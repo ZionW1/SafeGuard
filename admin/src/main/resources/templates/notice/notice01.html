@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>Document</title>
+</head>
+<body>
+    <div class="admin-container">
+        <th:block th:replace="~{fragments/sidebar :: sidebarFragment}"></th:block>
+        <div class="main-content">
+            <h1><a href="/admin/notice01">공지사항</a></h1>
+            <form class="optionForm" action="/admin/notice01" method="get" id="form">
+                <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
+                <select name="code">
+                    <option value="0" th:selected="${option.code==0}">전체</option>
+                    <option value="1" th:selected="${option.code==1}">제목</option>
+                    <option value="2" th:selected="${option.code==2}">내용</option>
+                    <option value="3" th:selected="${option.code==3}">타입</option>
+                </select>
+                <select name="orderCode" id="order-code">
+                    <option value="0" th:selected="${option.orderCode == 0}">최신순</option>
+                </select>
+                <input type="text" name="keyword" placeholder="검색어를 입력해 주세요." th:value="${param.keyword}">
+                <input class="optionSubmit" type="submit" value="검색">
+            </form>
+            <table border="1">
+                <thead>
+                    <th style="width: 50px; text-align: center;">ID</th>
+                    <th style="text-align: center;">제목</th>
+                    <th style="width: 100px; text-align: center;">생성일</th>
+                </thead>
+                <tbody>
+                    <th:block th:if="${noticeList.isEmpty()}">
+                        <tr>
+                            <td colspan="5" align="center">조회된 데이터가 없습니다.</td>
+                        </tr>
+                    </th:block>
+                    <th:block th:each="notice, stat : ${noticeList}">
+                        <!-- <a th:href="|/admin/campaign/select?id=${campaign.id}|"> -->
+                        <tr th:onclick="|location.href='@{/admin/notice02(id=${notice.adminContentId})}'|">
+                            <td style="text-align: center;" ><span th:text="${stat.size - stat.index}"></span></td>
+                            <td><span th:text="${notice.title}"></span></td>
+                            <td style="text-align: center;" ><span th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}"></span></td>
+                        </tr>
+                    </th:block>
+                </tbody>
+            </table>
+            <div class="parent">
+                <div class="child">
+                <a th:href="@{${pageUrl} + '&page=' + ${page.first}}">[처음]</a>
+                
+                <th:block th:if="${page.page != page.first }">
+                    <a th:href="@{${pageUrl} + '&page=' + ${page.prev}}">[이전]</a>
+                </th:block>
+                <th:block th:each="no : ${#numbers.sequence(page.start, page.end)}">
+
+                    <th:block th:if="${page.page == no}">
+                        <b><span th:text="${no}"></span></b>
+                    </th:block>
+                    <th:block th:if="${page.page != no}">
+                        <a th:href="@{${pageUrl} + '&page='+${no}}" th:text="${no}"></a>
+                    </th:block>
+                </th:block>
+                <th:block th:if="${page.page != page.last }">
+                    <a th:href="@{${pageUrl} + '&page=' + ${page.next}}">[다음]</a>
+                </th:block>
+                <a th:href="@{${pageUrl} + '&page=' + ${page.last}}">[마지막]</a>
+            </div>
+            
+            </div>
+            <a href="/admin/notice03" class="insert">등록</a>
+        </div>
+    </div>
+    <div th:replace="fragments/footer :: mainFooter"></div>
+    <script src="/js/common.js"></script>
+</body>
+</html>

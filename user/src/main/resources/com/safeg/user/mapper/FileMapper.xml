@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.safeg.user.mapper.FileMapper">
+
+    <!-- 조회 -->
+    <select id="select" resultType="filesVO">
+        select * from files where target_id = #{id} and target_type='campaign' and is_deleted = 'N';
+    </select>
+
+    <select id="getMypageImage" resultType="filesVO">
+        select * from files where target_id = #{id} and target_type=#{targetType} and is_deleted = 'N';
+    </select>
+
+    <select id="userList" resultType="java.lang.Long">
+        select user_no from user_campaign where campaign_id = #{id}
+        <!-- and is_deleted = 'N'; -->
+    </select>
+
+    <!-- 등록 -->
+    <insert id="insert">
+        <!-- insert into files (id, file_name, file_path, file_size, 
+            type, parent_table, parent_no)
+            values (
+                #{id}, #{fileName}, #{filePath}, #{fileSize},
+                #{type}, #{parentTable}, #{parentNo}
+            ) -->
+        <!-- insert into campaign_image (created_date, last_Modified_Date, image, campaign_id, file_size, image_id, file_path, del_yn
+        )
+        values (
+            now(), now(), #{image}, #{campaignId}, #{fileSize}, #{imageId}, #{filePath}, 'N'
+        ) -->
+
+        insert into files (
+            file_type, target_id, target_type, original_name, saved_name, 
+            file_path, file_size, file_extension, created_by, updated_by
+        )
+        values (
+            #{fileType}, #{targetId}, #{targetType}, #{originalName}, #{savedName}, 
+            #{filePath}, #{fileSize}, #{fileExtension}, #{createdBy}, #{updatedBy}
+        )
+    </insert>
+    <!-- 수정 -->
+    <update id="update">
+        update files
+            set file_name = #{fileName},
+                file_path = #{filePath},
+                file_size = #{fileSize},
+                type = #{type},
+                parent_table = #{parentTable}
+                parent_no =#{parentNo}
+        where id= #{id}
+    </update>
+
+    <!-- 삭제 -->
+    <update id="delete">
+        <!-- delete from files
+        where id = #{id} -->
+        update campaign_image set del_yn = 'Y' where id = #{id};
+    </update>
+
+    <select id="listByParent" resultType="filesVO">
+        select * 
+        from files
+        where parent_table = #{parentTable}
+        and parent_no = #{parentNo}
+    </select>
+
+    <!-- 부모테이블 기준 파일 삭제 -->
+    <delete id="deleteByParent">
+        delete 
+        from files
+        where parent_table = #{parentTable}
+        and parent_no = #{parentNo}
+    </delete>
+
+    <select id="bannerFile" resultType="filesVO">
+        select * from files where target_id = #{id} and target_type='BANNER' and is_deleted = 'N';
+    </select>
+</mapper>

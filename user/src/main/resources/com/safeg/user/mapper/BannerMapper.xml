@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.safeg.user.mapper.BannerMapper">
+
+    <!-- <resultMap type="Users" id="userMap">
+        <id property="no" column="no" />
+        
+        <result property="no" column="no" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="name" column="name" />
+        <result property="email" column="email" />
+        <result property="enabled" column="enabled" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        
+        <collection property="authList" resultMap="authMap"></collection>
+    </resultMap>
+        
+    <resultMap type="UserAuth" id="authMap">
+        <result property="no" column="no" />
+        <result property="username" column="username" />
+        <result property="auth" column="auth" />
+    </resultMap> -->
+    
+    <select id="bannerList" resultType="BannerVO">
+        SELECT 
+            banner_id,
+            url,
+            title
+        FROM banner
+        WHERE is_deleted = 'N'
+        ORDER BY banner_id
+    </select>
+</mapper>

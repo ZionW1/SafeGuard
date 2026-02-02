@@ -1,0 +1,115 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity5">
+    <nav class="navigator" th:fragment="main-navigator">
+        
+    <!-- 상단 유틸 메뉴 -->
+    <div class="top-bar">
+        <div class="right">
+        <a href="#">고객센터</a>
+        <a href="#">광고문의</a>
+        </div>
+    </div>
+
+    <!-- 헤더 -->
+    <header class="main-header">
+        
+        <div class="header-left">
+            <div class="logo">행집</div>
+                <input type="text" class="search" placeholder="검색어를 입력하세요" />
+            </div>
+        <div class="header-right">
+            <div class="ad-section">
+                <img src="/images/fireworks-icon.png" alt="폭죽 아이콘" class="ad-icon" />
+                <div class="ad-text">
+                    <a href="/ask">
+                        <div class="ad-main">행사 문의는 이쪽으로!</div>
+                        <div class="ad-link">행사 요청 페이지</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+<nav class="nav-bar">
+    <div class="nav-container">
+        <ul class="nav-list">
+            <a href="/"><li>홈</li></a>
+            <a href="/campaign08"><li>지역</li></a>
+            <a href="/useGuide01"><li>이용가이드</li></a>
+            <a href="/leader01"><li>행집인솔자</li></a>
+            <a href="/bestAgent"><li class="auth-link">베스트 요원</li></a>
+            <li>인증된 협력업체</li>
+            <li href="/endCampaign">마감된 캠페인</li>
+            <a href="/notice01"><li><img src="https://cdn-icons-png.flaticon.com/512/1827/1827310.png" alt="공지" class="notice-icon">공지</li></a>
+        </ul>
+        <th:block sec:authorize="isAnonymous()">
+            <div class="d-grid gap-2">
+                <a href="/user01" class="auth-link" id="menuLogin">로그인</a>
+                <a href="/user02" class="auth-link" id="menuRegister">회원가입</a>
+                <!-- <a href="/login" class="btn btn-lg btn-primary">로그인</a>
+                <a href="/join" class="btn btn-lg btn-success">회원가입</a> -->
+            </div>
+        </th:block>
+        <th:block sec:authorize="isAuthenticated()">
+            <!-- <div class="card">
+                <div class="inner p-4">
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="item my-2">
+                            <h3 th:text="${user.name}"></h3>
+                        </div>
+                        <div class="item my-2">
+                            <h5 th:text="${user.email}"></h5>
+                        </div>
+                        <div class="item my-2 w-100">
+                            <span sec:authentication="principal">인증된 사용자</span>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+
+            <form action="/logout" method="post">
+                <!-- CSRF TOKEN -->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                안녕하세요, <span sec:authentication="name"></span>님!
+
+                <div class="d-grid gap-2">
+                    <a href="/mypage" class="auth-link" id="menuMyPage">마이페이지</a>
+                    <a href="/user04" class="auth-link" id="menuMyPage">마이페이지2</a>
+
+                    <!-- <li sec:authorize="isAuthenticated()"><a th:href="@{/user/mypage}">마이페이지</a></li> -->
+
+                    <a href="#" class="auth-link" id="menuLogout">로그아웃</a>
+                    <a href="javascript:goPost()">로그아웃</a>
+                    <button type="submit" class="btn btn-lg btn-primary">로그아웃</button>
+
+
+                </div>
+            </form>
+        </th:block>
+        <!-- <div class="auth-links">
+            <a href="/login" class="auth-link" id="menuLogin">로그인</a>
+            <a href="/join" class="auth-link" id="menuRegister">회원가입</a>
+            <a href="mypage.html" class="auth-link" id="menuMyPage" style="display: none;">마이페이지</a>
+            <a href="php/logout.php" class="auth-link" id="menuLogout" style="display: none;">로그아웃</a>
+        </div>       -->
+    </div>
+    </nav>
+    <script>
+    document.getElementById('menuLogout').addEventListener('click', function(e) {
+        console.log("meta[name=_csrf]: " + document.querySelector('meta[name="_csrf"]').getAttribute('content'));
+        alert("로그아웃 되었습니다.");
+        
+        e.preventDefault();
+
+        fetch('/logout', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': /* CSRF 토큰 값, 보통 메타태그에서 가져옴 */
+            document.querySelector('meta[name="_csrf"]').getAttribute('content')
+        }
+        }).then(() => {
+        // 로그아웃 후 리다이렉트 등 처리
+        window.location.href = '/';
+        });
+    });
+    </script>
+</nav>
+</html>

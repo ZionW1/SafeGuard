@@ -1,0 +1,33 @@
+<div th:fragment="sidebarMenu">
+    <aside class="sidebar">
+        <nav>
+            <div class="sr-only">로그인 해주세요</div>
+            <!-- <h3 class="sidebar-title">고객센터</h3> -->
+            
+            <ul class="sidebar-menu">
+                <li class="menu-item" th:classappend="${currentURI.startsWith('/notice01') || currentURI.startsWith('/notice02')} ? 'active' : ''">
+                    <h3 class="sidebar-title">고객센터</h3>
+
+                </li>
+                <li class="menu-item" th:classappend="${currentURI.startsWith('/notice01') || currentURI.startsWith('/notice02')} ? 'active' : ''">
+                    <a href="/notice01">공지사항</a>
+                </li>
+                <li class="menu-item" th:classappend="${currentURI.startsWith('/inquiry')} ? 'active' : ''">
+                    <a href="/inquiry">1:1 문의</a>
+                </li>
+                <li class="menu-item" th:classappend="${currentURI.startsWith('/faq')} ? 'active' : ''">
+                    <a href="/faq">자주 묻는 질문</a>
+                </li>
+                <li class="menu-item" th:classappend="${currentURI.startsWith('/useGuide01')} ? 'active' : ''">
+                    <a href="/useGuide01">이용가이드</a>
+                </li>
+                <!-- <li class="menu-item" th:classappend="${currentURI.startsWith('/leader01')} ? 'active' : ''">
+                    <a href="/leader01">행집인솔자</a>
+                </li>
+                <li class="menu-item" th:classappend="${currentURI.startsWith('/bestAgent')} ? 'active' : ''">
+                    <a href="/bestAgent">베스트요원</a>
+                </li> -->
+            </ul>
+        </nav>
+    </aside>
+</div>

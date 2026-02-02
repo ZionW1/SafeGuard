@@ -1,0 +1,20 @@
+<!-- src/main/resources/templates/fragments/head.html -->
+<!-- <!DOCTYPE html> 와 <html> 태그는 제거! -->
+<!-- <head> 와 <body> 태그도 제거! -->
+    <th:block th:fragment="common_head"> <!-- ⭐ 전체를 th:block으로 감싸서 프래그먼트 정의 ⭐ -->
+    <!-- ⭐ title 태그에 th:fragment는 없애고, base_layout에 title을 명시적으로 주는게 좋아 ⭐ -->
+    <!-- 아니면 base_layout에 <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">SafeG</title> 이렇게 해두면,
+        index.html의 <title>메인 페이지</title>가 SafeG | 메인 페이지 처럼 들어가게 돼! -->
+    <!-- fragments/head.html 에는 그냥 기본적인 메타 태그와 공통 CSS만 두는게 제일 깔끔해! -->
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>SafeG - 안전한 소비자의 선택 (기본 타이틀)</title> <!-- 기본 타이틀 -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- 여기에 공통적으로 사용할 CSS, JavaScript 링크가 들어갈 수 있어 -->
+    
+</th:block>

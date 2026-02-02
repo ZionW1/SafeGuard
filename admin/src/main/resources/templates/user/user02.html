@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+    <title>유저 상세보기</title>
+    <link rel="stylesheet" href="/css/style.css">
+    
+</head>
+<body>
+    <div class="admin-container">
+        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        <div class="main-content">
+            <h1>유저 수정</h1>
+            <h5><span>생성일 : </span><span th:text="${userSelect.createdAt}">캠페인 수정</span></h5>
+            <form class="form" action="/admin/user03" method="post" id="form" enctype="multipart/form-data">
+                <!-- <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block> -->
+                <!-- <div th:insert="~{fragments/csrfFragments :: inputCsrf}"></div> -->
+                <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
+
+                <input type="hidden" name="id" id="id" th:value="${userSelect.id}" />
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userId">아이디</label>
+                        <input type="text" name="userId" id="userId" th:value="${userSelect.userId}" disabled required />
+                    </div>
+                    <div class="form-group">
+                        <label for="userNm">이름</label>
+                        <input type="text" name="userNm" id="userNm" th:value="${userSelect.userNm}" disabled required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">이메일</label>
+                        <span th:if="${#strings.isEmpty(userSelect?.email)}">
+                            <input type="text" name="email" id="=email" value="" placeholder="닉네임을 입력하세요" />
+                        </span>
+                        <span th:unless="${#strings.isEmpty(userSelect?.email)}">
+                            <input type="text" name="email" id="email" th:value="${userSelect.email}" required />
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="nickName">닉네임</label>
+                        <span th:if="${#strings.isEmpty(userSelect?.nickName)}">
+                            <input type="text" name="nickName" id="nickName" value="" placeholder="닉네임을 입력하세요" />
+                        </span>
+                        <span th:unless="${#strings.isEmpty(userSelect?.nickName)}">
+                            <input type="text" name="nickName" id="nickName" th:value="${userSelect.nickName}" required />
+                        </span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phoneNum">휴대폰 번호</label>
+                        <!-- <input type="text" name="phoneNum" id="phoneNum" value="" placeholder="휴대폰 번호를 입력하세요" /> -->
+                        <span th:if="${#strings.isEmpty(userSelect?.phoneNum)}">
+                            <input type="text" name="phoneNum" id="phoneNum" value="" placeholder="닉네임을 입력하세요" />
+                        </span>
+                        <span th:unless="${#strings.isEmpty(userSelect?.phoneNum)}">
+                            <input type="text" name="phoneNum" id="phoneNum" th:value="${userSelect.phoneNum}" required />
+                        </span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fullAddress">주소</label>
+                        <!-- <input type="text" id="addressId" name="addressId" th:value="${userSelect.fullAddress}"/> -->
+                        <span th:if="${#strings.isEmpty(userSelect?.fullAddress)}">
+                            <input type="text" name="fullAddress" id="fullAddress" value="" disabled/>
+                        </span>
+                        <span th:unless="${#strings.isEmpty(userSelect?.fullAddress)}">
+                            <input type="text" name="fullAddress" id="fullAddress" th:value="${userSelect.fullAddress}" disabled />
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bankNm">은행명</label>
+                        <!-- <input type="text" id="bankNm" name="bankNm" th:value="${userSelect.bankNm}" required /> -->
+                        <span th:if="${#strings.isEmpty(userSelect?.bankNm)}">
+                            <input type="text" name="bankNm" id="bankNm" value="" placeholder="은행명을 입력하세요" />
+                        </span>
+                        <span th:unless="${#strings.isEmpty(userSelect?.bankNm)}">
+                            <input type="text" name="bankNm" id="bankNm" th:value="${userSelect.bankNm}" required />
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="accountNumber">계좌번호</label>
+                        <!-- <input type="text" name="accountNumber" id="accountNumber" th:value="${userSelect.accountNumber}" required /> -->
+                        <span th:if="${#strings.isEmpty(userSelect?.accountNumber)}">
+                            <input type="text" name="accountNumber" id="accountNumber" value="" placeholder="계좌번호를 입력하세요" />
+                        </span>
+                        <span th:unless="${#strings.isEmpty(userSelect?.accountNumber)}">
+                            <input type="text" name="accountNumber" id="accountNumber" th:value="${userSelect.accountNumber}" required />
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="depositor">예금주 이름</label>
+                        <!-- <input type="text" name="depositor" id="depositor" th:value="${userSelect.depositor}" /> -->
+                        <span th:if="${#strings.isEmpty(userSelect?.depositor)}">
+                            <input type="text" name="depositor" id="depositor" value="" placeholder="예금주 이름을 입력하세요" />
+                        </span>
+                        <span th:unless="${#strings.isEmpty(userSelect?.depositor)}">
+                            <input type="text" name="depositor" id="depositor" th:value="${userSelect.depositor}" required />
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>사용자 메모</label>
+                    <!-- <textarea name="memo" id="memo" rows="4" th:text="${userSelect.memo}"></textarea> -->
+                    <span th:if="${#strings.isEmpty(userSelect?.memo)}">
+                        <input type="text" name="memo" id="memo" value="" placeholder="메모를 입력하세요" />
+                    </span>
+                    <span th:unless="${#strings.isEmpty(userSelect?.memo)}">
+                        <input type="text" name="memo" id="memo" th:value="${userSelect.memo}" required />
+                    </span>
+                </div>
+                <div class="form-row">
+                    <div class="">
+                        <button type="submit" class="update-btn">유저 수정</button>
+                        <button type="button" class="update-btn" th:onclick="userRemove()">유저 삭제</button>
+                    </div>
+                    <div class="mgl439per">
+                        <span th:if="${userSelect.guardType == '00' || userSelect.guardType == '01'}">
+                            <button type="button" class="stop-btn" onclick="guardTypeChnage('02')">경호원 변경</button>
+                        </span>
+                        <span th:if="${userSelect.guardType == '02'}">
+                            <button type="button" class="stop-btn" onclick="guardTypeChnage('03')">수행 변경</button>
+                        </span>
+                        <span th:if="${userSelect.guardType == '03'}">
+                            <button type="button" class="stop-btn" onclick="guardTypeChnage('02')">경호원 변경</button>
+                        </span>
+                        
+                        <button type="button" class="stop-btn" th:if="${userSelect.role == 'LEADER'}" onclick="userUpdate()">일반 유저 변경</button>
+                        <button type="button" class="stop-btn" th:unless="${userSelect.role == 'LEADER'}" onclick="leaderUpdate()">인솔자 변경</button>
+                        <button type="button" class="stop-btn" th:if="${userSelect.isStopped == 'N'}" onclick="userStop()">정지하기</button>
+                        <button type="button" class="stop-btn" th:unless="${userSelect.isStopped == 'N'}" onclick="userUnstop()">정지풀기</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("DOM이 준비되었습니다!");
+            const userSelect = /*[[${userSelect}]]*/ [];
+            console.log(userSelect);
+
+            console.log(userSelect.guardType);
+            
+        });
+        const csrfToken = /*[[${_csrf.token}]]*/ '';
+        const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+        const params = new URLSearchParams(location.search);
+        const id = params.get("id");
+        const form = document.getElementById("form");
+        console.log(id);
+
+        function userRemove() {
+            // const id = /*[[${userSelect.id}]]*/ '';
+            console.log(id);
+            if(!confirm('이 사용자를 삭제하시겠습니까?')){
+                return;
+            }
+
+            form.action = '/admin/user04'; // action 속성 변경
+            form.submit(); // 요청 전송
+        }
+
+        // userUpdate 함수 수정 (fetch API 사용)
+        function userUpdate(){
+            // userUpdate() 함수는 보통 'id' 파라미터를 받거나, form에서 'id' input의 value를 읽어와야 할 거야.
+            // 현재 코드에서는 console.log(id); 로 'id' 변수를 쓰고 있는데, 이 'id'가 어디서 오는지 코드상으로 명확하지 않아서 일단 전역 변수라고 가정할게!
+            // 아니면 hidden input의 값을 읽어올 수도 있어. 예시: document.getElementById('id').value;
+
+            if(!confirm('이 사용자를 일반 유저로 변경하시겠습니까?')){
+                return;
+            }
+
+            // 변경된 action URL (POST 요청)
+            const url = '/admin/user05';
+
+            // FormData 객체를 사용하여 form 데이터를 쉽게 구성
+            // <form id="form" ...> 태그의 모든 입력 필드 데이터를 자동으로 담아줘
+
+            // 만약 authRole, authCode 같은 값을 추가로 보내야 한다면 formData.append()를 사용
+            // formData.append('authRole', 'ROLE_USER');
+            // formData.append('authCode', '02');
+            const userId = document.getElementById('id').value; // <input type="hidden" name="id" id="id" ...> 에서 id 값을 가져옴
+            const form = document.getElementById('form');
+            const formData = new FormData(form);
+
+            fetch(url, {
+                method: 'POST', // 요청 방식은 POST
+                headers: {
+                    // 'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                    // 만약 스프링 시큐리티를 사용하고 있다면 CSRF 토큰도 헤더에 추가해야 할 수 있어.
+                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                },
+                body: formData
+                // FormData 객체를 body에 바로 전달 (Content-Type 헤더는 자동으로 'multipart/form-data'로 설정됨)
+                            // 만약 application/json 형식으로 보내고 싶다면:
+                            // headers: { 'Content-Type': 'application/json' },
+                            // body: JSON.stringify({
+                            //    id: userId,
+                            //    authRole: 'ROLE_USER',
+                            //    authCode: '02'
+                            // })
+            })
+            .then(response => {
+                // 응답이 성공적인지 확인 (HTTP 상태 코드 200-299)
+                if (!response.ok) {
+                    // 서버에서 에러 응답을 보낸 경우 (예: 400, 500)
+                    // JSON 응답을 예상한다면 .json()으로 파싱
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || '서버 응답 오류');
+                    });
+                }
+                // 응답 본문을 JSON으로 파싱 (서버가 JSON을 반환한다고 가정)
+                return response.json();
+            })
+            .then(data => {
+                // 성공적으로 응답을 받았을 때
+                if (data.success) { // 서버 응답에 'success' 필드가 true인 경우
+                    alert(data.message || '사용자가 일반 유저로 변경되었습니다!');
+                    // 성공 후 필요한 UI 업데이트 또는 페이지 새로고침 (선택 사항)
+                    window.location.reload(); // 현재 페이지 새로고침
+                } else {
+                    alert(data.message || '사용자 변경에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                // 네트워크 오류 또는 catch 블록에서 throw된 에러 처리
+                console.error('Error:', error);
+                alert('요청 처리 중 오류가 발생했습니다: ' + error.message);
+            });
+        }
+
+        function leaderUpdate(){
+            
+            if(!confirm('이 사용자를 일반 인솔자로 변경하시겠습니까?')){
+                return;
+            }
+
+            const url = '/admin/user06';
+
+            const userId = document.getElementById('id').value;
+            const form = document.getElementById('form');
+            const formData = new FormData(form);
+
+            fetch(url, {
+                method: 'POST', // 요청 방식은 POST
+                headers: {
+                    // 'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                    // 만약 스프링 시큐리티를 사용하고 있다면 CSRF 토큰도 헤더에 추가해야 할 수 있어.
+                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                },
+                body: formData
+            })
+            .then(response => {
+                // 응답이 성공적인지 확인 (HTTP 상태 코드 200-299)
+                if (!response.ok) {
+                    // 서버에서 에러 응답을 보낸 경우 (예: 400, 500)
+                    // JSON 응답을 예상한다면 .json()으로 파싱
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || '서버 응답 오류');
+                    });
+                }
+                // 응답 본문을 JSON으로 파싱 (서버가 JSON을 반환한다고 가정)
+                return response.json();
+            })
+            .then(data => {
+                // 성공적으로 응답을 받았을 때
+                if (data.success) { // 서버 응답에 'success' 필드가 true인 경우
+                    alert(data.message || '사용자가 인솔자로 변경되었습니다!');
+                    // 성공 후 필요한 UI 업데이트 또는 페이지 새로고침 (선택 사항)
+                    window.location.reload(); // 현재 페이지 새로고침
+                } else {
+                    alert(data.message || '사용자 인솔자 변경에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                // 네트워크 오류 또는 catch 블록에서 throw된 에러 처리
+                console.error('Error:', error);
+                alert('요청 처리 중 오류가 발생했습니다: ' + error.message);
+            });
+        }
+
+        function userStop(){
+            if(!confirm('이 사용자를 정지 하시겠습니까?')){
+                return;
+            }
+
+            const url = '/admin/user07';
+
+            const userId = document.getElementById('id').value;
+            const form = document.getElementById('form');
+            const formData = new FormData(form);
+
+            fetch(url, {
+                method: 'POST', // 요청 방식은 POST
+                headers: {
+                    // 'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                    // 만약 스프링 시큐리티를 사용하고 있다면 CSRF 토큰도 헤더에 추가해야 할 수 있어.
+                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                },
+                body: formData
+            })
+            .then(response => {
+                // 응답이 성공적인지 확인 (HTTP 상태 코드 200-299)
+                if (!response.ok) {
+                    // 서버에서 에러 응답을 보낸 경우 (예: 400, 500)
+                    // JSON 응답을 예상한다면 .json()으로 파싱
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || '서버 응답 오류');
+                    });
+                }
+                // 응답 본문을 JSON으로 파싱 (서버가 JSON을 반환한다고 가정)
+                return response.json();
+            })
+            .then(data => {
+                // 성공적으로 응답을 받았을 때
+                if (data.success) { // 서버 응답에 'success' 필드가 true인 경우
+                    alert(data.message || '사용자가 정지상태로 변경되었습니다!');
+                    // 성공 후 필요한 UI 업데이트 또는 페이지 새로고침 (선택 사항)
+                    window.location.reload(); // 현재 페이지 새로고침
+                } else {
+                    alert(data.message || '사용자 정지상태 변경에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                // 네트워크 오류 또는 catch 블록에서 throw된 에러 처리
+                console.error('Error:', error);
+                alert('요청 처리 중 오류가 발생했습니다: ' + error.message);
+            });
+        }
+
+        function userUnstop(){
+            if(!confirm('이 사용자를 정지 해제 하시겠습니까?')){
+                return;
+            }
+
+            const url = '/admin/user08';
+
+            const userId = document.getElementById('id').value;
+            const form = document.getElementById('form');
+            const formData = new FormData(form);
+
+            fetch(url, {
+                method: 'POST', // 요청 방식은 POST
+                headers: {
+                    // 'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                    // 만약 스프링 시큐리티를 사용하고 있다면 CSRF 토큰도 헤더에 추가해야 할 수 있어.
+                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                },
+                body: formData
+            })
+            .then(response => {
+                // 응답이 성공적인지 확인 (HTTP 상태 코드 200-299)
+                if (!response.ok) {
+                    // 서버에서 에러 응답을 보낸 경우 (예: 400, 500)
+                    // JSON 응답을 예상한다면 .json()으로 파싱
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || '서버 응답 오류');
+                    });
+                }
+                // 응답 본문을 JSON으로 파싱 (서버가 JSON을 반환한다고 가정)
+                return response.json();
+            })
+            .then(data => {
+                // 성공적으로 응답을 받았을 때
+                if (data.success) { // 서버 응답에 'success' 필드가 true인 경우
+                    alert(data.message || '사용자가 정지 해제 상태로 변경되었습니다!');
+                    // 성공 후 필요한 UI 업데이트 또는 페이지 새로고침 (선택 사항)
+                    window.location.reload(); // 현재 페이지 새로고침
+                } else {
+                    alert(data.message || '사용자 정지 해제 변경에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                // 네트워크 오류 또는 catch 블록에서 throw된 에러 처리
+                console.error('Error:', error);
+                alert('요청 처리 중 오류가 발생했습니다: ' + error.message);
+            });
+        }
+
+        function guardTypeChnage(param){
+            if(param === '02'){
+                if(!confirm('이 사용자를 경호원으로 변경하시겠습니까?')){
+                    return;
+                }
+            } else {
+                if (!confirm('이 사용자를 수행 유저로 변경하시겠습니까?')){
+                    return;
+                }
+            }
+
+            const url = '/admin/user09';
+
+            const userId = document.getElementById('id').value;
+            const form = document.getElementById('form');
+            const formData = new FormData(form);
+            formData.append('guardType', param);           // '01' 값을 bodyguardType 필드에 추가
+
+            fetch(url, {
+                method: 'POST', // 요청 방식은 POST
+                headers: {
+                    // 'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                    // 만약 스프링 시큐리티를 사용하고 있다면 CSRF 토큰도 헤더에 추가해야 할 수 있어.
+                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                },
+                body: formData
+            })
+            .then(response => {
+                // 응답이 성공적인지 확인 (HTTP 상태 코드 200-299)
+                if (!response.ok) {
+                    // 서버에서 에러 응답을 보낸 경우 (예: 400, 500)
+                    // JSON 응답을 예상한다면 .json()으로 파싱
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || '서버 응답 오류');
+                    });
+                }
+                // 응답 본문을 JSON으로 파싱 (서버가 JSON을 반환한다고 가정)
+                return response.json();
+            })
+            .then(data => {
+                // 성공적으로 응답을 받았을 때
+                if (data.success) { // 서버 응답에 'success' 필드가 true인 경우
+                    alert(data.message || '사용자가 수행 유저로 변경되었습니다!');
+                    // 성공 후 필요한 UI 업데이트 또는 페이지 새로고침 (선택 사항)
+                    window.location.reload(); // 현재 페이지 새로고침
+                } else {
+                    alert(data.message || '사용자 수행 유저 변경에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                // 네트워크 오류 또는 catch 블록에서 throw된 에러 처리
+                console.error('Error:', error);
+                alert('요청 처리 중 오류가 발생했습니다: ' + error.message);
+            });
+        }
+    </script>
+</body>
+</html>

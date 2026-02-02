@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.safeg.admin.mapper.FileMapper">
+    <!-- 목록 -->
+    <select id="list" resultType="FilesVO">
+        select * from files;
+    </select>
+    <!-- 조회 -->
+    <select id="select" resultType="FilesVO">
+        select * from files where FILE_TYPE = 'campaign_File' and target_Id = #{id} and is_Deleted = 'N';
+    </select>
+    <!-- 등록 -->
+    <insert id="insert">
+        <!-- insert into files (id, file_name, file_path, file_size, 
+            type, parent_table, parent_no)
+            values (
+                #{id}, #{fileName}, #{filePath}, #{fileSize},
+                #{type}, #{parentTable}, #{parentNo}
+            ) -->
+        <!-- insert into files (image, file_size, image_id, file_path, status, status_id
+        )
+        values (
+            #{image}, #{fileSize}, #{imageId}, #{filePath}, #{status}, #{statusId}
+        ) -->
+
+
+        insert into files (
+            file_type, target_id, target_type, original_name, saved_name, 
+            file_path, file_size, file_extension, created_by, updated_by
+        )
+        values (
+            #{fileType}, #{targetId}, #{targetType}, #{originalName}, #{savedName}, 
+            #{filePath}, #{fileSize}, #{fileExtension}, #{createdBy}, #{updatedBy}
+        )
+    </insert>
+    <!-- 수정 -->
+    <update id="update">
+        <!-- update files
+            set file_name = #{fileName},
+                file_path = #{filePath},
+                file_size = #{fileSize},
+                type = #{type},
+                parent_table = #{parentTable}
+                parent_no =#{parentNo}
+        where id= #{id} -->
+        update files
+            set saved_name = #{savedName},
+                file_path = #{filePath},
+                file_size = #{fileSize},
+                parent_table = #{parentTable}
+                updated_by = #{updatedBy}
+                updated_at = #{updatedAt}
+        where id= #{id}
+    </update>
+
+    <!-- 삭제 -->
+    <update id="delete">
+        <!-- delete from files
+        where id = #{id} -->
+        update files set is_deleted = 'Y' where target_id = #{id} and target_type = 'campaign';
+    </update>
+
+    <select id="listByParent" resultType="FilesVO">
+        select * 
+        from files
+        where parent_table = #{parentTable}
+        and parent_no = #{parentNo}
+    </select>
+
+    <!-- 부모테이블 기준 파일 삭제 -->
+    <delete id="deleteByParent">
+        delete 
+        from files
+        where parent_table = #{parentTable}
+        and parent_no = #{parentNo}
+    </delete>
+
+    <insert id="bannerInsert">
+        <!-- insert into files (id, file_name, file_path, file_size, 
+            type, parent_table, parent_no)
+            values (
+                #{id}, #{fileName}, #{filePath}, #{fileSize},
+                #{type}, #{parentTable}, #{parentNo}
+            ) -->
+        <!-- insert into files (image, file_size, image_id, file_path, status, status_id
+        )
+        values (
+            #{image}, #{fileSize}, #{imageId}, #{filePath}, #{status}, #{statusId}
+        ) -->
+
+        insert into files (
+            file_type, target_id, target_type, original_name, saved_name, 
+            file_path, file_size, file_extension, created_by, updated_by
+        )
+        values (
+            #{fileType}, #{targetId}, #{targetType}, #{originalName}, #{savedName}, 
+            #{filePath}, #{fileSize}, #{fileExtension}, #{createdBy}, #{updatedBy}
+        )
+    </insert>
+
+    <update id="bannerUpdate" parameterType="BannerVO">
+        update files set 
+            image = #{image},
+            file_size = #{fileSize},
+            image_id = #{imageId},
+            file_path = #{filePath}
+        where target_Id = #{id}
+    </update>
+
+    <select id="bannerSelect" resultType="FilesVO">
+        select * from files where target_id = #{id} and target_type = 'BANNER' and is_Deleted = 'N';
+    </select>
+
+
+    <update id="bannerFileRemove" parameterType="BannerVO">
+        update files
+        set is_Deleted = 'Y'
+        where target_Id = #{id}
+    </update>
+</mapper>

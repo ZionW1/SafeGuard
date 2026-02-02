@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.safeg.user.mapper.CampaignMapper">
+    <select id="campaignSelect" resultType="campaignVO">
+        select 
+            campaign_id,
+            company_Nm, 
+            company_Ph, 
+            campaign_Title, 
+            recruitment_Num, 
+            applicants_Num, 
+            white_Sal,
+            green_Sal,
+            yellow_Sal,
+            orange_sal,
+            red_sal,
+            blue_sal,
+            brown_sal,
+            place_Addr,
+            mission,
+            <!-- DATE_FORMAT(App_period_str,'%Y-%m-%d') AS app_period_str,
+            DATE_FORMAT(App_period_end,'%Y-%m-%d') AS app_period_end,
+            DATE_FORMAT(event_period_str,'%Y-%m-%d') AS event_period_str,
+            DATE_FORMAT(event_period_str,'%Y-%m-%d') AS event_period_str,
+            DATE_FORMAT(result_date,'%Y-%m-%d') AS result_date -->
+            app_period_str,
+            app_period_end,
+            event_period_str,
+            event_period_end,
+            leader_code,
+            type_code,
+            result_date
+            <!-- DATE_FORMAT(event_Period_str,'%Y-%m-%d') AS event_Period_str,
+            DATE_FORMAT(event_Period_end,'%Y-%m-%d') AS event_Period_end -->
+        from campaign 
+        where campaign_id = #{id}
+        and is_deleted = 'N'
+    </select>
+    <select id="appliedCampaign" resultType="UserCampaignVO">
+        SELECT
+            campaign_id,
+            applied_str_date,
+            applied_end_date
+        FROM user_campaign
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="campaignApplied" resultType="UserCampaignVO">
+        select 
+            uc.user_id,
+            uc.campaign_id,
+            uc.user_no,
+            c.app_period_str,
+            c.app_period_end,
+            c.event_period_str,
+            c.event_period_end
+        from user_campaign uc
+        left outer join campaign c
+        on uc.campaign_id = c.campaign_id
+        where uc.user_Id= #{userId} 
+        and uc.campaign_id = #{campaignId}
+    </select>
+
+    <insert id="campaignApply" parameterType="java.util.List">
+        INSERT INTO user_campaign(
+            campaign_id, 
+            user_No, 
+            user_id, 
+            applied_str_date, 
+            applied_end_date,
+            event_str_date,
+            event_end_date,
+            apply_date
+        ) values 
+        <foreach collection="dailyEntries" item="entry" separator=",">
+        (
+            #{entry.campaignId},
+            #{entry.userNo},
+            #{entry.userId},
+            #{entry.appliedStrDate},
+            #{entry.appliedEndDate},
+            #{entry.eventPeriodStr},
+            #{entry.eventPeriodEnd},
+            #{entry.applyDate}
+        )
+        </foreach>
+    </insert>
+
+    <update id="updateApplicants">
+        update campaign set 
+            applicants_Num = #{applicantsNum} + 1
+        where campaign_id= #{campaignId}
+    </update>
+
+    <update id="updateCampaign">
+        UPDATE campaign set
+            is_active ='N'
+        WHERE campaign_id = #{id}
+    </update>
+
+    <select id="closedCampaign" resultType="CampaignVO">
+        <![CDATA[
+        SELECT 
+            c.campaign_id, 
+            c.campaign_Title, 
+            c.recruitment_Num, 
+            c.applicants_Num, 
+            f.saved_name, 
+            f.file_path,
+            (CASE
+                WHEN type_code = '01' THEN '경호'
+                WHEN type_code = '02' THEN '진행'
+                WHEN type_code = '03' THEN '수행'
+                ELSE ''
+            END) as type_code,
+            c.app_period_str,
+            c.app_period_end,
+            event_Period_str,
+            event_Period_End,
+            t.user_nm
+            FROM campaign c 
+        LEFT OUTER JOIN files f 
+        ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN team_leader t
+        on c.leader_code = t.id
+        Where f.is_deleted = 'N'
+        AND f.target_type = 'campaign'
+        AND c.is_deleted = 'N'
+        AND c.is_active = 'N'
+        AND c.app_Period_end < now()
+        AND c.applicants_Num = c.recruitment_Num
+        ORDER BY c.campaign_id desc
+        ]]>
+    </select>
+
+</mapper>

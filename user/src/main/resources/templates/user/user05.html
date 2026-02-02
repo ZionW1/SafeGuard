@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{layouts/base_layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        table.bestAgentList {
+            float: left;
+            width: 48%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        table.bestPayList {
+            float: right;
+            width: 48%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <main layout:fragment="content">
+        <div class="main-side-content">
+            <div class="container">
+                <!-- <th:block th:replace="~{fragments/noticeSidebar :: sidebarMenu}" /> -->
+            </div>
+            <div class="article-container">
+                <!-- <h1>경호 캠페인 참여 랭킹</h1> -->
+                <div class="notice-title">경호 캠페인 참여 랭킹</div>
+                <div>
+                    <div class="bestAgent-title">출석<span style="margin-left: 49.5%">포인트</span></div>
+                    <table class="bestAgentList">
+                        <thead>
+                            <tr>
+                                <th>랭킹</th>
+                                <th>유저 ID</th>
+                                <th>유저 이름</th>
+                                <th>캠페인 수</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="userRank, stat : ${bestAgentList}">
+                                <td th:text="${stat.count}"></td>
+                                <td th:text="${userRank.userId}"></td>
+                                <td th:text="${userRank.userNm}"></td>
+                                <td th:text="${userRank.count}"></td>
+                            </tr>
+                            <tr th:if="${bestAgentList.empty}">
+                                <td colspan="4">참여 캠페인 정보가 없습니다.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <table class="bestPayList">
+                    <thead>
+                        <tr>
+                            <th>랭킹</th>
+                            <th>유저 ID</th>
+                            <th>유저 이름</th>
+                            <th>수행 점수</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="userRank, stat : ${bestPayList}">
+                            <td th:text="${stat.count}"></td>
+                            <td th:text="${userRank.userId}"></td>
+                            <td th:text="${userRank.userNm}"></td>
+                            <td th:text="${userRank.pay}"></td>
+                        </tr>
+                        <tr th:if="${bestPayList.empty}">
+                            <td colspan="4">참여 캠페인 정보가 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,99 @@
+/* 레이아웃 공통 스타일 */
+
+.st-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.st-row-center {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.st-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.st-cursor {
+    cursor: pointer;
+}
+
+/* gap과 flex-direction 조절용 기본 클래스 */
+/* JS 변수를 직접 쓸 수 없으므로, 많이 쓰이는 경우 아래처럼 고정값으로 사용하거나 원하는 곳에서 inline style 권장 */
+.st-gap {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 기본 gap */
+    flex-direction: row; /* 기본 방향 */
+}
+
+/* 방향 column일 경우 */
+.st-gap-col {
+    flex-direction: column;
+}
+
+.st-main {
+    height: 100vh;
+    width: 100vw;
+    background-color: #fff;
+    padding-top: 106px;
+}
+
+.st-main-body {
+    width: 74.16%;
+    max-width: 1280px;
+    margin: auto;
+    padding-bottom: 56px;
+    min-height: 100vh;
+}
+
+.st-space-btwn {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+}
+
+/* 기본 flexDirection row, 높이는 fit-content */
+.st-width-100 {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    flex-direction: row;
+}
+
+/* flexDirection column일 경우 별도 클래스 */
+.st-width-100-col {
+    flex-direction: column;
+}
+
+.st-empty-space {
+    width: 100%;
+    height: 20px; /* 기본 높이, 필요시 inline style로 조절 */
+}
+
+/* 크기 고정 너비 div, 중앙 정렬 및 컬러 */
+.st-signin-body-wrapper {
+    max-width: 432px;
+    min-width: 342px;
+    width: 22.5%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #191919;
+}
+
+.st-signin-logo-image {
+    margin: auto;
+    object-fit: cover;
+}
+
+.st-loading {
+    width: 100%;
+    height: 100vh;
+}

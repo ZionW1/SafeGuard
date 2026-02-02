@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.safeg.user.mapper.UserMapper">
+    <resultMap type="UserVO" id="userMap">
+        <!-- <id property="no" column="no" />
+        <result property="id" column="id" />
+        <result property="accountNumber" column="account_number" />
+        <result property="bank" column="bank" />
+        <result property="depositor" column="depositor" />
+        <result property="name" column="name" />
+        <result property="email" column="email" />
+        <result property="isDeleted" column="is_deleted" />
+        <result property="isStopped" column="is_stopped" />
+        <result property="nickname" column="nickname" />
+        <result property="password" column="password" />
+        <result property="phone" column="phone" />
+        <result property="point" column="point" />
+        <result property="roleCd" column="role_cd" />
+        <result property="addressId" column="address_id" />
+        <result property="stoppedDate" column="stopped_date" />
+        <result property="memo" column="memo" />
+        <result property="profileImage" column="profile_image" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <result property="referrer" column="referrer" />
+        <result property="enabled" column="enabled" />
+        <collection property="authList" resultMap="authMap"></collection> -->
+
+
+        <id property="id" column="id" />
+        <result property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="userNm" column="user_nm" />
+        <result property="password" column="password" />
+        <result property="accountNumber" column="account_number" />
+        <result property="bankNm" column="bank_nm" />
+        <result property="depositor" column="depositor" />
+        <result property="email" column="email" />
+        <result property="isDeleted" column="is_deleted" />
+        <result property="isStopped" column="is_stopped" />
+        <result property="nickname" column="nickname" />
+        <result property="phoneNum" column="phone_num" />
+        <result property="pointId" column="point_id" />
+        <result property="userRating" column="user_rating" />
+        <result property="commonId" column="common_id" />
+        <result property="addressId" column="address_id" />
+        <result property="gradeId" column="grade_id" />
+        <result property="stopDate" column="stop_date" />
+        <result property="memo" column="memo" />
+        <result property="fileId" column="FILE_ID" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <result property="enabled" column="enabled" />
+        <collection property="authList" resultMap="authMap"></collection>
+    </resultMap>
+        
+    <resultMap type="UserAuth" id="authMap">
+        <result property="no" column="no" />
+        <result property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="auth" column="auth" />
+        <result property="authCd" column="auth_cd" />
+    </resultMap>
+
+    <!-- 회원 조회 - id -->
+    <select id="select" resultMap="userMap">
+        SELECT
+            u.id,
+            u.user_id,
+            u.password,
+            u.user_nm,
+            u.email,
+            u.enabled,
+            u.phone_num,
+            u.nickname,
+            u.bank_nm,
+            u.depositor,
+            u.account_number,
+            u.created_at,
+            u.updated_at,
+            u.auth_id,
+            (CASE
+                WHEN auth_id = '01' THEN 'ROLE_ADMIN'
+                WHEN auth_id = '02' THEN 'ROLE_USER'
+                WHEN auth_id = '03' THEN 'ROLE_LEADER'
+                ELSE 'X'
+            END) AS auth
+        FROM user u 
+        LEFT OUTER JOIN user_auth auth 
+        on u.auth_id = auth.auth_cd
+        WHERE u.user_id = #{id}
+    </select>
+
+    <insert id="join" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user( user_id, user_nm, email, password, phone_num, grade_id, referrer_no)
+        VALUES ( #{userId}, #{userNm}, #{email}, #{password}, #{phoneNum}, 1, #{referrerNo})
+    </insert>
+
+    <!-- 회원 권한 등록 -->
+    <insert id="insertAuth">
+        INSERT INTO user_auth( id, name, auth_cd, auth )
+        VALUES ( #{id}, #{name}, #{authCd}, #{auth})
+    </insert>
+
+    <update id="updateProfile">
+        UPDATE user set 
+            nickname = #{nickname},
+            email = #{email},
+            phone_num = #{phoneNum},
+            bank_nm = #{bankNm},
+            account_Number = #{accountNumber},
+            depositor = #{depositor},
+            updated_at = now()
+        WHERE id= #{id}
+    </update>
+
+    
+
+    <select id="totalUser" resultType="int">
+        SELECT COUNT(*) FROM user
+    </select>
+
+    <select id="bestAgentList" resultType="UserVO">
+        SELECT
+            u.user_id,
+            u.user_nm,
+            COALESCE(COUNT(uc.campaign_id), 0) AS count
+        FROM
+            user u
+        LEFT OUTER JOIN
+            user_campaign uc 
+        ON 
+            u.user_id = uc.user_id
+        WHERE
+            u.role = 'USER'
+        GROUP BY
+            u.id, u.user_nm, u.email
+        ORDER BY
+            count DESC,
+            u.id ASC;
+    </select>
+
+    <select id="bestPayList" resultType="UserVO">
+        SELECT 
+            user_id,
+            user_nm,
+            COALESCE(pay, 0) pay
+            <!-- pay = COALESCE(pay, 0) + (select campaign_pay from campaign where campaign_id = #{campaignId}) -->
+        FROM user
+        WHERE
+            role = 'USER'
+        GROUP BY
+            user_id, user_nm, pay
+        ORDER BY
+            pay desc,
+            user_id asc;
+    </select>
+    
+    <select id="getReferrerNo" resultType="Long">
+        SELECT 
+            id
+        FROM 
+            user 
+        WHERE
+            user_id = #{referrerId}
+    </select>
+
+    <select id="getReferrerNoById" resultType="Long">
+        SELECT 
+            referrer_no
+        FROM 
+            user 
+        WHERE
+            id = #{userNo}
+    </select>
+    
+</mapper>

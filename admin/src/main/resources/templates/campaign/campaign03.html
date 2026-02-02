@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+        <title>캠페인 등록</title>
+        <link rel="stylesheet" href="/css/style.css">
+        <!-- 타임리프 자바스크립트 모드 -->
+        <script th:inline="javascript">
+            document.addEventListener("DOMContentLoaded", function() {
+                console.log("DOM이 준비되었습니다!");
+                // 여기에 실행하고 싶은 코드 작성
+                const leaderList = /*[[${leaderList}]]*/ [];
+                console.log("campaignSelect : " + JSON.stringify(leaderList));
+
+                
+                
+            });
+
+            function securityTypeChange(typeCode) {
+                console.log("선택된 경호/진행/수행 구분: " + typeCode);
+                document.getElementById("typeCode").value = typeCode;
+            }
+
+            function inputLeaderPhoneNumber(idx) {
+                console.log("선택된 인솔자 ID: " + idx);
+                const leaderList = /*[[${leaderList}]]*/ [];
+                console.log(leaderList[idx].phoneNum);
+
+                const selectPhoneNumber = leaderList[idx].phoneNum;
+                const selectNo = leaderList[idx].id;
+                console.log("selectPhoneNumber " + selectPhoneNumber);
+                console.log("selectNo " + selectNo);
+                console.log("userId " + leaderList[idx].userId);
+
+                document.getElementById("leader_contact").value = selectPhoneNumber;
+                document.getElementById("leaderNo").value = selectNo;
+                document.getElementById("leaderCode").value = leaderList[idx].userId;
+                console.log("a" + selectPhoneNumber);
+                
+            }
+        </script>
+    </head>
+    <body>
+        <div class="admin-container">
+        <!-- 사이드바 -->
+        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        <!-- 메인 등록폼 -->
+        <div class="main-content">
+            <h1>캠페인 등록</h1>
+            <form class="form" action="/admin/campaign04" method="post" enctype="multipart/form-data">
+                <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
+
+                <!-- 업체 정보 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="companies">업체명</label>
+                        <input type="text" name="companyNm" id="companyNm" required />
+                    </div>
+                    <div class="form-group">
+                        <label>고객 연락처</label>
+                        <input type="text" id="companyPh" name="companyPh" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="leader">인솔자 선택</label>
+                        <select id="leaderNm" name="leaderNm" th:field="*{leaderList}" onchange="inputLeaderPhoneNumber(this.value)" required >
+                            <option value="">-- 선택하세요 --</option>
+                            <option th:each="leader, stat : ${leaderList}" th:value="${stat.index}" th:text="${leader.userNm}" ></option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="leaderCode" name="leaderCode" required />
+                    <input type="hidden" id="leaderNo" name="leaderNo" required />
+
+                    <div class="form-group">
+                        <label for="phone">인솔자 연락처</label>
+                        <input type="text" id="leader_contact" name="leader_contact" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="leaderPay">인솔자 급여</label>
+                        <input type="text" id="leaderPay" name="leaderPay" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="leaderPay">인솔자 포인트</label>
+                        <input type="text" id="leaderPoint" name="leaderPoint" required />
+                    </div>
+                </div>
+
+                <!-- 캠페인 정보 -->
+                <div class="form-group">
+                    <label>캠페인명</label>
+                    <input type="text" id="campaignTitle" name="campaignTitle" required />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="campaignPay">캠페인 급여</label>
+                        <input type="text" id="campaignPay" name="campaignPay" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="securityType">경호/진행/수행 구분</label>
+                        <select id="securityType" name="securityType" th:field="*{securityType}" onchange="securityTypeChange(this.value)" required>
+                            <option value="">-- 선택하세요 --</option>
+                            <option name=""th:each="type : ${securityType}" th:value="${type.code}" th:text="${type.codeName}"></option>
+                        </select>
+                        <input type="hidden" id="typeCode" name="typeCode" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>캠페인 이미지</label>
+                    <div id="drop-area" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px" >
+                        <p>이미지를 클릭하거나 끌어다 놓으세요</p>
+                        <input type="file" name="image" id="image" accept="image/*" style="display: none" />
+                        <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin-top: 10px; display: none" />
+                    </div>
+                </div>
+                
+                <!-- 주소 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>모집 인원 수</label>
+                        <input type="number" id="recruitmentNum" name="recruitmentNum" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="placeAddr">주소</label>
+                        <input type="text" id="placeAddr" name="placeAddr" />
+                    </div>
+                </div>
+
+                <!-- 안내사항 -->
+                <div class="form-group">
+                    <label>안내사항</label>
+                    <textarea id="mission" name="mission" rows="4"></textarea>
+                </div>
+
+                <!-- 일정 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>신청기간</label>
+                        <div class="form-row">
+                            <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" required />
+                            <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>행사기간</label>
+                        <div class="form-row">
+                            <input class="dateInsert" type="date" name="eventPeriodStr" id="eventPeriodStr" required />
+                            <input class="dateInsert" type="date" name="eventPeriodEnd" id="eventPeriodEnd" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>명단발표기간</label>
+                        <div class="form-row">
+                            <input class="dateInsert" type="date" name="resultDate" id="resultDate" required />
+                        </div>
+                    </div>
+                </div>
+                <button type="submit">캠페인 등록</button>
+            </form>
+        </div>
+        </div>
+        <!-- ✅ 드래그앤드롭 스크립트 -->
+        <script>
+            const dropArea = document.getElementById("drop-area");
+            const imageInput = document.getElementById("image");
+            const preview = document.getElementById("preview");
+
+            dropArea.addEventListener("click", () => imageInput.click());
+
+            dropArea.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                dropArea.style.backgroundColor = "#f3e7ff";
+            });
+
+            dropArea.addEventListener("dragleave", () => {
+                dropArea.style.backgroundColor = "transparent";
+            });
+
+            dropArea.addEventListener("drop", (e) => {
+                e.preventDefault();
+                dropArea.style.backgroundColor = "transparent";
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith("image/")) {
+                    imageInput.files = e.dataTransfer.files;
+                    showPreview(file);
+                }
+            });
+
+            imageInput.addEventListener("change", () => {
+                const file = imageInput.files[0];
+                if (file) {
+                    showPreview(file);
+                }
+            });
+
+            function showPreview(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.safeg.admin.mapper.UserDetailMapper">
+    <resultMap type="UserVO" id="userMap">
+        <id property="no" column="no" />
+        <result property="id" column="id" />
+        <result property="accountNumber" column="account_number" />
+        <result property="bankNm" column="bank_nm" />
+        <result property="depositor" column="depositor" />
+        <result property="email" column="email" />
+        <result property="isDeleted" column="is_deleted" />
+        <result property="isStopped" column="is_stopped" />
+        <result property="nickName" column="nickname" />
+        <result property="password" column="password" />
+        <result property="userId" column="user_id" />
+        <result property="userNm" column="user_nm" />
+        <result property="phoneNum" column="phone_num" />
+        <result property="gradeId" column="grade_id" />
+        <result property="roleCd" column="role_cd" />
+        <result property="authId" column="auth_id" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <result property="enabled" column="enabled" />
+        <collection property="authList" resultMap="authMap"></collection>
+    </resultMap>
+        
+    <resultMap type="UserAuth" id="authMap">
+        <result property="no" column="no" />
+        <result property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="auth" column="auth" />
+        <result property="authCd" column="auth_cd" />
+    </resultMap>
+    <!-- 목록 -->
+    <select id="userList" resultType="UserVO">
+        select u.id, u.name, u.email, u.nickName, u.phone,
+            ua.address, ua.detail, u.point, u.profile_Image,
+            auth.auth,
+            DATE_FORMAT(u.created_at, '%Y.%m.%d') created_at
+        from user u
+        left outer join user_address ua
+        on u.no = ua.id
+        <!-- left outer join files f
+        on u.profile_image = f.id -->
+        left outer join user_auth auth
+        on u.no = auth.no
+        where 
+        <if test="option.code == 0">
+            u.id like CONCAT('%', #{option.keyword}, '%') or
+            u.name like CONCAT('%', #{option.keyword}, '%') or
+            u.email like CONCAT('%', #{option.keyword}, '%') or
+            u.nickName like CONCAT('%', #{option.keyword}, '%') or
+            u.phone like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 1">
+            u.id like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 2">
+            u.name like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 3">
+            u.email like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 4">
+            u.nickName like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 5">
+            u.phone like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        and is_Deleted = 'N'
+        <if test="option.orderCode == 0">
+            order by u.no desc
+        </if>
+        <if test="option.orderCode == 1">
+            order by u.name asc, u.no desc
+        </if>
+        limit #{page.index}, #{page.rows};
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) 
+        from user u
+        where 
+            <if test="option.code == 0">
+                id like CONCAT('%', #{option.keyword}, '%') or
+                name like CONCAT('%', #{option.keyword}, '%') or
+                email like CONCAT('%', #{option.keyword}, '%') or
+                nickname like CONCAT('%', #{option.keyword}, '%') or
+                phone like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 1">
+            u.id like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 2">
+            u.name like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 3">
+            u.email like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 4">
+            u.nickName like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 5">
+            u.phone like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        and is_Deleted = 'N'
+    </select>
+<select id="select" resultMap="userMap">
+        SELECT
+            u.id,
+            u.user_id,
+            u.password,
+            u.user_nm,
+            u.email,
+            u.enabled,
+            u.phone_num,
+            u.nickname,
+            u.bank_nm,
+            u.depositor,
+            u.account_number,
+            u.created_at,
+            u.updated_at,
+            u.auth_id,
+            (CASE
+                WHEN auth_id = '01' THEN 'ROLE_ADMIN'
+                WHEN auth_id = '02' THEN 'ROLE_USER'
+                ELSE 'X'
+            END) AS auth
+        FROM user u 
+        
+        WHERE u.user_id = #{id}
+    </select>
+</mapper>

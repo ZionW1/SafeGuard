@@ -1,0 +1,512 @@
+<!DOCTYPE html >
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/base_layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Pretendard', sans-serif;
+            background-color: #fff;
+            color: #333;
+            box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
+        }
+        h1 {
+            margin-top: 20px;
+            margin-lift: 50px;
+            font-size: 40px;
+        }
+        
+        
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <main layout:fragment="content">
+
+        <div class="w100vh h100vh">
+                <img src="/images/1681333062142-171456d92167.jpeg" alt="Ask Image" style="width: 100%; height: 100%;" />
+        </div>
+        <div class="h80vh w80vw mlr-auto">
+            
+
+            <section class="business-features-section">
+                <!-- <div class="section-header">
+                    <h2>수치가 말해주는 1등 체험단 강남맛집의 차별성</h2>
+                    <p>비즈니스를 위한 최적의 솔루션을 만나보세요.</p>
+                </div> -->
+                <div class="spacer">
+                    수치가 말해주는 1등 체험단<br />
+                    <span class="highlight">강남맛집</span>의 차별성, 실시간 숫자로 확인하세요
+                </div>
+            
+                <!-- ⭐ 여기부터 카드 컨테이너 ⭐ -->
+                <!-- 한 줄에 3개 카드가 나오는 컨테이너 (예시) -->
+                <div class="card-grid-container four-cols">
+                    <div class="card-box">
+                        <!-- 아이콘 이미지 (예시: site에서 사용하는 SVG 아이콘) -->
+                        <img src="/images/business_icon_01.svg" alt="고객 발굴 아이콘" class="card-icon" />
+                        <h3 class="card-title">매출 2배 달성, <br>잠재 고객 발굴</h3>
+                    </div>
+                    <div class="card-box">
+                        <img src="/images/business_icon_02.svg" alt="캠페인 세팅 아이콘" class="card-icon" />
+                        <h3 class="card-title">원하는 상품군, <br>원하는 키워드</h3>
+                    </div>
+                    <div class="card-box">
+                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
+                    </div>
+                    <div class="card-box">
+                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
+                    </div>
+                    <!-- 카드가 더 있다면 여기에 추가 -->
+                    <!-- 만약 4개라면 four-cols 클래스를 주거나, @media 쿼리로 3개에서 4개로 전환되도록 설정 -->
+                </div>
+            </section>
+        </div>
+
+        <div class="w100vh h100vh" style="background-color: #333; color: white; padding-top: 40px; padding-bottom: 40px; ">
+            <div class="spacer">
+                하나부터 열까지<br />
+                <span class="highlight">강남맛집</span>의 기술력 기반 리뷰
+            </div>
+
+            
+            <div class="slider-container">
+                <div class="slider-track" id="sliderTrack">
+                <!-- 원본 카드들 -->
+                <div class="card"> <div class="number">631,549 +</div> <div class="desc">누적 리뷰어</div> </div>
+                <div class="card"> <div class="number">3,008,029 +</div> <div class="desc">누적 캠페인</div> </div>
+                <div class="card"> <div class="number">21,647,961 +</div> <div class="desc">서비스 시작</div> </div>
+                <div class="card"> <div class="number">21,647,961 +</div> <div class="desc">누적 리뷰</div> </div>
+                <div class="card"> <div class="number">119-87-00800 +</div> <div class="desc">사업자등록</div> </div>
+                <div class="card"> <div class="number">1688-2352 +</div> <div class="desc">고객센터</div> </div>
+                <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
+                </div>
+            </div>
+        </div>
+        <div class="h80vh w80vw mlr-auto">
+            <section class="business-features-section">
+                <div class="section-header">
+                    <h2>수치가 말해주는 1등 체험단 강남맛집의 차별성</h2>
+                    <p>비즈니스를 위한 최적의 솔루션을 만나보세요.</p>
+                </div>
+            
+                <!-- ⭐ 여기부터 카드 컨테이너 ⭐ -->
+                <!-- 한 줄에 3개 카드가 나오는 컨테이너 (예시) -->
+                <div class="card-grid-container three-cols">
+                    <div class="card-box1">
+                        <!-- 아이콘 이미지 (예시: site에서 사용하는 SVG 아이콘) -->
+                        <img src="/images/business_icon_01.svg" alt="고객 발굴 아이콘" class="card-icon" />
+                        <h3 class="card-title">매출 2배 달성, <br>잠재 고객 발굴</h3>
+                        <p class="card-description">
+                            정확한 타겟팅과 빅데이터 기반으로 <br>잠재 고객을 발굴하고 브랜드 인지도를 높여보세요.
+                        </p>
+                    </div>
+                    <div class="card-box1">
+                        <img src="/images/business_icon_02.svg" alt="캠페인 세팅 아이콘" class="card-icon" />
+                        <h3 class="card-title">원하는 상품군, <br>원하는 키워드</h3>
+                        <p class="card-description">
+                            자유로운 캠페인 세팅으로 <br>가장 효율적인 광고 진행이 가능합니다.
+                        </p>
+                    </div>
+                    <div class="card-box1">
+                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
+                        <p class="card-description">
+                            캠페인 결과 데이터를 제공하여 <br>최적의 광고 집행을 돕습니다.
+                        </p>
+                    </div>
+                    <!-- 카드가 더 있다면 여기에 추가 -->
+                    <!-- 만약 4개라면 four-cols 클래스를 주거나, @media 쿼리로 3개에서 4개로 전환되도록 설정 -->
+                </div>
+            </section>
+        </div>
+        <div class="w100vh h80vh" style="background-color: #333; color: white; padding-top: 40px; padding-bottom: 40px; ">
+            <div class="spacer">
+                하나부터 열까지<br />
+                <span class="highlight">강남맛집</span>의 기술력 기반 리뷰
+            </div>
+
+            
+            <div class="slider-container">
+                <div class="slider-track" id="sliderTrack">
+                <!-- 원본 카드들 -->
+                <div class="card"> <div class="number">631,549 +</div> <div class="desc">누적 리뷰어</div> </div>
+                <div class="card"> <div class="number">3,008,029 +</div> <div class="desc">누적 캠페인</div> </div>
+                <div class="card"> <div class="number">21,647,961 +</div> <div class="desc">서비스 시작</div> </div>
+                <div class="card"> <div class="number">21,647,961 +</div> <div class="desc">누적 리뷰</div> </div>
+                <div class="card"> <div class="number">119-87-00800 +</div> <div class="desc">사업자등록</div> </div>
+                <div class="card"> <div class="number">1688-2352 +</div> <div class="desc">고객센터</div> </div>
+                <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ads-reason-container">
+            <!-- 좌측 번호 리스트 -->
+            <ul class="reason-list">
+                <li class="active" data-index="0">
+                    <span class="num-circle active">01</span>
+                    <span class="text">맞춤형 리뷰어 선별</span>
+                </li>
+                <li data-index="1">
+                    <span class="num-circle">02</span>
+                    <span class="text">전략적 키워드 활용</span>
+                </li>
+                <li data-index="2">
+                    <span class="num-circle">03</span>
+                    <span class="text">고퀄리티 리뷰 제공</span>
+                </li>
+                <li data-index="3">
+                    <span class="num-circle">04</span>
+                    <span class="text">편리한 마감보고서</span>
+                </li>
+                <li data-index="4">
+                    <span class="num-circle">05</span>
+                    <span class="text">낮은 비용 높은 효율</span>
+                </li>
+            </ul>
+        
+            <!-- 우측 슬라이드 영역 -->
+            <div class="reason-slide">
+                <div class="slide-item active" data-index="0">
+                    <span class="tag">No. 1</span>
+                    <h3>나에게 맞는 리뷰어로<br>맞춤형 리뷰어 선별</h3>
+                    <ul class="desc-list">
+                        <li>광고주 업종과 지역에 딱 맞는 리뷰어를 선별해 타깃 고객층의 마음을 사로잡습니다.</li>
+                        <li>업종과 지역에 최적화된 인플루언서 매칭으로 고객과 광고주 모두의 신뢰를 확보합니다.</li>
+                    </ul>
+                    <div class="slide-img">
+                        <img src="/images/tablet_review.svg" alt="맞춤형 리뷰어 이미지" />
+                    </div>
+                </div>
+        
+                <div class="slide-item" data-index="1">
+                    <span class="tag">No. 2</span>
+                    <h3>전략적 키워드로<br>효과적 마케팅</h3>
+                    <ul class="desc-list">
+                        <li>타깃 키워드 분석을 통해 최적화된 마케팅 전략을 수립합니다.</li>
+                        <li>효율적인 광고 집행으로 최상의 투자 대비 효과를 제공합니다.</li>
+                    </ul>
+                    <div class="slide-img">
+                        <img src="/images/keyword_marketing.svg" alt="키워드 마케팅 이미지" />
+                    </div>
+                </div>
+        
+                <div class="slide-item" data-index="2">
+                    <span class="tag">No. 3</span>
+                    <h3>고퀄리티 리뷰<br>제공 및 관리</h3>
+                    <ul class="desc-list">
+                        <li>전문가가 리뷰 품질을 관리하여 신뢰도 높은 콘텐츠를 생산합니다.</li>
+                        <li>리뷰의 지속적인 모니터링으로 품질을 유지합니다.</li>
+                    </ul>
+                    <div class="slide-img">
+                        <img src="/images/high_quality_review.svg" alt="고퀄리티 리뷰 이미지" />
+                    </div>
+                </div>
+        
+                <div class="slide-item" data-index="3">
+                    <span class="tag">No. 4</span>
+                    <h3>편리한 마감보고서<br>제공</h3>
+                    <ul class="desc-list">
+                        <li>캠페인 종료 후 상세한 리포트를 제공해 효율적인 성과 관리가 가능합니다.</li>
+                        <li>사용자 친화적 UI로 데이터를 쉽게 확인할 수 있습니다.</li>
+                    </ul>
+                    <div class="slide-img">
+                        <img src="/images/report.svg" alt="마감보고서 이미지" />
+                    </div>
+                </div>
+        
+                <div class="slide-item" data-index="4">
+                    <h3>낮은 비용으로<br>높은 효율 달성</h3>
+                    <ul class="desc-list">
+                        <li>경쟁력 있는 가격으로 최대의 광고 효과를 실현합니다.</li>
+                        <li>효율성 중심의 광고 시스템을 제공합니다.</li>
+                    </ul>
+                    <div class="slide-img">
+                        <img src="/images/efficiency.svg" alt="낮은 비용 높은 효율 이미지" />
+                    </div>
+                </div>
+        
+                <!-- 다음 버튼 -->
+                <button type="button" class="slide-next" aria-label="다음 슬라이드">
+                    &gt;
+                </button>
+            </div>
+        </div>
+
+        <div class="h80vh w100vw mlr-auto" style="background-color: #333; color: white; padding-top: 40px; padding-bottom: 40px; ">
+            <section class="business-features-section">
+                <div class="section-header">
+                    <h2>수치가 말해주는 1등 체험단 강남맛집의 차별성</h2>
+                    <p>비즈니스를 위한 최적의 솔루션을 만나보세요.</p>
+                </div>
+            
+                <!-- ⭐ 여기부터 카드 컨테이너 ⭐ -->
+                <!-- 한 줄에 3개 카드가 나오는 컨테이너 (예시) -->
+                <div class="card-grid-container six-cols">
+                    <div class="card-box2">
+                        <!-- 아이콘 이미지 (예시: site에서 사용하는 SVG 아이콘) -->
+                        <img src="/images/business_icon_01.svg" alt="고객 발굴 아이콘" class="card-icon" />
+                        <h3 class="card-title">매출 2배 달성, <br>잠재 고객 발굴</h3>
+                        <p class="card-description">
+                            정확한 타겟팅과 빅데이터 기반으로 <br>잠재 고객을 발굴하고 브랜드 인지도를 높여보세요.
+                        </p>
+                    </div>
+                    <div class="card-box2">
+                        <img src="/images/business_icon_02.svg" alt="캠페인 세팅 아이콘" class="card-icon" />
+                        <h3 class="card-title">원하는 상품군, <br>원하는 키워드</h3>
+                        <p class="card-description">
+                            자유로운 캠페인 세팅으로 <br>가장 효율적인 광고 진행이 가능합니다.
+                        </p>
+                    </div>
+                    <div class="card-box2">
+                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
+                        <p class="card-description">
+                            캠페인 결과 데이터를 제공하여 <br>최적의 광고 집행을 돕습니다.
+                        </p>
+                    </div>
+                    <div class="card-box2">
+                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
+                        <p class="card-description">
+                            캠페인 결과 데이터를 제공하여 <br>최적의 광고 집행을 돕습니다.
+                        </p>
+                    </div>
+                    <div class="card-box2">
+                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
+                        <p class="card-description">
+                            캠페인 결과 데이터를 제공하여 <br>최적의 광고 집행을 돕습니다.
+                        </p>
+                    </div>
+                    <div class="card-box2">
+                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
+                        <p class="card-description">
+                            캠페인 결과 데이터를 제공하여 <br>최적의 광고 집행을 돕습니다.
+                        </p>
+                    </div>
+                    <!-- 카드가 더 있다면 여기에 추가 -->
+                    <!-- 만약 4개라면 four-cols 클래스를 주거나, @media 쿼리로 3개에서 4개로 전환되도록 설정 -->
+                </div>
+            </section>
+        </div>
+        
+
+        <div class="container-ask">
+
+            <div class="text-area">
+              <h1>지금 상담을 예약하고<br /><span class="highlight">강남맛집</span> 솔루션을 받아보세요!</h1>
+          
+              <form class="askForm" id="contactForm" action="#" method="post" novalidate>
+                <label for="companyName">업체명</label>
+                <input type="text" id="companyName" name="companyName" placeholder="업체명을 입력해 주세요" required autocomplete="organization" />
+          
+                <label for="phoneNumber">전화번호</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="전화번호를 입력해 주세요" required autocomplete="tel" pattern="[\d\s\-\+\(\)]+" />
+          
+                <label for="region">지역</label>
+                <input type="text" id="region" name="region" placeholder="지역을 입력해 주세요" required autocomplete="address-level1" />
+          
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" placeholder="이메일을 입력해 주세요" required autocomplete="email" />
+          
+                <label>자동등록방지</label>
+                <div class="captcha-wrapper">
+                  <img src="/captcha-image-path" alt="보안문자 이미지" class="captcha-img" />
+                  <input type="text" name="captcha" placeholder="보안문자를 입력해 주세요" class="captcha-input" required />
+                  <button type="button" class="captcha-refresh" aria-label="보안문자 새로고침">⟳</button>
+                </div>
+          
+                <div class="privacy-consent">
+                  <input type="checkbox" id="privacyAgree" name="privacyAgree" required />
+                  <label for="privacyAgree">개인정보 수집동의 <a href="#" class="privacy-link" target="_blank" rel="noopener">약관보기</a></label>
+                </div>
+          
+                <p class="note">24시간 이내에 상담원이 빠르게 연락드리겠습니다.</p>
+          
+                <button type="submit" class="submit-button">전문 상담 예약하기</button>
+              </form>
+            </div>
+          
+            <div class="image-area">
+              <img src="/images/mobile_preview.png" alt="강남맛집 모바일 화면 이미지" />
+            </div>
+          
+          </div>
+          
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const sliderTrack = document.getElementById('sliderTrack');
+                const originalCards = Array.from(sliderTrack.children);
+                const originalCardCount = originalCards.length; // 원본 카드 개수 (7개)
+                const highlightPosition = 3; // 0-indexed: 4번째 카드를 의미 (index 3)
+                const gap = 30; // CSS와 동일하게 설정
+
+                let currentIndex = 0; // 슬라이드 트랙의 이동 인덱스
+                let cardWidthWithGap = 0; // 카드 하나의 너비 + 간격
+                let slideInterval; // setInterval ID를 저장할 변수
+                let isTransitioning = false; // ⭐ 슬라이드 중복 실행 방지 플래그 ⭐
+
+                // 무한 루프를 위해 원본 카드들을 충분히 복제해서 트랙 뒤에 추가
+                // (원본 카드 수 * 3 또는 * 4 정도로 충분히 여유를 줌)
+                for (let i = 0; i < originalCardCount * 1; i++) {
+                    sliderTrack.appendChild(originalCards[i % originalCardCount].cloneNode(true));
+                }
+
+                function applyHighlight() {
+                    Array.from(sliderTrack.children).forEach(card => {
+                        card.classList.remove('highlight');
+                    });
+
+                    const targetCard = sliderTrack.children[currentIndex + highlightPosition];
+                    if (targetCard) {
+                        targetCard.classList.add('highlight');
+                    }
+                }
+
+                function calculateCardWidth() {
+                    if (sliderTrack.children.length > 0) {
+                        const firstCard = sliderTrack.children[0];
+                        cardWidthWithGap = parseFloat(getComputedStyle(firstCard).width) + gap;
+                    } else {
+                        cardWidthWithGap = 200 + gap; // 기본값
+                    }
+                }
+
+                function slide() {
+                    if (isTransitioning) return; // ⭐ 이미 슬라이드 중이면 다시 시작하지 않음 ⭐
+                    isTransitioning = true; // 슬라이드 시작
+
+                    currentIndex++;
+                    sliderTrack.style.transform = `translateX(${-currentIndex * cardWidthWithGap}px)`;
+                    applyHighlight();
+                }
+                
+                // ⭐ transitionend 이벤트 리스너: 무한 슬라이드 리셋 로직 처리 (최적화 버전) ⭐
+                sliderTrack.addEventListener('transitionend', function() {
+                isTransitioning = false; // 슬라이드 종료 (다음 슬라이드를 허용)
+
+                // 현재 인덱스가 원본 카드 개수를 넘어섰을 때만 리셋 로직 실행
+                if (currentIndex >= originalCardCount) {
+                    // ⭐ 첫 번째 requestAnimationFrame: transition을 끈 상태를 브라우저가 인식하도록 함 ⭐
+                    requestAnimationFrame(() => {
+                        sliderTrack.style.transition = 'none'; // transition 일시 정지
+
+                        // ⭐ 두 번째 requestAnimationFrame: transform 리셋을 브라우저가 인식하도록 함 ⭐
+                        requestAnimationFrame(() => {
+                            currentIndex = 0; // ⭐⭐⭐ 이 줄을 다시 살려야 해! 인덱스 리셋 ⭐⭐⭐
+                            sliderTrack.style.transform = `translateX(0px)`; // ⭐⭐⭐ 이 줄도 다시 살려야 해! 맨 처음 위치로 순간 이동 ⭐⭐⭐
+                            applyHighlight(); // 리셋 후 하이라이트 다시 적용
+
+                            // ⭐ 세 번째 requestAnimationFrame: transition을 다시 활성화하도록 함 ⭐
+                            requestAnimationFrame(() => {
+                                sliderTrack.style.transition = 'transform 0.5s ease';
+                            });
+                        });
+                    });
+                }
+            });
+
+
+                function startSlider() {
+                    calculateCardWidth();
+                    
+                    // 초기 위치 설정 (transition: none 상태로)
+                    sliderTrack.style.transition = 'none';
+                    sliderTrack.style.transform = `translateX(0px)`;
+                    currentIndex = 0;
+                    applyHighlight();
+
+                    // 아주 짧은 딜레이 후 transition 활성화 및 슬라이더 시작
+                    setTimeout(() => {
+                        sliderTrack.style.transition = 'transform 0.5s ease';
+                        slideInterval = setInterval(slide, 2000);
+                    }, 50); // ⭐ 50ms 딜레이: 초기 로드 깜빡임 방지 ⭐
+                }
+
+                window.addEventListener('resize', () => {
+                    clearInterval(slideInterval); // 리사이즈 중 슬라이드 중지
+                    calculateCardWidth(); // 카드 너비 재계산
+
+                    // 리사이즈 시 현재 위치를 즉시 보정 (transition 없이)
+                    sliderTrack.style.transition = 'none';
+                    sliderTrack.style.transform = `translateX(${-currentIndex * cardWidthWithGap}px)`;
+                    applyHighlight();
+
+                    // 잠시 후 transition 다시 활성화 및 슬라이더 재시작
+                    setTimeout(() => {
+                        sliderTrack.style.transition = 'transform 0.5s ease';
+                        slideInterval = setInterval(slide, 2000); // 재시작
+                    }, 50);
+                });
+
+                startSlider();
+            });
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const listItems = document.querySelectorAll('.reason-list li');
+                const slides = document.querySelectorAll('.slide-item');
+                const nextBtn = document.querySelector('.slide-next');
+
+                let currentIndex = 0;
+                let slideTimer = null;
+
+                // 슬라이드 활성화 함수
+                function activateSlide(index) {
+                    // 리스트 스타일 업데이트
+                    listItems.forEach((li) => li.classList.remove('active'));
+                    listItems[index].classList.add('active');
+
+                    // 슬라이드 보여주기 업데이트
+                    slides.forEach((slide) => slide.classList.remove('active'));
+                    slides[index].classList.add('active');
+
+                    currentIndex = index;
+                }
+
+                // 다음 슬라이드로 이동
+                function nextSlide() {
+                    let nextIndex = (currentIndex + 1) % slides.length;
+                    activateSlide(nextIndex);
+                }
+
+                // 리스트 클릭 이벤트에 연결
+                listItems.forEach((li) => {
+                    li.addEventListener('click', () => {
+                        clearInterval(slideTimer);
+                        let idx = Number(li.dataset.index);
+                        activateSlide(idx);
+                        slideTimer = setInterval(nextSlide, 5000);
+                    });
+                });
+
+                // 다음 버튼 클릭 이벤트
+                nextBtn.addEventListener('click', () => {
+                    clearInterval(slideTimer);
+                    nextSlide();
+                    slideTimer = setInterval(nextSlide, 5000);
+                });
+
+                // 자동 슬라이드 시작 (5초 간격)
+                slideTimer = setInterval(nextSlide, 5000);
+
+                // 초기 슬라이드 활성화
+                activateSlide(0);
+            });
+        </script>
+    </main>
+</body>
+</html>

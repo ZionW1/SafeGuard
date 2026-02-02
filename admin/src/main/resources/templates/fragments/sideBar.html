@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>사이드바</title>
+    <!-- 사이드바에 필요한 CSS나 JS 파일이 있다면 여기에 추가할 수 있어 -->
+    <!-- <style>
+        .sidebar {
+            width: 200px;
+            height: 100%;
+            background-color: #f8f9fa;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px 0;
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .sidebar a:hover {
+            color: #007bff;
+        }
+    </style> -->
+    <link rel="stylesheet" href="/css/style.css" />
+
+</head>
+<body>
+
+    <!-- ⭐️ 여기가 중요! th:fragment 속성을 사용해서 이 부분이 '사이드바' 프래그먼트임을 알려주는 거야. ⭐️ -->
+    <div th:fragment="sidebarFragment" class="sidebar">
+        <div class="sidebar-menu">
+            <h2><a href="/admin/campaign01">챗짱 Admin</a></h2>
+            <a href="/admin/campaign01"><div class="menu-item">캠페인 목록 요약</div></a>
+            <a href="/admin/campaign03"><div class="menu-item">캠페인 등록</div></a>
+            <a href="/admin/campaign07"><div class="menu-item">선정인원 없는 캠페인 목록</div></a>
+            <div class="menu-item">알림톡</div>
+            <a href="/admin/banner01"><div class="menu-item">배너</div></a>
+            <a href="/admin/notice01"><div class="menu-item">공지사항</div></a>
+            <a href="/admin/useGuide01"><div class="menu-item">이용가이드</div></a>
+            <a href="/admin/leader01"><div class="menu-item">인솔자</div></a>
+            <a href="/admin/user01"><div class="menu-item">유저</div></a>
+            
+            <!-- <button id="menuLogout">로그아웃</button> -->
+            <!-- <a href="#" class="auth-link" id="menuLogout">로그아웃</a> -->
+            <a href="javascript:logout()" class="auth-link" id="">로그아웃</a>
+        </div>
+    </div>
+</body>
+</html>

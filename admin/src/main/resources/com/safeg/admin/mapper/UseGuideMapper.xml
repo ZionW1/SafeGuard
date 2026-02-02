@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.safeg.admin.mapper.UseGuideMapper">
+    
+    <select id="useGuideSelect" resultType="AdminContentVO">
+        SELECT 
+            AdminContent_id,
+            title,
+            content,
+            content_type,
+            author,
+            created_at,
+            updated_at
+        FROM 
+            AdminContent
+        where
+            is_active = 'Y'
+            and content_type='USE_GUIDE'
+    </select>
+    
+    <insert id="useGuideInsert" parameterType="AdminContentVO">
+        insert into AdminContent 
+            (content, title, author, content_type) 
+        values 
+            (#{content}, #{title}, #{author}, 'USE_GUIDE');
+    </insert>
+
+    <update id="useGuideUpdate" parameterType="AdminContentVO">
+        update AdminContent
+        set content = #{content},
+            title = #{title},
+            author = #{author},
+            updated_at = CURRENT_TIMESTAMP
+        where content_type = 'USE_GUIDE'
+        and is_active = 'Y';
+    </update>
+
+</mapper>

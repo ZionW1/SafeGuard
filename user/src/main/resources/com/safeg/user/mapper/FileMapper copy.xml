@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.resister.bdgd_user.mapper.FileMapper">
+    <!-- 목록 -->
+    <select id="list" resultType="Files">
+        select * from files;
+    </select>
+    <!-- 조회 -->
+    <select id="select" resultType="Files">
+        select * from files where status_id = #{id} and status='campaign' and is_delete = 'N';
+    </select>
+    <!-- 등록 -->
+    <insert id="insert">
+        <!-- insert into files (id, file_name, file_path, file_size, 
+            type, parent_table, parent_no)
+            values (
+                #{id}, #{fileName}, #{filePath}, #{fileSize},
+                #{type}, #{parentTable}, #{parentNo}
+            ) -->
+        insert into campaign_image (created_date, last_Modified_Date, image, campaign_id, file_size, image_id, file_path, del_yn
+        )
+        values (
+            now(), now(), #{image}, #{campaignId}, #{fileSize}, #{imageId}, #{filePath}, 'N'
+        )
+    </insert>
+    <!-- 수정 -->
+    <update id="update">
+        update files
+            set file_name = #{fileName},
+                file_path = #{filePath},
+                file_size = #{fileSize},
+                type = #{type},
+                parent_table = #{parentTable}
+                parent_no =#{parentNo}
+        where id= #{id}
+    </update>
+
+    <!-- 삭제 -->
+    <update id="delete">
+        <!-- delete from files
+        where id = #{id} -->
+        update campaign_image set del_yn = 'Y' where id = #{id};
+    </update>
+
+    <select id="listByParent" resultType="Files">
+        select * 
+        from files
+        where parent_table = #{parentTable}
+        and parent_no = #{parentNo}
+    </select>
+
+    <!-- 부모테이블 기준 파일 삭제 -->
+    <delete id="deleteByParent">
+        delete 
+        from files
+        where parent_table = #{parentTable}
+        and parent_no = #{parentNo}
+    </delete>
+
+    <select id="bannerFile" resultType="Files">
+        select * from files where status_id = #{id} and status='BANNER' and is_delete = 'N';
+    </select>
+</mapper>

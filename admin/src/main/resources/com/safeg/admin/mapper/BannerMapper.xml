@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.safeg.admin.mapper.BannerMapper">
+    <select id="bannerList" resultType="BannerVO">
+        select * from banner
+            order by banner_id desc;
+    </select>
+
+    <select id="count" resultType="int" parameterType="Option">
+        select count(*) from banner;
+    </select>
+
+    <select id="bannerSelect" resultType="BannerVO">
+        select * from banner where banner_id = #{id};
+    </select>
+
+    <update id="bannerUpdate" parameterType="BannerVO">
+        update banner
+        set url = #{url},
+            title = #{title}
+        where banner_id = #{bannerId};
+    </update>
+
+    <insert id="bannerInsert" parameterType="BannerVO" useGeneratedKeys="true" keyProperty="id">
+        <!-- insert into files (id, file_name, file_path, file_size, 
+            type, parent_table, parent_no)
+            values (
+                #{id}, #{fileName}, #{filePath}, #{fileSize},
+                #{type}, #{parentTable}, #{parentNo}
+            ) -->
+        insert into banner (url, title
+        )
+        values (
+            #{url}, #{title}
+        )
+    </insert>
+    
+    <update id="bannerOldRemove">
+        UPDATE banner
+        SET is_deleted = 'Y'
+        WHERE banner_id NOT IN (
+            SELECT banner_id FROM (
+                SELECT banner_id 
+                FROM banner
+                ORDER BY banner_id DESC
+                LIMIT 3
+            ) AS temp
+        );
+    </update>
+</mapper>

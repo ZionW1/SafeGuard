@@ -1,0 +1,100 @@
+// common.js
+
+// 로그아웃 함수
+function logout() {
+    const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+    const csrfHeaderName = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+    // **** 이 줄을 꼭 추가해서 console에서 출력되는 값을 확인해줘! ****
+    console.log("DEBUG: raw csrfHeaderName from meta tag:", csrfHeaderName);
+
+    // 토큰이 없으면 경고 메시지를 띄우고 함수 종료
+    if (!csrfToken || !csrfHeaderName) {
+        console.error("CSRF 토큰 또는 헤더 메타 태그를 찾을 수 없거나 비어있습니다. Spring Security 설정 또는 HTML을 확인하세요.");
+        alert("로그아웃 보안 토큰이 없어 로그아웃할 수 없습니다. 잠시 후 다시 시도해 주세요.");
+        return; // 토큰이 없으면 더 이상 진행하지 않음
+    }
+    
+    // 콘솔 로그 오타 수정!
+    console.log("CSRF Token: " + csrfToken);
+    console.log("CSRF Header Name: " + csrfHeaderName);
+
+    fetch('/logout', {
+        method: 'POST',
+        headers: {
+            [csrfHeaderName]: csrfToken, // 동적으로 헤더 이름 사용
+            'Content-Type': 'application/x-www-form-urlencoded' // 필요하다면 이 헤더도 추가
+        }
+    })
+    .then(response => {
+        // fetch는 4xx, 5xx 오류도 then으로 넘어오므로 response.ok로 확인해야 해.
+        if (response.ok || response.status === 302) { // 2xx 성공 코드 또는 302 리다이렉트 코드일 경우
+            console.log("로그아웃 성공! 페이지를 / 로 이동합니다.");
+            window.location.href = '/'; // 로그아웃 성공 후 이동할 페이지 (여기에 로그인 페이지로 바꾸는 것도 고려해봐!)
+        } else if (response.status === 403) {
+            console.error("로그아웃 실패: 403 Forbidden. CSRF 토큰 문제일 수 있습니다.");
+            alert("로그아웃 보안 인증에 실패했습니다. (403)");
+            // 서버 응답 본문에 에러 메시지가 있다면 response.text() 또는 response.json()으로 읽어올 수 있어.
+        }
+        else {
+            console.error(`로그아웃 실패: ${response.status} ${response.statusText}`);
+            alert("로그아웃에 실패했습니다. 다시 시도해 주세요.");
+        }
+    })
+    .catch(error => {
+        // 네트워크 오류 등 fetch 요청 자체에 문제가 발생했을 때
+        console.error('로그아웃 요청 중 네트워크 또는 기타 오류 발생:', error);
+        alert('로그아웃 중 네트워크 문제가 발생했습니다. 관리자에게 문의하세요.');
+    });
+    alert("로그아웃 되었습니다.");
+}
+// }
+// document.getElementById('menuLogout').addEventListener('click', function(e) {
+//     e.preventDefault(); // 기본 링크 동작을 막아줘.
+
+//     // 1. CSRF 토큰과 헤더명을 가져와 (null 체크 포함)
+//     const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+//     const csrfHeaderName = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+//     // **** 이 줄을 꼭 추가해서 console에서 출력되는 값을 확인해줘! ****
+//     console.log("DEBUG: raw csrfHeaderName from meta tag:", csrfHeaderName);
+
+//     // 토큰이 없으면 경고 메시지를 띄우고 함수 종료
+//     if (!csrfToken || !csrfHeaderName) {
+//         console.error("CSRF 토큰 또는 헤더 메타 태그를 찾을 수 없거나 비어있습니다. Spring Security 설정 또는 HTML을 확인하세요.");
+//         alert("로그아웃 보안 토큰이 없어 로그아웃할 수 없습니다. 잠시 후 다시 시도해 주세요.");
+//         return; // 토큰이 없으면 더 이상 진행하지 않음
+//     }
+    
+//     // 콘솔 로그 오타 수정!
+//     console.log("CSRF Token: " + csrfToken);
+//     console.log("CSRF Header Name: " + csrfHeaderName);
+
+//     fetch('/logout', {
+//         method: 'POST',
+//         headers: {
+//             [csrfHeaderName]: csrfToken, // 동적으로 헤더 이름 사용
+//             'Content-Type': 'application/x-www-form-urlencoded' // 필요하다면 이 헤더도 추가
+//         }
+//     })
+//     .then(response => {
+//         // fetch는 4xx, 5xx 오류도 then으로 넘어오므로 response.ok로 확인해야 해.
+//         if (response.ok || response.status === 302) { // 2xx 성공 코드 또는 302 리다이렉트 코드일 경우
+//             console.log("로그아웃 성공! 페이지를 / 로 이동합니다.");
+//             window.location.href = '/'; // 로그아웃 성공 후 이동할 페이지 (여기에 로그인 페이지로 바꾸는 것도 고려해봐!)
+//         } else if (response.status === 403) {
+//             console.error("로그아웃 실패: 403 Forbidden. CSRF 토큰 문제일 수 있습니다.");
+//             alert("로그아웃 보안 인증에 실패했습니다. (403)");
+//             // 서버 응답 본문에 에러 메시지가 있다면 response.text() 또는 response.json()으로 읽어올 수 있어.
+//         }
+//         else {
+//             console.error(`로그아웃 실패: ${response.status} ${response.statusText}`);
+//             alert("로그아웃에 실패했습니다. 다시 시도해 주세요.");
+//         }
+//     })
+//     .catch(error => {
+//         // 네트워크 오류 등 fetch 요청 자체에 문제가 발생했을 때
+//         console.error('로그아웃 요청 중 네트워크 또는 기타 오류 발생:', error);
+//         alert('로그아웃 중 네트워크 문제가 발생했습니다. 관리자에게 문의하세요.');
+//     });
+// });

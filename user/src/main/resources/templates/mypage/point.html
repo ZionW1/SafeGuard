@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{layouts/base_layout}"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        .point_List {
+            width: 300%;
+            max-width: 1200px;
+
+            border-collapse: collapse;
+            margin: 0px auto;
+        }
+        
+        .point_List th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .table_container {
+            float: right;
+            width: 77%;          /* 컨테이너 너비 설정 */
+            display: grid;           /* 가로 나열 */
+            justify-content: space-between; /* 테이블 사이 공간 균등 배분 */
+            align-items: flex-start; /* 상단 정렬 */
+            gap: 20px;               /* 테이블 사이 간격 */
+        }
+        .textalign_left {
+            text-align: left;
+        }
+        .tableTitle {
+            font-size: large;
+            font-weight: bold;
+            text-align: left;
+        }
+    </style>
+    <title>Document</title>
+</head>
+    <main layout:fragment="content">
+        <div class="main-side-content">
+            <div class="container">
+                <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenu}" />
+            </div>
+            
+            <div class="table_container">
+                <div class="content-area">
+                    <h2>포인트 내역 : <span th:text="${totalPoint}"></span> 만근포인트 : <span th:text="${pointFull}"></span></h2> 
+                </div>
+                <div class="tableTitle">완료된 행사 포인트 : <span th:text="${pointList[0].totalPoint}"></span></div>
+                <table class="point_List" style="border: 1px;">
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>캠페인 명</th>
+                            <th>날짜</th>
+                            <th>상태</th>
+                            <th>포인트</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="point, stat : ${pointList}">
+                            <td th:text="${stat.count}"></td>
+                            <td th:text="${point.campaignTitle}"></td>
+                            <td th:text="${point.applyDate}"></td>
+                            <td th:text="${point.statusNm}"></td>
+                            <td th:text="${point.campaignPay}"></td>
+                        </tr>
+                        <tr th:if="${pointList.isEmpty()}">
+                            <td colspan="5">참여 캠페인 정보가 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div th:if="${!referrerPayList.isEmpty() && referrerPayList != null}">
+                    <!-- <td colspan="4">참여 캠페인 정보가 없습니다.</td> -->
+
+                <div class="tableTitle">추천인 포인트 : <span th:text="${referrerPayList[0].totalPoint}"></span></div>
+                <table class="point_List" style="border: 1px;">
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>이름</th>
+                            <th>포인트</th>
+                            <th>횟수</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="giver, stat1 : ${referrerPayList}">
+                            <td th:text="${stat1.count}"></td>
+                            <td th:text="${giver.userNm}"></td>
+                            <td th:text="${giver.totalAmount}"></td>
+                            <td th:text="${giver.referrerCount}"></td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+                <!-- <span th:text="${pointList[1].leaderCode}"></span>            <span th:text="${id}"></span> -->
+                <!-- <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br> -->
+                <div th:if="${leaderPayList != null}">
+                    <!-- <td colspan="4">참여 캠페인 정보가 없습니다.</td> -->
+
+                    <div class="tableTitle">인솔자 포인트 : <span th:text="${leaderPayList[0].totalPoint}"></span></div>
+                    <table class="point_List" style="border: 1px solid #000; border-collapse: collapse; margin-top: 20px;">
+                        <thead>
+                            <tr>
+                                <th>번호</th>
+                                <th>캠페인 명</th>
+                                <th>횟수</th>
+                                <th>포인트</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${leaderPayList.isEmpty()}">
+                                <td colspan="4" style="text-align:center;">참여 캠페인 정보가 없습니다.</td>
+                            </tr>
+                            <tr th:each="giver, stat : ${leaderPayList}">
+                                <td th:text="${stat.index + 1}">1</td> <!-- 행 번호 -->
+                                <td th:text="${giver.campaignTitle}">캠페인명</td>
+                                <td th:text="${giver.count}">횟수</td>
+                                <td th:text="${giver.leaderPoint}">포인트</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</html>

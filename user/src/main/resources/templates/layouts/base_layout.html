@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">행집 경호원 사이트</title> <!-- title 태그도 넣는걸 추천해! -->
+
+    <!-- 여기가 마이클의 common_head 프래그먼트가 들어갈 자리야 -->
+    <th:block th:replace="~{fragments/head :: common_head}"></th:block>
+
+    <!-- ⭐ 여기! 백슬래시(\) 삭제! ⭐ -->
+    <th:block layout:fragment="css"></th:block> 
+</head>
+<body>
+    <header th:replace="~{fragments/header :: common_header}"></header>
+
+    <main layout:fragment="content">
+        <!-- 각 페이지의 'main' 내용이 여기에 삽입될 거야. -->
+    </main>
+
+    <footer th:replace="fragments/footer :: common_footer"></footer>
+
+    <div id="commonModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="commonModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commonModalLabel">알림</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- 모달 내용이 들어갈 부분 -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <!-- <button type="button" class="btn btn-primary">확인</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ⭐ 여기에는 layout-dialect의 페이지별 JS 삽그먼트도 넣어두면 좋아! ⭐ -->
+    <th:block layout:fragment="script"></th:block>
+</body>
+</html>

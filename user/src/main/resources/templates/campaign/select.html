@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+        <title>캠페인 수정</title>
+        <link rel="stylesheet" href="/css/style.css">
+        
+        <script th:inline="javascript">
+            document.addEventListener("DOMContentLoaded", function() {
+                let file = /*[[${file}]]*/ null;
+
+                if (file != null){
+                    document.getElementById("campaignImage").style.display = "block";
+                    // document.getElementById("imgFile").style.display = "none";
+                }else{
+                    
+
+                }
+                
+                console.log("DOM이 준비되었습니다!");
+                // 여기에 실행하고 싶은 코드 작성
+                const campaignSelect = /*[[${campaignSelect}]]*/ [];
+                console.log(campaignSelect);
+                console.log("campaignSelect : " + JSON.stringify(campaignSelect));
+
+                if(campaignSelect.leaderCode != null){
+                    document.getElementById("leader_contact").value = campaignSelect.leaderPhone;
+                    document.getElementById("leaderCode").value = campaignSelect.leaderCode;
+                    
+                    const selectElement = document.getElementById('leader');
+                    
+                    selectElement.value = campaignSelect.leaderCode;
+                    for(let i = 0; i < selectElement.options.length; i++) {
+                        selectElement.options[i].value = i
+                    }
+                    selectElement.selectedIndex = campaignSelect.leaderCode;
+                    
+                }
+
+                if(campaignSelect.typeCode != null){
+                    console.log("typeCode")
+                    document.getElementById("typeCode").value = campaignSelect.typeCode;
+                    
+                    const selectElement = document.getElementById('securityType');
+                    
+                    selectElement.value = campaignSelect.typeCode;
+                    
+                    selectElement.selectedIndex = campaignSelect.typeCode;
+                }
+                
+                
+            });
+            function deleteCampaign() {
+                if (!confirm("정말로 이 캠페인을 삭제하시겠습니까?")) {
+                    return;
+                }
+            }
+
+            function securityTypeChange(typeCode) {
+                console.log("선택된 경호/진행/수행 구분: " + typeCode);
+                document.getElementById("typeCode").value = typeCode;
+            }
+
+            function inputLeaderPhoneNumber(idx) {
+                console.log("선택된 인솔자 ID: " + idx);
+                const leaderList = /*[[${leaderList}]]*/ [];
+
+                console.log("selectPhoneNumber : " + JSON.stringify(leaderList[idx-1]));
+
+                const selectPhoneNumber = leaderList[idx-1].phone;
+                const selectNo = leaderList[idx-1].no;
+
+                console.log("selectPhoneNumber : " + selectPhoneNumber);
+
+                document.getElementById("leader_contact").value = selectPhoneNumber;
+                document.getElementById("leaderCd").value = idx;
+
+                console.log("a" + selectPhoneNumber);
+            }
+
+            function removeFile(element, id){
+                console.log("campaign: " + id)
+                let request = new XMLHttpRequest();
+                request.onreadystatechange = function(){
+                    if(request.readyState == request.DONE && request.status == 200) {
+                        let response = request.responseText;
+                        if(response == 'SUCCESS'){
+                            alert('파일 삭제 성공');
+                            // 파일 목록 갱신
+                            // 방법 1 - 페이지 새로 고침
+                            // location.reload();
+                            
+                            // 방법 2 - DOM 으로 파일 항목 행 삭제
+                            // alert(eletemet);
+                            //element.parentNode.parentNode.remove(); // button > td > tr
+                            document.getElementById("imgFile").remove();
+                            document.getElementById("campaignImage").style.display = "block";
+                            // 방법 3 - 파일목록 비동기로 요청
+                            // 1. JSON 데이터를 받고 랜더링
+                            // 2. 파일목록 뷰(html)를 응답받아 랜더링 ⭐️
+                            
+                            //getFileList();
+                            
+                        }else{ 
+                            alert('파일 삭제 실패');
+                        }
+                    } 
+                }
+                const url = `/file/${id}`
+                    console.log("delete url : " + url);
+                    request.open('DELETE', url, true);
+                    request.send();
+            }
+        </script>
+    </head>
+    <body>
+        <div div class="sidebar">
+            <h2>챗짱 Admin</h2>
+            <div class="menu-item" onclick="history.back()">← 돌아가기</div>
+        </div>
+        <div class="main-content">
+            <h1>캠페인 수정</h1>
+            <form class="form" action="/campaign/campaign05" method="post" id="form" enctype="multipart/form-data">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <input type="hidden" name="campaignId" id="campaignId" th:value="${campaignSelect.campaignId}" />
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="businessName">업체명</label>
+                        <input type="text" name="companyNm" id="companyNm" th:value="${campaignSelect.companyNm}" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="mainPhone">고객 연락처</label>
+                        <input type="text" name="companyPh" id="companyPh" th:value="${campaignSelect.companyPh}" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>인솔자 연락처</label>
+                        <input type="text" name="leader_contact" id="leader_contact" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="leader">인솔자 선택</label>
+                        <select id="leader" name="leader" th:field="*{campaignSelect}" onchange="inputLeaderPhoneNumber(this.value)" >
+                            <option value="">-- 선택하세요 --</option>
+                            <option th:each="leader, stat : ${campaignSelect}" th:value="${stat.index}" th:text="${leader.leaderName}"></option>
+                        </select>
+                        <input type="hidden" id="leaderCode" name="leaderCode" required />
+                    </div>
+                    <!-- <div class="form-group">
+                        <label>인솔자 선택</label>
+                        <select name="userGuideList" id="userGuideList" required>
+                            <option value="">선택하세요</option>
+                            <option value="김인솔">김인솔</option>
+                            <option value="박리더">박리더</option>
+                        </select>
+                    </div> -->
+                </div>
+                
+                <div class="form-group">
+                    <label>캠페인명</label>
+                    <input type="text" name="campaignTitle" id="campaignTitle" th:value="${campaignSelect.campaignTitle}" required />
+                </div>
+                <div class="form-group">
+                    <label for="securityType">경호/진행/수행 구분</label>
+                    <select id="securityType" name="securityType" th:field="*{securityType}" onchange="securityTypeChange(this.value)" required>
+                        <option value="">-- 선택하세요 --</option>
+                        <option name="" th:each="type : ${securityType}" th:value="${type.code}" th:text="${type.codeName}"></option>
+                    </select>
+                    <input type="hidden" id="typeCode" name="typeCode" />
+                </div>
+                <div class="form-group">
+                    <div class="form-group">
+                        <label>캠페인 이미지</label>
+                        <div id="drop-area" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px" >
+                            <p>이미지를 클릭하거나 끌어다 놓으세요</p>
+                            
+                            <div th:if="${file != null}" id="campaignImage">
+                                <input type="file" name="image" id="image" accept="image/*" style="display: none" />
+                                <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin-top: 10px; display: none" />
+                                <img id="imgFile"th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" width="720" height="405" />
+                            </div>
+                            <div th:if="${file == null}">
+                                <input type="file" name="image" id="image" accept="image/*" style="display: none" />
+                                <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin-top: 10px; display: none" />
+                            </div>
+                        </div>
+                        <div th:if="${file != null}">
+                            <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" 
+                            th:onclick="removeFile(this, [[${campaignSelect.campaignId}]])">기존 이미지 삭제</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>모집 인원 수</label>
+                    <input type="number" name="recruitmentNum" id="recruitmentNum" th:value="${campaignSelect.recruitmentNum}" required />
+                </div>
+                <div class="form-group">
+                    <label>등급별 급여</label>
+                    <div class="point-grid">
+                        <input type="number" step="10000" name="whiteSal" id="whiteSal" th:value="${campaignSelect.whiteSal}" />
+                        <input type="number" step="10000" name="greenSal" id="greenSal" th:value="${campaignSelect.greenSal}" />
+                        <input type="number" step="10000" name="yellowSal" id="yellowSal" th:value="${campaignSelect.yellowSal}" />
+                        <input type="number" step="10000" name="orangeSal" id="orangeSal" th:value="${campaignSelect.orangeSal}" />
+                        <input type="number" step="10000" name="redSal" id="redSal" th:value="${campaignSelect.redSal}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>주소</label>
+                    <input type="text" name="placeAddr" id="placeAddr" th:value="${campaignSelect.placeAddr}" />
+                </div>
+                <div class="form-group">
+                    <label>안내사항</label>
+                    <textarea name="mission" id="mission" rows="4" th:text="${campaignSelect.mission}"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <span>신청기간</span>
+                        <div class="form-row">
+                            <input type="date" name="AppPeriodStr" id="AppPeriodStr" th:value="${campaignSelect.AppPeriodStr}" required />
+                            <input type="date" name="AppPeriodEnd" id="AppPeriodEnd" th:value="${campaignSelect.AppPeriodEnd}" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span>행사기간</span>
+                        <div class="form-row">
+                            <input type="date" name="eventPeriodStr" id="eventPeriodStr" th:value="${campaignSelect.eventPeriodStr}" required />
+                            <input type="date" name="eventPeriodEnd" id="eventPeriodEnd" th:value="${campaignSelect.eventPeriodEnd}" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <span>명단발표기간</span>
+                        <div class="form-row">
+                            <input type="date" name="resultDate" id="resultDate" th:value="${campaignSelect.resultDate}" required />
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit">캠페인 수정</button>
+                <button type="button" class="delete-btn" onclick="campaignRemove()">캠페인 삭제</button>
+            </form>
+        </div>
+
+        <script>
+            const params = new URLSearchParams(location.search);
+            const id = params.get("id");
+            const form = document.getElementById("form");
+
+            function campaignRemove(){
+                if(!confirm('정말로 이 캠페인을 삭제하시겠습니까?')){
+                    return;
+                }
+
+                form.action = '/campaign/delete'; // action 속성 변경
+                form.submit(); // 요청 전송
+            }
+
+    const dropArea = document.getElementById("drop-area");
+    const imageInput = document.getElementById("image");
+    const preview = document.getElementById("preview");
+
+    dropArea.addEventListener("click", () => imageInput.click());
+
+    dropArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropArea.style.backgroundColor = "#f3e7ff";
+    });
+
+    dropArea.addEventListener("dragleave", () => {
+        dropArea.style.backgroundColor = "transparent";
+    });
+
+    dropArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropArea.style.backgroundColor = "transparent";
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith("image/")) {
+            imageInput.files = e.dataTransfer.files;
+            showPreview(file);
+        }
+    });
+
+    imageInput.addEventListener("change", () => {
+        const file = imageInput.files[0];
+        if (file) {
+            showPreview(file);
+        }
+    });
+
+    function showPreview(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+    document.addEventListener("DOMContentLoaded", function(){
+        //const form = document.querySelector("form");
+        // document.getElementById("campaignImage").style.display = "none";
+    });
+        </script>
+    </body>
+</html>
+<script>
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     const form = document.querySelector("form");
+
+    //     form.addEv;
+    //     entListener("submit", function (e) {
+    //         e.preventDefault(); // 기존 동작 막기
+
+    //         const formData = new FormData(form);
+
+    //         fetch("../php/update_campaign.php", {
+    //             method: "POST",
+    //             body: formData,
+    //         })
+    //             .then((res) => res.text())
+    //             .then((result) => {
+    //                 alert("수정이 완료되었습니다.");
+    //                 window.location.href = "admin_panel.html";
+    //             })
+    //             .catch((err) => {
+    //                 alert("수정 중 오류가 발생했습니다.");
+    //                 console.error(err);
+    //             });
+    //     });
+    // });
+
+</script>

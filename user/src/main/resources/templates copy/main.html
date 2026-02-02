@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>대장의 캠페인 플랫폼</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script>
+    // document.addEventListener('DOMContentLoaded', function () {
+    // fetch('php/check_login.php')
+    //     .then(res => res.json())
+    //     .then(loginData => {
+    //     const loggedIn = loginData.loggedIn;
+
+    //     // 상단 메뉴 토글
+    //     document.getElementById('menuLogin').style.display = loggedIn ? 'none' : 'inline';
+    //     document.getElementById('menuRegister').style.display = loggedIn ? 'none' : 'inline';
+    //     document.getElementById('menuMyPage').style.display = loggedIn ? 'inline' : 'none';
+    //     document.getElementById('menuLogout').style.display = loggedIn ? 'inline' : 'none';
+
+    //     // 캠페인 데이터 가져오기
+    //     fetch('data/campaigns.json')
+    //         .then(res => res.json())
+    //         .then(campaigns => {
+    //         const popular = [...campaigns].sort((a, b) => b.applicants - a.applicants);
+    //         const chance = [...campaigns].sort((a, b) => a.applicants - b.applicants);
+    //         const newest = [...campaigns].sort((a, b) => new Date(b.date) - new Date(a.date));
+    //         const reviews = campaigns.filter(c => c.hasReview);
+
+    //         // ✅ 새로운 카드 HTML 생성 함수
+    //         const render = (id, list) => {
+    // const container = document.getElementById(id);
+    // container.innerHTML = '';
+    // list.forEach(c => {
+    //     const card = document.createElement('div');
+    //     card.className = 'campaign-card';
+    //     card.innerHTML = `
+    //     <img src="${c.image}" alt="${c.title}" class="campaign-image" />
+    //     <div class="campaign-info-box">
+    //         <div class="campaign-tags">
+    //         <span class="tag status">${c.status}</span>
+    //         <span class="tag dday">${c.dday}</span>
+    //         </div>
+    //         <h3 class="campaign-title-text">[${c.region}][${c.status}] ${c.title}</h3>
+    //         <p class="campaign-stats">신청 ${c.applicants} / 모집 ${c.limit}</p>
+    //     </div>
+    //     `;
+    //     container.appendChild(card);
+    // });
+    // };
+
+    //         // 각 섹션 그리기
+    //         render('popularList', popular);
+    //         render('chanceList', chance);
+    //         render('newList', newest);
+    //         render('reviewList', reviews);
+
+    //         // 로그인 여부에 따라 순서 재배치
+    //         const campaignContainer = document.getElementById('campaignContainer');
+    //         const sections = {
+    //             popular: document.getElementById('popularSection'),
+    //             chance: document.getElementById('chanceSection'),
+    //             new: document.getElementById('newSection'),
+    //             reviews: document.getElementById('reviewsSection')
+    //         };
+
+    //         campaignContainer.innerHTML = '';
+    //         if (loggedIn) {
+    //             campaignContainer.appendChild(sections.chance);
+    //             campaignContainer.appendChild(sections.new);
+    //             campaignContainer.appendChild(sections.popular);
+    //         } else {
+    //             campaignContainer.appendChild(sections.popular);
+    //             campaignContainer.appendChild(sections.chance);
+    //             campaignContainer.appendChild(sections.new);
+    //         }
+    //         campaignContainer.appendChild(sections.reviews);
+    //         });
+    //     });
+    // });
+    </script>
+</head>
+<body>
+    <!-- 상단 유틸 메뉴 -->
+    <div class="top-bar">
+        <div class="right">
+        <a href="#">고객센터</a>
+        <a href="#">광고문의</a>
+        </div>
+    </div>
+
+    <!-- 헤더 -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo">행집</div>
+                <input type="text" class="search" placeholder="검색어를 입력하세요" />
+            </div>
+        <div class="header-right">
+            <div class="ad-section">
+                <img src="images/fireworks-icon.png" alt="폭죽 아이콘" class="ad-icon" />
+                <div class="ad-text">
+                    <div class="ad-main">행사 문의는 이쪽으로!</div>
+                    <div class="ad-link">행사 요청 페이지</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 내비게이션 -->
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <ul class="nav-list">
+                <li>홈</li>
+                <li>지역</li>
+                <li>이용가이드</li>
+                <li>행집인솔자</li>
+                <li>베스트 요원</li>
+                <li>인증된 협력업체</li>
+                <li>
+                <img src="https://cdn-icons-png.flaticon.com/512/1827/1827310.png" alt="공지" class="notice-icon">
+                공지
+                </li>
+            </ul>
+            <div class="auth-links">
+                <a href="/user/login.html" class="auth-link" id="menuLogin">로그인</a>
+                <a href="register/register.html" class="auth-link" id="menuRegister">회원가입</a>
+                <a href="mypage.html" class="auth-link" id="menuMyPage" style="display: none;">마이페이지</a>
+                <a href="php/logout.php" class="auth-link" id="menuLogout" style="display: none;">로그아웃</a>
+            </div>      
+        </div>
+    </nav>
+
+    <!-- 🔹 배너 3개 영역 -->
+    <section class="banner-section">
+        <div class="banner-card">
+            <img src="https://via.placeholder.com/400x150?text=우리+가게+홍보하기" alt="홍보 배너" />
+        </div>
+        <div class="banner-card">
+            <img src="https://via.placeholder.com/400x150?text=스페셜+캠페인" alt="스페셜 배너" />
+        </div>
+        <div class="banner-card">
+            <img src="https://via.placeholder.com/400x150?text=리뷰어+이용매뉴얼" alt="이용매뉴얼 배너" />
+        </div>
+    </section>
+
+    <!-- 🔹 캠페인 영역 -->
+    <div id="campaignContainer">
+        <section id="popularSection">
+            <h2 class="campaign-title" >인기 있는 캠페인</h2>
+            <div class="campaign-list" id="popularList">
+                <!-- <img src="${c.image}" alt="${c.title}" class="campaign-image" /> -->
+                <th:block th:each="campaign : ${campaignFavorite}">
+                    <div class="campaign-card">
+                        <img id="imgFile" th:src="|/img?id=${campaign.id}|" alt="파일이미지" width="720" height="405" class="campaign-image"/><br>
+                        <div class="campaign-info-box">
+                            <div class="campaign-tags">
+                                <span class="tag status" th:text="${campaign.contentsDateStart}"></span>
+                                <span class="tag dday" th:text="${campaign.contentsDateEnd}"></span>
+                            </div>
+                            <!-- <h3 class="campaign-title-text">[${c.region}][${c.status}] ${c.title}</h3> -->
+                            <h3 class="campaign-title-text" th:text="${campaign.title}"></h3>
+                            <p class="campaign-stats">신청 <span th:text="${campaign.status}"> / 모집 <span th:text="${campaign.countOfApplications}"></p>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </section>
+
+        <section id="chanceSection">
+            <h2 class="campaign-title">선정확률 높은 캠페인</h2>
+            <div class="campaign-list" id="chanceList">
+                <th:block th:each="campaign : ${campaignFavorite}">
+                    <div class="campaign-card">
+                        <img id="imgFile" th:src="|/img?id=${campaign.id}|" alt="파일이미지" width="720" height="405" class="campaign-image"/><br>
+                        <div class="campaign-info-box">
+                            <div class="campaign-tags">
+                                <span class="tag status" th:text="${campaign.contentsDateStart}"></span>
+                                <span class="tag dday" th:text="${campaign.contentsDateEnd}"></span>
+                            </div>
+                            <!-- <h3 class="campaign-title-text">[${c.region}][${c.status}] ${c.title}</h3> -->
+                            <h3 class="campaign-title-text" th:text="${campaign.title}"></h3>
+                            <p class="campaign-stats">신청 <span th:text="${campaign.status}"> / 모집 <span th:text="${campaign.countOfApplications}"></p>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </section>
+
+        <section id="newSection">
+            <h2 class="campaign-title">새로 오픈한 캠페인</h2>
+            <div class="campaign-list" id="newList"></div>
+        </section>
+
+        <section id="reviewsSection">
+            <h2 class="campaign-title">실시간 리뷰</h2>
+            <div class="campaign-list" id="reviewList"></div>
+        </section>
+    </div>
+
+    <footer>
+        <p>강남맛집 © 2023</p>
+    </footer>
+
+    <!-- 🔹 로그인 확인 및 캠페인 정렬 로직 -->
+    <script src="index.js"></script>
+</body>
+</html>

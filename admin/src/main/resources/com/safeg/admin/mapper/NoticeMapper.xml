@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.safeg.admin.mapper.NoticeMapper">
+
+    <select id="noticeList" resultType="AdminContentVO">
+        <![CDATA[
+        SELECT 
+            AdminContent_id,
+            title,
+            content,
+            content_type,
+            author,
+            created_at,
+            updated_at
+        FROM 
+            AdminContent
+        where
+        ]]>
+        <if test="option.code == 0">
+            (title like CONCAT('%', #{option.keyword}, '%')
+            or content like CONCAT('%', #{option.keyword}, '%')
+            or content_type like CONCAT('%', #{option.keyword}, '%'))
+        </if>
+        <if test="option.code == 1">
+            title like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 2">
+            content like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 3">
+            content_type like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        and content_type='NOTICE'
+        and is_active = 'Y'
+        <if test="option.orderCode == 0">
+            order by AdminContent_id desc
+        </if>
+    </select>
+
+    <select id="noticeSelect" resultType="AdminContentVO">
+        <![CDATA[
+        SELECT 
+            AdminContent_id,
+            title,
+            content,
+            content_type,
+            author,
+            created_at,
+            updated_at
+        FROM 
+            AdminContent
+        where
+            AdminContent_id = #{noticeId}
+            and is_active = 'Y'
+            and content_type='NOTICE'
+        ]]>
+    </select>
+
+    <insert id="noticeInsert" parameterType="AdminContentVO">
+        <![CDATA[
+        INSERT INTO AdminContent (title, content, content_type, author)
+        VALUES (#{title}, #{content}, #{contentType}, #{author})
+        ]]>
+    </insert>
+
+    <update id="noticeUpdate" parameterType="AdminContentVO">
+        <![CDATA[
+        UPDATE AdminContent
+        SET title = #{title},
+            content = #{content},
+            updated_at = NOW()
+        WHERE AdminContent_id = #{adminContentId}
+        ]]>
+    </update>
+</mapper>

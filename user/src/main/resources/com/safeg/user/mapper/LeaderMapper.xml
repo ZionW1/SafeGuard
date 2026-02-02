@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.safeg.user.mapper.LeaderMapper">
+    
+    <select id="leaderSelect" resultType="AdminContentVO">
+        SELECT 
+            AdminContent_id,
+            title,
+            content,
+            content_type,
+            author,
+            created_at,
+            updated_at
+        FROM 
+            AdminContent
+        where
+            is_active = 'Y'
+            and content_type='LEADER'
+    </select>
+</mapper>

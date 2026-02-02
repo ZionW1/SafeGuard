@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{layouts/base_layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        .article-container {     float: right;
+            width: 80%; margin: 0 auto; }
+        .notice-title {
+            font-size: 40px;
+            font-weight: 700;
+            /* margin: 5%; */
+            /* padding-bottom: 10px; */
+            color: #111;
+        }
+        h1 { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 20px; }
+        .article-info { font-size: 1.2em; color: #666; margin-bottom: 20px; font-weight: 700;}
+        .article-content { line-height: 1.6; }
+        /* CKEditor가 생성하는 HTML 구조에 따라 필요한 CSS를 추가하여 스타일을 유지 */
+        .ck-content { /* CKEditor의 기본 클래스 */
+            margin-top: 50px;
+            font-size: 1em; /* 필요에 따라 조절 */
+            line-height: 1.6em;
+        }
+        /* 저장된 CKEditor 내용의 이미지 스타일 유지 */
+        .ck-content img {
+            max-width: 100%;
+            height: auto;
+            display: block; /* 이미지가 줄 바꿈되도록 */
+            margin: 0 auto; /* 중앙 정렬 */
+        }
+        /* 저장된 CKEditor 내용의 캡션 스타일 유지 */
+        .ck-content .image-caption {
+            font-style: italic;
+            text-align: center;
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .ck-content { /* CKEditor의 기본 클래스 */
+        font-size: 1em; /* 필요에 따라 조절 */
+        line-height: 1.6em;
+        text-align: center; /* CKEditor 콘텐츠의 기본 텍스트 정렬을 초기화 (필요시) */
+    }
+
+    /* ⭐️⭐️⭐️ 이 부분을 수정/추가해줘! ⭐️⭐️⭐️ */
+    .ck-content figure.image { /* CKEditor 이미지를 감싸는 figure 태그 */
+        display: block; /* 블록 요소로 만들어 margin: auto가 작동하도록 함 */
+        margin: 0 auto; /* 좌우 마진을 자동으로 설정하여 가운데 정렬 */
+        max-width: 100%; /* 너무 커지는 것을 방지 */
+    }
+    
+    .ck-content figure.image img { /* figure 안의 실제 이미지 태그 */
+        display: block; /* 블록 요소로 만들어 margin: auto가 작동하도록 함 */
+        margin: 0 auto; /* 좌우 마진을 자동으로 설정하여 가운데 정렬 */
+        max-width: 100%; /* 부모(figure)보다 커지지 않도록 */
+        height: auto; /* 비율 유지 */
+    }
+    
+    /* 캡션도 가운데 정렬되도록 */
+    .ck-content .image-caption {
+        text-align: center; 
+        font-style: italic;
+        font-size: 0.9em;
+        color: #555;
+        margin-top: 5px;
+    }
+    /* 반응형 디자인 (선택 사항이지만 좋은 연습!) */
+    @media (max-width: 768px) {
+        .region-sub-list-grid {
+            grid-template-columns: repeat(2, 1fr); /* 화면이 작아지면 2열로 */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .region-sub-list-grid {
+            grid-template-columns: 1fr; /* 더 작아지면 1열로 */
+        }
+        .region-category {
+            padding: 20px;
+        }
+        .region-main-title .title-text {
+            font-size: 24px;
+        }
+    }
+
+    .menu-item {
+        margin-bottom: 12px;
+    }
+
+    .menu-item a {
+        text-decoration: none;
+        color: #555;
+        font-size: 15px;
+        display: block;
+        padding: 6px 8px;
+        border-radius: 4px;
+        transition: background-color 0.15s;
+    }
+
+    .menu-item a:hover {
+        background-color: #f0f0f0;
+        color: #333;
+    }
+
+    .menu-item.active a {
+            width: 250px;
+        background-color: #6f59b6; /* 보라색 강조 */
+        color: #fff;
+        font-weight: 700;
+    }
+    
+</style>
+    <title>Document</title>
+</head>
+<body>
+
+    <main layout:fragment="content">
+        <div class="main-side-content">
+            <div class="container">
+                <th:block th:replace="~{fragments/noticeSidebar :: sidebarMenu}" />
+            </div>
+            <div class="article-container">
+                <div class="notice-title" th:text="${noticeSelect.title}">게시글 제목입니다.</div>
+                <div class="article-info">
+                    작성자: <span th:text="${noticeSelect.author}"></span> |
+                    작성일: <span th:text="${#temporals.format(noticeSelect.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                </div>
+                <div class="article-content ck-content">
+                    <!-- ⭐️⭐️⭐️ 여기가 핵심! th:utext를 사용해야 HTML이 그대로 렌더링돼! ⭐️⭐️⭐️ -->
+                    <p th:utext="${noticeSelect.content}"></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- <div th:replace="fragments/navigator :: main-navigator"></div>
+    <div class="container">
+        <th:block th:replace="~{fragments/noticeSidebar :: sidebarMenu (activeMenu='notice')}" />
+    </div>
+    <div class="article-container">
+        <h1 th:text="${noticeSelect.title}">게시글 제목입니다.</h1>
+        <div class="article-info">
+            작성자: <span th:text="${noticeSelect.author}"></span> |
+            작성일: <span th:text="${#temporals.format(noticeSelect.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+        </div>
+        <div class="article-content ck-content">
+            <p th:utext="${noticeSelect.content}"></p>
+        </div>
+        <br>
+    </div> -->
+</body>
+</html>

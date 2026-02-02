@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.resister.bdgd_user.mapper.UserDetailMapper">
+    <resultMap type="Users" id="userMap">
+        <id property="no" column="no" />
+        <result property="id" column="id" />
+        <result property="accountNumber" column="account_number" />
+        <result property="bank" column="bank" />
+        <result property="depositor" column="depositor" />
+        <result property="name" column="name" />
+        <result property="email" column="email" />
+        <result property="isDeleted" column="is_deleted" />
+        <result property="isStopped" column="is_stopped" />
+        <result property="nickname" column="nickname" />
+        <result property="password" column="password" />
+        <result property="phone" column="phone" />
+        <result property="point" column="point" />
+        <result property="roleCd" column="role_cd" />
+        <result property="addressId" column="address_id" />
+        <result property="stoppedDate" column="stopped_date" />
+        <result property="memo" column="memo" />
+        <result property="profileImage" column="profile_image" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <result property="referrer" column="referrer" />
+        <result property="enabled" column="enabled" />
+        <collection property="authList" resultMap="authMap"></collection>
+    </resultMap>
+        
+    <resultMap type="UserAuth" id="authMap">
+        <result property="no" column="no" />
+        <result property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="auth" column="auth" />
+        <result property="authCd" column="auth_cd" />
+    </resultMap>
+
+    <!-- 회원 조회 - id -->
+    <select id="select" resultMap="userMap">
+        SELECT u.no
+            ,u.id
+            ,u.password
+            ,u.name
+            ,u.email
+            ,enabled
+            ,phone
+            ,role_cd
+            ,role
+            ,nickname
+            ,u.created_at
+            ,u.updated_at
+            ,auth
+        FROM user u LEFT OUTER JOIN user_auth auth 
+        ON u.Id = auth.id
+        WHERE u.id = #{id}
+    </select>
+
+    <insert id="join">
+        INSERT INTO user( id, name, email, password, phone)
+        VALUES ( #{id}, #{name}, #{email}, #{password}, #{phone} )
+    </insert>
+
+    <!-- 회원 권한 등록 -->
+    <insert id="insertAuth">
+        INSERT INTO user_auth( id, name, auth_cd, auth )
+        VALUES ( #{id}, #{name}, #{authCd}, #{auth})
+    </insert>
+
+    <update id="mypageUpdate">
+        update user set 
+            nickname = #{nickname},
+            email = #{email},
+            phone = #{phone},
+            bank = #{bank},
+            account_Number = #{accountNumber},
+            depositor = #{depositor},
+            updated_at = now()
+        where id= #{id}
+    </update>
+</mapper>

@@ -1,0 +1,539 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    margin: 0;
+    font-family: "Pretendard", sans-serif;
+    flex-direction: column;
+    display: flex;
+    min-width: 100%;
+    min-height: 100vh; /* 전체 화면 높이를 100%로 */
+    height: 100vh;
+    background-color: #f8f4ff;
+}
+
+/* footer는 기본 블록요소이므로 따로 위치 지정 안해도 하단으로 붙음 */
+footer {
+    background-color: #f1f1f1;
+    padding: 20px;
+    text-align: center;
+}
+    .login-container {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(134, 112, 207, 0.2);
+        width: 360px;
+        max-width: 90vw;
+        padding: 40px 30px;
+        text-align: center;
+        height: 100vh;
+    }
+    .login-container img {
+        width: 120px;
+        margin-bottom: 25px;
+    }
+    .login-container h1 {
+        color: #5641d8;
+        margin-bottom: 30px;
+        font-weight: 700;
+        font-size: 1.8rem;
+    }
+    .login-container .id{
+        width: 100%;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        border: 2px solid #c1b6e7;
+        border-radius: 10px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+    .login-container .pw {
+        width: 89%;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        border: 2px solid #c1b6e7;
+        border-radius: 10px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+    /* .login-container input[type="text"],
+    .login-container input[type="password"] {
+        width: 100%;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        border: 2px solid #c1b6e7;
+        border-radius: 10px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s;
+    } */
+    .login-container input[type="text"]:focus,
+    .login-container input[type="password"]:focus {
+        border-color: #6c54d2;
+        box-shadow: 0 0 8px #9e88e9;
+    }
+    .login-container button {
+        width: 100%;
+        padding: 14px 0;
+        background-color: #674de4;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-weight: 600;
+    }
+    .login-container button:hover {
+        background-color: #5636a9;
+    }
+    .login-container .welcome-msg {
+        margin-top: 20px;
+        font-size: 0.95rem;
+        color: #837ccf;
+    }
+    /* input 요소의 기본 appearance 속성 제거 */
+
+.checkbox-group {
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.checkbox-group label {
+    font-weight: 400;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.admin-container {
+    /* display: contents; */
+    min-width: 100%;
+    display: flex;
+    height: 100vh; /* 화면 높이에 맞게 */
+    background: #faf7ff;
+}
+.sidebar {
+    float: left;
+    max-width: 15%;
+    min-height: 100%;
+    background-color: #d8c7ff;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    display: flex;
+    flex: 1; /* header와 footer를 제외한 영역 꽉 채우기 */
+    flex-direction: row; /* 사이드바와 메인 콘텐츠 가로 배치 */
+}
+.sidebar-menu {
+    min-width: 100%;
+    max-height: 100%;
+}
+.sidebar h2 {
+    color: #5e4b8b;
+    font-size: 20px;
+    margin-bottom: 20px;
+    
+}
+.menu-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f1eaff;
+    border-radius: 6px;
+    color: #5e4b8b;
+    cursor: pointer;
+}
+.menu-item.active {
+    background-color: #e3d4ff;
+}
+.main-content {
+    flex: 1; padding: 20px; overflow-y: auto;
+    flex-grow: 1;
+    float: right;
+    padding: 20px;
+    overflow-y: auto;
+}
+.main-content h1 {
+    color: #5e4b8b;
+    margin-bottom: 20px;
+}
+form.form {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+    max-width: 950px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+form.optionForm {
+    background: f8f4ff;
+    padding: 15px;
+    border-radius: 12px;
+    /* box-shadow: 0 0 6px rgba(0, 0, 0, 0.05); */
+    max-width: 700px;
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+}
+.optionSubmit {
+    background-color: #c3acf4;
+
+    width: 130px;
+    height: 40px;
+    border: none;  /* 맥에서도 크기가 제대로 적용되도록 */
+    padding: 8px 30px;
+    font-size: 25px;
+    color: #7552c1;
+    border: none;
+    border-radius: 6px;
+    margin-top: 3px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    color: #5b408b;
+}
+h1 {
+    color: #5b408b;
+    margin-bottom: 20px;
+}
+
+h5 {
+    color: #5b408b;
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    display: block;
+    color: #333;
+}
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+.form-row {
+    display: flex;
+    gap: 16px;
+}
+.form-row .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.point-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+input[type="file"] {
+    border: 1px dashed #bbb;
+    background: #f9f8ff;
+    padding: 14px;
+    font-size: 14px;
+    border-radius: 10px;
+}
+
+button {
+    background-color: #b594ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #a27efc;
+}
+button[type="submit"] {
+    background-color: #d9b8ff;
+    color: white;
+}
+button[type="submit"]:hover {
+    background-color: #c09aea;
+}
+.update-btn {
+    width: 87px;
+    background-color: #d9b8ff;
+    color: white;
+    margin-top: -12px;
+    margin-bottom: 15px;
+}
+.stop-btn {
+    width: 110px;
+    background-color: #ffb74b;
+    color: white;
+    background-color: #ff6b6b;
+    color: white;
+    margin-top: -12px;
+    margin-bottom: 15px;
+}
+.delete-btn:hover {
+    background-color: #ff4b4b;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+th,
+td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    font-size: 14px;
+}
+th {
+    background-color: #f3ecff;
+    color: #5e4b8b;
+}
+th.title {
+    width: 30%;
+}
+tr {
+    cursor: pointer;
+}
+tr:hover {
+    background-color: #f9f3ff;
+}
+
+.parent {
+    text-align: center;
+}
+
+.child {
+    display: inline-block;
+    /* 원하는 너비, 높이, 여백 등 추가 가능 */
+    width: 900px;
+    background-color: #f8f4ff;
+    padding: 20px;
+}
+
+.insert {
+    width: 50px;
+    text-align: center;
+    background-color: #d8c7ff;
+    padding: 5px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    float: right;
+}
+
+.dateInsert{
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Pretendard', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  h3 {
+    font-size: 28px;
+    margin-bottom: 24px;
+  }
+  .form-item {
+    margin-bottom: 20px;
+  }
+  .field-label {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .text-field {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: 'Pretendard', sans-serif;
+  }
+  .help-text {
+    font-size: 13px;
+    color: #637381;
+    margin-top: 4px;
+  }
+  .upload-container {
+    display: flex;
+    flex-direction: column;
+  }
+  .upload-box {
+    width: 90%;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  .upload-box:hover {
+    border-color: #1976d2;
+  }
+  .preview-image {
+    max-width: 100%;
+    max-height: 200px;
+    margin-top: 10px;
+    display: none;
+  }
+  .button-container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .submit-button {
+    width: 10rem;
+    height: 3rem;
+    font-size: 1.05rem;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .submit-button:hover {
+    background-color: #1565c0;
+  }
+
+.wt100 {
+    width: 100px;
+}
+
+.wt200 {
+    width: 200px;
+}
+
+.wt300 {
+    width: 300px;
+}
+
+.wdt5{
+    width: 5%;
+}
+.wdt10{
+    width: 10%;
+}
+.wdt15{
+    width: 15%;
+}
+.wdt20{
+    width: 20%;
+}
+.wdt25{
+    width: 25%;
+}
+.wdt30{
+    width: 30%;
+}
+.wdt40{
+    width: 40%;
+}
+.wdt50{
+    width: 50%;
+}
+.mgl439per{
+    margin-left: 43.9%;
+}
+.mgl50per{
+    margin-left: 50%;
+}
+.error-msg {
+    margin-bottom: 30px; /* 작은 여백 */
+    color: red; /* 기존 스타일 유지 */
+  }
+
+.password-input-container {
+    position: relative; /* 자식 요소 (아이콘)의 위치를 위해 필요 */
+    text-align: left; /* 라벨과 입력창을 왼쪽 정렬 */
+}
+
+.password-input-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #7a69d9;
+    font-size: 0.95rem;
+}
+
+.password-input-container input[type="password"],
+.password-input-container input[type="text"] { /* type=text일 때도 스타일 적용 */
+    width: 100%;
+    padding: 12px 40px 12px 14px; /* 아이콘 공간 확보를 위해 패딩 조정 */
+    border: 2px solid #c1b6e7;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px; /* 오른쪽에서 여백 */
+    top: 41%; /* 컨테이너의 중앙에 오도록 */
+    transform: translateY(-50%) translateY(12px); /* 세로 중앙 정렬 및 라벨만큼 내려줌 */
+    cursor: pointer;
+    color: #836ddf; /* 아이콘 색상 */
+    font-size: 1.2rem;
+    /* 추가: z-index를 주면 다른 요소에 가려지지 않아 */
+    z-index: 10; 
+}
+.campaign_image {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+}
+.mrg_auto {
+    margin: 0 auto;
+}
+
+.hidden {
+    display: none !important; /* !important를 사용하여 다른 인라인 스타일보다 우선순위를 높여줘 */
+}

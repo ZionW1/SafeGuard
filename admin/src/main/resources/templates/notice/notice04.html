@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>Document</title>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 사이드바 -->
+        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+
+        <!-- 본문 영역 -->
+        <div class="main-content">
+                    
+            <h1><a href="/admin/notice02">공지사항 등록</a></h1>
+            
+            <form th:action="@{/admin/notice04}" id="contentForm" method="post">
+                <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
+                <input type="hidden" name="action" value="I"/>
+                <input type="hidden" name="author" value="admin"/>
+                <input type="hidden" name="contentType" value="NOTICE"/>
+
+                <label for="title">공지사항 제목</label><br/>
+                <input type="text" id="title" name="title" th:value="${noticeSelect.title}"/>
+                <div style="height: 30px;"></div>
+                <label for="content">공지사항 내용</label><br/>
+                <textarea id="content" name="content" rows="10" cols="60" style="width: 900px;" th:text="${noticeSelect.content}"></textarea>
+                <div style="height: 30px;"></div>
+                <button type="submit">저장하기</button>
+            </form>
+        </div>
+<!-- 
+<script>
+    fetch("../data/campaigns.json")
+        .then((res) => res.json())
+        .then((data) => {
+            const tbody = document.querySelector("#campaignTable tbody");
+            data.forEach((c) => {
+                const row = document.createElement("tr");
+                row.setAttribute("data-id", c.id);
+                row.innerHTML = `
+                    <td>${c.id}</td>
+                    <td>${c.region || "미입력"}</td>
+                    <td>${c.title}</td>
+                    <td>${c.status || "진행중"}</td>
+                    <td>${c.date}</td>
+                    <td>${c.applicants}</td>
+                    <td>${c.limit}</td>
+                    <td></td>
+                `;
+                row.addEventListener("click", () => {
+                    window.location.href = `campaign_detail.html?id=${c.id}`;
+                });
+                tbody.appendChild(row);
+            });
+        });
+</script>
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function(){
+    
+    console.log("a : " + companiesList);
+    console.log("b : " + userGuideList);
+    });
+</script> -->
+<script src="/js/ckeditor.js"></script> 
+
+<!-- ⭐️⭐️⭐️ 이 스크립트 블록 안에서 CKEditor 초기화 ⭐️⭐️⭐️ -->
+<script>
+    // 1. MyCustomUploadAdapterPlugin을 전역 함수로 정의 (or 이 스크립트 블록 안에 정의)
+    // 이 코드를 너의 <script> 태그 안에 직접 넣는 것이 가장 간단해.
+    function MyCustomUploadAdapterPlugin(editor) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return new MyUploadAdapter(loader);
+        };
+    }
+
+    class MyUploadAdapter {
+        constructor(loader) {
+            this.loader = loader;
+        }
+        upload() {
+            return this.loader.file
+                .then(file => new Promise((resolve, reject) => {
+                    const data = new FormData();
+                    data.append('upload', file);
+
+                    fetch('/upload/image', { method: 'POST', body: data })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.uploaded && result.url) {
+                                resolve({ default: result.url });
+                            } else {
+                                reject(result.error && result.error.message ? result.error.message : '이미지 업로드 실패.');
+                            }
+                        })
+                        .catch(err => reject('파일 업로드 중 네트워크 오류: ' + err));
+                }));
+        }
+        abort() { /* 업로드 취소 로직 (필요시) */ }
+    }
+
+    // 2. window.ClassicEditor 객체를 사용하여 에디터 생성
+    let editorInstance; // 에디터 인스턴스를 저장할 변수
+
+    ClassicEditor
+        // ⭐️⭐️⭐️ 여기가 실제 에디터를 생성하는 부분이야. ⭐️⭐️⭐️
+        // HTML의 <textarea id="editor">에 연결되도록 selector를 '#editor'로 변경했어.
+        .create(document.querySelector('#content'), {
+            // MyCustomUploadAdapterPlugin은 우리가 src/ckeditor.js의 builtinPlugins에 추가했기 때문에,
+            // 여기서 extraPlugins로 다시 명시할 필요는 없어! 빌드에 이미 포함되어 있을 거야.
+            licenseKey: 'GPL',  // ⭐️⭐️⭐️ 여기에 직접 추가해서 다시 시도해 봐 ⭐️⭐️⭐️
+            toolbar: {
+                items: [
+                    'heading', '|', 'bold', 'italic', '|',
+                    'fontSize', // ⭐️ 글씨 크기 조절 버튼
+                    'fontColor', // ⭐️ 글씨 색상 조절 버튼
+                    'fontBackgroundColor', // ⭐️ 글씨 배경 색상 조절 버튼
+                    '|',
+                    'alignment', // ⭐️ 글씨 정렬 버튼 추가 (여기에 넣으면 드롭다운 형태로 나타날 거야) ⭐️
+                    '|',
+                    'link', 'bulletedList', 'numberedList', '|',
+                    'indent', 'outdent', '|',
+                    'imageUpload', 'blockQuote', 'insertTable', 'mediaEmbed', 'undo', 'redo'
+                ]
+            },
+            // ⭐️ 이미지 설정 ⭐️
+            image: {
+                toolbar: [
+                    'imageTextAlternative', 'toggleImageCaption',
+                    'imageStyle:inline', 'imageStyle:block', 'imageStyle:side',
+                    '|', // 구분선 (선택 사항)
+                    'resizeImage', // 이미지 클릭 시 드래그 핸들이 나오도록 하는 기본 아이템
+                    'resizeImage:50', 'resizeImage:75', 'resizeImage:original' // 특정 비율로 조절하는 버튼
+                ],
+                resizeOptions: [
+                    // ⭐️⭐️⭐️ 여기를 수정해 줘! ⭐️⭐️⭐️
+                    // icon 이름을 CKEditor가 아는 명시적인 이름으로 변경하거나, 아예 제거해서 플러그인 기본값을 사용하게 해야 해.
+                    // ImageResizeButtons 플러그인은 자체적으로 'small', 'medium', 'large', 'original' 아이콘을 인식해.
+                    { name: 'resizeImage:original', value: null, icon: 'original' }, // 'originalSize' -> 'original'
+                    { name: 'resizeImage:25', value: '25%', icon: 'small' },           // 'medium' -> 'small' (새로 추가)
+                    { name: 'resizeImage:50', value: '50%', icon: 'medium' },           // 'medium'
+                    { name: 'resizeImage:75', value: '75%', icon: 'large' }             // 'large'
+                ],
+                // resizeUnit: 'px', // 기본적으로 픽셀 조절 가능
+                styles: [
+                    'full', 'side', 'alignLeft', 'alignCenter', 'alignRight'
+                ]
+            },
+            // // ⭐️ 파일 업로드 설정 ⭐️
+            // ckfinder: {
+            //     uploadUrl: '/upload/image' // 우리의 커스텀 업로드 어댑터 URL
+            // },
+            // ⭐️ 한국어 설정 (우리가 빌드 시 language: 'ko'로 설정했으니 아마 필요 없을 거야. 확인용.) ⭐️
+            language: 'ko', 
+            table: {
+                contentToolbar: [
+                    'tableColumn',
+                    'tableRow',
+                    'mergeTableCells',
+                    'splitTableCell', // ⭐️ 추가: 셀 분리 기능
+                    'toggleTableCaption', // ⭐️ 추가: 표 캡션(제목) 토글 기능
+                    '|', // 구분선 (필요하면 넣어줘)
+                    'tableProperties', // ⭐️ 추가: 표 전체 속성 편집 모달
+                    'tableCellProperties' // ⭐️ 추가: 선택된 셀 속성 편집 모달
+            ] // 표 편집 툴바 옵션
+                
+            },
+
+            fontSize: {
+            options: [
+                10, 12, 14, 'default', 18, 20, 22, 24, 26, 28, 30 // px 단위로 설정
+            ],
+            supportAllValues: true // 이 설정을 하면, 목록에 없는 값도 수동 입력 가능하게 돼 (브라우저 지원 시)
+        },
+        // ⭐️ 글씨 색상 및 배경 색상 옵션 추가 (원하는 색상으로 설정 가능) ⭐️
+        fontColor: {
+                colors: [
+                    { color: 'hsl(0, 0%, 0%)', label: 'Black' },
+                    { color: 'hsl(0, 0%, 30%)', label: 'Dim grey' },
+                    { color: 'hsl(0, 0%, 60%)', label: 'Grey' },
+                    { color: 'hsl(0, 0%, 90%)', label: 'Light grey' },
+                    { color: 'hsl(0, 0%, 100%)', label: 'White', 
+                    // 'hasBorder'는 색상이 너무 밝아서 테두리로 구분해야 할 때 사용
+                    hasBorder: true
+                    },
+                    { color: 'hsl(0, 75%, 60%)', label: 'Red' },
+                    { color: 'hsl(30, 75%, 60%)', label: 'Orange' },
+                    { color: 'hsl(60, 75%, 60%)', label: 'Yellow' },
+                    { color: 'hsl(90, 75%, 60%)', label: 'Light green' },
+                    { color: 'hsl(120, 75%, 60%)', label: 'Green' },
+                    { color: 'hsl(180, 75%, 60%)', label: 'Cyan' },
+                    { color: 'hsl(210, 75%, 60%)', label: 'Light blue' },
+                    { color: 'hsl(240, 75%, 60%)', label: 'Blue' },
+                    { color: 'hsl(270, 75%, 60%)', label: 'Purple' }
+                ]
+            },
+            fontBackgroundColor: {
+                colors: [
+                    { color: 'hsl(0, 0%, 0%)', label: 'Black' },
+                    { color: 'hsl(0, 0%, 30%)', label: 'Dim grey' },
+                    { color: 'hsl(0, 0%, 60%)', label: 'Grey' },
+                    { color: 'hsl(0, 0%, 90%)', label: 'Light grey' },
+                    { color: 'hsl(0, 0%, 100%)', label: 'White', hasBorder: true },
+                    { color: 'hsl(0, 75%, 60%)', label: 'Red' },
+                    { color: 'hsl(30, 75%, 60%)', label: 'Orange' },
+                    { color: 'hsl(60, 75%, 60%)', label: 'Yellow' },
+                    { color: 'hsl(90, 75%, 60%)', label: 'Light green' },
+                    { color: 'hsl(120, 75%, 60%)', label: 'Green' },
+                    { color: 'hsl(180, 75%, 60%)', label: 'Cyan' },
+                    { color: 'hsl(210, 75%, 60%)', label: 'Light blue' },
+                    { color: 'hsl(240, 75%, 60%)', label: 'Blue' },
+                    { color: 'hsl(270, 75%, 60%)', label: 'Purple' }
+                ]
+            },
+            alignment: {
+                options: ['left', 'right', 'center', 'justify'] // 좌, 우, 가운데, 양쪽 정렬
+            },
+            // ⭐️ 기타 툴바 아이템 설정 ⭐️
+            // 만약 툴바 구성을 명시하고 싶다면 여기에 추가하면 돼.
+            // toolbar: {
+            //     items: [
+            //         'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
+            //         'blockQuote', 'imageUpload', 'insertTable', 'mediaEmbed', 'undo', 'redo'
+            //     ]
+            // }
+
+        })
+        .then(editor => {
+            editorInstance = editor; // 에디터 인스턴스를 저장
+            console.log('CKEditor가 성공적으로 로드되었습니다.', editor);
+            // 에디터 로딩 후에 필요한 추가적인 초기화 작업을 여기에 넣을 수 있어.
+        })
+        .catch(error => {
+            console.log("aaa");
+            console.log('에러 발생했어요 : '+error);
+            // console.error('CKEditor 로딩 중 오류 발생:', error);
+        });
+
+    // 폼 제출 시 에디터 내용을 textarea에 반영
+    document.getElementById('contentForm').addEventListener('ss', function(event) {
+        // CKEditor 5는 생성될 때 연결된 <textarea>의 내용을 자동으로 업데이트해줘.
+        // 그래서 보통 이 `submit` 이벤트 리스너 안에서 `getData()`를 호출하고 
+        // hidden input에 넣는 등의 작업이 필요 없는 경우가 많아.
+        // form의 `textarea` name="content"로 값이 잘 넘어갈 거야.
+        console.log("폼이 제출됩니다. CKEditor 내용:", editorInstance.getData());
+    });
+</script>
+</body>
+</html>

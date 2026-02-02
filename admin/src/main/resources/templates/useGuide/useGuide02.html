@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+    <title>CKEditor 5 Classic editor</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <style>
+        .ck .ck-editor__top.ck-reset_all {
+            width: 800px;
+        }
+
+        .ck .ck-editor__main .ck-editor__editable {
+            min-height: 400px;
+        }
+        .ck-content .image img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            min-width: unset !important; /* 🔥 이걸 추가해줘! */
+            height: auto !important; /* 추가적으로 height도 auto로 고정될 수 있으니 unset */
+        }
+
+        /* ⭐️⭐️⭐️ 이미지 캡션 스타일 수정 ⭐️⭐️⭐️ */
+    .ck-editor__editable .image-caption {
+        font-size: 0.8em; /* 캡션 폰트 크기를 줄임 (원하는 크기로 조절) */
+        padding: 0.3em;   /* 내부 여백을 줄임 (원하는 크기로 조절) */
+        text-align: center; /* 캡션 텍스트 중앙 정렬 */
+    }
+    /* Enter image caption 이라는 placeholder 텍스트의 크기/스타일 */
+    .ck-editor__editable .image-caption.ck-placeholder {
+        font-size: 0.8em; /* 플레이스홀더 텍스트 폰트 크기 조절 */
+        padding: 0.3em;
+        text-align: center;
+        opacity: 0.7; /* 조금 연하게 표시 */
+    }
+    /* 캡션을 입력할 때 보여지는 에디터 요소 (Enter image caption 이라는 텍스트를 감싸는 input 같은 요소) */
+    .ck-editor__editable .ck-widget__caption {
+        padding: 0.3em;
+    }
+    .ck .ck-editor__main .ck-editor__editable {
+        max-width: 100%;
+        min-height: 0px;
+    }
+    
+    </style>
+</head>
+<body>
+    <h1>Classic editor</h1>
+    <div id="editor">
+        <p>This is some sample content.</p>
+    </div>
+    <script>
+        ClassicEditor
+            .create( document.querySelector( '#editor' ), {
+                // Editor configuration.
+                image: {
+                    toolbar: [
+                        'imageTextAlternative', 'toggleImageCaption', 
+                        'imageStyle:inline', 'imageStyle:block', 'imageStyle:side',
+                        '|', 
+                        'resizeImage', // ⭐️⭐️⭐️ 이게 있어야 드래그 핸들이 나와! ⭐️⭐️⭐️
+                        'resizeImage:50', 'resizeImage:75', 'resizeImage:original' 
+                    ],
+                    resizeOptions: [
+                        { name: 'resizeImage:original', value: null, icon: 'originalSize' },
+                        { name: 'resizeImage:50', value: '50%', icon: 'medium' },
+                        { name: 'resizeImage:75', value: '75%', icon: 'large' }
+                    ],
+                    styles: [
+                        'full', 'side', 'alignLeft', 'alignCenter', 'alignRight'
+                    ]
+                },
+            ckfinder: {
+                uploadUrl: '/upload/image'
+            }
+            } )
+            .catch( error => {
+                console.log( '에러 발생했어요 : '+error );
+                // console.error( error );
+            } );
+    </script>
+</body>
+</html>

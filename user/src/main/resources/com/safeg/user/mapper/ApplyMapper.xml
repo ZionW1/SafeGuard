@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.safeg.user.mapper.ApplyMapper">
+    <select id="userCampaignApply" resultType="UserCampaignVO">
+        select 
+            uc.campaign_id,
+            uc.user_id,
+            uc.user_No,
+            u.user_nm,
+            u.phone_Num,
+            c.campaign_title,
+            c.company_nm,
+            c.company_ph,
+            c.applicants_Num,
+            c.recruitment_Num,
+            uc.status,
+            (CASE
+                WHEN c.type_code = '01' THEN '경호'
+                WHEN c.type_code = '02' THEN '진행'
+                WHEN c.type_code = '03' THEN '수행'
+                ELSE ''
+            END) as type_nm,
+            (CASE
+                WHEN uc.status = '0' THEN '대기'
+                WHEN uc.status = '1' THEN '출근'
+                WHEN uc.status = '2' THEN '퇴근'
+                WHEN uc.status = '3' THEN '지각'
+                WHEN uc.status = '4' THEN '결근'
+                WHEN uc.status = '5' THEN '무단'
+                ELSE '없음'
+            END) as status_nm,
+            uc.user_no,
+            c.app_period_str,
+            c.app_period_end,
+            c.event_Period_str,
+            c.event_Period_End,
+            result_date,
+            apply_date,
+            place_addr
+        from user_campaign uc 
+        left outer join user u 
+        on uc.user_id = u.user_id
+        left outer join campaign c 
+        on uc.campaign_id = c.campaign_id
+        where uc.campaign_id=#{id}
+        AND uc.apply_date = #{applyDate}
+        AND uc.is_deleted = 'N'
+    </select>
+
+    <update id="updateStatus">
+        UPDATE 
+            user_campaign 
+        SET 
+            Status = #{statusValue} 
+        WHERE 
+            campaign_id = #{campaignId} 
+        AND 
+            user_no = #{userNo}
+        AND
+            apply_date = #{applyDate}
+        AND
+            is_deleted = 'N'
+    </update>
+
+    <select id="statusInfo" resultType="String">
+        SELECT 
+            status
+        FROM 
+            user_campaign 
+        WHERE 
+            campaign_id = #{campaignId}
+        AND 
+            user_no = #{userNo}
+        AND
+            apply_date = #{applyDate}
+        AND
+            is_deleted = 'N'
+    </select>
+
+    <update id="updatePay">
+        UPDATE 
+            user 
+        SET 
+            pay = COALESCE(pay, 0) + (select campaign_pay from campaign where campaign_id = #{campaignId})
+        WHERE 
+            id = #{userNo}
+        AND
+            is_deleted = 'N'
+    </update>
+
+    <update id="updateLatenessPay">
+        UPDATE 
+            user 
+        SET 
+            pay = COALESCE(pay, 0) + (select campaign_pay from campaign where campaign_id = #{campaignId})
+        WHERE 
+            id = #{userNo}
+        AND
+            is_deleted = 'N'
+    </update>
+
+    <update id="initStatus">
+        UPDATE 
+            user_campaign 
+        SET 
+            Status = 0,
+            late_yn = 'N'
+        WHERE 
+            campaign_id = #{campaignId} 
+        AND 
+            user_no = #{userNo}
+        AND
+            apply_date = #{applyDate}
+        AND
+            is_deleted = 'N'
+    </update>
+
+    <insert id="insertPointHistory">
+        INSERT INTO Point_History( user_Id, amount, point_Type, source_id, mission_date )
+        VALUES ( #{userId}, #{amount}, #{pointType}, #{sourceId}, #{missionDate})
+    </insert>
+
+    <update id="lateYn">
+        UPDATE 
+            user_campaign 
+        SET 
+            late_yn = 'Y'
+        WHERE 
+            campaign_id = #{campaignId} 
+        AND 
+            user_no = #{userNo}
+        AND
+            apply_date = #{applyDate}
+        AND
+            is_deleted = 'N'
+    </update>
+
+    <update id="pointFull">
+        UPDATE 
+            user 
+        SET 
+            point_full = COALESCE(point_full, 0) + 10000
+        WHERE 
+            id = #{userNo}
+        AND
+            is_deleted = 'N'
+    </update>
+</mapper>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{layouts/base_layout}"><head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .mypage_form {
+      max-width: 55%;
+      margin: auto;
+    }
+    
+    .section-title {
+        width: 80%;
+      margin-top: 30px;
+      margin-bottom: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-bottom: 2px solid #555;
+      padding-bottom: 2px;
+    }
+    .form-row {
+        width: 70%;
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+        align-items: center;
+    }
+    label {
+      width: 130px;
+      font-weight: 600;
+      color: #222;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"] {
+      flex: 1;
+      padding: 15px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    input[readonly] {
+      background-color: #f0f0f0;
+      cursor: not-allowed;
+    }
+    .mypage_button {
+      margin-top: 00px;
+      padding: 10px 20px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 5px;
+      background-color: #f09a67;
+      color: white;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e28342;
+    }
+    .left-container {
+    display: flex;
+    flex-direction: column;  /* 세로 정렬 (이미지 위, 텍스트 아래) */
+    align-items: center;     /* 가로 중심 정렬 */
+    justify-content: center; /* 세로 중심 정렬 */
+    height: 100%;            /* 부모 컨테이너 높이에 맞춤 (필요에 따라 조절) */
+    width: 100%;             /* 부모 컨테이너 너비에 맞춤 */
+    box-sizing: border-box;  /* 패딩, 보더 포함 */
+    padding: 10px;           /* 영역 내 간격 */
+    }
+    .mypage_address {
+        margin-right: 5px;
+    }
+    .zone_code {
+        width: 100px;
+    }
+    </style>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+    <script th:inline="javascript">
+        // /*<![CDATA[*/
+        // const isAuthenticated = /*[[${#authentication.principal != 'anonymousUser'}]]*/ false; // 서버에서 boolean 값 주입
+        // if (isAuthenticated) {
+        //     console.log("JavaScript: 사용자 로그인 상태입니다.");
+        // } else {
+        //     console.log("JavaScript: 사용자 로그인 상태가 아닙니다.");
+        // }
+        // /*]]>*/
+        document.addEventListener('DOMContentLoaded', function () {
+
+        });
+
+        const csrfToken = /*[[${_csrf.token}]]*/ '';
+        const csrfHeaderName = /*[[${_csrf.headerName}]]*/ '';
+
+var element_wrap = document.getElementById('address_search_wrap');
+
+function foldDaumPostcode() {
+    document.getElementById('address_modal_background').style.display = 'none';
+}
+
+function execDaumPostcode() {
+    var element_wrap = document.getElementById('address_search_wrap');
+    var modal_bg = document.getElementById('address_modal_background');
+
+    modal_bg.style.display = 'flex'; // 모달 보이기
+
+    new daum.Postcode({
+        oncomplete: function(data) {
+            var addr = '';
+            var extraAddr = '';
+            console.log(data.sido);
+            if (data.userSelectedType === 'R') {
+                addr = data.roadAddress;
+            } else {
+                addr = data.jibunAddress;
+            }
+
+            if(data.userSelectedType === 'R'){
+                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                    extraAddr += data.bname;
+                }
+                if(data.buildingName !== '' && data.apartment === 'Y'){
+                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                }
+                if(extraAddr !== ''){
+                    extraAddr = ' (' + extraAddr + ')';
+                }
+            }
+            console.log(data)
+            document.getElementById('zoneCode').value = data.zonecode;
+            document.getElementById('address').value = addr + extraAddr;
+            document.getElementById('province').value = data.sido;
+            document.getElementById('city').value = data.sigungu;
+            document.getElementById('roadName').value = data.roadname;
+            document.getElementById('roadAddress').value = data.roadAddress;
+            // document.getElementById('jibunAddress').value = data.jibunAddress;
+            document.getElementById('extraAddress').value = data.bname;
+
+            // document.getElementById('detailAddress').value = ''
+            document.getElementById('detailAddress').focus();
+
+            foldDaumPostcode(); // 모달 닫기
+
+        },
+        onresize : function(size) {
+            element_wrap.style.height = 460 + 'px';
+        },
+        width : '100%',
+        height : '100%'
+    }).embed(element_wrap);
+}
+
+    // roadAddress detailAddress를 합쳐서 fullAddress를 업데이트하는 함수
+    function updateFullAddress() {
+        const jibunAddr = document.getElementById('roadAddress').value;      // 숨겨진 지번 주소 (Daum API 결과)
+        const detailAddr = document.getElementById('detailAddress').value;    // 사용자가 직접 입력하는 상세 주소
+
+        let combinedAddress = jibunAddr; // 기본은 지번 주소로 시작
+
+        // 상세 주소 필드에 값이 있다면 지번 주소 뒤에 추가
+        if (detailAddr.trim() !== '') { // trim()으로 공백 제거 후 내용이 있는지 확인
+            combinedAddress += ' ' + detailAddr; // 공백을 넣어 구분
+        }
+        console.log(combinedAddress);
+        // 최종적으로 조합된 주소를 fullAddress hidden 필드에 설정
+        document.getElementById('fullAddress').value = combinedAddress.trim(); // 마지막 공백까지 제거
+    }
+
+    </script>
+    
+    <script th:inline="javascript">
+        // const isAuthenticated = document.getElementById('isAuthenticated').value === 'true';
+
+        // let user = /*[[${user}]]*/ null;
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     console.log("user : " + user);
+        // });
+    </script>
+</head>
+
+<body>
+    <!-- <div sec:authorize="isAuthenticated()">
+        <h3>인증된 사용자 디버그 정보:</h3>
+        <p>Principal 클래스명: <span th:text="${#authentication.principal.getClass().getName()}"></span></p>
+        <p>Principal 전체 정보: <span th:text="${#authentication.principal.toString()}"></span></p>
+        <p>Username (sec:authentication="name"): <span sec:authentication="name"></span></p>
+        여기에 th:text="${#authentication.principal.id}" 추가해보기
+        <p>ID (principal.id): <span th:text="${#authentication.principal.id}"></span></p>
+    </div> -->
+    <main layout:fragment="content">
+        <div class="main-side-content">
+            <div class="container">
+                <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenu}" />
+            </div>
+        <!-- <h2 style="text-align: left; margin-top: 20px;">내 정보</h2> -->
+        <div class="main-content">
+            <!-- <form class="mypage_form" action="/userUpdate" method="post"> -->
+            <form class="mypage_form" id="form" action="/mypage/updateInfo" method="post" enctype="multipart/form-data">
+
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="id" th:value="${user.id}" />
+                <input type="hidden" name="userId" th:value="${user.userId}" />
+                <h1>마이페이지</h1>
+                <p>환영합니다, <span sec:authentication="name"></span>님! 마이페이지입니다.</p>
+                
+                <!-- 로그인한 사용자만 이 섹션을 볼 수 있도록 함 -->
+                <div sec:authorize="isAuthenticated()">
+                <!-- #authentication.principal 을 user 변수에 할당하여 편리하게 사용 -->
+                <!-- <div th:with="user = ${#authentication.principal}"> -->
+                    
+                        
+                        <div class="section-title">회원정보</div>
+                        <div class="form-row">
+                            <label for="nickname">닉네임</label>
+                            <input type="text" id="nickname" name="nickname" th:value="${user.nickname}"/>
+                        </div>
+                        <div class="form-row">
+                            <label for="email">아이디(이메일)</label>
+                            <input type="email" id="email" name="email" th:value="${user.email}" readonly />
+                        </div>
+                        <div class="form-row">
+                            <label for="phone">휴대전화번호</label>
+                            <input type="tel" id="phoneNum" name="phoneNum" th:value="${user.phoneNum}"/>
+                        </div>
+                        <div class="form-row">
+                            <label for="bankNm">은행명</label>
+                            <input type="text" id="bankNm" name="bankNm" th:value="${user.bankNm}" placeholder="은행명 입력" />
+                        </div>
+                        <div class="form-row">
+                            <label for="accountNumber">계좌번호</label>
+                            <input type="text" id="accountNumber" name="accountNumber" th:value="${user.accountNumber}" placeholder="계좌번호 입력" />
+                        </div>
+                        <div class="form-row">
+                            <label for="depositor">예금주명</label>
+                            <input type="text" id="depositor" name="depositor" th:value="${user.depositor}" placeholder="예금주명 입력" />
+                        </div>
+                        <div th:if="${getAddress != null}">
+                            <div class="form-row">
+                                <label for="address">주소</label>
+                                <input type="text" id="getfullAddress" name="getfullAddress" th:value="${getAddress.fullAddress}" placeholder="" readonly/>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <!-- <span sec:authentication="name"></span> -->
+                            <input class="mypage_address zone_code" type="text" name="zoneCode"  id="zoneCode" placeholder="우편번호" readonly>
+                            <input class="mypage_address" type="text" name="address"  id="address" placeholder="주소" readonly><br>
+                            <input class="mypage_address" type="text" name="detailAddress"  id="detailAddress" placeholder="상세주소" oninput="updateFullAddress();">
+                            <input class="mypage_button" type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
+
+                            <input type="hidden" name="province" id="province">
+                            <input type="hidden" name="city" id="city">
+                            <input type="hidden" name="roadName" id="roadName">
+                            <input type="hidden" name="roadAddress" id="roadAddress">
+                            <input type="hidden" name="jibunAddress" d="jibunAddress">
+                            <input type="hidden" name="extraAddress" id="extraAddress">
+                            <input type="hidden" name="fullAddress" id="fullAddress" value="">
+                        </div>
+                        <div class="form-row">
+                            <button class="mypage_button" type="submit">저장하기</button>
+                            <button class="mypage_button" type="button" onclick="ApplyBodyguard('01')">경호원 신청하기</button>
+                        </div>
+                    </form>
+                    
+                    <form class="certificate-preview" action="/mypage/uploadIdttImage" method="post" enctype="multipart/form-data">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <input type="hidden" name="id" th:value="${user.id}" />
+                        <input type="hidden" name="userId" th:value="${user.userId}" />
+                        <div th:if="${getIdentity != null}">
+                            <img id="imgCertFile" th:src="|/selectProfile?id=${user.id}&args=2|" alt="파일이미지" width="720" height="405" style="max-width: 100%; margin: 0px auto;" />
+                            <!-- <div class="file-action-buttons">
+                                <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
+                                        th:onclick="removeFile(this, [[${userId}]])">기존 이미지 삭제</button>
+                            </div> -->
+                        </div>
+                        <div class="profile" th:if="${getIdentity == null}">
+                            <!-- <input type="file" name="image" id="image" accept="image/*" style="display: none" /> -->
+                            <div class="profile" th:if="${getIdentity == null}">
+                                <div id="cert_drop" style="width: 75%; border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px">
+                                    <input type="file" name="IdttImage" id="cert_image" accept="image/*" style="display: none" />
+                                    <div id="imageDisplayArea">
+                                        <img id="cert_preview" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
+                                        
+                                        <!-- getIdentity null일 때만 보이도록. -->
+                                        <p id="cert_placeholder_message" 
+                                            th:if="${getIdentity == null}"
+                                            style="color: #888; font-size: 0.9em; margin-top: 10px; display: block;">
+                                            신분증 이미지를 선택해주세요. (신분증 업로드 시 뒷자리 마스킹 처리할 것)
+                                        </p>
+                                    </div>
+                                </div>
+                                <button class="mypage_button" type="submit">신분증 이미지 업로드</button>
+                            </div>
+                            <!-- <div th:if="${file != null}">
+                                <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" 
+                                th:onclick="removeFile(this, [[${userId}]])">기존 이미지 삭제</button>
+                            </div> -->
+                            
+                            <p><span sec:authentication=""></span></p>
+
+                        </div>
+                    </form>
+
+                    <form class="certificate-preview" action="/mypage/uploadCertImage" method="post" enctype="multipart/form-data">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <input type="hidden" name="id" th:value="${user.id}" />
+                        <input type="hidden" name="userId" th:value="${user.userId}" />
+                        <div th:if="${getCertificate != null}">
+                            <img id="imgCertFile" th:src="|/selectProfile?id=${user.id}&args=3|" alt="파일이미지" width="720" height="405" style="max-width: 100%; margin: 0px auto;" />
+                            <!-- <div class="file-action-buttons">
+                                <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
+                                        th:onclick="removeFile(this, [[${userId}]])">기존 이미지 삭제</button>
+                            </div> -->
+                        </div>
+                        <div class="profile" th:if="${getCertificate == null}">
+                            <!-- <input type="file" name="image" id="image" accept="image/*" style="display: none" /> -->
+                            <div class="profile" th:if="${getCertificate == null}">
+                                <div id="cert_drop" style="width: 75%; border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px">
+                                    <input type="file" name="certImage" id="cert_image" accept="image/*" style="display: none" />
+                                    <div id="imageDisplayArea">
+                                        <img id="cert_preview" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
+                                        
+                                        <!-- getCertificate가 null일 때만 보이도록. -->
+                                        <p id="cert_placeholder_message" 
+                                            th:if="${getCertificate == null}"
+                                            style="color: #888; font-size: 0.9em; margin-top: 10px; display: block;">
+                                            이수증 이미지를 선택해주세요.
+                                        </p>
+                                    </div>
+                                </div>
+                                <button class="mypage_button" type="submit">이수증 이미지 업로드</button>
+                            </div>
+                            <!-- <div th:if="${file != null}">
+                                <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" 
+                                th:onclick="removeFile(this, [[${userId}]])">기존 이미지 삭제</button>
+                            </div> -->
+                            
+                            <p><span sec:authentication=""></span></p>
+
+                        </div>
+                    </form>
+                <!-- </div> -->
+            </div>
+        </div>
+    
+        <div id="address_modal_background" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+        background-color: rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999;">
+            <div id="address_search_wrap" style="position:relative; width:90%; max-width:500px; height:460px; background:#fff; border-radius:8px; padding:10px; box-sizing: border-box;">
+                <button onclick="foldDaumPostcode()" style="position:absolute; top:10px; right:10px; z-index:10; cursor:pointer;">✕</button>
+            </div>
+        </div>
+        <!-- 로그인하지 않은 사용자에게 보이는 메시지 -->
+        <div sec:authorize="!isAuthenticated()" class="guest-message">
+            <p>로그인 후 마이페이지를 이용하실 수 있습니다.</p>
+            <p><a th:href="@{/login}">로그인하기</a></p>
+        </div>
+    </div>
+    <!-- ✅ 드래그앤드롭 스크립트 -->
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+    const dropCert = document.getElementById("cert_drop");
+    const certImage = document.getElementById("cert_image"); // 파일 input 요소
+    const certPreview = document.getElementById("cert_preview");
+    const certPlaceholderMessage = document.getElementById("cert_placeholder_message");
+    const certUploadForm = document.querySelector(".certificate-preview"); // 폼 자체를 선택
+
+    // --- 추가된 부분: 폼 제출 이벤트 리스너 ---
+    if (certUploadForm) {
+        certUploadForm.addEventListener('submit', function(e) {
+            // certImage.files.length === 0 이면 선택된 파일이 없다는 뜻
+            if (certImage.files.length === 0) {
+                e.preventDefault(); // 폼 제출을 막음
+                alert("이수증 이미지를 선택해주세요!");
+                // 추가적으로, 드롭 영역에 포커스나 시각적 강조를 줄 수도 있어.
+                // dropCert.focus();
+                // dropCert.style.borderColor = "red"; // 예시
+            }
+            // 파일이 있다면 폼은 정상적으로 제출될 거야.
+        });
+    }
+    // ------------------------------------------
+
+    if (dropCert && certImage && certPreview) { // 기존 DOM 요소 존재 확인
+        // 헬퍼 함수: 메시지와 미리보기 이미지의 가시성을 업데이트
+        function updateCertDisplay(hasFileSelected) {
+            if (hasFileSelected) {
+                certPreview.style.display = "block";
+                if (certPlaceholderMessage) {
+                    certPlaceholderMessage.style.display = "none";
+                }
+            } else {
+                certPreview.src = "";
+                certPreview.style.display = "none";
+                // 초기 상태에 따라 메시지를 보이게 함
+                // 만약 페이지 로드 시 'getCertificate == null'이 true여서 메시지가 처음부터 보인다면
+                // 여기서 다시 'block'으로 설정하면 돼.
+                // 아니면 처음부터 Thymeleaf가 'display: none'으로 처리하고, 파일이 없을 때만 'block'으로 바꿀 수도 있어.
+                // 여기서는 HTML의 `th:if`와 `display: block` 초기 설정에 맞춰서 처리할게.
+                if (certPlaceholderMessage) {
+                    certPlaceholderMessage.style.display = "block";
+                }
+            }
+        }
+
+        dropCert.addEventListener("click", () => {
+            certImage.click();
+        });
+
+        dropCert.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropCert.style.backgroundColor = "#f3e7ff";
+        });
+        dropCert.addEventListener("dragleave", () => {
+            dropCert.style.backgroundColor = "transparent";
+        });
+        dropCert.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropCert.style.backgroundColor = "transparent";
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith("image/")) {
+                certImage.files = e.dataTransfer.files;
+                showPreview(file);
+                updateCertDisplay(true); // 파일 선택됨
+            }
+        });
+
+        certImage.addEventListener("change", () => {
+            const file = certImage.files[0];
+            if (file) {
+                showPreview(file);
+                updateCertDisplay(true); // 파일 선택됨
+            } else {
+                updateCertDisplay(false); // 파일 선택 취소됨
+            }
+        });
+
+        function showPreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                certPreview.src = e.target.result;
+                certPreview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // 페이지 로드 시, 이미 이미지가 로드되어 있다면 메시지를 숨김
+        // <img id="imgCertFile"> 가 실제로 로드되는 경우가 있다면 그 때 메시지를 숨겨야 해.
+        // 현재는 certPreview가 이미지를 미리보기하는 용도이므로,
+        // 페이지 로드 시 certPreview.src가 비어있다면, 즉 파일이 없다고 판단하면 메시지를 보이게 한다.
+        if (certPreview.src === "" && certPlaceholderMessage) {
+            // (Thymeleaf의 th:if 조건과 맞물려 이미 보이고 있을 확률이 높음)
+            // certPlaceholderMessage.style.display = "block"; // 초기화 시점에 항상 보이도록 강제하려면 사용
+        }
+
+    } 
+});
+        function ApplyBodyguard(param) {
+            // alert("경호원 신청이 완료되었습니다. 관리자 승인 후 이용 가능합니다.");
+            if(!confirm("경호원 신청을 하시겠습니까? 신청 후에는 수정이 불가능합니다.")) {
+                return; // 사용자가 취소를 누르면 함수 종료
+            }
+            const url = '/mypage/applyBodyguard';
+    
+    // ⭐ ⭐ ⭐ csrfHeader와 csrfToken 변수명을 명확히 사용! ⭐ ⭐ ⭐
+    // Thymeleaf가 값을 여기에 넣어줄 거야.
+    const csrfHeader = /*[[${_csrf.headerName}]]*/ ''; // 'X-CSRF-TOKEN' 또는 비어있는 문자열 등이 될 수 있음
+    const csrfToken = /*[[${_csrf.token}]]*/ '';      // 실제 토큰 값 또는 비어있는 문자열 등이 될 수 있음
+
+    const userId = document.getElementById('id').value; // 이 부분은 그대로
+    const form = document.getElementById('form');      // 이 부분도 그대로
+    const formData = new FormData(form);               // 이 부분도 그대로
+    formData.append('guardType', param);           // '01' 값을 bodyguardType 필드에 추가
+
+    const requestHeaders = {}; // fetch 요청에 사용할 헤더 객체 생성
+
+    // ⭐ ⭐ ⭐ csrfHeader와 csrfToken 값이 유효할 경우에만 헤더에 추가! ⭐ ⭐ ⭐
+    // null, undefined, 빈 문자열('')이 아닐 경우에만 추가합니다.
+    if (csrfHeader && csrfToken) { 
+        requestHeaders[csrfHeader] = csrfToken;
+    }
+    // Content-Type 헤더는 FormData 사용 시 자동으로 설정되므로 주석 처리하는 것이 일반적이지만,
+    // 필요하다면 여기 조건문 바깥에 추가할 수 있어 (FormData 사용 시에는 자동으로 'multipart/form-data'로 설정됨).
+    // requestHeaders['Content-Type'] = 'application/json'; // FormData 사용 시 주의
+
+    // ⭐ ⭐ ⭐ fetch 호출 부분에서 requestHeaders 객체를 사용! ⭐ ⭐ ⭐
+    fetch(url, {
+        method: 'POST', 
+        headers: requestHeaders, // 동적으로 생성된 requestHeaders 객체 사용
+        body: formData
+    })
+
+    .then(response => {
+        // 응답 처리 로직
+        if (!response.ok) {
+            // 서버에서 에러 응답을 받았을 경우 (예: 400, 500)
+            // JSON 응답을 기대한다면 response.json()을 먼저 시도
+            return response.text().then(text => { // 응답 텍스트를 읽어 에러 메시지에 포함
+                throw new Error(`HTTP error! Status: ${response.status}, Message: ${text}`);
+            });
+        }
+        // 서버 응답이 JSON 형식이 아니라면 .json() 대신 .text() 사용
+        // 또는 content-type 헤더를 보고 분기
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.indexOf('application/json') !== -1) {
+            return response.json();
+        } else {
+            return response.text();
+        }
+    })
+    .then(data => {
+        console.log('Success:', data);
+        // 성공적으로 처리 후 다음 동작 (예: 페이지 이동, 메시지 표시)
+        // 예를 들어: window.location.href = '/some/success/page';
+        alert("저장이 완료되었습니다!");
+    })
+    .catch(error => {
+        console.error('Fetch operation failed:', error);
+        // 사용자에게 에러 메시지 표시
+        alert("저장 중 오류가 발생했습니다: " + error.message);
+    });
+        }
+    </script>
+</main>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.aloha.bodyguard.mapper.BoardMapper">
+    
+    <!-- 목록 -->
+    <select id="list" resultType="Board">
+        SELECT * FROM BOARD
+        WHERE
+            <if test="option.code == 0">
+                    title like CONCAT('%', #{option.keyword}, '%')
+                or writer like CONCAT('%', #{option.keyword}, '%')
+                or content like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 1">
+                title like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 2">
+                content like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 3">
+                    title like CONCAT('%', #{option.keyword}, '%')
+                or content like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 4">
+                writer like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.orderCode == 0">
+                order by created_at desc
+            </if>
+            <if test="option.orderCode == 1">
+                order by title asc
+            </if>
+
+            limit #{page.index}, #{page.rows}
+    </select>
+    
+    <!-- 조회 -->
+    <select id="select" resultType="Board">
+        select * from board where id = #{id}
+    </select>
+
+    <!-- 등록 -->
+    <!-- Mybatis 의 useGeneratedKey를 사용하면
+        MySQL의 Auto_increment 되는 값을 전달한 객체에 지정한 변수로 매핑할 수 있다. -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="no">
+        Insert into board (id, title, writer, content)
+        values (#{id}, #{title}, #{writer}, #{content})
+    </insert>
+
+    <!-- 수정 -->
+    <update id="update">
+        update board 
+            set title = #{title},
+                writer = #{writer},
+                content = #{content},
+                updated_at = now()
+        where id = #{id}
+    </update>
+    <!-- 삭제 -->
+    <delete id="delete">
+        delete from board 
+        where id= #{id}
+    </delete>
+
+    <!-- 데이터 갯수 -->
+    <select id="count" resultType="int">
+        select count(*) from board 
+        where 
+            <if test="option.code == 0">
+                    title like CONCAT('%', #{option.keyword}, '%')
+                or writer like CONCAT('%', #{option.keyword}, '%')
+                or content like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 1">
+                title like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 2">
+                content like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 3">
+                    title like CONCAT('%', #{option.keyword}, '%')
+                or content like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 4">
+                writer like CONCAT('%', #{option.keyword}, '%')
+            </if>
+    </select>
+</mapper>

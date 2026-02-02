@@ -1,0 +1,136 @@
+<!-- 📂 경로: register/register.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>회원가입</title>
+    <!-- <link rel="stylesheet" href="/css/createMember.css" /> -->
+    <link rel="stylesheet" href="/css/login.css">
+
+</head>
+<body>
+<div class="register-container">
+    <h2>회원가입</h2>
+    <form id="registerForm" class="" th:action="@{/user02}" method="post" th:object="${userVO}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="form-group">
+            <input type="text" name="userNm" id="userNm" th:field="*{userNm}" placeholder="이름" required />
+        </div>
+
+        <div class="form-group phone-group">
+            <input type="tel" name="phoneNum" id="phoneNum" th:field="*{phoneNum}" placeholder="휴대폰 번호" required />
+            <button type="button" class="" id="sendAuth">본인인증</button>
+            <div id="phoneStatus" style="font-size: 12px; margin-top: 4px;"></div>
+        </div>
+
+        <div class="form-group auth-group hidden" id="authCodeGroup">
+            <input type="text" name="authCode" id="authCode" th:field="*{authCode}" placeholder="인증번호 입력" />
+            <button type="button" class="verifyAuth" id="verifyAuth">인증하기</button>
+        </div>
+
+        <div class="form-group">
+            <input type="email" name="email" id="email" th:field="*{email}" placeholder="이메일" required />
+            <div id="emailStatus" style="font-size: 12px; margin-top: 4px;"></div>
+        </div>
+
+        <div class="form-group">
+            <input type="text" name="userId" id="userId" th:field="*{userId}" placeholder="아이디 (6자 이상)" minlength="6" required />
+            <div id="usernameStatus" style="font-size: 12px; margin-top: 4px;"></div>
+        </div>
+
+        <!-- <div class="form-group">
+            <input type="password" name="password" id="password" placeholder="비밀번호" required />
+            <div id="pwHint" class="password-guide">
+            비밀번호는 <span class="font-red"><strong>영문, 숫자, 특수문자 포함 8자 이상</strong></span>이어야 합니다.
+            </div>
+        </div>
+
+        <div class="form-group">
+            <input type="password" name="confirmPassword" id="confirmPassword" placeholder="비밀번호 확인" required />
+            <div id="passwordMatchStatus" style="font-size: 12px; margin-top: 4px;"></div>
+        </div> -->
+        <div class="form-group">
+            <div class="password-input-container">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required />
+                <span class="password-toggle" onclick="togglePasswordVisibility('password')">👁️</span>
+                <!-- 👁️ 이 이모지 대신 Font Awesome 아이콘 (예: <i class="far fa-eye"></i>) 등을 사용해도 좋아! -->
+            </div>
+            <div class="error-msg" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+        </div>
+        
+        <div class="form-group">
+            <div class="password-input-container">
+                <label for="passwordConfirm">비밀번호 확인</label>
+                <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="비밀번호를 다시 입력하세요" required />
+                <span class="password-toggle" onclick="togglePasswordVisibility('passwordConfirm')">👁️</span>
+            </div>
+            <div class="error-msg" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+        </div>
+
+
+        <div class="form-group">
+            <input type="text" name="referrerId" id="referrerId" placeholder="추천인 아이디 (선택)" />
+        </div>
+
+        <button type="submit">회원가입 신청</button>
+    </form>
+
+
+    
+
+    <p class="login-link">
+        <a href="/user01" class="back-to-login">← 로그인으로 돌아가기</a>
+    </p>
+    <p class="login-link">
+        <a href="/" class="back-to-login">메인 홈페이지로 돌아가기</a>
+    </p>
+</div>
+
+<script>
+    const sendAuth = document.getElementById('sendAuth');
+    const authCodeGroup = document.getElementById('authCodeGroup');
+
+    sendAuth.addEventListener('click', () => {
+        // 본인인증 시작 클릭 시 인증번호 입력란 보이기
+        authCodeGroup.classList.remove('hidden');
+
+        // 필요하면 버튼 비활성화 등 추가 동작 가능
+        sendAuth.disabled = true;
+        sendAuth.textContent = '본인인증 진행 중...';
+    });
+
+    document.getElementById('verifyAuth').addEventListener('click', function() {
+        const phone = document.getElementById('phoneInput').value;
+        if (!phone) {
+            alert('번호를 입력해주세요.');
+            return;
+        }
+        // 1) 인증번호 전송 요청 (서버/API로 Ajax 호출 등)
+        sendAuthCode(phone).then(() => {
+            // 2) 인증번호 입력란 활성화
+            document.getElementById('authCodeArea').style.display = 'block';
+            // 상태 메시지, 버튼 비활성화 등 처리
+        }).catch(() => {
+            alert('인증번호 전송에 실패했습니다. 다시 시도해주세요.');
+        });
+    });
+
+    function togglePasswordVisibility(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleButton = passwordField.nextElementSibling; // 바로 다음 형제 요소 (👁️ 버튼)
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text"; // 비밀번호 보이게
+                toggleButton.textContent = "🔒"; // 아이콘 변경 (선택 사항)
+            } else {
+                passwordField.type = "password"; // 비밀번호 숨기게
+                toggleButton.textContent = "👁️"; // 아이콘 변경 (선택 사항)
+            }
+        }
+</script>
+</body>
+</html>
+<!-- 📂 경로: bdgd_user/src/main/resources/templates/join.html -->

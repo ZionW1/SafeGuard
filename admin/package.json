@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@ckeditor/ckeditor5-basic-styles": "^47.3.0",
+    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
+    "@ckeditor/ckeditor5-essentials": "^47.3.0",
+    "@ckeditor/ckeditor5-image": "^47.3.0",
+    "@ckeditor/ckeditor5-paragraph": "^47.3.0",
+    "@ckeditor/ckeditor5-upload": "^47.3.0"
+  }
+}

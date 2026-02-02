@@ -1,0 +1,117 @@
+/* GlobalStyles.css */
+
+/* CSS 변수 정의 */
+:root {
+    --primary-color: #7a22d6;
+    --main-pink: #FEBBE4;
+    --dark-pink: #EA9DCC;
+    --font-regular: 1rem;
+    --font-small: 0.8rem;
+}
+
+/* reset.css를 별도 적용한다고 가정해서 여긴 생략 */
+
+/* body 기본 스타일 */
+body {
+    font-family: 'Pretendard', sans-serif;
+    -ms-overflow-style: none; /* IE, Edge 용 스크롤바 숨김 */
+    scrollbar-width: none; /* 파이어폭스 용 스크롤바 숨김 */
+}
+
+/* 스크롤바 숨김 (필요 시 아래 주석 해제) */
+/*
+*::-webkit-scrollbar {
+    display: none;
+}
+*/
+
+/* Ant Design Dropdown 메뉴 스타일 */
+.ant-dropdown-menu.ant-dropdown-menu-root.ant-dropdown-menu-vertical.ant-dropdown-menu-light {
+    padding: 8px auto;
+    border-radius: 0;
+}
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {
+    padding: 8px 24px;
+}
+
+/* Ant Design 탭 활성화 스타일 */
+.ant-tabs-tab-active {
+    border-bottom: 2px solid #ea9dcc !important;
+    z-index: 2;
+}
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+    border-bottom: 2px solid #ea9dcc !important;
+    z-index: 2;
+}
+
+/* 커스텀 클래스 */
+.ant-dropdown-menu-title-content.custom-drop-select {
+    color: green;
+}
+
+/* 인풋 placeholder 색상 */
+input::placeholder {
+    color: #dbdbdb;
+}
+
+/* 자동 완성 스타일 (크롬 등) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-transition: background-color 9999s ease-out;
+    -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+}
+
+/* 전역 박스 사이징 및 폰트 */
+* {
+    font-family: 'Pretendard', sans-serif;
+    box-sizing: border-box;
+}
+
+/* 버튼 기본 스타일 리셋 */
+button {
+    background: inherit;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    overflow: visible;
+    cursor: pointer;
+}
+
+/* 링크 기본 스타일 리셋 */
+a {
+    text-decoration: none;
+}
+
+/* slick 슬라이더 마진 조정 */
+/* 참고용, 필요 시 적용 */
+.slick-slide {
+    margin: 0 0px; /* space(여백)/2 */
+}
+.slick-list {
+    margin: 0 0px; /* space(여백)/-2 */
+}
+
+/* Pretendard 폰트 @font-face */
+/* 경로는 실제 프로젝트 폴더 구조에 맞게 조정 필요 */
+@font-face {
+    font-family: 'Pretendard';
+    src: local('PretendardBold'), url('./assets/fonts/Pretendard-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Pretendard';
+    src: local('PretendardMedium'), url('./assets/fonts/Pretendard-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Pretendard';
+    src: local('PretendardRegular'), url('./assets/fonts/Pretendard-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}

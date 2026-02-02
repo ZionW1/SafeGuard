@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>뤼튼 회원가입</title>
+    <link rel="stylesheet" href="/css/style.css" />
+
+    <style>
+        body {
+        background-color: #f1eaff;
+        font-family: 'Apple SD Gothic Neo', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        }
+        .signup-container {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(134, 112, 207, 0.2);
+        width: 400px;
+        max-width: 95vw;
+        padding: 40px 30px;
+        text-align: center;
+        }
+        .signup-container img {
+        width: 110px;
+        margin-bottom: 20px;
+        }
+        .signup-container h1 {
+        color: #5641d8;
+        font-weight: 700;
+        margin-bottom: 30px;
+        font-size: 1.8rem;
+        }
+        .signup-container label {
+        display: block;
+        text-align: left;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #7a69d9;
+        font-size: 0.95rem;
+        }
+
+        .signup-container input[type="text"],
+        .signup-container input[type="password"],
+        .signup-container input[type="email"] {
+        width: 100%;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        border: 2px solid #c1b6e7;
+        border-radius: 10px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s;
+        }
+        .signup-container input[type="email"] .email-size {
+            width:90%;
+        }
+
+        /* .signup-container input {
+            width: 100%;
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            border: 2px solid #c1b6e7;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        } */
+        .signup-container input[type="text"]:focus,
+        .signup-container input[type="password"]:focus,
+        .signup-container input[type="email"]:focus {
+        border-color: #6c54d2;
+        box-shadow: 0 0 8px #9e88e9;
+        }
+        .signup-container .agree {
+        text-align: left;
+        margin-bottom: 22px;
+        font-size: 1rem;
+        color: #836ddf;
+        }
+        .signup-container .agree input {
+        transform: scale(1.2);
+        /* margin-right: 6px;
+        vertical-align: middle; */
+        }
+        .signup-container button {
+        width: 100%;
+        padding: 14px 0;
+        background-color: #674de4;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        }
+        .signup-container button:hover {
+        background-color: #5636a9;
+        }
+        .error-msg {
+        color: #d13232;
+        font-size: 0.9rem;
+        margin-bottom: 30px;
+        height: 18px;
+        text-align: left;
+        }
+
+        .password-input-container {
+  position: relative;    /* 아이콘 위치 기준 만들기 */
+  width: 100%;           /* 컨테이너 폭 전체 */
+}
+
+.password-input-container input[type="password"], 
+.password-input-container input[type="text"]{
+  width: 100%;           /* 90% → 100%로 변경 */
+  padding: 12px 40px 12px 14px; /* 오른쪽에 아이콘 공간 확보 (여백 40px) */
+  border: 2px solid #c1b6e7;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+  box-sizing: border-box; /* 패딩 포함 너비 계산 */
+}
+
+.password-input-container .password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;               /* 오른쪽 끝에서 12px 안쪽 */
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #837ccf;
+  user-select: none;        /* 텍스트 선택 방지 */
+}
+
+.email-input-container {
+  position: relative;    /* 아이콘 위치 기준 만들기 */
+  width: 100%;           /* 컨테이너 폭 전체 */
+  margin-bottom: 18px;   /* 간격 조절용 */
+}
+
+.email-input-container input[type="email"]{
+  width: 100%;           /* 90% → 100%로 변경 */
+  padding: 12px 40px 12px 14px; /* 오른쪽에 아이콘 공간 확보 (여백 40px) */
+  border: 2px solid #c1b6e7;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+  box-sizing: border-box; /* 패딩 포함 너비 계산 */
+}
+
+    </style>
+    <script>
+        function togglePasswordVisibility(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleButton = passwordField.nextElementSibling; // 바로 다음 형제 요소 (👁️ 버튼)
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text"; // 비밀번호 보이게
+                toggleButton.textContent = "🔒"; // 아이콘 변경 (선택 사항)
+            } else {
+                passwordField.type = "password"; // 비밀번호 숨기게
+                toggleButton.textContent = "👁️"; // 아이콘 변경 (선택 사항)
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="signup-container">
+        <!-- <img src="/images/rytten-character.png" alt="뤼튼 AI" /> -->
+        <h1>회원가입</h1>
+        <form th:action="@{/join}" method="post" th:object="${userVO}">
+            <label for="userId">아이디</label>
+            <input type="text" id="userId" th:field="*{userId}" placeholder="아이디를 입력하세요" required />
+            <div class="error-msg" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></div>
+
+            <label for="userNm">이름</label>
+            <input type="text" id="userNm" th:field="*{userNm}" placeholder="이름을 입력하세요" required />
+            <div class="error-msg" th:if="${#fields.hasErrors('userNm')}" th:errors="*{userNm}"></div>
+            
+            <label for="nickName">닉네임</label>
+            <input type="text" id="nickName" th:field="*{nickName}" placeholder="닉네임을 입력하세요" required />
+            <div class="error-msg" th:if="${#fields.hasErrors('nickName')}" th:errors="*{nickName}"></div>
+            
+            <div class="password-input-container">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required />
+                <span class="password-toggle" onclick="togglePasswordVisibility('password')">👁️</span>
+                <!-- 👁️ 이 이모지 대신 Font Awesome 아이콘 (예: <i class="far fa-eye"></i>) 등을 사용해도 좋아! -->
+            </div>
+            <div class="error-msg" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+
+            
+            <div class="password-input-container">
+                <label for="passwordConfirm">비밀번호 확인</label>
+                <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="비밀번호를 다시 입력하세요" required />
+                <span class="password-toggle" onclick="togglePasswordVisibility('passwordConfirm')">👁️</span>
+            </div>
+            <div class="error-msg" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+
+            <div class="email-input-container">
+                <label for="email">이메일</label>
+                <input class="email-size" type="email" id="email" th:field="*{email}" placeholder="예: user@domain.com" required />
+            </div>
+            <div class="error-msg" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+
+            <div class="agree">
+                <input type="checkbox" id="agree" th:field="*{agree}"/>
+                <span> 이용약관에 동의합니다</span>
+                <div class="error-msg" th:if="${#fields.hasErrors('agree')}" th:errors="*{agree}"></div>
+            </div>
+
+            <button type="submit">가입하기</button>
+        </form>
+    </div>
+</body>
+</html>

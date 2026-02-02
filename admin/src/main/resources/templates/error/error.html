@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>오류 발생</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        h1 { color: #d33; }
+        .error-details { background-color: #f8f8f8; border: 1px solid #eee; padding: 20px; margin: 20px auto; max-width: 600px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>😱 문제가 발생했어요!</h1>
+    <p>요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.</p>
+    <div class="error-details">
+        <p><strong>발생 시각:</strong> <span th:text="${timestamp}"></span></p>
+        <p><strong>오류 메시지:</strong> <span th:text="${message}"></span></p>
+        <!-- 개발 환경에서는 스택 트레이스도 보여줄 수 있지만, 운영 환경에서는 보안상 노출하지 않는 것이 좋음 -->
+        <!-- <p th:if="${trace}"><strong>상세 내용:</strong> <pre th:text="${trace}"></pre></p> -->
+    </div>
+    <p><a href="/">홈으로 돌아가기</a></p>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

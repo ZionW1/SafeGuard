@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>뤼튼 로그인</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script>
+        function togglePasswordVisibility(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleButton = passwordField.nextElementSibling; // 바로 다음 형제 요소 (👁️ 버튼)
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text"; // 비밀번호 보이게
+                toggleButton.textContent = "🔒"; // 아이콘 변경 (선택 사항)
+            } else {
+                passwordField.type = "password"; // 비밀번호 숨기게
+                toggleButton.textContent = "👁️"; // 아이콘 변경 (선택 사항)
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <!-- 뤼튼 이미지 경로 넣기 -->
+        <h1>행집 어드민</h1>
+        <form action="/login" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <input class="id" type="text" name="userId" placeholder="아이디를 입력하세요" required />
+            <input class="pw" type="password" name="password" placeholder="비밀번호를 입력하세요" required />
+            <button type="submit">로그인</button>
+
+            <div class="checkbox-group">
+                <!-- <label><input type="checkbox" name="rememberId" /> 아이디 저장</label>
+                <label><input type="checkbox" name="autoLogin" /> 자동 로그인</label> -->
+                <div class="item">
+                    <label><input class="form-check-input" type="checkbox" name="remember-id" id="remember-id-check" th:checked="${rememberId}"/> 아이디 저장</label>
+                </div>
+                <div class="item">
+                    <label><input class="form-check-input" type="checkbox" name="auto-login" id="remember-me-check" /> 자동 로그인</label>
+                </div>
+            </div>
+        </form>
+        <div class="welcome-msg">
+            <a href="/join">Create New</a>
+        </div>
+    </div>
+</body>
+</html>

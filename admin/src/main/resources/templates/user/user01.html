@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>Document</title>
+</head>
+<body>
+    <div class="admin-container">
+        <div th:replace="~{fragments/sideBar :: sidebarFragment}"></div>
+        <div class="main-content">
+            <h1><a href="/admin/user01">유저 목록</a></h1>
+            <form class="optionForm" action="/admin/user01" method="get" id="form">
+                <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
+                <select name="code">
+                    <option value="0" th:selected="${option.code==0}">전체</option>
+                    <option value="1" th:selected="${option.code==1}">아이디</option>
+                    <option value="2" th:selected="${option.code==2}">이름</option>
+                    <option value="3" th:selected="${option.code==3}">이메일</option>
+                    <option value="4" th:selected="${option.code==4}">닉네임</option>
+                    <option value="5" th:selected="${option.code==5}">휴대폰번호</option>
+                    <option value="6" th:selected="${option.code==6}">역할</option>
+                    <option value="7" th:selected="${option.code==7}">정지유무</option>
+                </select>
+                <select name="orderCode" id="order-code">
+                    <option value="0" th:selected="${option.orderCode == 0}">최신순</option>
+                    <option value="1" th:selected="${option.orderCode == 1}">포인트순</option>
+                </select>
+                <input type="text" name="keyword" placeholder="검색어를 입력해 주세요." th:value="${param.keyword}">
+                <input class="optionSubmit" type="submit" value="검색">
+                
+            </form>
+            <table border="1">
+                <thead>
+                    <th class="wdt5">No</th>
+                    <th class="wdt10">아이디</th>
+                    <th class="wdt10">이름</th>
+                    <th class="wdt15">이메일</th>
+                    <th class="wdt10">닉네임</th>
+                    <th class="wdt10">휴대폰번호</th>
+                    <th class="wdt5">포인트</th>
+                    <th class="wdt15">주소</th>
+                    <th class="wdt5">역할</th>
+                    <th class="wdt5">정지</th>
+                </thead>
+                <tbody>
+                    <th:block th:if="${userList.isEmpty()}">
+                        <tr>
+                            <td colspan="5" align="center">조회된 데이터가 없습니다.</td>
+                        </tr>
+                    </th:block>
+                    <th:block th:each="user, stat: ${userList}">
+                        <tr th:onclick="|location.href='@{/admin/user02(id=${user.id})}'|">
+                            <td><span th:text="${stat.size - stat.index}"></span></td>
+                            <td><span th:text="${user.userId}"></span></td>
+                            <td><span th:text="${user.userNm}"></span></td>
+                            <td><span th:text="${user.email}"></span></td>
+                            <td><span th:text="${user.nickName}"></span></td>
+                            <td><span th:text="${user.phoneNum}"></span></td>
+                            <td><span th:text="${user.pointId}"></span></td>
+                            <td> <!-- ⭐⭐ 주소 정보를 표시할 단 하나의 셀 ⭐⭐ -->
+                                <!-- user.mainAddress가 null이 아니면 주소를 표시, null이면 "주소 없음" 표시 -->
+                                <span th:if="${user.fullAddress != null}" th:text="${user.fullAddress}"></span>
+                                <span th:if="${user.fullAddress == null}">- 주소 없음 -</span>
+                                <!-- 만약 한 유저가 여러 주소를 가진다면 (user.addresses)
+                                    <span th:if="${user.addresses != null and !user.addresses.empty}" th:text="${user.addresses[0].fullAddress}"></span>
+                                    <span th:else>- 주소 없음 -</span>
+                                -->
+                            </td>
+
+                            
+                            <!-- <td><span th:text="${userAdressList.fullAddress}"></span></td> -->
+                            <td><span th:text="${user.role}"></span></td>
+                            <td><span th:text="${user.isStopped}"></span></td>
+                            <!-- <td><button type="button" class="" onclick="leaderUpdate()">인솔자 변경</button></td> -->
+
+                        </tr>
+                    </th:block>
+                </tbody>
+            </table>
+            <div class="parent">
+                <div class="child">
+                <a th:href="@{${pageUrl} + '&page=' + ${page.first}}">[처음]</a>
+                <th:block th:if="${page.page != page.first }">
+                    <a th:href="@{${pageUrl} + '&page=' + ${page.prev}}">[이전]</a>
+                </th:block>
+                <th:block th:each="no : ${#numbers.sequence(page.start, page.end)}">
+                    <th:block th:if="${page.page == no}">
+                        <b><span th:text="${no}"></span></b>
+                    </th:block>
+                    <th:block th:if="${page.page != no}">
+                        <a th:href="@{${pageUrl} + '&page='+${no}}" th:text="${no}"></a>
+                    </th:block>
+                </th:block>
+                <th:block th:if="${page.page != page.last }">
+                    <a th:href="@{${pageUrl} + '&page=' + ${page.next}}">[다음]</a>
+                </th:block>
+                <a th:href="@{${pageUrl} + '&page=' + ${page.last}}">[마지막]</a>
+            </div>
+            </div>
+            <a href="/admin/campaign03" class="insert">등록</a>
+        </div>
+    </div>
+    <div th:replace="fragments/footer :: mainFooter"></div>
+
+    <script src="/js/common.js"></script>
+    <script th:inline="javascript">
+        function leaderUpdate(){
+            console.log("aa");
+            console.log("${userList[0].createdAt}");
+            if(!confirm('이 사용자를 인솔자로 변경하시겠습니까?')){
+                return;
+            }
+
+            form.action = '/admin/user05'; // action 속성 변경
+            form.submit(); // 요청 전송
+        }
+
+    </script>
+</body>
+</html>

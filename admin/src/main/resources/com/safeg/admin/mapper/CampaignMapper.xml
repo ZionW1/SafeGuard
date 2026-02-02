@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.safeg.admin.mapper.CampaignMapper">
+    <resultMap id="campaignResultMap" type="com.safeg.admin.vo.CampaignVO">
+        <!-- 다른 컬럼 매핑 -->
+        <result column="App_period_str" property="AppPeriodStr"
+                jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
+        <!-- ⭐ TypeHandler 클래스의 풀 패키지 경로를 여기에 넣어줘! ⭐ -->
+        <!-- App_period_end 등 다른 LocalDate 필드도 동일하게 설정 -->
+        <result column="App_period_end" property="AppPeriodEnd"
+                jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
+        <result column="event_Period_str" property="eventPeriodStr"
+                jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
+        <result column="event_Period_end" property="eventPeriodEnd"
+                jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
+        <result column="result_date" property="resultDate"
+                jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
+        <!-- ... 다른 컬럼 매핑 -->
+    </resultMap>
+    
+    <!-- 목록 -->
+    <select id="campaignList" resultType="CampaignVO">
+        select c.campaign_Id, 
+            place_addr,
+            campaign_title,
+            DATE_FORMAT(c.created_at, '%Y.%m.%d') created_at,
+            type_code,
+            applicants_Num,
+            recruitment_Num,
+            u.user_nm
+        from campaign c
+        left outer join user u 
+        on c.leader_code = u.id
+        where 
+        <if test="option.code == 0">
+            (campaign_title like CONCAT('%', #{option.keyword}, '%')
+            or place_addr like CONCAT('%', #{option.keyword}, '%'))
+        </if>
+        <if test="option.code == 1">
+            campaign_title like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 2">
+            place_addr like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 3">
+            tl.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
+        </if>
+        and c.is_deleted = 'N'
+        <if test="option.orderCode == 0">
+            order by campaign_Id desc
+        </if>
+        <if test="option.orderCode == 1">
+            order by campaign_title asc, campaign_id desc
+        </if>
+    </select>
+
+    <select id="campaignCount" resultType="int">
+        select count(*) 
+        from campaign c
+        where 
+            <if test="option.code == 0">
+                campaign_title like CONCAT('%', #{option.keyword}, '%')
+                or status_code like CONCAT('%', #{option.keyword}, '%')
+                or leader_code like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 1">
+                campaign_title like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 2">
+                status_code like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 3">
+                leader_code like CONCAT('%', #{option.keyword}, '%')
+            </if>
+        and is_deleted = 'N'
+    </select>
+
+    <select id="leaderList" resultType="UserVO">
+        SELECT 
+            id, 
+            user_id, 
+            user_nm, 
+            phone_num 
+        FROM 
+            user 
+        WHERE role = 'LEADER';
+    </select>
+
+    <select id="securityType" resultType="CampaignVO">
+        SELECT * 
+        FROM 
+            common_codes 
+        WHERE 
+            code_group = 'campaignType'
+    </select>
+
+    <!-- 등록 -->
+
+    <!-- 캠페인 유형 목록 -->
+    <!-- <select id="campaignTypesList" resultType="CampaignTypesVO">
+        SELECT id, name FROM campaign_Types;
+    </select> -->
+
+    <insert id="campaignInsert" parameterType="CampaignVO" useGeneratedKeys="true" keyProperty="campaignId">
+        INSERT INTO campaign (
+            company_nm,
+            company_ph,
+            campaign_title,
+            leader_Code,
+            type_code,
+            status_code,
+            recruitment_num,
+            leader_pay,
+            campaign_pay,
+            leader_point,
+            place_addr,
+            mission,
+            App_period_str,
+            App_period_end,
+            event_Period_str,
+            event_Period_end,
+            result_date
+        )
+        VALUES (
+            #{companyNm},
+            #{companyPh},
+            #{campaignTitle},
+            #{leaderNo},
+            #{typeCode},
+            '4',
+            #{recruitmentNum},
+            #{leaderPay},
+            #{campaignPay},
+            #{leaderPoint},
+            #{placeAddr},
+            #{mission},
+            #{appPeriodStr},
+            #{appPeriodEnd},
+            #{eventPeriodStr},
+            #{eventPeriodEnd},
+            #{resultDate}
+        );
+        
+    </insert>
+
+    <select id="campaignSelect" resultMap="campaignResultMap">
+        SELECT 
+            c.campaign_id,
+            c.company_nm,
+            c.company_ph,
+            c.campaign_title, 
+            c.leader_code,
+            c.type_code,
+            c.status_code,
+            c.recruitment_num,
+            c.applicants_num,
+            c.leader_Pay,
+            c.campaign_pay,
+            c.place_addr,
+            leader_point,
+            DATE_FORMAT(c.App_period_str,'%Y-%m-%d') AS App_period_str,
+            DATE_FORMAT(c.App_period_end,'%Y-%m-%d') AS App_period_end,
+            DATE_FORMAT(c.event_Period_str,'%Y-%m-%d') AS event_Period_str,
+            DATE_FORMAT(c.event_Period_end,'%Y-%m-%d') AS event_Period_end,
+            DATE_FORMAT(c.result_date,'%Y-%m-%d') AS result_date,
+            c.mission,
+            u.User_nm as leader_Name,
+            u.phone_num as leader_Phone,
+            u.id as leader_No,
+            cc.code_name
+        FROM campaign c
+        LEFT OUTER JOIN user u
+        on c.leader_Code = u.id
+        left outer join common_codes cc
+        on cc.code_group = 'campaignType'
+        and c.type_code = cc.code
+        WHERE c.campaign_id = #{id}
+        <!-- and c.status_code = '' -->
+        AND c.is_deleted = 'N'
+    </select>
+    
+    <update id="campaignUpdate" parameterType="CampaignVO" useGeneratedKeys="true" keyProperty="campaignId">
+        <!-- update campaign c JOIN campaign_schedule s 
+            ON c.id = s.id set 
+            c.business_name = #{businessName},
+            c.category = #{category},
+            c.description = #{description},
+            c.address = #{address},
+            c.main_phone = #{mainPhone},
+            c.channel = #{channel}, 
+            c.point = #{point},
+            c.title = #{title},
+            s.application_Date_Start = #{applicationDateStart},
+            s.application_Date_End = #{applicationDateEnd},
+            s.contents_Date_Start = #{contentsDateStart},
+            s.contents_Date_End = #{contentsDateEnd},
+            c.white_Salary = #{whiteSalary},
+            c.yellow_Salary = #{yellowSalary},
+            c.orange_Salary = #{orangeSalary},
+            c.green_Salary = #{greenSalary},
+            c.red_Salary = #{redSalary}
+        where 
+        c.id = #{id} -->
+        update campaign set
+
+            company_nm = #{companyNm},
+            company_ph = #{companyPh},
+            campaign_title = #{campaignTitle},
+            leader_Code = #{leaderNo},
+            type_code = #{typeCode},
+            status_code = #{statusCode},
+            recruitment_num = #{recruitmentNum},
+            leader_pay = #{leaderPay},
+            campaign_pay = #{campaignPay},
+            place_addr = #{placeAddr},
+            mission = #{mission},
+            App_period_str = #{appPeriodStr},
+            App_period_end = #{appPeriodEnd},
+            event_Period_str = #{eventPeriodStr},
+            event_Period_end = #{eventPeriodEnd},
+            result_date = #{resultDate},
+            leader_point = #{leaderPoint},
+            updated_at = CURRENT_TIMESTAMP
+        where 
+        campaign_id = #{campaignId};
+    </update>
+
+    <update id="campaignDelete">
+        update campaign set
+            is_deleted = 'Y',
+            updated_at = NOW()
+        where 
+        campaign_id = #{id}
+    </update>
+
+    <select id="campaign07" resultType="CampaignVO">
+        select c.campaign_Id, 
+            place_addr,
+            campaign_title,
+            DATE_FORMAT(created_at, '%Y.%m.%d') created_at,
+            applicants_Num,
+            recruitment_Num
+        from campaign c
+        where 
+        <if test="option.code == 0">
+            (campaign_title like CONCAT('%', #{option.keyword}, '%')
+            or status_code like CONCAT('%', #{option.keyword}, '%')
+            or leader_code like CONCAT('%', #{option.keyword}, '%'))
+        </if>
+        <if test="option.code == 1">
+            campaign_title like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 2">
+            status_name like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 3">
+            leader_code like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        and is_deleted = 'N'
+        and applicants_num = 0
+        <if test="option.orderCode == 0">
+            order by campaign_Id desc
+        </if>
+        <if test="option.orderCode == 1">
+            order by campaign_title asc, id desc
+        </if>
+    </select>
+
+    <update id="updateExpiredCampaignsStatus">
+        <![CDATA[
+            UPDATE campaign
+            SET is_deleted = 'Y',
+            updated_at = NOW()
+            WHERE event_Period_end < CURDATE() -- end_date가 오늘 날짜보다 지난 경우 (끝나는 날짜 포함 유무에 따라 <= 또는 <)
+            AND is_deleted = 'N'          -- 아직 삭제되지 않은 캠페인만
+        ]]>
+    </update>
+
+    <!-- <insert id="insertCampaignLeaderApply">
+        INSERT INTO user_campaign(
+            campaign_id, 
+            user_No, 
+            user_id, 
+            applied_str_date, 
+            applied_end_date, 
+            event_str_date, 
+            event_end_date, 
+            apply_date
+        ) values 
+        ( 
+            #{campaignId}, 
+            #{leaderNo}, 
+            #{leaderCode}, 
+            #{AppPeriodStr}, 
+            #{AppPeriodEnd}, 
+            #{eventPeriodStr}, 
+            #{eventPeriodEnd}, 
+            #{applyDate} 
+        ) 
+    </insert> -->
+
+    <insert id="insertCampaignLeaderApply" parameterType="java.util.List">
+        INSERT INTO user_campaign(
+            campaign_id, 
+            user_No, 
+            user_id, 
+            applied_str_date, 
+            applied_end_date,
+            event_str_date,
+            event_end_date,
+            apply_date,
+            status,
+            is_leader
+        ) values 
+        <foreach collection="dailyEntries" item="entry" separator=",">
+        (
+            #{entry.campaignId},
+            #{entry.userNo},
+            #{entry.userId},
+            #{entry.appliedStrDate},
+            #{entry.appliedEndDate},
+            #{entry.eventPeriodStr},
+            #{entry.eventPeriodEnd},
+            #{entry.applyDate},
+            '8',
+            'Y'
+        )
+        </foreach>
+    </insert>
+</mapper>

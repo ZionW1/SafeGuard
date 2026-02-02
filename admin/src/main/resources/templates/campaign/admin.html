@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>캠페인 등록</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Pretendard', sans-serif;
+      display: flex;
+      height: 100vh;
+      background-color: #f8f4ff;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #d8c7ff;
+      padding: 20px;
+    }
+    .sidebar h2 {
+      color: #fff;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .menu-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #f1eaff;
+      border-radius: 6px;
+      color: #5e4b8b;
+      cursor: pointer;
+    }
+    .menu-item.active {
+      background-color: #e3d4ff;
+    }
+    .main-content {
+      flex-grow: 1;
+      padding: 40px;
+      overflow-y: auto;
+    }
+    .main-content h1 {
+      color: #5e4b8b;
+      margin-bottom: 20px;
+    }
+    form {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: block;
+    }
+    input, select, textarea {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      width: 100%;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-row {
+      display: flex;
+      gap: 16px;
+    }
+    .form-row .form-group {
+      flex: 1;
+    }
+    .point-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    button {
+      background-color: #b594ff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #a27efc;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 사이드바 -->
+  <div class="sidebar">
+    <h2>챗짱 Admin</h2>
+    <div class="menu-item active">캠페인 등록</div>
+    <div class="menu-item">유저 관리</div>
+    <div class="menu-item">관리자 관리</div>
+    <div class="menu-item">급여 관리</div>
+  </div>
+
+  <!-- 메인 등록폼 -->
+  <div class="main-content">
+    <h1>캠페인 등록</h1>
+    <form action="../php/admin_save.php" method="POST" enctype="multipart/form-data">
+      <!-- 업체 정보 -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>업체명</label>
+          <input type="text" name="brand" required />
+        </div>
+        <div class="form-group">
+          <label>고객 연락처</label>
+          <input type="text" name="contact" required />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>인솔자 연락처</label>
+          <input type="text" name="guide_contact" required />
+        </div>
+        <div class="form-group">
+          <label>인솔자 선택</label>
+          <select name="guide_select" required>
+            <option value="">선택하세요</option>
+            <option value="김인솔">김인솔</option>
+            <option value="박리더">박리더</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 캠페인 정보 -->
+      <div class="form-group">
+        <label>카테고리</label>
+        <input type="text" name="category" />
+      </div>
+      <div class="form-group">
+        <label>캠페인명</label>
+        <input type="text" name="title" required />
+      </div>
+      <div class="form-group">
+        <label>경호/진행 구분</label>
+        <select name="type" required>
+          <option value="진행">진행</option>
+          <option value="경호">경호</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>캠페인 이미지</label>
+        <div id="drop-area" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px;">
+          <p>이미지를 클릭하거나 끌어다 놓으세요</p>
+          <input type="file" name="image" id="imageInput" accept="image/*" style="display: none;" required />
+          <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin-top: 10px; display: none;" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>모집 인원 수</label>
+        <input type="number" name="limit" required />
+      </div>
+
+      <!-- 포인트 등급 -->
+      <div class="form-group">
+        <label>등급별 포인트</label>
+        <div class="point-grid">
+          <input type="number" name="point_level1" placeholder="Lv.1 포인트" />
+          <input type="number" name="point_level2" placeholder="Lv.2 포인트" />
+          <input type="number" name="point_level3" placeholder="Lv.3 포인트" />
+        </div>
+      </div>
+
+      <!-- 주소 -->
+      <div class="form-group">
+        <label>주소</label>
+        <input type="text" name="address" />
+      </div>
+
+      <!-- 안내사항 -->
+      <div class="form-group">
+        <label>안내사항</label>
+        <textarea name="note" rows="4"></textarea>
+      </div>
+
+      <!-- 일정 -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>신청기간</label>
+          <input type="text" name="apply_period" placeholder="예: 5/9 ~ 5/11" />
+        </div>
+        <div class="form-group">
+          <label>행사기간</label>
+          <input type="text" name="event_period" placeholder="예: 5/12 ~ 5/15" />
+        </div>
+      </div>
+
+      <button type="submit">캠페인 등록</button>
+    </form>
+  </div>
+
+  <!-- ✅ 드래그앤드롭 스크립트 -->
+  <script>
+    const dropArea = document.getElementById('drop-area');
+    const imageInput = document.getElementById('imageInput');
+    const preview = document.getElementById('preview');
+
+    dropArea.addEventListener('click', () => imageInput.click());
+
+    dropArea.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropArea.style.backgroundColor = '#f3e7ff';
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+      dropArea.style.backgroundColor = 'transparent';
+    });
+
+    dropArea.addEventListener('drop', e => {
+      e.preventDefault();
+      dropArea.style.backgroundColor = 'transparent';
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        imageInput.files = e.dataTransfer.files;
+        showPreview(file);
+      }
+    });
+
+    imageInput.addEventListener('change', () => {
+      const file = imageInput.files[0];
+      if (file) {
+        showPreview(file);
+      }
+    });
+
+    function showPreview(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css" />
+  <title>배너 등록</title>
+  <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+    <style>
+    body {
+      font-family: 'Pretendard', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    h3 {
+      font-size: 28px;
+      margin-bottom: 24px;
+    }
+    .form-item {
+      margin-bottom: 20px;
+    }
+    .field-label {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .text-field {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      font-family: 'Pretendard', sans-serif;
+    }
+    .help-text {
+      font-size: 13px;
+      color: #637381;
+      margin-top: 4px;
+    }
+    .upload-container {
+      display: flex;
+      flex-direction: column;
+    }
+    .upload-box {
+      width: 90%;
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .upload-box:hover {
+      border-color: #1976d2;
+    }
+    .preview-image {
+      max-width: 100%;
+      max-height: 200px;
+      margin-top: 10px;
+      display: none;
+    }
+    .button-container {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .submit-button {
+      width: 10rem;
+      height: 3rem;
+      font-size: 1.05rem;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .submit-button:hover {
+      background-color: #1565c0;
+    }
+  </style>
+</head>
+<body>
+<div class="admin-container">
+    <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+
+    <div class="main-content">
+        <h1><a href="/admin/banner03">배너 등록</a></h1>
+        <form class="form" action="/admin/banner03" method="post" enctype="multipart/form-data">
+            <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
+
+            <div class="form-item">
+                <label class="field-label">배너명</label>
+                <input type="text" class="text-field" name="title" id="title" placeholder="배너명을 입력하세요." required>
+            </div>
+            
+            <div class="form-item">
+                <label class="field-label">URL 입력</label>
+                <input type="url" class="text-field" name="url" id="url" placeholder="예) https://www.naver.com" required>
+            </div>
+        
+            <div class="form-item">
+                <label class="field-label">배너 사진*</label>
+                
+
+                <div class="upload-container">
+                <div class="upload-box" id="upload-box">
+                    <p>이미지를 여기에 끌어다 놓거나 클릭하여 업로드하세요</p>
+                    <input type="file" name="file" id="file" accept="image/*" style="display: none;">
+                    <img id="preview-image" class="preview-image" alt="배너 이미지 미리보기">
+                </div>
+                <!-- <p class="help-text">배너 이미지를 업로드해 주세요</p> -->
+                </div>
+            </div>
+        
+            <div class="button-container">
+                <button type="submit" class="submit-button">제출하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // 파일 업로드 관련 기능
+    const uploadBox = document.getElementById('upload-box');
+    const fileInput = document.getElementById('file');
+    const previewImage = document.getElementById('preview-image');
+    let bannerImage = "";
+    
+    // 클릭 시 파일 선택 창 열기
+    uploadBox.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    // 파일 드래그 앤 드롭 기능
+    uploadBox.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadBox.style.borderColor = '#1976d2';
+    });
+    
+    uploadBox.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadBox.style.borderColor = '#ccc';
+        
+        console.log(e.dataTransfer.files.length);
+        if (e.dataTransfer.files.length) {
+            handleFile(e.dataTransfer.files[0]);
+        }
+    });
+    
+    // 파일 선택 시 처리
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            handleFile(e.target.files[0]);
+        }
+    });
+    
+    // 파일 처리 함수
+    function handleFile(file) {
+        if (file && file.type.startsWith('image/')) {
+            //document.getElementById('imgFile').style.display = 'none';
+            bannerImage = file;
+            
+            // 이미지 미리보기 표시
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    // 페이지 로드 시 초기화 작업
+    document.addEventListener('DOMContentLoaded', () => {
+      // 필요한 초기화 작업이 있다면 여기에 추가
+        console.log('배너 등록 페이지가 로드되었습니다.');
+    });
+</script>
+</body>
+</html>

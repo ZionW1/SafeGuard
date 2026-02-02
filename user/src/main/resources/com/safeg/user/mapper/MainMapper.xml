@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.safeg.user.mapper.MainMapper">
+    <resultMap id="campaignResultMap" type="com.safeg.user.vo.CampaignVO"> <!-- type도 너의 실제 VO 패키지 -->
+        <!-- ... 다른 필드 ... -->
+        <result property="eventPeriodStr" column="event_Period_Str"
+                javaType="java.time.LocalDate" typeHandler="com.safeg.user.config.StringToLocalDateTypeHandler"/>
+        <!-- event_Period_Str도 있다면 동일하게 추가 -->
+        <result property="eventPeriodEnd" column="event_Period_End"
+                javaType="java.time.LocalDate" typeHandler="com.safeg.user.config.StringToLocalDateTypeHandler"/>
+        <result property="AppPeriodStr" column="app_period_str"
+                javaType="java.time.LocalDate" typeHandler="com.safeg.user.config.StringToLocalDateTypeHandler"/>
+        <result property="AppPeriodEnd" column="app_period_end"
+                javaType="java.time.LocalDate" typeHandler="com.safeg.user.config.StringToLocalDateTypeHandler"/>
+        <result property="resultDate" column="result_date"
+                javaType="java.time.LocalDate" typeHandler="com.safeg.user.config.StringToLocalDateTypeHandler"/>
+    </resultMap>
+    <resultMap id="userAppliedCampaignMap" type="com.safeg.user.vo.UserCampaignVO">
+        <result property="campaignId" column="campaign_id"/>
+        <result property="appliedStartDate" column="applied_start_date"/>
+        <result property="appliedEndDate" column="applied_end_date"/>
+    </resultMap>
+    <!-- <resultMap type="Users" id="userMap">
+        <id property="no" column="no" />
+        
+        <result property="no" column="no" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="name" column="name" />
+        <result property="email" column="email" />
+        <result property="enabled" column="enabled" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        
+        <collection property="authList" resultMap="authMap"></collection>
+    </resultMap>
+        
+    <resultMap type="UserAuth" id="authMap">
+        <result property="no" column="no" />
+        <result property="username" column="username" />
+        <result property="auth" column="auth" />
+    </resultMap> -->
+    
+    <select id="campaignFavorite" resultType="CampaignVO">
+        <![CDATA[
+        SELECT 
+            c.campaign_id, 
+            c.campaign_Title, 
+            c.recruitment_Num, 
+            c.applicants_Num, 
+            f.saved_name, 
+            f.file_path,
+            (CASE
+                WHEN type_code = '01' THEN '경호'
+                WHEN type_code = '02' THEN '진행'
+                WHEN type_code = '03' THEN '수행'
+                ELSE ''
+            END) as type_code,
+            c.app_period_str,
+            c.app_period_end,
+            event_Period_str,
+            event_Period_End,
+            t.user_nm
+            FROM campaign c 
+        LEFT OUTER JOIN files f 
+        ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN team_leader t
+        on c.leader_code = t.id
+        Where f.is_deleted = 'N'
+        and f.target_type = 'campaign'
+        and c.is_deleted = 'N'
+        and c.app_Period_end >= now()
+        and c.applicants_Num <= c.recruitment_Num
+        and c.is_active = 'Y'
+        ORDER BY c.applicants_Num DESC, c.campaign_id desc
+        ]]>
+        <!-- DATE_FORMAT(c.event_Period_Str, '%Y.%m.%d') as event_period_str,
+            DATE_FORMAT(c.event_Period_End, '%Y.%m.%d') as event_Period_End -->
+    </select>
+
+    <select id="campaignWorkable" resultType="CampaignVO">
+        <![CDATA[
+        SELECT 
+            c.campaign_id, 
+            c.campaign_Title, 
+            c.recruitment_Num, 
+            c.applicants_Num, 
+            f.saved_name, 
+            f.file_path,
+            (CASE
+                WHEN type_code = '01' THEN '경호'
+                WHEN type_code = '02' THEN '진행'
+                WHEN type_code = '03' THEN '수행'
+                ELSE ''
+            END) as type_code,
+            c.app_period_str,
+            c.app_period_end,
+            event_Period_str,
+            event_Period_End,
+            t.user_nm
+            FROM campaign c 
+        LEFT OUTER JOIN files f 
+        ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN team_leader t
+        on c.leader_code = t.id
+        Where f.is_deleted = 'N'
+        and f.target_type = 'campaign'
+        and c.is_deleted = 'N'
+        and c.app_Period_End > now()
+        and c.applicants_Num = 0
+        and c.is_active = 'Y'
+        ORDER BY campaign_id asc
+        ]]>
+    </select>
+
+    <select id="campaignNew" resultType="CampaignVO">
+        <![CDATA[
+        SELECT 
+            c.campaign_id, 
+            c.campaign_Title, 
+            c.recruitment_Num, 
+            c.applicants_Num, 
+            f.saved_name, 
+            f.file_path,
+            (CASE
+                WHEN type_code = '01' THEN '경호'
+                WHEN type_code = '02' THEN '진행'
+                WHEN type_code = '03' THEN '수행'
+                ELSE ''
+            END) as type_code,
+            c.app_period_str,
+            c.app_period_end,
+            event_Period_str,
+            event_Period_End,
+            t.user_nm
+            FROM campaign c 
+        LEFT OUTER JOIN files f 
+        ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN team_leader t
+        on c.leader_code = t.id
+        Where f.is_deleted = 'N'
+        and f.target_type = 'campaign'
+        and c.app_Period_End > now()
+        and c.is_deleted = 'N'
+        and c.is_active = 'Y'
+        ORDER BY c.created_at desc
+        ]]>
+    </select>
+
+    <select id="bannerImage" resultType="BannerVO">
+        select * from banner where is_deleted = 'N' ;
+    </select>
+
+    <select id="campaignSelect" resultType="campaignVO">
+        select 
+            campaign_id,
+            company_Nm, 
+            company_Ph, 
+            campaign_Title, 
+            recruitment_Num, 
+            applicants_Num, 
+            white_Sal,
+            green_Sal,
+            yellow_Sal,
+            orange_sal,
+            red_sal,
+            blue_sal,
+            brown_sal,
+            place_Addr,
+            mission,
+            <!-- DATE_FORMAT(App_period_str,'%Y-%m-%d') AS app_period_str,
+            DATE_FORMAT(App_period_end,'%Y-%m-%d') AS app_period_end,
+            DATE_FORMAT(event_period_str,'%Y-%m-%d') AS event_period_str,
+            DATE_FORMAT(event_period_str,'%Y-%m-%d') AS event_period_str,
+            DATE_FORMAT(result_date,'%Y-%m-%d') AS result_date -->
+            app_period_str,
+            app_period_end,
+            event_period_str,
+            event_period_end,
+            result_date
+            <!-- DATE_FORMAT(event_Period_str,'%Y-%m-%d') AS event_Period_str,
+            DATE_FORMAT(event_Period_end,'%Y-%m-%d') AS event_Period_end -->
+        from campaign 
+        where campaign_id = #{id}
+        and is_deleted = 'N'
+        and is_active = 'Y'
+    </select>
+    <select id="campaignApply" resultType="UserCampaignVO">
+        select uc.user_id, uc.campaign_id, uc.user_no, c.event_period_str, c.event_period_end 
+        from user_campaign uc 
+        left outer join campaign c
+        on uc.campaign_id = c.campaign_id
+        where uc.user_Id= #{userId} 
+        and uc.campaign_id = #{campaignId}
+    </select>
+
+    <select id="appliedCampaign" resultType="UserCampaignVO">
+        SELECT
+            campaign_id,
+            applied_str_date,
+            applied_end_date
+        FROM user_campaign
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="allView" resultType="CampaignVO">
+        <![CDATA[
+        SELECT
+            c.campaign_id, 
+            c.campaign_Title, 
+            c.recruitment_Num, 
+            c.applicants_Num, 
+            f.saved_name, 
+            f.file_path, 
+            event_period_str period_str,
+            event_Period_End period_end,
+            DATE_FORMAT(c.created_at, '%Y.%m.%d') as created_at
+        FROM campaign c 
+        LEFT OUTER JOIN files f 
+        ON c.campaign_id = f.target_id
+        and f.target_type = 'campaign'
+        and c.is_deleted = 'N'
+        Where f.is_deleted = 'N'
+        and c.app_Period_End > now()
+        and is_active = 'Y'
+        ]]>
+        <if test="option.orderCode == 0"> <!-- 최신 순 -->
+            ORDER BY c.created_At DESC
+        </if>
+        <if test="option.orderCode == 1"> <!-- 인기 순 -->
+            ORDER BY c.applicants_Num DESC, c.campaign_id desc
+        </if>
+        <if test="option.orderCode == 2"> <!-- 마감임박 순 -->
+            ORDER BY ABS(DATEDIFF(App_Period_End, CURDATE())) ASC;
+        </if>
+        <if test="option.orderCode == 3"> <!-- 선정확률 높은 순 -->
+            and applicants_Num = 0
+            ORDER BY c.created_At DESC
+        </if>
+        
+    </select>
+
+    <select id="userCampaignApply" resultType="UserCampaignVO">
+        select 
+            uc.campaign_id,
+            uc.user_id,
+            uc.user_No,
+            u.user_nm,
+            u.phone_Num,
+            c.campaign_title,
+            c.event_period_str,
+            c.event_period_end,
+            c.company_nm,
+            c.company_ph,
+            c.recruitment_num,
+            applicants_Num,
+            (CASE
+                WHEN c.type_code = '01' THEN '경호'
+                WHEN c.type_code = '02' THEN '진행'
+                WHEN c.type_code = '03' THEN '수행'
+                ELSE ''
+            END) as type_nm,
+            (CASE
+                WHEN uc.status = '0' THEN '신청 대기'
+                WHEN uc.status = '1' THEN '선정 완료'
+                WHEN uc.status = '2' THEN '참여 완료'
+                WHEN uc.status = '3' THEN '정산 완료'
+                ELSE '없음'
+            END) as status_nm,
+            c.app_period_str,
+            c.app_period_end,
+            c.event_Period_str,
+            c.event_Period_End,
+            result_date,
+            place_addr
+        from user_campaign uc 
+        left outer join user u 
+        on uc.user_id = u.user_id
+        left outer join campaign c 
+        on uc.campaign_id = c.campaign_id
+        where uc.campaign_id=#{id};
+    </select>
+
+    <select id="campaignDeleted" resultType="UserCampaignVO">
+        SELECT * 
+        FROM campaign 
+        WHERE is_deleted = 'Y';
+    </select>
+
+    <select id="campaignCount" resultType="int">
+        SELECT count(*)
+        FROM campaign 
+        WHERE is_deleted = 'Y';
+    </select>
+
+    <select id="totalCampaign" resultType="int">
+        SELECT count(*)
+        FROM campaign 
+    </select>
+</mapper>

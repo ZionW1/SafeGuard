@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{layouts/base_layout}">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        /* header {
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #eee;
+        } */
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        /* form {
+            max-width: 800px;
+            margin: auto;
+        } */
+        /* .profile-preview {
+            float: left;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 30px;
+            margin-left : 70px;
+        }
+        .profile-preview img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #eee;
+            object-fit: cover;
+        }
+        .profile-preview p {
+            margin-top: 10px;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+        .profile-preview .media-links a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #555;
+            font-size: 1.1rem;
+        } */
+        .section-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #555;
+            padding-bottom: 2px;
+        }
+        .form-row {
+            width: 400px;
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        label {
+            width: 130px;
+            font-weight: 600;
+            color: #222;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"] {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        input[readonly] {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+        .profile_save {
+            margin-top: 00px;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #f09a67;
+            color: white;
+            cursor: pointer;
+        }
+        .profile_save:hover {
+            background-color: #e28342;
+        }
+        .left-container {
+            display: flex;
+            flex-direction: column;  /* 세로 정렬 (이미지 위, 텍스트 아래) */
+            align-items: center;     /* 가로 중심 정렬 */
+            justify-content: center; /* 세로 중심 정렬 */
+            height: 100%;            /* 부모 컨테이너 높이에 맞춤 (필요에 따라 조절) */
+            width: 100%;             /* 부모 컨테이너 너비에 맞춤 */
+            box-sizing: border-box;  /* 패딩, 보더 포함 */
+            padding: 10px;           /* 영역 내 간격 */
+        }
+        /* FullCalendar 기본 스타일 */
+        @import url('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css');
+
+        /* 캘린더 컨테이너 스타일 */
+        #calendar {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 10px;
+        }
+		
+		
+		
+    </style>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <script>
+        // alert("user04");
+        var currentLoggedInUserId = '[[${#authentication.principal.username}]]'; // 현재 로그인한 사용자의 ID를 템플릿에서 받아옴
+        console.log("현재 로그인한 사용자 ID: " + currentLoggedInUserId);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth', // 월별 달력으로 시작
+                headerToolbar: { // 달력 상단바 설정
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth'
+                },
+                locale: 'ko', // 한국어 설정
+                navLinks: true, // 날짜 클릭 시 이동
+                editable: false, // 이벤트 드래그&드롭 등 편집 기능 비활성화
+                // eventLimit: true, // 하루에 표시할 이벤트 개수 제한
+                // 여기에 이벤트 데이터를 가져올 설정을 추가할 거야!
+                events: {
+                    url: '/mypage/calendar', // 이 API에서 이벤트 데이터를 가져올 거야
+                    method: 'GET',
+                    extraParams: function() { // 필요하면 추가 파라미터 전달
+                        return {
+                            userId: currentLoggedInUserId // 예를 들어 로그인한 사용자의 ID를 넘길 수 있어
+                        };
+                    },
+                    failure: function() {
+                        alert('캘린더 이벤트를 불러오는 데 실패했습니다.');
+                    }
+                },
+                // 이벤트 색상이나 스타일을 다르게 할 때 유용해
+                eventDidMount: function(info) {
+                    console.log("이벤트 데이터: "+ JSON.stringify(info));
+                    console.log("이벤트 데이터: "+ JSON.stringify(info.event.backgroundColor));
+
+                    if (info.event.extendedProps.status === '0') {
+                        info.el.style.backgroundColor = info.event.backgroundColor; // 신청 날짜는 파란색
+                        info.el.style.borderColor = info.event.borderColor;
+                    } else if (info.event.extendedProps.status === '1') {
+                        info.el.style.backgroundColor = info.event.backgroundColor; // 신청 날짜는 파란색
+                        info.el.style.borderColor = info.event.borderColor;
+                    } else if (info.event.extendedProps.status === '2') {
+                        info.el.style.backgroundColor = info.event.backgroundColor; // 완료 날짜는 초록색
+                        info.el.style.borderColor = info.event.borderColor;
+                    } else if (info.event.extendedProps.status === '3') {
+                        info.el.style.backgroundColor = info.event.backgroundColor; // 완료 날짜는 초록색
+                        info.el.style.borderColor = info.event.borderColor;
+                    } else if (info.event.extendedProps.status === '4') {
+                        info.el.style.backgroundColor = info.event.backgroundColor; // 완료 날짜는 초록색
+                        info.el.style.borderColor = info.event.borderColor;
+                    } else if (info.event.extendedProps.status === '5') {
+                        info.el.style.backgroundColor = info.event.backgroundColor; // 완료 날짜는 초록색
+                        info.el.style.borderColor = info.event.borderColor;
+                    } else if (info.event.extendedProps.status === '6') {
+                        info.el.style.backgroundColor = info.event.backgroundColor; // 완료 날짜는 초록색
+                        info.el.style.borderColor = info.event.borderColor;
+                    }
+                }
+            });
+            calendar.render();
+        });
+    </script>
+    
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="main-side-content">
+        <div class="container">
+            <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenu}" />
+        </div>
+        <h2 style="text-align: left; margin-top: 20px;">나의 캠페인</h2>
+        <div id="calendar"></div>
+        
+    </div>
+</main>
+</body>
+</html>

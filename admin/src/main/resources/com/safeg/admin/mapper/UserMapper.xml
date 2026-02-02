@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.safeg.admin.mapper.UserMapper">
+    <resultMap type="UserVO" id="UserMap">
+        <id property="id" column="id" />
+        <result property="createdDate" column="created_date" />
+        <result property="lastModifiedDate" column="last_modified_date" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="email" column="email" />
+        <result property="role" column="role" />
+        <result property="status" column="status" />
+        <result property="del_yn" column="del_yn" />
+        <result property="fullName" column="full_name" />
+        <result property="phoneNumber" column="phone_number" />
+        <result property="address" column="address" />
+    </resultMap>
+    <!-- 목록 -->
+    <select id="userList" resultType="UserVO">
+        select u.id, u.user_id, u.user_Nm, u.email, u.nickName, u.phone_num,
+            u.address_id, point_Id, full_Address,
+            auth.auth,
+            DATE_FORMAT(u.created_at, '%Y.%m.%d') created_at,
+            role, is_stopped
+        from user u
+        left outer join user_address ua
+        on u.id = ua.address_id
+        left outer join user_auth auth
+        on u.id = auth.no
+        where
+        <if test="option.code == 0">
+            (u.user_id like CONCAT('%', #{option.keyword}, '%') or
+            u.user_nm like CONCAT('%', #{option.keyword}, '%') or
+            u.email like CONCAT('%', #{option.keyword}, '%') or
+            u.nickname like CONCAT('%', #{option.keyword}, '%') or
+            u.phone_num like CONCAT('%', #{option.keyword}, '%'))
+        </if>
+        <if test="option.code == 1">
+            u.user_id like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 2">
+            u.user_nm like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 3">
+            u.email like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 4">
+            u.nickName like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 5">
+            u.phone_num like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 6">
+            u.role like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 7">
+            u.is_stopped like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        and u.is_Deleted = 'N'
+        and role != 'Admin'
+        <if test="option.orderCode == 0">
+            order by id desc
+        </if>
+        <if test="option.orderCode == 1">
+            order by point_id desc, created_at desc
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) 
+        from user u
+        where 
+            <if test="option.code == 0">
+                id like CONCAT('%', #{option.keyword}, '%') or
+                name like CONCAT('%', #{option.keyword}, '%') or
+                email like CONCAT('%', #{option.keyword}, '%') or
+                nickname like CONCAT('%', #{option.keyword}, '%') or
+                phone like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 1">
+            u.id like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 2">
+                u.name like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 3">
+                u.email like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 4">
+                u.nickName like CONCAT('%', #{option.keyword}, '%')
+            </if>
+            <if test="option.code == 5">
+                u.phone like CONCAT('%', #{option.keyword}, '%')
+            </if>
+        and is_Deleted = 'N'
+    </select>
+
+    <!-- <select id="userSelect" resultMap="userMap"> -->
+    <select id="userSelect" resultType="userVO">
+        SELECT
+            u.id,
+            u.user_id,
+            u.user_nm,
+            u.email,
+            u.enabled,
+            u.phone_num,
+            u.nickname,
+            u.bank_nm,
+            u.depositor,
+            u.account_number,
+            u.created_at,
+            u.updated_at,
+            u.auth_id,
+            u.point_id,
+            ua.address_Id,
+            memo,
+            role,
+            is_stopped,
+            guard_type,
+            ua.full_Address,
+            (CASE
+                WHEN auth_id = '01' THEN 'ROLE_ADMIN'
+                WHEN auth_id = '02' THEN 'ROLE_USER'
+                ELSE 'X'
+            END) AS auth
+        FROM user u
+        LEFT OUTER JOIN user_address ua
+        ON u.id = ua.user_id
+        AND ua.is_deleted = 'N'
+        WHERE u.id = #{id}
+        AND u.is_deleted = 'N'
+    </select>
+
+    <insert id="userJoin" parameterType="UserVO">
+        INSERT INTO 
+            USER (user_id, user_nm, password, email, nickName, grade_id, auth_id, role, auth_id)
+        VALUES
+            (#{userId}, #{userNm}, #{password}, #{email}, #{nickName}, '1', '01', 'Admin', '01')
+
+    </insert>
+
+    <update id="userInfoUpdate" parameterType="UserVO">
+        UPDATE USER
+        SET 
+            <!-- user_nm = #{userNm}, -->
+            email = #{email},
+            phone_num = #{phoneNum},
+            nickname = #{nickName},
+            bank_nm = #{bankNm},
+            depositor = #{depositor},
+            account_number = #{accountNumber},
+            updated_at = NOW(),
+            address_Id = #{addressId},
+            memo = #{memo},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="userRemove">
+        UPDATE USER
+        SET 
+            is_deleted = 'Y',
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="userUpdate">
+        UPDATE USER
+        SET
+            role = #{authRole},
+            auth_id = #{authCode},
+            updated_at = NOW()
+        WHERE id = #{id}
+        AND is_deleted = 'N'
+    </update>
+
+    <update id="userAuthUpdate">
+        UPDATE user_auth
+        SET
+            auth = #{authRole},
+            auth_cd = #{authCode}
+        WHERE id = #{id}
+    </update>
+
+    <update id="userLeaderUpdate">
+        UPDATE USER
+        SET 
+            role = 'LEADER',
+            auth_id = '03',
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="userStop">
+        UPDATE USER
+        SET 
+            is_stopped = 'Y',
+            stop_date = NOW(),
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="userUnstop">
+        UPDATE USER
+        SET 
+            is_stopped = 'N',
+            stop_date = null,
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="resetAllUserPay">
+        UPDATE 
+            USER 
+        SET pay = 0
+        WHERE 
+            CURRENT_DATE() = LAST_DAY(CURRENT_DATE());
+    </update>
+
+    <select id="userAddressList" resultType="userVO">
+        SELECT
+            full_Address
+            user_id
+        FROM 
+            user_address
+    </select>
+
+    <update id="guardTypeChange" parameterType="UserVO">
+        UPDATE USER
+        SET 
+            guard_type = #{guardType},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+</mapper>

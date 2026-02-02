@@ -1,0 +1,39 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "HomeController",
+            "request": "launch",
+            "mainClass": "com.safeg.admin.controller.HomeController",
+            "projectName": "admin"
+        },
+        {
+            "type": "java",
+            "name": "HomeController$PasswordEncoderTest",
+            "request": "launch",
+            "mainClass": "com.safeg.admin.controller.HomeController$PasswordEncoderTest",
+            "projectName": "admin"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-UserApplication<user>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.safeg.user.UserApplication",
+            "projectName": "user",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AdminApplication<admin>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.safeg.admin.AdminApplication",
+            "projectName": "admin",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=50306 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=admin"
+        }
+    ]
+}

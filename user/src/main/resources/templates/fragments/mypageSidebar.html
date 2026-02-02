@@ -1,0 +1,151 @@
+<div th:fragment="mypageSidebarMenu">
+    <aside class="sidebar">
+        <nav>
+            <div class="sr-only">
+            <form class="profile-preview" action="/updateProfile" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="id" id="id" th:value="${userId}" />
+                <input type="hidden" name="userId" id="userId" th:value="${username}" />
+                <p>현재 사용자 ID: <span th:text="${username}">guest</span></p>
+
+                <div class="profile">
+                    <!-- <input type="file" name="image" id="image" accept="image/*" style="display: none" /> -->
+                    <div id="drop-area" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px">
+                        <!-- 1. input type="file"은 DOM에 항상 하나만 존재하도록! -->
+                        <input type="file" name="image" id="image" accept="image/*" style="display: none" />
+                    
+                        <!-- 2. 기존 이미지 미리보기 영역 -->
+                        <!-- (사용자가 파일이 없을 때 기본 이미지를 보여주고, 파일이 있으면 업로드된 이미지를 보여주는 부분) -->
+                        <div id="imageDisplayArea">
+                            <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
+                            <!-- th:if="${file != null}" -->
+                            <img th:if="${file != null}" id="imgFile" th:src="|/selectProfile?id=${userId}&args=1|" alt="파일이미지" width="720" height="405" style="max-width: 100%; margin: 0px auto;" />
+                            <!-- th:if="${file == null}" -->
+                            <img th:if="${file == null}" id="defaultImage" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
+                        </div>
+                    
+                        <!-- 3. 기타 UI 요소 (예: '기존 이미지 삭제' 버튼) -->
+                        
+                    </div>
+                    <!-- <div th:if="${file != null}">
+                        <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" 
+                        th:onclick="removeFile(this, [[${userId}]])">기존 이미지 삭제</button>
+                    </div> -->
+                    <div th:if="${file != null}" class="file-action-buttons">
+                        <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
+                                th:onclick="removeFile(this, [[${userId}]])">기존 이미지 삭제</button>
+                    </div>
+                    <p><span sec:authentication=""></span></p>
+                </div>
+                <button class="profile_save" type="submit">프로필 사진 저장하기</button>
+            </form>
+        </div>
+        <div class="mypage-menu">
+            <h3 class="sidebar-title">고객센터</h3>
+            
+            <ul class="sidebar-menu">
+                <!-- <li class="menu-item" th:classappend="${currentURI.startsWith('/notice01')} ? 'active' : ''">
+                    <a href="/notice01">공지사항</a>
+                </li> -->
+                <li class="menu-item" th:classappend="${(currentURI.startsWith('/mypage/calendarPage')) ? 'active' : ''}">
+                    <a href="/mypage/calendarPage">경호 캘린더</a></li>
+                <li class="menu-item" th:classappend="${currentURI.startsWith('/mypage/infoUpdate')} ? 'active' : ''">
+                    <a href="/mypage/infoUpdate">내 정보</a>
+                </li>
+                <li class="menu-item" th:classappend="${currentURI.startsWith('/mypage/point')} ? 'active' : ''">
+                    <a href="/mypage/point">포인트 내역</a>
+                </li>
+                <li class="menu-item" th:classappend="${currentURI.startsWith('/mypage/changePasswordPage')} ? 'active' : ''">
+                    <a href="/mypage/changePasswordPage">비밀번호 변경</a>
+                </li>
+                <!-- <li class="menu-item" th:classappend="${currentURI.startsWith('/useGuide01')} ? 'active' : ''">
+                    <a href="/useGuide01">이용가이드</a>
+                </li> -->
+            </ul>
+        </div>
+        </nav>
+    </aside>
+    <script th:inline="javascript">
+    const dropArea = document.getElementById("drop-area");
+    const imageInput = document.getElementById("image"); // ⭐ id="image"로 변경됨 ⭐
+    const preview = document.getElementById("preview");
+    const defaultImage = document.getElementById("defaultImage"); // 새로 추가된 기본 이미지
+
+    // 기존 이미지가 있으면 숨기고, 없으면 보여주기
+    if (defaultImage && imageInput.files.length === 0) { // defaultImage가 있고 아직 선택된 파일이 없으면
+        defaultImage.style.display = 'block';
+        preview.style.display = 'none';
+        // imgFile (기존 이미지)도 파일 없으면 숨기기
+        const imgFile = document.getElementById("imgFile");
+        if (imgFile) imgFile.style.display = 'none';
+    }
+
+    dropArea.addEventListener("click", () => imageInput.click()); // 클릭 시 파일 선택창 열림
+
+    // 드래그 오버 / 드래그 리브 / 드롭 이벤트 (기존 코드 그대로)
+    dropArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropArea.style.backgroundColor = "#f3e7ff";
+    });
+    dropArea.addEventListener("dragleave", () => {
+        dropArea.style.backgroundColor = "transparent";
+    });
+    dropArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropArea.style.backgroundColor = "transparent";
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith("image/")) {
+            imageInput.files = e.dataTransfer.files; // 드롭된 파일을 input에 설정
+            showPreview(file);
+        }
+    });
+
+    // input 값이 변경될 때 미리보기 업데이트
+    imageInput.addEventListener("change", () => {
+        const file = imageInput.files[0];
+        if (file) {
+            showPreview(file);
+        } else {
+            // 파일 선택이 취소되거나 파일이 없을 때 처리 (기존 이미지 또는 기본 이미지 복구)
+            preview.style.display = 'none';
+            // 여기서는 `file` 변수에 따라 `imgFile` 또는 `defaultImage`를 다시 보여주는 로직이 필요해.
+            // Thymeleaf의 ${file != null} 값은 JS에서 직접 접근하기 어려우므로,
+            // 렌더링 시점에 JS 변수에 할당하거나, HTML에서 현재 상태를 나타내는 data-* 속성 등을 활용하는 게 좋아.
+            // 예를 들어 <div id="imageDisplayArea" data-has-initial-image="${file != null}"></div>
+            // JS에서 이 data-has-initial-image 값을 읽어서 처리
+        }
+    });
+
+    // 미리보기를 보여주는 함수
+    function showPreview(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            // 새 이미지가 선택되었으니 기존 이미지나 기본 이미지는 숨김
+            const imgFile = document.getElementById("imgFile");
+            if (imgFile) imgFile.style.display = 'none';
+            if (defaultImage) defaultImage.style.display = 'none';
+
+            preview.src = e.target.result;
+            preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // 초기 로드 시 기존 이미지가 있으면 preview와 imgFile을 적절히 설정
+    // 이건 DOMContentLoaded 안에서 처리하는 게 좋아.
+    document.addEventListener("DOMContentLoaded", function() {
+        const initialImgFile = document.getElementById("imgFile");
+        const initialPreview = document.getElementById("preview");
+        const initialDefaultImage = document.getElementById("defaultImage");
+
+        if (initialImgFile) { // 기존 파일이 있었으면
+            initialImgFile.style.display = 'block';
+            initialPreview.style.display = 'none';
+            if (initialDefaultImage) initialDefaultImage.style.display = 'none';
+        } else { // 기존 파일이 없었으면 기본 이미지
+            if (initialDefaultImage) initialDefaultImage.style.display = 'block';
+            initialPreview.style.display = 'none';
+        }
+    });
+            </script>
+</div>

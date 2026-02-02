@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>지역 선택 팝업</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background:#fff; color:#222; }
+  h3 { margin-bottom: 15px; }
+  .region-category { font-weight: bold; margin-top: 20px; }
+  .region-list { display: flex; flex-wrap: wrap; margin-top: 10px; }
+  .region-group { width: 25%; padding: 0 10px; box-sizing: border-box; }
+  .region-group ul { list-style: none; padding-left: 0; }
+  .region-group ul li { margin-bottom: 8px; cursor: pointer; color: #007bff; }
+  .region-group ul li:hover { text-decoration: underline; }
+  .region-group ul li.subregion { color: #555; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h3>지역 선택</h3>
+
+<div>
+  <div class="region-category">서울</div>
+  <div class="region-list">
+    <div class="region-group">
+      <ul>
+        <li onclick="selectRegion('전체 서울')">전체</li>
+        <li onclick="selectRegion('홍대/마포')">홍대/마포</li>
+        <li onclick="selectRegion('강서/목동')">강서/목동</li>
+        <li onclick="selectRegion('교대/사당')">교대/사당</li>
+        <li onclick="selectRegion('송파/잠실')">송파/잠실</li>
+      </ul>
+    </div>
+    <div class="region-group">
+      <ul>
+        <li onclick="selectRegion('신촌/이대/은평')">신촌/이대/은평</li>
+        <li onclick="selectRegion('명동/이태원')">명동/이태원</li>
+        <li onclick="selectRegion('여의도/영등포')">여의도/영등포</li>
+        <li onclick="selectRegion('강남/논현')">강남/논현</li>
+        <li onclick="selectRegion('강동/천호')">강동/천호</li>
+      </ul>
+    </div>
+    <div class="region-group">
+      <ul>
+        <li onclick="selectRegion('노원/강북/도봉')">노원/강북/도봉</li>
+        <li onclick="selectRegion('수유/동대문/중랑')">수유/동대문/중랑</li>
+        <li onclick="selectRegion('구로/금천')">구로/금천</li>
+        <li onclick="selectRegion('삼성/선릉')">삼성/선릉</li>
+        <li onclick="selectRegion('압구정/신사')">압구정/신사</li>
+      </ul>
+    </div>
+    <div class="region-group">
+      <ul>
+        <li onclick="selectRegion('종로/대학로/성북')">종로/대학로/성북</li>
+        <li onclick="selectRegion('건대/왕십리')">건대/왕십리</li>
+        <li onclick="selectRegion('관악/신림')">관악/신림</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 다른 지역들(경기-인천, 강원, 대전-충청...)도 같은 패턴으로 추가 -->
+
+<script>
+  function selectRegion(region) {
+    // 부모창 함수 호출 후 팝업 닫기
+    if (window.opener && typeof window.opener.selectRegionAndSearch === "function") {
+      window.opener.selectRegionAndSearch(region);
+      window.close();
+    } else {
+      alert("부모 창을 찾을 수 없습니다.");
+    }
+  }
+</script>
+
+</body>
+</html>

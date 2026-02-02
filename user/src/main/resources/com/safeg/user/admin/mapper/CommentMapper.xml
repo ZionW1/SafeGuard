@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.aloha.bodyguard.mapper.CommentMapper">
+    <!-- 목록 -->
+    <select id="list" resultType="Comments">
+        select * from comments 
+        order by parent_no desc, created_at asc;
+    </select>
+
+    <select id="select" resultType="Comments">
+        select * from comments where id=#{id} 
+    </select>
+    <!-- 등록 -->
+    <!-- Mybatis 의 useGeneratedKey를 사용하면
+        MySQL의 Auto_increment 되는 값을 전달한 객체에 지정한 변수로 매핑할 수 있다. -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="no">
+        Insert into comments (id, board_No, parent_no, writer, content)
+        values (#{id}, #{boardNo}, #{parentNo}, #{writer}, #{content})
+    </insert>
+    <!-- 수정 -->
+    <update id="update">
+        update comments
+            set parent_no = #{parentNo} 
+            ,writer = #{writer}
+            ,content = #{content}
+            ,updated_At = now()
+        where id = #{id}
+    </update>
+    <!-- 삭제 -->
+    <delete id="delete">
+        delete from comments
+        where id = #{id}
+    </delete>
+
+    <!-- 게시글 기준 목록 -->
+    <select id="listByParent" resultType="Comments">
+        select * from comments 
+        where board_no = #{boardNo}
+        order by parent_no desc, created_at asc;
+    </select>
+    
+    <!-- 게시글 기준 삭제-->
+    <delete id="deleteByParent">
+        delete from comments
+        where board_no = #{boardNo}
+    </delete>
+
+    <!-- 답글 목록 -->
+    <select id="replyList" resultType="Comments">
+        select * from comment
+        where parent_no=#{parentNo} and no!=#{parentNo}
+    </select>
+
+    <!-- parentNo 기준 댓글 삭제 -->
+    <delete id="deleteReplyByParent">
+        delete from comments
+        where parent_no = #{parentNo}
+    </delete>
+</mapper>

@@ -8,7 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="leaderSelect" resultType="AdminContentVO">
         SELECT 
-            AdminContent_id,
+            Admin_Content_id,
             title,
             content,
             content_type,
@@ -16,21 +16,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             created_at,
             updated_at
         FROM 
-            AdminContent
+            Admin_Content
         where
             is_active = 'Y'
             and content_type='LEADER'
     </select>
 
     <insert id="leaderInsert" parameterType="AdminContentVO">
-        INSERT INTO AdminContent 
+        INSERT INTO Admin_Content 
             (content, title, author, content_type) 
         VALUES 
             (#{content}, #{title}, #{author}, 'LEADER');
     </insert>
 
     <update id="leaderUpdate" parameterType="AdminContentVO">
-        UPDATE AdminContent
+        UPDATE Admin_Content
         SET content = #{content},
             title = #{title},
             author = #{author},
@@ -38,4 +38,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE content_type = 'LEADER'
         AND is_active = 'Y';
     </update>
+
+
+    <select id="leaderList" resultType="UserVO">
+        SELECT 
+            *
+        FROM 
+            user
+        where
+            role = 'LEADER'
+        AND
+            is_deleted = 'N'
+    </select>
 </mapper>

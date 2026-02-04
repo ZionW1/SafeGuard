@@ -56,4 +56,8 @@ public class LeaderController {
         // 예시: 간단한 콘솔 출력 후 성공 페이지로 리다이렉트
         return "redirect:/admin/leader01"; // 저장 성공 후 리다이렉트될 페이지 (예: 목록 페이지)
     }
+    // List<UserVO> leaderList = leaderService.leaderList();
+    // log.info("leader01" + leaderList);
+    // model.addAttribute("leaderList", leaderList);
+    // return "leader/leader01";
 }

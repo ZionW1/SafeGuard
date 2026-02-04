@@ -8,7 +8,7 @@
     <select id="noticeList" resultType="AdminContentVO">
         <![CDATA[
         SELECT 
-            AdminContent_id,
+            Admin_Content_id,
             title,
             content,
             content_type,
@@ -16,7 +16,7 @@
             created_at,
             updated_at
         FROM 
-            AdminContent
+            Admin_Content
         where
         ]]>
         <!-- <if test="option.code == 0">
@@ -38,12 +38,12 @@
         <!-- <if test="option.orderCode == 0">
             order by AdminContent_id desc
         </if> -->
-        order by AdminContent_id desc
+        order by Admin_Content_id desc
     </select>
 
     <select id="noticeSelect" resultType="AdminContentVO">
         SELECT 
-            AdminContent_id,
+            Admin_Content_id,
             title,
             content,
             content_type,
@@ -51,10 +51,10 @@
             created_at,
             updated_at
         FROM 
-            AdminContent
+            Admin_Content
         where
             is_active = 'Y'
             and content_type='NOTICE'
-            and AdminContent_id = #{id}
+            and Admin_Content_id = #{id}
     </select>
 </mapper>

@@ -86,7 +86,7 @@
 <body>
 <main layout:fragment="content">
     <div class="main-side-content">
-        <div class="container">
+        <!-- <div class="container">
             <th:block th:replace="~{fragments/noticeSidebar :: sidebarMenu}" />
         </div>
         <div class="article-container">
@@ -96,10 +96,32 @@
                 작성일: <span th:text="${#temporals.format(leaderSelect.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
             </div>
             <div class="article-content ck-content">
-                <!-- ⭐️⭐️⭐️ 여기가 핵심! th:utext를 사용해야 HTML이 그대로 렌더링돼! ⭐️⭐️⭐️ -->
                 <div th:utext="${leaderSelect.content}"></div>
             </div>
-        </div>
+        </div> -->
+
+
+    <div class="container">
+        <h2>리더 목록</h2>
+        <table border="1" cellspacing="0" cellpadding="8">
+            <thead>
+                <tr>
+                    <th>이름</th>
+                    <th>연락처</th>
+                    <th>이메일</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${leaderList == null or #lists.isEmpty(leaderList)}">
+                    <td colspan="3" align="center">조회된 데이터가 없습니다.</td>
+                </tr>
+                <tr th:each="leader : ${leaderList}" th:onclick="|location.href='@{//campaign02(id=${leader.id})}'|" style="cursor:pointer">
+                    <td th:text="${leader.userNm}"></td>
+                    <td th:text="${leader.phoneNum}"></td>
+                    <td th:text="${leader.email}"></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </main>
 </body>

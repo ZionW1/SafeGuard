@@ -121,12 +121,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.app_period_end,
             event_Period_str,
             event_Period_End,
-            t.user_nm
             FROM campaign c 
         LEFT OUTER JOIN files f 
         ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN team_leader t
-        on c.leader_code = t.id
         Where f.is_deleted = 'N'
         AND f.target_type = 'campaign'
         AND c.is_deleted = 'N'

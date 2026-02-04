@@ -6,9 +6,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!-- namespace="매퍼 인터페이스 경로" --> 
 <mapper namespace="com.safeg.user.mapper.LeaderMapper">
     
-    <select id="leaderSelect" resultType="AdminContentVO">
+    <select id="leaderSelect1" resultType="AdminContentVO">
         SELECT 
-            AdminContent_id,
+            Admin_Content_id,
             title,
             content,
             content_type,
@@ -16,7 +16,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             created_at,
             updated_at
         FROM 
-            AdminContent
+            Admin_Content
+        where
+            is_active = 'Y'
+            and content_type='LEADER'
+    </select>
+
+    <select id="leaderList" resultType="UserVO">
+        SELECT 
+            *
+        FROM 
+            user
+        where
+            role = 'LEADER'
+        AND
+            is_deleted = 'N'
+    </select>
+
+    <select id="leaderSelect" resultType="UserVO">
+        SELECT 
+            user_nm,
+
+        FROM 
+            Admin_Content
         where
             is_active = 'Y'
             and content_type='LEADER'

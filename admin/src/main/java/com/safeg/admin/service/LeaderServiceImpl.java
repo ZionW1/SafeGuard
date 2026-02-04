@@ -1,11 +1,14 @@
 package com.safeg.admin.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.safeg.admin.mapper.LeaderMapper;
 import com.safeg.admin.mapper.UseGuideMapper;
 import com.safeg.admin.vo.AdminContentVO;
+import com.safeg.admin.vo.UserVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,5 +47,12 @@ public class LeaderServiceImpl implements LeaderService{
 
         int result = leaderMapper.leaderUpdate(adminContentVO);
         return result;
+    }
+
+    @Override
+    public List<UserVO> leaderList() throws Exception {
+        // TODO Auto-generated method stub
+        List<UserVO>  leaderList = leaderMapper.leaderList();
+        return leaderList;
     }
 }

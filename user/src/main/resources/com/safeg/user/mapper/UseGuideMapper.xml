@@ -7,7 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.safeg.user.mapper.UseGuideMapper">
     <select id="useGuide01" resultType="com.safeg.user.vo.UseGuideVO">
         SELECT 
-            AdminContent_id,
+            Admin_Content_id,
             title,
             content,
             content_type,
@@ -15,7 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             created_at,
             updated_at
         FROM 
-            AdminContent
+            Admin_Content
         WHERE
             is_active = 'Y'
             and content_type='USE_GUIDE'

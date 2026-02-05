@@ -64,11 +64,22 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="leader">인솔자 선택</label>
                         <select id="leaderNm" name="leaderNm" th:field="*{leaderList}" onchange="inputLeaderPhoneNumber(this.value)" required >
                             <option value="">-- 선택하세요 --</option>
                             <option th:each="leader, stat : ${leaderList}" th:value="${stat.index}" th:text="${leader.userNm}" ></option>
+                        </select>
+                    </div> -->
+
+                    <div class="form-group">
+                        <label for="leaderNm">인솔자 선택</label>
+                        <select id="leaderNm" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)" required>
+                            <option value="">-- 선택하세요 --</option>
+                            <option th:each="leader, stat : ${leaderList}" 
+                                    th:value="${leader.userId}" 
+                                    th:text="${leader.userNm}">
+                            </option>
                         </select>
                     </div>
                     <input type="hidden" id="leaderCode" name="leaderCode" required />
@@ -99,11 +110,21 @@
                         <label for="campaignPay">캠페인 급여</label>
                         <input type="text" id="campaignPay" name="campaignPay" required />
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="securityType">경호/진행/수행 구분</label>
                         <select id="securityType" name="securityType" th:field="*{securityType}" onchange="securityTypeChange(this.value)" required>
                             <option value="">-- 선택하세요 --</option>
                             <option name=""th:each="type : ${securityType}" th:value="${type.code}" th:text="${type.codeName}"></option>
+                        </select>
+                        <input type="hidden" id="typeCode" name="typeCode" />
+                    </div> -->
+                    <div class="form-group">
+                        <label for="securityType">경호/진행/수행 구분</label>
+                        <select id="securityType" name="securityType" onchange="securityTypeChange(this.value)" required>
+                            <option value="">-- 선택하세요 --</option>
+                            <option th:each="type : ${securityType}" 
+                                    th:value="${type.code}" 
+                                    th:text="${type.codeName}"></option>
                         </select>
                         <input type="hidden" id="typeCode" name="typeCode" />
                     </div>

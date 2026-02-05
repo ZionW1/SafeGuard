@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/")
 @Slf4j
 public class HomeController {
     @Autowired
@@ -50,7 +50,7 @@ public class HomeController {
     }
 
 
-    @GetMapping("/")
+    @GetMapping("")
     public String home(@AuthenticationPrincipal CustomUser authUser, Model model,
                 Option option, 
                 Page page) throws Exception{

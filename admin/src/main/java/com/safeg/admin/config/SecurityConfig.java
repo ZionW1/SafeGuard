@@ -57,10 +57,11 @@ public class SecurityConfig {
         log.info("securityFilterChain : : : : : : : : :");
         // ✅ 인가 설정
         http.authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+            .requestMatchers("/", "/login", "/join", "/css/**", "/js/**", "/images/**", "/error01").permitAll() // 로그인 없이도 접근 가능한 정적 파일이나 특정 경로                    
+            .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                                 // .requestMatchers("/user", "/user/**").hasAnyRole("USER", "ADMIN")
                                 // .requestMatchers("/**").permitAll()
-                                .requestMatchers("/", "/login", "/join", "/css/**", "/js/**", "/images/**", "/error01").permitAll() // 로그인 없이도 접근 가능한 정적 파일이나 특정 경로
+                                
                                 // .anyRequest().permitAll());
                                 .anyRequest().authenticated());
         log.info("::::: SecurityFilterChain - 인가 설정 완료 :::::");

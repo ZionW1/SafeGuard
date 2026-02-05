@@ -17,7 +17,7 @@
             <div class="main-content">
                 
                 <h1><a th:href="@{/admin/campaign01}">캠페인 목록 요약</a></h1>
-                <form class="optionForm" action="@{/admin/campaign01}" method="get" id="form">
+                <form class="optionForm" th:action="@{/admin/campaign01}" method="get" id="form">
                     <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
 
                     <select name="code">
@@ -116,7 +116,7 @@
                 </div>
                 
                 </div>
-                <a href="@{/admin/campaign03}" class="insert">등록</a>
+                <a th:href="@{/admin/campaign03}" class="insert">등록</a>
 
             </div>
         </div>

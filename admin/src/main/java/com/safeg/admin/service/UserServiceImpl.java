@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.safeg.admin.mapper.UserMapper;
 import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
+import com.safeg.admin.vo.UserAuth;
 import com.safeg.admin.vo.UserVO;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -31,11 +32,27 @@ public class UserServiceImpl implements UserService{
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Override
+    @Transactional
     public int userJoin(UserVO userVO) throws Exception {
+        String id = userVO.getUserId();
 
         // 4. 암호화된 비밀번호가 담긴 UserVO 객체를 DB에 저장
 
         int result = userMapper.userJoin(userVO);
+
+        if( result > 0 ) {
+            // 회원 기본 권한 등록
+            UserAuth userAuth = new UserAuth();
+            userAuth.setId(userVO.getId());
+            userAuth.setName(id);
+            userAuth.setAuthCd("01");
+            userAuth.setAuth("ROLE_ADMIN");
+
+            result = userMapper.insertAuth(userAuth);
+            log.info("result1 : " + result);
+        }
+        
         return result;
     }
 

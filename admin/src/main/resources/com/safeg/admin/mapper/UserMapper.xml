@@ -135,12 +135,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND u.is_deleted = 'N'
     </select>
 
-    <insert id="userJoin" parameterType="UserVO">
+    <insert id="userJoin" parameterType="UserVO" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO 
             USER (user_id, user_nm, password, email, nickName, grade_id, auth_id, role, auth_id)
         VALUES
             (#{userId}, #{userNm}, #{password}, #{email}, #{nickName}, '1', '01', 'Admin', '01')
+    </insert>
 
+    <insert id="insertAuth">
+        INSERT INTO user_auth( id, name, auth_cd, auth )
+        VALUES ( #{id}, #{name}, #{authCd}, #{auth})
     </insert>
 
     <update id="userInfoUpdate" parameterType="UserVO">

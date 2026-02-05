@@ -88,7 +88,7 @@ public class CampaignController {
 
             model.addAttribute("user", user);
         }
-        return "/campaign/campaign01";
+        return "campaign/campaign01";
     }
 
     // 상세보기 처리
@@ -124,7 +124,7 @@ public class CampaignController {
         }else {
             model.addAttribute("file", null);
         }
-        return "/campaign/campaign02";
+        return "campaign/campaign02";
     }
 
     @GetMapping("/campaign03")
@@ -140,7 +140,7 @@ public class CampaignController {
         model.addAttribute("leaderList", leaderList);
         model.addAttribute("securityType", securityType);
 
-        return "/campaign/campaign03";
+        return "campaign/campaign03";
     }
 
     // 등록 처리
@@ -216,7 +216,7 @@ public class CampaignController {
                         .toUriString();
         log.info("pageRows : " + page.getRows());
         model.addAttribute("pageUrl", pageUrl);
-        return "/campaign/campaign07";
+        return "campaign/campaign07";
     }
     
 }

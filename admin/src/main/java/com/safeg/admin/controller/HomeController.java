@@ -88,7 +88,7 @@ public class HomeController {
         log.info(":::::::::: 어드민 가입 화면 ::::::::::");
         // return "/admin/list";
         model.addAttribute("userVO", new UserVO());
-        return "/join";
+        return "join";
     }
 
     @PostMapping("/join")

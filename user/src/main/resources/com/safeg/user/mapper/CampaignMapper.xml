@@ -31,8 +31,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             app_period_end,
             event_period_str,
             event_period_end,
-            leader_code,
-            type_code,
             result_date
             <!-- DATE_FORMAT(event_Period_str,'%Y-%m-%d') AS event_Period_str,
             DATE_FORMAT(event_Period_end,'%Y-%m-%d') AS event_Period_end -->
@@ -121,9 +119,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.app_period_end,
             event_Period_str,
             event_Period_End,
+            t.user_nm
             FROM campaign c 
         LEFT OUTER JOIN files f 
         ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN team_leader t
+        on c.leader_code = t.id
         Where f.is_deleted = 'N'
         AND f.target_type = 'campaign'
         AND c.is_deleted = 'N'

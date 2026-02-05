@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.safeg.admin.config.CryptoUtils;
@@ -28,6 +29,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@RequestMapping("/admin")
 @Slf4j
 public class HomeController {
     @Autowired
@@ -48,7 +50,7 @@ public class HomeController {
     }
 
 
-    @GetMapping("")
+    @GetMapping("/")
     public String home(@AuthenticationPrincipal CustomUser authUser, Model model,
                 Option option, 
                 Page page) throws Exception{

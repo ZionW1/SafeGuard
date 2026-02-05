@@ -113,7 +113,7 @@ public class HomeController {
         }
 
         if (bindingResult.hasErrors()) {
-            return "/join";
+            return "join";
         }
 
         // ⭐️⭐️⭐️ 이제 DB에 저장할 비밀번호만 BCrypt로 암호화! ⭐️⭐️⭐️

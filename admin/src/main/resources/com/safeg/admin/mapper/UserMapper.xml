@@ -137,9 +137,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="userJoin" parameterType="UserVO" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO 
-            USER (user_id, user_nm, password, email, nickName, grade_id, auth_id, role, auth_id)
+            USER (user_id, user_nm, password, email, nickName, auth_id, role)
         VALUES
-            (#{userId}, #{userNm}, #{password}, #{email}, #{nickName}, '1', '01', 'Admin', '01')
+            (#{userId}, #{userNm}, #{password}, #{email}, #{nickName}, '01', 'Admin')
     </insert>
 
     <insert id="insertAuth">

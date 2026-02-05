@@ -5,7 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
         <title>캠페인 등록</title>
-        <link rel="stylesheet" href="/css/style.css">
+        <!-- <link rel="stylesheet" href="/css/style.css"> -->
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+
         <!-- 타임리프 자바스크립트 모드 -->
         <script th:inline="javascript">
             document.addEventListener("DOMContentLoaded", function() {

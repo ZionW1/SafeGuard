@@ -80,7 +80,7 @@ public class UserController {
 
         model.addAttribute("userVO", new UserVO());
 
-        return "/user/user02";
+        return "user/user02";
     }
 
     /**

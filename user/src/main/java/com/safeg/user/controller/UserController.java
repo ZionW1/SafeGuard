@@ -71,7 +71,7 @@ public class UserController {
         }
         model.addAttribute("username", username);
         model.addAttribute("rememberId", rememberId);
-        return "/user/user01";
+        return "user/user01";
     }
 
     @GetMapping("/user02")
@@ -105,7 +105,7 @@ public class UserController {
 
         if (bindingResult.hasErrors()) {
             log.info("bindingResult.hasErrors");
-            return "/user/user02";
+            return "user/user02";
         }
 
         String rawPasswordToEncode = userVO.getPassword(); // 평문 비밀번호 가져오기

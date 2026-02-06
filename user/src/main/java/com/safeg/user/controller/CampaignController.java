@@ -218,7 +218,7 @@ public class CampaignController {
 
         model.addAttribute("closedCampaign", closedCampaign);
 
-        return "/campaign/campaign09";
+        return "campaign/campaign09";
     }
     
 

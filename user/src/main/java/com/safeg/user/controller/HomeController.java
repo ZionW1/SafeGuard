@@ -313,7 +313,6 @@ public class HomeController {
     }
     
     @GetMapping("/userCampaignApply01")
-
     public String userCampaignApply01(@AuthenticationPrincipal CustomUser authUser, Model model, @RequestParam("id") String id) throws Exception{
         log.info(":::::::::: userCampaignApply 화면 :::::::::: " + id);
         // option.setOrderCode(0);
@@ -344,6 +343,6 @@ public class HomeController {
         model.addAttribute("campaignCount", campaignCount);
         model.addAttribute("campaignDeleted", campaignDeleted);
         
-        return "/ask01";
+        return "ask01";
     }
 }

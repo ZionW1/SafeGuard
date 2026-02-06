@@ -167,7 +167,7 @@ public class UserController {
         }
         log.info(authUser.getUserVo().toString());
 
-        return "/user/user03";
+        return "user/user03";
     }
 
     // @PostMapping("/updateInfo")
@@ -199,7 +199,7 @@ public class UserController {
 
         // Users mypageSelect = userService.mypageSelect(authUser.getUser().getId());
 
-        return "/index";
+        return "index";
     }
 
     @GetMapping("/addressCode")

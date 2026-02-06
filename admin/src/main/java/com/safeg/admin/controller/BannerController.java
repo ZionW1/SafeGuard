@@ -67,7 +67,7 @@ public class BannerController {
         log.info("pageRows : " + page.getRows());
         model.addAttribute("pageUrl", pageUrl);
         
-        return "/banner/banner01";
+        return "banner/banner01";
     }
     
     @GetMapping("/banner02")
@@ -96,7 +96,7 @@ public class BannerController {
         // return "redirect:/admin/campaign/insert?error";
         // // return "redirect:/board/insert?error";
         // log.info(":::::::::: banner02 ::::::::::");
-        return "/banner/banner02";
+        return "banner/banner02";
     }
 
     // 배너 수정 처리
@@ -130,7 +130,7 @@ public class BannerController {
         // return "redirect:/admin/campaign/insert?error";
         // // return "redirect:/board/insert?error";
         // log.info(":::::::::: banner02 ::::::::::");
-        return "/banner/banner03";
+        return "banner/banner03";
     }
 
     // 배너 등록 처리

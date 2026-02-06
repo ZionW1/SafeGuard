@@ -49,7 +49,7 @@ public class NoticeController {
                         .toUriString();
         model.addAttribute("pageUrl", pageUrl);
 
-        return "/notice/notice01";
+        return "notice/notice01";
     }
 
     // 상세 페이지 화면
@@ -60,14 +60,14 @@ public class NoticeController {
 
         model.addAttribute("noticeSelect", noticeSelect);
 
-        return "/notice/notice02";
+        return "notice/notice02";
     }
 
     @GetMapping("/notice03")
     public String notice03(Model model) throws Exception {
         log.info("Admin NoticeController notice03() 호출");
         
-        return "/notice/notice03";
+        return "notice/notice03";
     }
 
     // 등록 처리

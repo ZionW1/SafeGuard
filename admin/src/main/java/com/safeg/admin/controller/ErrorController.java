@@ -16,6 +16,6 @@ public class ErrorController {
     public String error(Model model) throws Exception {
         log.info("Admin HomeController error() 호출");
         
-        return "/error/error01";
+        return "error/error01";
     }
 }

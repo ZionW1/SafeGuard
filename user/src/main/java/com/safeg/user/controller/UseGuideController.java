@@ -29,6 +29,6 @@ public class UseGuideController {
         model.addAttribute("currentURI", request.getRequestURI());
         model.addAttribute("useGuide01", useGuide01);
         
-        return "/useGuide/useGuide01"; // useGuide03.html
+        return "useGuide/useGuide01"; // useGuide03.html
     }
 }

@@ -80,7 +80,7 @@ public class UserController {
             model.addAttribute("pageUrl", pageUrl);
 
         }
-        return "/user/user01";
+        return "user/user01";
     }
 
     @GetMapping("/user02")
@@ -95,7 +95,7 @@ public class UserController {
         if(file != null){
             model.addAttribute("file", file);
         }
-        return "/user/user02";
+        return "user/user02";
     }
     @PostMapping("/user03")
     public String user03(@AuthenticationPrincipal CustomUser authUser, Model model, UserVO userVO) throws Exception {

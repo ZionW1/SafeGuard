@@ -33,7 +33,7 @@ public class NoticeController {
         model.addAttribute("noticeList", noticeList);
         model.addAttribute("currentURI", request.getRequestURI()); // ⭐ 모델에 currentURI 추가
 
-        return "/notice/notice01";
+        return "notice/notice01";
     }
 
     @GetMapping("/notice02")
@@ -45,6 +45,6 @@ public class NoticeController {
         model.addAttribute("currentURI", request.getRequestURI());
         model.addAttribute("noticeSelect", noticeSelect);
 
-        return "/notice/notice02";
+        return "notice/notice02";
     }
 }

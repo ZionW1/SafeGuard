@@ -83,7 +83,7 @@ public class MyPageController {
         }
         // currentUserId를 이용해서 필요한 데이터 조회 및 모델에 추가
         // ...
-        return "/user/user04";
+        return "user/user04";
     }
 
     @GetMapping("/infoUpdate")
@@ -120,7 +120,7 @@ public class MyPageController {
             return "redirect:/";
         }
         log.info(authUser.getUserVo().toString());
-        return "/user/user03";
+        return "user/user03";
     }
 
     @GetMapping("/changePasswordPage")
@@ -140,7 +140,7 @@ public class MyPageController {
             return "redirect:/";
         }
 
-        return "/mypage/changePasswordPage";
+        return "mypage/changePasswordPage";
     }
 
 
@@ -517,6 +517,6 @@ public class MyPageController {
             model.addAttribute("currentURI", request.getRequestURI());
 
         }
-        return "/mypage/point";
+        return "mypage/point";
     }
 }

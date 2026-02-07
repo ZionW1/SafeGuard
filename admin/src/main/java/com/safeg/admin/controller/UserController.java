@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @Slf4j
-@RequestMapping("/admin")
 public class UserController {
     
     @Autowired

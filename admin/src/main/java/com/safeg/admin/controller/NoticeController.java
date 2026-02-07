@@ -24,7 +24,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Controller
 @Slf4j
-@RequestMapping("/admin")
 public class NoticeController {
     
     @Autowired

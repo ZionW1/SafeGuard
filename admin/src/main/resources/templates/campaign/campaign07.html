@@ -55,7 +55,7 @@
                     </div>
                         <th:block th:each="campaign, stat : ${campaignsList}">
                             <!-- <a th:href="|/admin/campaign/select?id=${campaign.id}|"> -->
-                            <tr th:onclick="|location.href='@{/admin/campaign02(id=${campaign.campaignId})}'|">
+                            <tr th:onclick="|location.href='@{/campaign02(id=${campaign.campaignId})}'|">
                                 <td><span th:text="${stat.size- stat.index}"></span></td>
                                 <td><span th:text="${campaign.placeAddr}"></span></td>
                                 <td><span th:text="${campaign.campaignTitle}"></span></td>

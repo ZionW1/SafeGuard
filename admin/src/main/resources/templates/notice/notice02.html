@@ -15,9 +15,9 @@
         <!-- 본문 영역 -->
         <div class="main-content">
                     
-            <h1 th:onclick="|location.href='@{/admin/notice02(id=${noticeSelect.adminContentId})}'|">공지사항 상세보기</h1>
+            <h1 th:onclick="|location.href='@{/notice02(id=${noticeSelect.adminContentId})}'|">공지사항 상세보기</h1>
             
-            <form th:action="@{/admin/notice05}" id="contentForm" method="post">
+            <form th:action="@{/notice05}" id="contentForm" method="post">
                 <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
                 <input type="hidden" name="action" value="U"/>
                 <input type="hidden" name="author" value="admin"/>

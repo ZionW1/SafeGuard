@@ -15,9 +15,8 @@
         <!-- 본문 영역 -->
         <div class="main-content">
                     
-            <h1><a href="/admin/notice02">공지사항 등록</a></h1>
-            
-            <form th:action="@{/admin/notice04}" id="contentForm" method="post">
+            <h1><a th:href="@{/notice02}">공지사항 등록</a></h1>
+            <form th:action="@{/notice04}" id="contentForm" method="post">
                 <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
                 <input type="hidden" name="action" value="I"/>
                 <input type="hidden" name="author" value="admin"/>

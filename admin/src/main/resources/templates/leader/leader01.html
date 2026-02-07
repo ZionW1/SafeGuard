@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
     <title>Document</title>
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
     
     <style>
         .ck-editor__editable_inline {
@@ -63,11 +63,11 @@
 
         <!-- 본문 영역 -->
         <div class="main-content">
-            <form th:action="@{/admin/leader02}" id="contentForm" method="post">
+            <form th:action="@{/leader02}" id="contentForm" method="post">
                 <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
 
                 <div th:if="${leaderSelect == null}">
-                    <h1><a href="/admin/leader01">인솔자 생성</a></h1>
+                    <h1><a href="@{/leader01}">인솔자 생성</a></h1>
                     <input type="hidden" id="action" name="action" th:value="I"/>
                     <label for="title">인솔자 제목</label>
                     <input type="text" id="title" name="title"/>
@@ -76,7 +76,7 @@
                     <textarea id="content" name="content" rows="10" cols="60" style="width: 900px;"></textarea>
                 </div>
                 <div th:if="${leaderSelect != null}">
-                    <h1><a href="/admin/leader01">인솔자 수정</a></h1>
+                    <h1><a th:href="@{/leader01}">인솔자 수정</a></h1>
                     <label for="content">인솔자 생성/수정</label>
                     <input type="hidden" id="adminContentId" name="adminContentId" th:value="${leaderSelect.adminContentId}"/>
                     <input type="hidden" id="action" name="action" th:value="U"/>

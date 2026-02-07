@@ -17,7 +17,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response,
                         AuthenticationException authException) throws IOException, ServletException {
         // 인증되지 않은 사용자가 보호된 리소스에 접근했을 때, '/' 경로로 리다이렉션
-        response.sendRedirect("/error01");
+        response.sendRedirect("/admin/error01");
     }
 
     

@@ -11,8 +11,8 @@
     <div class="admin-container">
         <th:block th:replace="~{fragments/sidebar :: sidebarFragment}"></th:block>
         <div class="main-content">
-            <h1><a th:href="@{/admin/notice01}">공지사항</a></h1>
-            <form class="optionForm" th:action="@{/admin/notice01}" method="get" id="form">
+            <h1><a th:href="@{/notice01}">공지사항</a></h1>
+            <form class="optionForm" th:action="@{/notice01}" method="get" id="form">
                 <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
                 <select name="code">
                     <option value="0" th:selected="${option.code==0}">전체</option>
@@ -40,7 +40,7 @@
                     </th:block>
                     <th:block th:each="notice, stat : ${noticeList}">
                         <!-- <a th:href="|/admin/campaign/select?id=${campaign.id}|"> -->
-                        <tr th:onclick="|location.href='@{/admin/notice02(id=${notice.adminContentId})}'|">
+                        <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
                             <td style="text-align: center;" ><span th:text="${stat.size - stat.index}"></span></td>
                             <td><span th:text="${notice.title}"></span></td>
                             <td style="text-align: center;" ><span th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}"></span></td>
@@ -71,7 +71,7 @@
             </div>
             
             </div>
-            <a th:href="@{/admin/notice03}" class="insert">등록</a>
+            <a th:href="@{/notice03}" class="insert">등록</a>
         </div>
     </div>
     <div th:replace="fragments/footer :: mainFooter"></div>

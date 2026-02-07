@@ -6,7 +6,7 @@
     <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
     <title>Document</title>
 
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
     
     <style>
         .ck-editor__editable_inline {

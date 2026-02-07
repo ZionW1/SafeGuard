@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
 
-  <link rel="stylesheet" href="/css/style.css" />
-
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
   <title>전체 배너 목록</title>
   <style>
     body {
@@ -50,7 +49,7 @@
     .checkbox-cell {
       text-align: center;
     }
-  </style>
+</style>
 </head>
 <body>
     <div class="admin-container">
@@ -59,8 +58,8 @@
         <!-- 본문 영역 -->
         <div class="main-content">
             
-            <h1><a href="/admin/banner01">전체 배너 목록</a></h1>
-            <form class="optionForm" action="/admin/banner01" method="get" id="form">
+            <h1><a href="@{/banner01}">전체 배너 목록</a></h1>
+            <form class="optionForm" action="@{/banner01}" method="get" id="form">
                 <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
 
                 <select name="code">
@@ -97,7 +96,7 @@
                 </th:block>
                 <th:block th:each="banner : ${bannerList}">
                     <!-- <tr th:onclick="|location.href='@{/banner/banner02(id=${banner.bannerId}),targetType=banner}'|"> -->
-                    <tr th:onclick="|location.href='@{/admin/banner02(id=${banner.bannerId}, targetType='banner')}'|">
+                    <tr th:onclick="|location.href='@{/banner02(id=${banner.bannerId}, targetType='banner')}'|">
 
                         <td><span th:text="${banner.bannerId}"></span></td>
                         <td><span th:text="${banner.title}"></span></td>
@@ -152,7 +151,7 @@
         </div>
         
         </div>
-        <a href="/admin/banner03" class="insert">등록</a>
+        <a href="@{/banner03}" class="insert">등록</a>
     </div>
 </div>
     <script>

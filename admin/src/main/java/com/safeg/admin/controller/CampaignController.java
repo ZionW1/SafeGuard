@@ -154,9 +154,9 @@ public class CampaignController {
         int result = campaignsService.campaignInsert(campaignVO);
 
         if(result > 0){
-            return "redirect:/admin/campaign01";
+            return "redirect:/campaign01";
         }
-        return "redirect:/admin/insert?error";
+        return "redirect:/insert?error";
         // return "redirect:/board/insert?error";
     }
 
@@ -166,9 +166,9 @@ public class CampaignController {
         log.info("수정 처리 : " + campaign);
         int result = campaignsService.campaignUpdate(campaign);
         if(result > 0){
-            return "redirect:/admin/campaign01";
+            return "redirect:/campaign01";
         }
-        return "redirect:/admin/update?error&id=" + campaign.getCampaignId();
+        return "redirect:/update?error&id=" + campaign.getCampaignId();
     }
 
     // 삭제 처리
@@ -179,7 +179,7 @@ public class CampaignController {
         // if(result > 0){
         //     return "redirect:/admin/campaign01";
         // }
-        return "redirect:/admin/campaign02?error&id="+id;
+        return "redirect:/campaign02?error&id="+id;
     }
 
     @GetMapping("/campaign07")

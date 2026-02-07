@@ -17,7 +17,7 @@
             <div class="main-content">
                 
                 <h1><a th:href="@{/admin/campaign01}">캠페인 목록 요약</a></h1>
-                <form class="optionForm" th:action="@{/admin/campaign01}" method="get" id="form">
+                <form class="optionForm" th:action="@{/campaign01}" method="get" id="form">
                     <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
 
                     <select name="code">
@@ -54,7 +54,7 @@
                     </div>
                         <th:block th:each="campaign : ${campaignsList}">
                             <!-- <a th:href="|/admin/campaign/select?id=${campaign.id}|"> -->
-                            <tr th:onclick="|location.href='@{/admin/campaign02(id=${campaign.campaignId})}'|">
+                            <tr th:onclick="|location.href='@{/campaign02(id=${campaign.campaignId})}'|">
                                 <td><span th:text="${campaign.campaignId}"></span></td>
                                 <td><span th:text="${campaign.placeAddr}"></span></td>
                                 <td><span th:text="${campaign.campaignTitle}"></span></td>

@@ -22,9 +22,9 @@ public class UseGuideController {
     @GetMapping("/useGuide01")
     public String useGuide01(Model model, HttpServletRequest request) throws Exception {
 
-        log.info("UseGuide saveContent success");
         UseGuideVO useGuide01 = useGuideService.useGuide01();
-
+        log.info("UseGuide saveContent success");
+        
         if (useGuide01 == null) {
             log.info("조회된 이용가이드 데이터가 없습니다. 빈 객체를 생성합니다.");
             useGuide01 = new UseGuideVO();
@@ -35,6 +35,9 @@ public class UseGuideController {
             // 2. 데이터가 있을 때만 로그를 찍음 (안 그러면 여기서 에러!)
             log.info("Saved Content: " + useGuide01.getContent());
         }
+        model.addAttribute("currentURI", request.getRequestURI());
+        model.addAttribute("useGuide01", useGuide01);
+        
         return "useGuide/useGuide01"; // useGuide03.html
     }
 }

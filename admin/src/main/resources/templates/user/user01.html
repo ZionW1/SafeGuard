@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="admin-container">
-        <div th:replace="~{fragments/sideBar :: sidebarFragment}"></div>
+        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
         <div class="main-content">
             <h1><a th:href="@{/user01}">유저 목록</a></h1>
             <form class="optionForm" th:action="@{/user01}" method="get" id="form">

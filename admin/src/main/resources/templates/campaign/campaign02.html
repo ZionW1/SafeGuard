@@ -7,7 +7,7 @@
 
         
         <title>캠페인 수정</title>
-        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="@{/css/style.css}">
         
         <script th:inline="javascript">
             document.addEventListener("DOMContentLoaded", function() {
@@ -191,7 +191,7 @@
 
             <div class="main-content">
                 <h1>캠페인 수정</h1>
-                <form class="form" action="/admin/campaign05" method="post" id="form" enctype="multipart/form-data">
+                <form class="form" action="@{/admin/campaign05}" method="post" id="form" enctype="multipart/form-data">
                     <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
                     
                     <input type="hidden" name="campaignId" id="campaignId" th:value="${campaignSelect.campaignId}" />

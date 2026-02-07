@@ -23,7 +23,7 @@
             color: #007bff;
         }
     </style> -->
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="@{/css/style.css}" />
 
 </head>
 <body>
@@ -31,16 +31,17 @@
     <!-- ⭐️ 여기가 중요! th:fragment 속성을 사용해서 이 부분이 '사이드바' 프래그먼트임을 알려주는 거야. ⭐️ -->
     <div th:fragment="sidebarFragment" class="sidebar">
         <div class="sidebar-menu">
-            <h2><a href="/admin/campaign01">챗짱 Admin</a></h2>
-            <a href="/admin/campaign01"><div class="menu-item">캠페인 목록 요약</div></a>
-            <a href="/admin/campaign03"><div class="menu-item">캠페인 등록</div></a>
-            <a href="/admin/campaign07"><div class="menu-item">선정인원 없는 캠페인 목록</div></a>
+            "@{/admin/campaign01}"
+            <h2><a href="@{/admin/campaign01}">챗짱 Admin</a></h2>
+            <a href="@{/admin/campaign01}"><div class="menu-item">캠페인 목록 요약</div></a>
+            <a href="@{/admin/campaign03}"><div class="menu-item">캠페인 등록</div></a>
+            <a href="@{/admin/campaign07}"><div class="menu-item">선정인원 없는 캠페인 목록</div></a>
             <div class="menu-item">알림톡</div>
-            <a href="/admin/banner01"><div class="menu-item">배너</div></a>
-            <a href="/admin/notice01"><div class="menu-item">공지사항</div></a>
-            <a href="/admin/useGuide01"><div class="menu-item">이용가이드</div></a>
-            <a href="/admin/leader01"><div class="menu-item">인솔자</div></a>
-            <a href="/admin/user01"><div class="menu-item">유저</div></a>
+            <a href="@{/admin/banner01}"><div class="menu-item">배너</div></a>
+            <a href="@{/admin/notice01}"><div class="menu-item">공지사항</div></a>
+            <a href="@{/admin/useGuide01}"><div class="menu-item">이용가이드</div></a>
+            <a href="@{/admin/leader01}"><div class="menu-item">인솔자</div></a>
+            <a href="@{/admin/user01}"><div class="menu-item">유저</div></a>
             
             <!-- <button id="menuLogout">로그아웃</button> -->
             <!-- <a href="#" class="auth-link" id="menuLogout">로그아웃</a> -->

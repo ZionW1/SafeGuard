@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="@{/css/style.css}" />
     <title>Document</title>
 </head>
 <body>
     <div class="admin-container">
         <th:block th:replace="~{fragments/sidebar :: sidebarFragment}"></th:block>
         <div class="main-content">
-            <h1><a href="/admin/notice01">공지사항</a></h1>
-            <form class="optionForm" action="/admin/notice01" method="get" id="form">
+            <h1><a href="@{/admin/notice01}">공지사항</a></h1>
+            <form class="optionForm" action="@{/admin/notice01}" method="get" id="form">
                 <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
                 <select name="code">
                     <option value="0" th:selected="${option.code==0}">전체</option>
@@ -71,10 +71,10 @@
             </div>
             
             </div>
-            <a href="/admin/notice03" class="insert">등록</a>
+            <a href="@{/admin/notice03}" class="insert">등록</a>
         </div>
     </div>
     <div th:replace="fragments/footer :: mainFooter"></div>
-    <script src="/js/common.js"></script>
+    <script src="@{/js/common.js}"></script>
 </body>
 </html>

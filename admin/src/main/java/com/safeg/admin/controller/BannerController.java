@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-@RequestMapping("/admin")
 public class BannerController {
     
     @Autowired
@@ -107,9 +106,9 @@ public class BannerController {
         
         int result = bannerService.bannerUpdate(bannerVO);
         if(result > 0){
-            return "redirect:/admin/banner01";
+            return "redirect:/banner01";
         }
-        return "redirect:/admin/banner02?error";
+        return "redirect:/banner02?error";
     }
 
     // @RequestMapping("/banner03")
@@ -141,8 +140,8 @@ public class BannerController {
         
         int result = bannerService.bannerInsert(bannerVO);
         if(result > 0){
-            return "redirect:/admin/banner01";
+            return "redirect:/banner01";
         }
-        return "redirect:/admin/banner03?error";
+        return "redirect:/banner03?error";
     }
 }

@@ -78,9 +78,9 @@ public class NoticeController {
         
         int result = noticeService.noticeInsert(adminContentVO);
         if(result > 0){
-            return "redirect:/admin/notice01";
+            return "redirect:/notice01";
         }
-        return "redirect:/admin/notice03?error";
+        return "redirect:/notice03?error";
     }
 
     // 수정 처리
@@ -93,9 +93,9 @@ public class NoticeController {
         
         int result = noticeService.noticeUpdate(adminContentVO);
         if(result > 0){
-            return "redirect:/admin/notice01";
+            return "redirect:/notice01";
         }
-        return "redirect:/admin/notice02?error";
+        return "redirect:/notice02?error";
         // return "redirect:/board/insert?error";
     }
     

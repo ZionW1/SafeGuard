@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="@{/css/style.css}" />
   <title>배너 등록</title>
   <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
     <style>
@@ -93,8 +93,8 @@
     <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
 
     <div class="main-content">
-        <h1><a href="/admin/banner03">배너 등록</a></h1>
-        <form class="form" action="/admin/banner03" method="post" enctype="multipart/form-data">
+        <h1><a href="@{/admin/banner03}">배너 등록</a></h1>
+        <form class="form" action="@{/admin/banner03}" method="post" enctype="multipart/form-data">
             <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
 
             <div class="form-item">

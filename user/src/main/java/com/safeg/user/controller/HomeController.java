@@ -208,7 +208,7 @@ public class HomeController {
         model.addAttribute("allView", allView);
         model.addAttribute("pageUrl", pageUrl);
 
-        return "/campaign/campaign08";
+        return "campaign/campaign08";
     }
     
     @GetMapping("/campaign09")

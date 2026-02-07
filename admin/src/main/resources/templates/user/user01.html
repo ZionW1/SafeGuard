@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
     <title>Document</title>
 </head>
 <body>
     <div class="admin-container">
         <div th:replace="~{fragments/sideBar :: sidebarFragment}"></div>
         <div class="main-content">
-            <h1><a href="/admin/user01">유저 목록</a></h1>
-            <form class="optionForm" action="/admin/user01" method="get" id="form">
+            <h1><a th:href="@{/admin/user01}">유저 목록</a></h1>
+            <form class="optionForm" th:action="@{/admin/user01}" method="get" id="form">
                 <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
                 <select name="code">
                     <option value="0" th:selected="${option.code==0}">전체</option>
@@ -100,12 +100,12 @@
                 <a th:href="@{${pageUrl} + '&page=' + ${page.last}}">[마지막]</a>
             </div>
             </div>
-            <a href="/admin/campaign03" class="insert">등록</a>
+            <a th:href="@{/admin/campaign03}" class="insert">등록</a>
         </div>
     </div>
     <div th:replace="fragments/footer :: mainFooter"></div>
 
-    <script src="/js/common.js"></script>
+    <script th:src="@{/js/common.js}"></script>
     <script th:inline="javascript">
         function leaderUpdate(){
             console.log("aa");

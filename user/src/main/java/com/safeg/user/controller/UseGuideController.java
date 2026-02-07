@@ -23,12 +23,18 @@ public class UseGuideController {
     public String useGuide01(Model model, HttpServletRequest request) throws Exception {
 
         log.info("UseGuide saveContent success");
-        UseGuideVO  useGuide01 = useGuideService.useGuide01();
-        log.info("Saved Content: " + useGuide01.getContent());
+        UseGuideVO useGuide01 = useGuideService.useGuide01();
 
-        model.addAttribute("currentURI", request.getRequestURI());
-        model.addAttribute("useGuide01", useGuide01);
-        
+        if (useGuide01 == null) {
+            log.info("조회된 이용가이드 데이터가 없습니다. 빈 객체를 생성합니다.");
+            useGuide01 = new UseGuideVO();
+            useGuide01.setTitle("등록된 이용가이드가 없습니다.");
+            useGuide01.setContent("내용을 등록해 주세요.");
+            useGuide01.setAuthor("관리자");
+        } else {
+            // 2. 데이터가 있을 때만 로그를 찍음 (안 그러면 여기서 에러!)
+            log.info("Saved Content: " + useGuide01.getContent());
+        }
         return "useGuide/useGuide01"; // useGuide03.html
     }
 }

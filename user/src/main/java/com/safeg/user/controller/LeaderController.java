@@ -23,7 +23,7 @@ public class LeaderController {
     @Autowired
     LeaderService leaderService;
 
-    @GetMapping("leader01")
+    @GetMapping("/leader01")
     public String leader01(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception{
 
         // AdminContentVO leaderSelect = leaderService.leaderSelect();
@@ -37,7 +37,7 @@ public class LeaderController {
         return "leader/leader01";
     }
 
-    @GetMapping("leader02")
+    @GetMapping("/leader02")
     public String leader02(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model, Long id) throws Exception{
 
         // AdminContentVO leaderSelect = leaderService.leaderSelect();

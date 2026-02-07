@@ -8,9 +8,6 @@
 
     <!-- 여기가 마이클의 common_head 프래그먼트가 들어갈 자리야 -->
     <th:block th:replace="~{fragments/head :: common_head}"></th:block>
-
-    <!-- ⭐ 여기! 백슬래시(\) 삭제! ⭐ -->
-    <th:block layout:fragment="css"></th:block> 
 </head>
 <body>
     <header th:replace="~{fragments/header :: common_header}"></header>
@@ -19,8 +16,8 @@
         <!-- 각 페이지의 'main' 내용이 여기에 삽입될 거야. -->
     </main>
 
-    <footer th:replace="fragments/footer :: common_footer"></footer>
-
+    <div th:replace="~{fragments/footer :: common_footer}"></div>
+    
     <div id="commonModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="commonModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

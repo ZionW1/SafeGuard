@@ -144,16 +144,14 @@
                 <th:block th:replace="~{fragments/noticeSidebar :: sidebarMenu}" />
             </div>
             <div class="article-container">
-                <div class="notice-title" th:text="${useGuide01.title}">게시글 제목입니다.</div>
+                <div class="notice-title" th:text="${useGuide01?.title}">게시글 제목입니다.</div>
                 <div class="article-info">
-                    작성자: <span th:text="${useGuide01.author}"></span> |
-                    작성일: <span th:text="${#temporals.format(useGuide01.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                    작성자: <span th:text="${useGuide01?.author}"></span> |
+                    작성일: <span th:text="${useGuide01?.createdAt != null ? #temporals.format(useGuide01.createdAt, 'yyyy-MM-dd HH:mm') : '-'}"></span>
                 </div>
                 <div class="article-content ck-content">
-                    <!-- ⭐️⭐️⭐️ 여기가 핵심! th:utext를 사용해야 HTML이 그대로 렌더링돼! ⭐️⭐️⭐️ -->
-                    <p th:utext="${useGuide01.content}"></p>
+                    <p th:utext="${useGuide01?.content ?: '내용이 없습니다.'}"></p>
                 </div>
-                <br>
             </div>
         </div>
     </main>

@@ -11,8 +11,8 @@
     <div class="admin-container">
         <div th:replace="~{fragments/sideBar :: sidebarFragment}"></div>
         <div class="main-content">
-            <h1><a th:href="@{/admin/user01}">유저 목록</a></h1>
-            <form class="optionForm" th:action="@{/admin/user01}" method="get" id="form">
+            <h1><a th:href="@{/user01}">유저 목록</a></h1>
+            <form class="optionForm" th:action="@{/user01}" method="get" id="form">
                 <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
                 <select name="code">
                     <option value="0" th:selected="${option.code==0}">전체</option>
@@ -52,7 +52,7 @@
                         </tr>
                     </th:block>
                     <th:block th:each="user, stat: ${userList}">
-                        <tr th:onclick="|location.href='@{/admin/user02(id=${user.id})}'|">
+                        <tr th:onclick="|location.href='@{/user02(id=${user.id})}'|">
                             <td><span th:text="${stat.size - stat.index}"></span></td>
                             <td><span th:text="${user.userId}"></span></td>
                             <td><span th:text="${user.userNm}"></span></td>
@@ -100,7 +100,7 @@
                 <a th:href="@{${pageUrl} + '&page=' + ${page.last}}">[마지막]</a>
             </div>
             </div>
-            <a th:href="@{/admin/campaign03}" class="insert">등록</a>
+            <a th:href="@{/campaign03}" class="insert">등록</a>
         </div>
     </div>
     <div th:replace="fragments/footer :: mainFooter"></div>
@@ -108,14 +108,35 @@
     <script th:src="@{/js/common.js}"></script>
     <script th:inline="javascript">
         function leaderUpdate(){
+            
             console.log("aa");
             console.log("${userList[0].createdAt}");
             if(!confirm('이 사용자를 인솔자로 변경하시겠습니까?')){
                 return;
             }
+            const form = document.querySelector('form');
 
             form.action = '/admin/user05'; // action 속성 변경
             form.submit(); // 요청 전송
+        }
+
+        function leaderUpdate(){
+            if(!confirm('변경하시겠습니까?')){ return; }
+
+            const formData = new FormData(document.getElementById('form'));
+
+            fetch('/admin/user05', {
+                method: 'POST',
+                body: formData // 폼 데이터를 그대로 실어 보냄
+            })
+            .then(response => {
+                if(response.ok) {
+                    alert("변경되었습니다.");
+                    location.reload(); // 성공 후 새로고침
+                } else {
+                    alert("에러가 발생했습니다.");
+                }
+            });
         }
 
     </script>

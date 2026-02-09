@@ -52,10 +52,14 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework:spring-aspects'
+
     // Other dependencies (e.g., database driver)
     implementation 'com.mysql:mysql-connector-j' // MySQL 8.0.31 이후 버전에 맞는 올바른 의존성
     // or
     runtimeOnly 'com.h2database:h2' // Example for H2 database
+    
     // MyBatis 설정 (이미 추가하신 내용)
     // JPA/Hibernate 기능을 함께 사용하려는 경우 (가장 권장)
 

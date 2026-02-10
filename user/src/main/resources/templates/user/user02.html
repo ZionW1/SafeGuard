@@ -34,7 +34,7 @@
             <!-- <input type="text" name="authCode" id="authCode" th:field="*{authCode}" placeholder="인증번호 입력" />
             <button type="button" class="verifyAuth" id="verifyAuth">인증하기</button> -->
 
-            <div id="authSection" style="display:none;">
+            <div id="authSection">
                 <input type="text" id="authCode" placeholder="인증번호 6자리 입력">
                 <span id="timer">03:00</span>
                 <button type="button" id="verifyBtn">인증확인</button>
@@ -201,9 +201,12 @@
     let timerInterval;
 
     function startTimer() {
-        document.getElementById('authSection').style.display = 'block'; // 입력창 보이기
+        //document.getElementById('authSection').style.display = 'block'; // 입력창 보이기
+        const authCodeGroup = document.getElementById('authCodeGroup');
+
         clearInterval(timerInterval);
-        
+        authCodeGroup.classList.remove('hidden');
+
         timerInterval = setInterval(() => {
             let minutes = Math.floor(timeLeft / 60);
             let seconds = timeLeft % 60;

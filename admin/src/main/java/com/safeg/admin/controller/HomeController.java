@@ -1,6 +1,7 @@
 package com.safeg.admin.controller;
 
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -168,7 +169,12 @@ public class HomeController {
     System.out.println("입력된 평문 비밀번호: " + enteredPlainPassword);
     System.out.println("DB에 저장된 해시: " + dbEncodedPassword);
     System.out.println("비밀번호 일치 여부: " + isMatch);
-
+    Random random = new Random();
+    
+    int code = 100000 + random.nextInt(900000);
+    log.info("code + " + code);
+    
+    // return String.valueOf(code);
     // 만약 회원가입 시 평문 'MJordan23!'을 암호화한 해시와 로그인 시 'MJordan23!'을 비교해서 일치하는지 확인
     // String newHash = encoder.encode(enteredPlainPassword);
     // System.out.println("새로 생성된 해시: " + newHash);
@@ -184,4 +190,10 @@ public class HomeController {
 // boolean isMatch = encoder.matches("입력한평문비밀번호", "DB의BCrypt해시");
 // 이 코드를 실행해서 isMatch가 true가 나오는지 확인해 봐. false가 나온다면 평문 비밀번호가 틀린 거야.
 
+
+    @GetMapping("/test")
+    public String test() throws Exception {
+        log.info("test page");
+        return "test";
+    }
 }

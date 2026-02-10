@@ -53,6 +53,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework:spring-aspects'
     
     // Other dependencies (e.g., database driver)
     implementation 'com.mysql:mysql-connector-j' // MySQL 8.0.31 이후 버전에 맞는 올바른 의존성

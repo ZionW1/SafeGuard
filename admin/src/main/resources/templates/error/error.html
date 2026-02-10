@@ -18,6 +18,11 @@
         <!-- 개발 환경에서는 스택 트레이스도 보여줄 수 있지만, 운영 환경에서는 보안상 노출하지 않는 것이 좋음 -->
         <!-- <p th:if="${trace}"><strong>상세 내용:</strong> <pre th:text="${trace}"></pre></p> -->
     </div>
+
+    <h1>오류가 발생했습니다.</h1>
+    <p th:text="${status} + ' ' + ${error}"></p>
+    <p th:text="${message}"></p>
+    <a href="/">홈으로</a>
     <p><a href="/">홈으로 돌아가기</a></p>
 </body>
 </html>

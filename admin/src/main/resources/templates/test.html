@@ -1,0 +1,130 @@
+<!-- simple.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>인증 문자 요청</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+    <h2>휴대폰 인증번호 전송</h2>
+    <form id="smsForm">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <label for="phoneNumber">휴대폰 번호:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" placeholder="01012345678" required pattern="\d{10,11}" />
+        <button type="submit" id="sendCode">인증번호 발송</button>
+
+        <div id="authSection" style="display:none;">
+            <input type="text" id="authCode" placeholder="인증번호 6자리 입력">
+            <span id="timer">03:00</span>
+            <button type="button" id="verifyBtn">인증확인</button>
+        </div>
+    </form>
+
+    <p id="resultMessage"></p>
+
+    <script th:inline="javascript">
+        const form = document.getElementById('smsForm');
+        const resultMessage = document.getElementById('resultMessage');
+
+        const csrfHeader = /*[[${_csrf.headerName}]]*/ ''; // 예: 'X-CSRF-TOKEN' 또는 빈 문자열
+        const csrfToken = /*[[${_csrf.token}]]*/ '';       // 실제 토큰 값 또는 빈 문자열
+
+        const requestHeaders = {};
+
+        if (csrfHeader && csrfToken) {
+            requestHeaders[csrfHeader] = csrfToken;
+        }
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const phoneNumber = document.getElementById('phoneNumber').value;
+
+            
+            fetch('auth/sendCode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    ...requestHeaders  // 반드시 객체 병합 형태로 추가
+                },
+                credentials: 'include',  // 이 옵션이 중요합니다!
+                body: new URLSearchParams({ phoneNumber: phoneNumber })
+            })
+            .then(response => response.text()) // json() 대신 text()로 받기
+            .then(data => {
+                console.log("서버 응답 데이터:", data);
+                
+                // 서버에서 리턴한 문자열에 '성공'이라는 글자가 포함되어 있는지 확인
+                if (data.includes("성공") || data === "Test OK") {
+                    resultMessage.style.color = 'blue';
+                    resultMessage.textContent = '인증번호가 발송되었습니다.';
+                    
+                    // 여기에 타이머 시작 함수를 넣으면 딱 좋습니다!
+                    startTimer(); 
+                } else {
+                    resultMessage.style.color = 'red';
+                    resultMessage.textContent = '발송 실패: ' + data;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultMessage.textContent = '서버와 통신 중 오류가 발생했습니다.';
+            });
+        });
+
+        let timeLeft = 180; // 3분
+        let timerInterval;
+
+        function startTimer() {
+            document.getElementById('authSection').style.display = 'block'; // 입력창 보이기
+            clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("인증 시간이 만료되었습니다. 다시 시도해주세요.");
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        // 인증확인 버튼 클릭 이벤트
+        document.getElementById('verifyBtn').addEventListener('click', () => {
+            const inputCode = document.getElementById('authCode').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+
+            fetch('auth/verifyCode', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...requestHeaders },
+                body: new URLSearchParams({ phoneNumber: phoneNumber, inputCode: inputCode })
+            })
+            .then(res => res.text())
+            .then(data => {
+                if (data === "인증 성공") {
+                    alert("✅ 인증되었습니다!");
+                    clearInterval(timerInterval);
+                    resultMessage.textContent = "인증되었습니다.";
+
+                    // 추가로 인증번호 입력창과 버튼을 비활성화하거나 숨길 수도 있습니다.
+                    document.getElementById('phoneNumber').disabled = true;
+                    document.getElementById('sendCode').disabled = true;
+                    document.getElementById('authCode').disabled = true;
+                    document.getElementById('verifyBtn').disabled = true;
+
+                    // 다음 단계(회원가입 완료 등)로 진행
+                } else {
+                    alert(data);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

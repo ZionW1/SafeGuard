@@ -18,8 +18,8 @@
                 
                 <h1><a th:href="@{/campaign01}">캠페인 목록 요약</a></h1>
                 <form class="optionForm" th:action="@{/campaign01}" method="get" id="form">
-                    <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
-
+                    <div th:replace="~{fragments/csrfFragments :: inputCsrf}"></div>
+                    
                     <select name="code">
                         <option value="0" th:selected="${option.code==0}">전체</option>
                         <option value="1" th:selected="${option.code==1}">제목</option>

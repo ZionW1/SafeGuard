@@ -1,4 +1,4 @@
-package com.safeg.admin.config;
+package com.safeg.user.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

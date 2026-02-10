@@ -25,7 +25,7 @@ public class SmsController {
         String message = "알리고 API를 통한 Spring 비동기 발송 테스트입니다.";
         
         // 서비스의 비동기 메서드 호출
-        smsService.sendSms(to, message);
+        smsService.sendTestSms(to, message);
         log.info("문자 발송 요청이 완료되었습니다");
         return "문자 발송 요청이 완료되었습니다! (백그라운드에서 처리 중)";
     }

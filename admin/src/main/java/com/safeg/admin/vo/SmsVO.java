@@ -10,14 +10,12 @@ import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-
 public class SmsVO {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,5 +34,4 @@ public class SmsVO {
         this.msgId = msgId;
         this.sentAt = LocalDateTime.now();
     }
-
 }

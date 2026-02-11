@@ -191,7 +191,7 @@
 
             <div class="main-content">
                 <h1>캠페인 수정</h1>
-                <form class="form" th:action="@{/admin/campaign05}" method="post" id="form" enctype="multipart/form-data">
+                <form class="form" th:action="@{/campaign05}" method="post" id="form" enctype="multipart/form-data">
                     <div th:replace="~{fragments/csrfFragments :: inputCsrf}"></div>
                     
                     <input type="hidden" name="campaignId" id="campaignId" th:value="${campaignSelect.campaignId}" />
@@ -279,7 +279,8 @@
 
                             <div id="existing-file-section" th:classappend="${file == null} ? 'hidden'">
                                 <div class="mrg_auto">
-                                    <img class="campaign_image" id="imgFile" th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" />
+                                    <img class="campaign_image" id="imgFile" th:src="@{/img(id=${campaignSelect.campaignId})}"
+                                    alt="파일이미지" />
                                 </div>
                                 <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
                                         th:onclick="removeFile(this, [[${campaignSelect.campaignId}]])">기존 이미지 삭제</button>

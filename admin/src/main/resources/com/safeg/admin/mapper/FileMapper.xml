@@ -11,7 +11,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <!-- 조회 -->
     <select id="select" resultType="FilesVO">
-        select * from files where FILE_TYPE = 'campaign_File' and target_Id = #{id} and is_Deleted = 'N';
+        select *
+        from files
+        where FILE_TYPE = 'campaign_File'
+        and target_Id = #{id}
+        and is_Deleted = 'N';
     </select>
     <!-- 등록 -->
     <insert id="insert">

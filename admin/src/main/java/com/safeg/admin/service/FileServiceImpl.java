@@ -34,6 +34,8 @@ public class FileServiceImpl implements FileService{
 
     @Override
     public FilesVO select(String id) throws Exception{
+
+        log.info("id + " + id);
         String status = "campaign";
         String status_id = id;
         FilesVO file = fileMapper.select(id, status);

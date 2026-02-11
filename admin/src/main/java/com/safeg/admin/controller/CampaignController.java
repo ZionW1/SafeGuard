@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.safeg.admin.service.CampaignService;
@@ -162,13 +163,25 @@ public class CampaignController {
 
     // 수정 처리
     @PostMapping("/campaign05")
-    public String campaign05(CampaignVO campaign) throws Exception{
-        log.info("수정 처리 : " + campaign);
-        int result = campaignsService.campaignUpdate(campaign);
-        if(result > 0){
-            return "redirect:/campaign01";
+    public String campaign05(CampaignVO campaign, RedirectAttributes rttr) throws Exception{
+        try {
+            log.info("수정 처리 시작: {}", campaign);
+            
+            int result = campaignsService.campaignUpdate(campaign);
+            
+            if(result > 0){
+                rttr.addFlashAttribute("message", "수정이 완료되었습니다.");
+                return "redirect:/campaign01";
+            } else {
+                // 업데이트된 행이 0개인 경우
+                return "redirect:/campaign02?error&id=" + campaign.getCampaignId();
+            }
+        } catch (Exception e) {
+            log.error("캠페인 수정 중 오류 발생: ", e);
+            // 에러 메시지를 가지고 안전한 페이지로 리다이렉트
+            rttr.addFlashAttribute("errorMessage", "시스템 오류가 발생했습니다.");
+            return "redirect:/campaign02?id=" + campaign.getCampaignId();
         }
-        return "redirect:/update?error&id=" + campaign.getCampaignId();
     }
 
     // 삭제 처리

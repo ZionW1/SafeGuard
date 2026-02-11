@@ -51,7 +51,7 @@ public class FileController {
     public ResponseEntity<byte[]> thumbnail(@RequestParam("id") String id) throws Exception{
         log.info("thumbnail : " + id);
         FilesVO file = fileService.select(id);
-
+        
         String filePath = file.getFilePath();
         // 파일 객체 생성
         File f = new File(filePath);

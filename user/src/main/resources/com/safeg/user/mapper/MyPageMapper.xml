@@ -109,7 +109,8 @@
             apply_date,
             c.campaign_title,
             u.pay,
-            c.leader_code
+            c.leader_code,
+            u.auth_id
             FROM user_campaign uc
         LEFT OUTER JOIN
         campaign c 

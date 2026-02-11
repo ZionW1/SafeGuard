@@ -51,7 +51,7 @@ public class UserCampaignVO {
     private int pointSum;
     private int pay;
 
-
+    private String authId;
 
 
     private Long pointId;

@@ -72,10 +72,9 @@
                         </tr>
                     </tbody>
                 </table>
-                <div th:if="${!referrerPayList.isEmpty() && referrerPayList != null}">
+                <div class="tableTitle">추천인 포인트 : <span th:text="${referrerPayList[0].totalPoint}"></span></div>
                     <!-- <td colspan="4">참여 캠페인 정보가 없습니다.</td> -->
 
-                <div class="tableTitle">추천인 포인트 : <span th:text="${referrerPayList[0].totalPoint}"></span></div>
                 <table class="point_List" style="border: 1px;">
                     <thead>
                         <tr>
@@ -86,19 +85,25 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <div th:if="${!referrerPayList.isEmpty() && referrerPayList != null}">
                         <tr th:each="giver, stat1 : ${referrerPayList}">
                             <td th:text="${stat1.count}"></td>
                             <td th:text="${giver.userNm}"></td>
                             <td th:text="${giver.totalAmount}"></td>
                             <td th:text="${giver.referrerCount}"></td>
                         </tr>
-                        
+                        </div>
+                        <div th:if="${referrerPayList.isEmpty() && referrerPayList == null}">
+                            <tr th:each="giver, stat1 : ${referrerPayList}">
+                                <td colspan="4">추천인 포인트가 없습니다.</td>
+                            </tr>
+                            </div>
                     </tbody>
                 </table>
             </div>
                 <!-- <span th:text="${pointList[1].leaderCode}"></span>            <span th:text="${id}"></span> -->
                 <!-- <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br> -->
-                <div th:if="${leaderPayList != null}">
+                <div th:if="${pointList.authId == '03'}">
                     <!-- <td colspan="4">참여 캠페인 정보가 없습니다.</td> -->
 
                     <div class="tableTitle">인솔자 포인트 : <span th:text="${leaderPayList[0].totalPoint}"></span></div>
@@ -123,6 +128,7 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
                     </div>
                 </div>
             </div>

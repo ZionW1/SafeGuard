@@ -503,13 +503,15 @@ public class MyPageController {
             
                 // 리스트가 비어 있지 않으니 안전하게 접근 가능
                 leaderPayList.get(0).setTotalPoint(leaderPoint);
-            
+                model.addAttribute("leaderPayList", leaderPayList);
+
+            }else{
+                model.addAttribute("leaderPayList", null);
             }
 
             int totalPoint = workPoint + referrerPoint + leaderPoint;
             log.info(":::::::::: totalPoint :::::::::: " + totalPoint);
             model.addAttribute("totalPoint", totalPoint);
-            model.addAttribute("leaderPayList", leaderPayList);
 
 
             model.addAttribute("pointFull", pointFull);

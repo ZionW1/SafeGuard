@@ -410,6 +410,7 @@ public class MyPageController {
     }
 
     @PostMapping("/uploadCertImage")
+    @ResponseBody
     public String uploadCertImage(@AuthenticationPrincipal CustomUser authUser, UserVO userVO, Model model) throws Exception{
         // log.info(":::::::::: uploadCertImage :::::::::: + " + authUser.getUserVo().getUserId());
         log.info(":::::::::: uploadCertImage :::::::::: + " + userVO);

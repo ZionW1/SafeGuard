@@ -275,7 +275,7 @@ function execDaumPostcode() {
                         <input type="hidden" name="id" th:value="${user.id}" />
                         <input type="hidden" name="userId" th:value="${user.userId}" />
                         <div th:if="${getIdentity != null}">
-                            <img id="imgCertFile" th:src="|/selectProfile?id=${user.id}&args=2|" alt="파일이미지" width="720" height="405" style="max-width: 100%; margin: 0px auto;" />
+                            <img id="imgIdttFile" th:src="|/selectProfile?id=${user.id}&args=2|" alt="파일이미지" width="720" height="405" style="max-width: 100%; margin: 0px auto;" />
                             <!-- <div class="file-action-buttons">
                                 <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
                                         th:onclick="removeFile(this, [[${userId}]])">기존 이미지 삭제</button>
@@ -309,26 +309,19 @@ function execDaumPostcode() {
                         </div>
                     </form>
 
-                    <form class="certificate-preview" action="/mypage/uploadCertImage" method="post" enctype="multipart/form-data">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <form id="certForm" class="certificate-preview" action="/mypage/uploadCertImage" method="post" enctype="multipart/form-data">
+                        <input type="hidden" id="csrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <input type="hidden" name="id" th:value="${user.id}" />
                         <input type="hidden" name="userId" th:value="${user.userId}" />
                         <div th:if="${getCertificate != null}">
                             <img id="imgCertFile" th:src="|/selectProfile?id=${user.id}&args=3|" alt="파일이미지" width="720" height="405" style="max-width: 100%; margin: 0px auto;" />
-                            <!-- <div class="file-action-buttons">
-                                <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
-                                        th:onclick="removeFile(this, [[${userId}]])">기존 이미지 삭제</button>
-                            </div> -->
                         </div>
                         <div class="profile" th:if="${getCertificate == null}">
-                            <!-- <input type="file" name="image" id="image" accept="image/*" style="display: none" /> -->
                             <div class="profile" th:if="${getCertificate == null}">
                                 <div id="cert_drop" style="width: 75%; border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px">
                                     <input type="file" name="certImage" id="cert_image" accept="image/*" style="display: none" />
                                     <div id="imageDisplayArea">
                                         <img id="cert_preview" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
-                                        
-                                        <!-- getCertificate가 null일 때만 보이도록. -->
                                         <p id="cert_placeholder_message" 
                                             th:if="${getCertificate == null}"
                                             style="color: #888; font-size: 0.9em; margin-top: 10px; display: block;">
@@ -336,17 +329,29 @@ function execDaumPostcode() {
                                         </p>
                                     </div>
                                 </div>
-                                <button class="mypage_button" type="submit">이수증 이미지 업로드</button>
+                                <button type="button" id="uploadBtn" class="mypage_button">이수증 이미지 업로드</button>
                             </div>
-                            <!-- <div th:if="${file != null}">
-                                <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" 
-                                th:onclick="removeFile(this, [[${userId}]])">기존 이미지 삭제</button>
-                            </div> -->
-                            
                             <p><span sec:authentication=""></span></p>
 
                         </div>
                     </form>
+
+                    <!-- <form id="certForm" class="certificate-preview" enctype="multipart/form-data">
+                        <input type="hidden" id="csrfToken" th:value="${_csrf.token}" />
+                        <input type="hidden" name="id" th:value="${user.id}" />
+                        <input type="hidden" name="userId" th:value="${user.userId}" />
+                    
+                        <input type="file" name="certImage" id="cert_image" accept="image/*" style="display:none" />
+                        <label for="cert_image" style="border: 2px dashed #b594ff; padding: 20px; display: inline-block; cursor: pointer;">
+                            이수증 이미지를 선택해주세요.
+                        </label>
+                    
+                        <div id="imageDisplayArea">
+                            <img id="cert_preview" src="" alt="미리보기" style="max-width: 100%; display: none;" />
+                        </div>
+                    
+                        <button type="button" id="uploadBtn" class="mypage_button">이수증 이미지 업로드</button>
+                    </form> -->
                 <!-- </div> -->
             </div>
         </div>
@@ -462,70 +467,115 @@ function execDaumPostcode() {
 
     } 
 });
+
+document.getElementById('uploadBtn').addEventListener('click', function() {
+    const form = document.getElementById('certForm');
+    const csrfToken = document.getElementById('csrfToken').value;
+    const inputFile = document.getElementById('cert_image').files[0];
+
+    if (!inputFile) {
+        alert("먼저 이수증 이미지를 선택해주세요.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('certImage', inputFile);
+    formData.append('id', form.querySelector('input[name="id"]').value);
+    formData.append('userId', form.querySelector('input[name="userId"]').value);
+
+    fetch('/mypage/uploadCertImage', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken // CSRF 토큰 헤더에 포함
+        },
+        body: formData,
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('업로드 실패');
+        return response.text();
+    })
+    .then(data => {
+        alert('이수증 이미지가 성공적으로 업로드되었습니다.');
+        // 필요시 UI 업데이트
+    })
+    .catch(error => {
+        alert('업로드 중 문제가 발생했습니다: ' + error.message);
+    });
+});
         function ApplyBodyguard(param) {
+
+            const img = document.getElementById('imgCertFile');
+    
+            // 이미지 src 값이 없거나 빈 문자열인지 확인
+            if (!img || !img.src || img.src.trim() === '') {
+                alert('이수증 이미지가 없습니다. 이미지를 등록해주세요.');
+                // 추가로 제출 막으려면 아래 주석 해제
+                // event.preventDefault();
+                return;
+            }
             // alert("경호원 신청이 완료되었습니다. 관리자 승인 후 이용 가능합니다.");
             if(!confirm("경호원 신청을 하시겠습니까? 신청 후에는 수정이 불가능합니다.")) {
                 return; // 사용자가 취소를 누르면 함수 종료
             }
             const url = '/mypage/applyBodyguard';
-    
-    // ⭐ ⭐ ⭐ csrfHeader와 csrfToken 변수명을 명확히 사용! ⭐ ⭐ ⭐
-    // Thymeleaf가 값을 여기에 넣어줄 거야.
-    const csrfHeader = /*[[${_csrf.headerName}]]*/ ''; // 'X-CSRF-TOKEN' 또는 비어있는 문자열 등이 될 수 있음
-    const csrfToken = /*[[${_csrf.token}]]*/ '';      // 실제 토큰 값 또는 비어있는 문자열 등이 될 수 있음
+            
+            // ⭐ ⭐ ⭐ csrfHeader와 csrfToken 변수명을 명확히 사용! ⭐ ⭐ ⭐
+            // Thymeleaf가 값을 여기에 넣어줄 거야.
+            const csrfHeader = /*[[${_csrf.headerName}]]*/ ''; // 'X-CSRF-TOKEN' 또는 비어있는 문자열 등이 될 수 있음
+            const csrfToken = /*[[${_csrf.token}]]*/ '';      // 실제 토큰 값 또는 비어있는 문자열 등이 될 수 있음
 
-    const userId = document.getElementById('id').value; // 이 부분은 그대로
-    const form = document.getElementById('form');      // 이 부분도 그대로
-    const formData = new FormData(form);               // 이 부분도 그대로
-    formData.append('guardType', param);           // '01' 값을 bodyguardType 필드에 추가
+            const userId = document.getElementById('id').value; // 이 부분은 그대로
+            const form = document.getElementById('form');      // 이 부분도 그대로
+            const formData = new FormData(form);               // 이 부분도 그대로
+            formData.append('guardType', param);           // '01' 값을 bodyguardType 필드에 추가
 
-    const requestHeaders = {}; // fetch 요청에 사용할 헤더 객체 생성
+            const requestHeaders = {}; // fetch 요청에 사용할 헤더 객체 생성
 
-    // ⭐ ⭐ ⭐ csrfHeader와 csrfToken 값이 유효할 경우에만 헤더에 추가! ⭐ ⭐ ⭐
-    // null, undefined, 빈 문자열('')이 아닐 경우에만 추가합니다.
-    if (csrfHeader && csrfToken) { 
-        requestHeaders[csrfHeader] = csrfToken;
-    }
-    // Content-Type 헤더는 FormData 사용 시 자동으로 설정되므로 주석 처리하는 것이 일반적이지만,
-    // 필요하다면 여기 조건문 바깥에 추가할 수 있어 (FormData 사용 시에는 자동으로 'multipart/form-data'로 설정됨).
-    // requestHeaders['Content-Type'] = 'application/json'; // FormData 사용 시 주의
+            // ⭐ ⭐ ⭐ csrfHeader와 csrfToken 값이 유효할 경우에만 헤더에 추가! ⭐ ⭐ ⭐
+            // null, undefined, 빈 문자열('')이 아닐 경우에만 추가합니다.
+            if (csrfHeader && csrfToken) { 
+                requestHeaders[csrfHeader] = csrfToken;
+            }
+            // Content-Type 헤더는 FormData 사용 시 자동으로 설정되므로 주석 처리하는 것이 일반적이지만,
+            // 필요하다면 여기 조건문 바깥에 추가할 수 있어 (FormData 사용 시에는 자동으로 'multipart/form-data'로 설정됨).
+            // requestHeaders['Content-Type'] = 'application/json'; // FormData 사용 시 주의
 
-    // ⭐ ⭐ ⭐ fetch 호출 부분에서 requestHeaders 객체를 사용! ⭐ ⭐ ⭐
-    fetch(url, {
-        method: 'POST', 
-        headers: requestHeaders, // 동적으로 생성된 requestHeaders 객체 사용
-        body: formData
-    })
+            // ⭐ ⭐ ⭐ fetch 호출 부분에서 requestHeaders 객체를 사용! ⭐ ⭐ ⭐
+            fetch(url, {
+                method: 'POST', 
+                headers: requestHeaders, // 동적으로 생성된 requestHeaders 객체 사용
+                body: formData
+            })
 
-    .then(response => {
-        // 응답 처리 로직
-        if (!response.ok) {
-            // 서버에서 에러 응답을 받았을 경우 (예: 400, 500)
-            // JSON 응답을 기대한다면 response.json()을 먼저 시도
-            return response.text().then(text => { // 응답 텍스트를 읽어 에러 메시지에 포함
-                throw new Error(`HTTP error! Status: ${response.status}, Message: ${text}`);
+            .then(response => {
+                // 응답 처리 로직
+                if (!response.ok) {
+                    // 서버에서 에러 응답을 받았을 경우 (예: 400, 500)
+                    // JSON 응답을 기대한다면 response.json()을 먼저 시도
+                    return response.text().then(text => { // 응답 텍스트를 읽어 에러 메시지에 포함
+                        throw new Error(`HTTP error! Status: ${response.status}, Message: ${text}`);
+                    });
+                }
+                // 서버 응답이 JSON 형식이 아니라면 .json() 대신 .text() 사용
+                // 또는 content-type 헤더를 보고 분기
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.indexOf('application/json') !== -1) {
+                    return response.json();
+                } else {
+                    return response.text();
+                }
+            })
+            .then(data => {
+                console.log('Success:', data);
+                // 성공적으로 처리 후 다음 동작 (예: 페이지 이동, 메시지 표시)
+                // 예를 들어: window.location.href = '/some/success/page';
+                alert("저장이 완료되었습니다!");
+            })
+            .catch(error => {
+                console.error('Fetch operation failed:', error);
+                // 사용자에게 에러 메시지 표시
+                alert("저장 중 오류가 발생했습니다: " + error.message);
             });
-        }
-        // 서버 응답이 JSON 형식이 아니라면 .json() 대신 .text() 사용
-        // 또는 content-type 헤더를 보고 분기
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.indexOf('application/json') !== -1) {
-            return response.json();
-        } else {
-            return response.text();
-        }
-    })
-    .then(data => {
-        console.log('Success:', data);
-        // 성공적으로 처리 후 다음 동작 (예: 페이지 이동, 메시지 표시)
-        // 예를 들어: window.location.href = '/some/success/page';
-        alert("저장이 완료되었습니다!");
-    })
-    .catch(error => {
-        console.error('Fetch operation failed:', error);
-        // 사용자에게 에러 메시지 표시
-        alert("저장 중 오류가 발생했습니다: " + error.message);
-    });
         }
     </script>
 </main>

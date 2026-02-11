@@ -48,24 +48,56 @@ public class UserServiceImpl implements UserService {
         UsernamePasswordAuthenticationToken token 
             = new UsernamePasswordAuthenticationToken(username, password);
         
-        // 토큰을 이용하여 인증
-        Authentication authentication = authenticationManager.authenticate(token);
+
+        Authentication authentication = null;
+
+        try {
+            authentication = authenticationManager.authenticate(token);
+            boolean result = authentication.isAuthenticated();
+            log.info("로그인 성공 여부: " + result);
         
-        // 인증 여부 확인
-        boolean result = authentication.isAuthenticated();
-
-        // 인증이 성공하면 SecurityContext에 설정
-        if (result) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            
-            // 세션에 인증 정보 설정 (세션이 없으면 새로 생성)
-            HttpSession session = request.getSession(true);  // 세션이 없으면 새로 생성
-            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-        }else{
-            log.error("바로 로그인 인증에 실패하였습니다.");
+            if (result) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                HttpSession session = request.getSession(true);
+                session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+                log.info("세션에 SPRING_SECURITY_CONTEXT 설정 완료");
+            }
+        
+            return result;
+        } catch (Exception ex) {
+            log.error("로그인 실패: " + ex.getMessage(), ex);
+            return false;
         }
+        // // 토큰을 이용하여 인증
+        // try {
+        //     authentication = authenticationManager.authenticate(token);
+        //     boolean result = authentication.isAuthenticated();
+        //     // ...
+        // } catch (Exception ex) {
+        //     log.error("로그인 실패: " + ex.getMessage());
+        //     return false;
+        // }
+        
+        // // 인증 여부 확인
+        // boolean result = authentication.isAuthenticated();
+        // log.error("result . + + + + + " +  result);
 
-        return result;
+        // // 인증이 성공하면 SecurityContext에 설정
+        // if (result) {
+        //     SecurityContextHolder.getContext().setAuthentication(authentication);
+            
+        //     // 세션에 인증 정보 설정 (세션이 없으면 새로 생성)
+        //     HttpSession session = request.getSession(true);  // 세션이 없으면 새로 생성
+        //     session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+        //     log.info("session . " + session.getAttribute("SPRING_SECURITY_CONTEXT"));
+
+        // }else{
+        //     log.error("바로 로그인 인증에 실패하였습니다.");
+        // }
+
+        // log.info("result . + + + + + + " + result);
+
+        // return result;
     }
 
     @Override

@@ -39,12 +39,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserController {
 
+    // @Autowired
+    // UserService userService;
+
+    // private final PasswordEncoder passwordEncoder; // ⭐️ BCryptPasswordEncoder가 주입될 곳 ⭐️
+
+    // // ⭐️ 생성자 주입 ⭐️
+    // public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    //     this.userService = userService;
+    //     this.passwordEncoder = passwordEncoder;
+    // }
+
+
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+
+    // 모든 의존성을 생성자 주입으로 받음
     @Autowired
-    UserService userService;
-
-    private final PasswordEncoder passwordEncoder; // ⭐️ BCryptPasswordEncoder가 주입될 곳 ⭐️
-
-    // ⭐️ 생성자 주입 ⭐️
     public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
@@ -108,27 +119,58 @@ public class UserController {
             return "user/user02";
         }
 
-        String rawPasswordToEncode = userVO.getPassword(); // 평문 비밀번호 가져오기
-        String encodedPassword = passwordEncoder.encode(rawPasswordToEncode); // BCrypt로 암호화
-        log.info("rawPasswordToEncode" + rawPasswordToEncode);
-
+        String rawPassword = userVO.getPassword();
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+        
         userVO.setPassword(encodedPassword);
-        // 암호화 전 비밀번호
-        String plainPassword = userVO.getPassword();
-
-        log.info(":::::::::: 어드민 가입 처리 최종 (암호화 후) :::::::::: Password=" + userVO.getPassword());
-
-        // // 회원 가입 요청
+        
+        // 회원가입 DB 저장
         int result = userService.join(userVO);
-
-        // // 회원 가입 성공 시, 바로 로그인
+        
         boolean loginResult = false;
-        if( result > 0 ) {
-            // 암호화 전 비밀번호 다시 세팅
-            // 회원가입 시, 비밀번호 암호화하기 때문에, 
-            userVO.setPassword(plainPassword);
-            loginResult = userService.login(userVO, request);
+        
+        if (result > 0) {
+            // 로그인용 객체에 평문 비밀번호 세팅 (userVO를 새로 만들거나 복사해도 좋음)
+            UserVO loginUser = new UserVO();
+            loginUser.setUserId(userVO.getUserId());
+            loginUser.setPassword(rawPassword);  // 반드시 평문 비밀번호 사용
+        
+            loginResult = userService.login(loginUser, request);
         }
+        
+            log.info("loginResult + " + loginResult);
+
+
+
+
+
+
+        // String rawPasswordToEncode = userVO.getPassword(); // 평문 비밀번호 가져오기
+        // String encodedPassword = passwordEncoder.encode(rawPasswordToEncode); // BCrypt로 암호화
+        // log.info("rawPasswordToEncode" + rawPasswordToEncode);
+
+        // userVO.setPassword(encodedPassword);
+        // // 암호화 전 비밀번호
+        // String plainPassword = userVO.getPassword();
+
+        // log.info(":::::::::: 어드민 가입 처리 최종 (암호화 후) :::::::::: Password=" + userVO.getPassword());
+
+        // // // 회원 가입 요청
+        // int result = userService.join(userVO);
+
+        // // // 회원 가입 성공 시, 바로 로그인
+        // boolean loginResult = false;
+        
+        // if( result > 0 ) {
+        //     // 암호화 전 비밀번호 다시 세팅
+        //     // 회원가입 시, 비밀번호 암호화하기 때문에, 
+        //     userVO.setPassword(plainPassword);
+
+        //     log.info("plainPassword : " + plainPassword);
+        //     loginResult = userService.login(userVO, request);
+        //     log.info("loginResult + " + loginResult);
+
+        // }
         if (loginResult){
             return "redirect:/"; // 메인 화면으로 이동
         }

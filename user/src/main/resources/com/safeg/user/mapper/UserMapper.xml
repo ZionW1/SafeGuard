@@ -89,8 +89,6 @@
                 ELSE 'X'
             END) AS auth
         FROM user u 
-        LEFT OUTER JOIN user_auth auth 
-        on u.auth_id = auth.auth_cd
         WHERE u.user_id = #{id}
     </select>
 

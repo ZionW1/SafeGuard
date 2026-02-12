@@ -241,7 +241,7 @@ public class UserController {
 
         // Users mypageSelect = userService.mypageSelect(authUser.getUser().getId());
 
-        return "index";
+        return "redirect:/mypage/calendarPage";
     }
 
     @GetMapping("/addressCode")

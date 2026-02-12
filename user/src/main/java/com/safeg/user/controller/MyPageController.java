@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,6 +133,11 @@ public class MyPageController {
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
             Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
             String username = customUser.getUsername(); // 로그인 아이디 (userId)
+            FilesVO file = fileService.getMypageImage(String.valueOf(userIdFromDb), "profile");
+
+            model.addAttribute("userId", userIdFromDb); // 뷰에서 DB ID를 사용할 수 있도록 모델에 추가
+            model.addAttribute("username", username); // 필요한 경우 username도 추가
+            model.addAttribute("file", file); // 필요한 경우 username도 추가
 
             model.addAttribute("currentURI", request.getRequestURI());
             model.addAttribute("userId", userIdFromDb); // 뷰에서 DB ID를 사용할 수 있도록 모델에 추가
@@ -439,85 +445,111 @@ public class MyPageController {
         return "redirect:/mypage/infoUpdate";
     }
 
+    @PostMapping("/markDeleted/{id}") // 👈 POST 메서드로 변경하고 URL 의미도 변경
+    @ResponseBody
+    public ResponseEntity<String> markFileAsDeleted(@PathVariable("id") String id) throws Exception { // 메서드 이름도 변경하는 게 좋아
+        log.info("=========================== markFileAsDeleted =========================" + id);
+
+        // 여기 fileService.delete(id)는 이제 물리적 삭제가 아니라 'is_deleted = Y'로 업데이트하는 로직이어야 해!
+        // 예를 들어: int result = fileService.markAsDeleted(id);
+        int result = fileService.delete(id); // 현재 fileService.delete()가 이미 is_deleted를 변경한다고 가정
+
+        log.info("=========================== result =========================" + result);
+
+        // 파일 상태 변경 성공
+        if (result > 0) {
+            return ResponseEntity.ok("SUCCESS"); // HTTP 200 OK와 함께 "SUCCESS" 반환
+        }
+        // 파일 상태 변경 실패
+        return ResponseEntity.status(400).body("FAIL"); // HTTP 400 Bad Request와 함께 "FAIL" 반환 (삭제 실패가 500은 아닐 수 있으니 400으로 변경)
+    }
+
     @SuppressWarnings("null")
     @GetMapping("/point")
     public String pointList (@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        int workPoint = 0;
-        int referrerPoint = 0;
-        int leaderPoint = 0;
-        List<UserCampaignVO> leaderPayList = null;
         if (authentication.getPrincipal() instanceof CustomUser) {
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
+            Long id = customUser.getId();
+            String username = customUser.getUsername();
+
+            FilesVO file = fileService.getMypageImage(String.valueOf(id), "profile");
+
+            log.info("pointList : id : " + id);
+            log.info("pointList : username : " + username);
             
-            Long id = customUser.getId(); // users 테이블의 실제 id 값을 가져왔다!
-            log.info("pointList : " + id);
-            model.addAttribute("id", id);
+            model.addAttribute("userId", id);
+            model.addAttribute("username", username);
+            model.addAttribute("file", file);
 
             List<UserCampaignVO> campaignIds = myPageService.campaignId(id);
-            // List<Long> campaignIds = userCampaignMapper.selectCampaignIdsByUserNo(1L);
-
-            log.info("campaignIds : " + campaignIds);
-
             List<UserCampaignVO> pointList = myPageService.pointList(id);
             List<UserCampaignVO> referrerPayList = myPageService.referrerPayList(id);
-            // if(campaignIds.size() > 0){
-            //     log.info("campaignIds.size() : " + campaignIds.size());
-            //     leaderPayList = myPageService.leaderPayList(id, campaignIds);
-            // }
 
-            if (campaignIds != null && !campaignIds.isEmpty()) {
-                log.info("campaignIds.size() : " + campaignIds.size());
-                leaderPayList = myPageService.leaderPayList(id, campaignIds);
+            log.info("campaignIds: " + campaignIds);
+
+            int workPoint = 0;
+            if (pointList != null && !pointList.isEmpty()) {
+                for (UserCampaignVO workPay : pointList) {
+                    workPoint += workPay.getCampaignPay();
+                }
+                pointList.get(0).setTotalPoint(workPoint); // 총 포인트를 첫 번째 객체에 설정
             }
+
+            int referrerPoint = 0;
+            if (referrerPayList != null && !referrerPayList.isEmpty()) {
+                for (UserCampaignVO referrerPay : referrerPayList) {
+                    referrerPoint += referrerPay.getTotalAmount();
+                }
+            }
+
+            log.info("workPoint: " + workPoint);
+            log.info("referrerPoint: " + referrerPoint);
+
+            List<UserCampaignVO> leaderPayList = null;
+            String authId = null;
+            int leaderPoint = 0;
+
+            if ((campaignIds != null && !campaignIds.isEmpty())&& "03".equals(campaignIds.get(0).getAuthId())){
+                authId = campaignIds.get(0).getAuthId();
+                log.info("authId: " + authId);
+
+                if ("03".equals(authId)) {
+                    log.info("campaignIds size: " + campaignIds.size());
+                    leaderPayList = myPageService.leaderPayList(id, campaignIds);
+                    if (leaderPayList != null && !leaderPayList.isEmpty()) {
+                        for (UserCampaignVO leaderPay : leaderPayList) {
+                            leaderPoint += leaderPay.getLeaderPoint();
+                        }
+                        leaderPayList.get(0).setTotalPoint(leaderPoint);
+                        log.info("leaderPayList :  " + leaderPayList);
+                        model.addAttribute("leaderPayList", leaderPayList);
+                    } else {
+                        model.addAttribute("leaderPayList", leaderPayList != null ? leaderPayList : Collections.emptyList());
+                    }
+                }
+            }
+            // aosqkf12!!
+            log.info("leaderPoint: " + leaderPoint);
 
             int pointFull = myPageService.pointFull(id);
-
-            for (UserCampaignVO workPay : pointList) {
-                workPoint += workPay.getCampaignPay();
-            }
-
-            for (UserCampaignVO referrerPay : referrerPayList) {
-                referrerPoint += referrerPay.getTotalAmount();
-            }
-
-            
-            log.info(":::::::::: referrerPoint :::::::::: " + referrerPoint);
-
-            pointList.get(0).setTotalPoint(workPoint);
-            log.info(":::::::::: leaderPayList :::::::::: ");
-            if(referrerPoint > 0){
-                referrerPayList.get(0).setTotalPoint(referrerPoint);
-            }
-            log.info(":::::::::: leaderPayList :::::::::: ");
-            // leaderPoint += userCampaignVO.getLeaderPoint();
-            log.info(":::::::::: leaderPayList :::::::::: " + leaderPayList);
-            
-            model.addAttribute("pointList", pointList);
-            model.addAttribute("referrerPayList", referrerPayList);
-            if (leaderPayList != null && !leaderPayList.isEmpty()) {
-                for (UserCampaignVO leaderPay : leaderPayList) {
-                    leaderPoint += leaderPay.getLeaderPoint();
-                }
-                log.info(":::::::::: leaderPoint :::::::::: " + leaderPoint);
-            
-                // 리스트가 비어 있지 않으니 안전하게 접근 가능
-                leaderPayList.get(0).setTotalPoint(leaderPoint);
-                model.addAttribute("leaderPayList", leaderPayList);
-
-            }else{
-                model.addAttribute("leaderPayList", null);
-            }
-
             int totalPoint = workPoint + referrerPoint + leaderPoint;
-            log.info(":::::::::: totalPoint :::::::::: " + totalPoint);
-            model.addAttribute("totalPoint", totalPoint);
 
+            log.info("authID: " + authId);
 
+            log.info("totalPoint: " + totalPoint);
+
+            model.addAttribute("pointList", pointList != null ? pointList : Collections.emptyList());
+            model.addAttribute("authId", authId);
+            model.addAttribute("referrerPayList", referrerPayList != null ? referrerPayList : Collections.emptyList());
+            model.addAttribute("id", id);
             model.addAttribute("pointFull", pointFull);
-
-
+            model.addAttribute("totalPoint", totalPoint);
             model.addAttribute("currentURI", request.getRequestURI());
+
+
+            // model.addAttribute("leaderPayList", leaderPayList != null ? leaderPayList : Collections.emptyList());
+            // model.addAttribute("pointList", pointList != null ? pointList : Collections.emptyList());
 
         }
         return "mypage/point";

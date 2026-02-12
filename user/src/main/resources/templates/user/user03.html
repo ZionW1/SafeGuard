@@ -296,8 +296,8 @@ function execDaumPostcode() {
                                             신분증 이미지를 선택해주세요. (신분증 업로드 시 뒷자리 마스킹 처리할 것)
                                         </p>
                                     </div>
-                                </div>
-                                <button class="mypage_button" type="submit">신분증 이미지 업로드</button>
+                                </div>identification
+                                <button class="mypage_button" id="identificationUploadBtn" type="submit">신분증 이미지 업로드</button>
                             </div>
                             <!-- <div th:if="${file != null}">
                                 <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" 
@@ -329,7 +329,7 @@ function execDaumPostcode() {
                                         </p>
                                     </div>
                                 </div>
-                                <button type="button" id="uploadBtn" class="mypage_button">이수증 이미지 업로드</button>
+                                <button type="button" id="certificateUploadBtn" class="mypage_button">이수증 이미지 업로드</button>
                             </div>
                             <p><span sec:authentication=""></span></p>
 
@@ -468,7 +468,7 @@ function execDaumPostcode() {
     } 
 });
 
-document.getElementById('uploadBtn').addEventListener('click', function() {
+document.getElementById('certificateUploadBtn').addEventListener('click', function() {
     const form = document.getElementById('certForm');
     const csrfToken = document.getElementById('csrfToken').value;
     const inputFile = document.getElementById('cert_image').files[0];

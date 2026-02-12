@@ -2,43 +2,66 @@
     <aside class="sidebar">
         <nav>
             <div class="sr-only">
-            <form class="profile-preview" action="/updateProfile" method="post" enctype="multipart/form-data">
+            <!-- <form class="profile-preview" action="/updateProfile" method="post" enctype="multipart/form-data">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <input type="hidden" name="id" id="id" th:value="${userId}" />
                 <input type="hidden" name="userId" id="userId" th:value="${username}" />
                 <p>현재 사용자 ID: <span th:text="${username}">guest</span></p>
 
                 <div class="profile">
-                    <!-- <input type="file" name="image" id="image" accept="image/*" style="display: none" /> -->
                     <div id="drop-area" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px">
-                        <!-- 1. input type="file"은 DOM에 항상 하나만 존재하도록! -->
                         <input type="file" name="image" id="image" accept="image/*" style="display: none" />
-                    
-                        <!-- 2. 기존 이미지 미리보기 영역 -->
-                        <!-- (사용자가 파일이 없을 때 기본 이미지를 보여주고, 파일이 있으면 업로드된 이미지를 보여주는 부분) -->
                         <div id="imageDisplayArea">
                             <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
-                            <!-- th:if="${file != null}" -->
                             <img th:if="${file != null}" id="imgFile" th:src="|/selectProfile?id=${userId}&args=1|" alt="파일이미지" width="720" height="405" style="max-width: 100%; margin: 0px auto;" />
-                            <!-- th:if="${file == null}" -->
                             <img th:if="${file == null}" id="defaultImage" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
                         </div>
-                    
-                        <!-- 3. 기타 UI 요소 (예: '기존 이미지 삭제' 버튼) -->
-                        
                     </div>
-                    <!-- <div th:if="${file != null}">
-                        <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" 
-                        th:onclick="removeFile(this, [[${userId}]])">기존 이미지 삭제</button>
-                    </div> -->
                     <div th:if="${file != null}" class="file-action-buttons">
                         <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
-                                th:onclick="removeFile(this, [[${userId}]])">기존 이미지 삭제</button>
+                                th:onclick="markFileDeleted([[${userId}]]);">기존 이미지 삭제</button>
                     </div>
                     <p><span sec:authentication=""></span></p>
                 </div>
-                <button class="profile_save" type="submit">프로필 사진 저장하기</button>
+                <div th:if="${file == null}" class="file-action-buttons">
+                            <button class="profile_save" type="submit">프로필 사진 저장하기</button>
+                </div>
+            </form> -->
+            
+            <div id="existing-file-section" th:if="${file != null} ? 'hidden'" style="max-width: 100%; margin: 0px auto; ">
+                <div class="imageDisplayArea">
+                    <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
+                    <img th:if="${file != null}" id="imgFile" th:src="|/selectProfile?id=${userId}&args=1|" alt="파일이미지" width="720" height="405" style="max-width: 100%; margin: 0px auto;" />
+                    <img th:if="${file == null}" id="defaultImage" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
+                </div>
+                <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
+                        th:onclick="markFileDeleted([[${userId}]])">기존 이미지 삭제</button>
+            </div>
+            
+            <!-- ⭐️ 파일 업로드 영역: ID 추가 및 hidden 클래스 조건부 추가 ⭐️ -->
+            <!-- file 객체가 null이 아니면 hidden 클래스를 추가해서 숨기고, null이면 hidden 클래스 없이 보여줌 -->
+            <form class="profile-preview" action="/updateProfile" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="id" id="id" th:value="${userId}" />
+                <input type="hidden" name="userId" id="userId" th:value="${username}" />
+                
+
+                <div th:unless="${file != null} ? 'hidden'">
+                    <div id="drop-area" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px;">
+                        <p>이미지를 클릭하거나 끌어다 놓으세요</p>
+                        <div>
+                            <input type="file" name="image" id="image" accept="image/*" style="display: none" />
+                            <img th:if="${file == null}" id="defaultImage" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
+
+                            <!-- ⭐️ 여기 hidden 클래스 추가 ⭐️ -->
+                            <img id="preview" src="" alt="미리보기" class="hidden" style="max-width: 100%; margin-top: 10px;" />
+                        </div>
+                    </div>
+                    <button class="profile_save" type="submit">프로필 사진 저장하기</button>
+                </div>
+
             </form>
+
         </div>
         <div class="mypage-menu">
             <h3 class="sidebar-title">고객센터</h3>
@@ -70,6 +93,8 @@
     const imageInput = document.getElementById("image"); // ⭐ id="image"로 변경됨 ⭐
     const preview = document.getElementById("preview");
     const defaultImage = document.getElementById("defaultImage"); // 새로 추가된 기본 이미지
+    // 예: 버튼 클릭 등 이벤트에 연결하여 호출
+    const csrfHeaderToSend = "X-CSRF-TOKEN"; // 👈 Spring Security가 기본으로 기대하는 헤더 이름!
 
     // 기존 이미지가 있으면 숨기고, 없으면 보여주기
     if (defaultImage && imageInput.files.length === 0) { // defaultImage가 있고 아직 선택된 파일이 없으면
@@ -131,6 +156,90 @@
         reader.readAsDataURL(file);
     }
 
+    // 비동기 파일 삭제 요청 함수 (async/await 사용)
+    async function markFileDeleted(id) {
+        const csrfToken = document.querySelector('input[name="_csrf"]').value;
+        const url = `/mypage/markDeleted/${id}`;
+        console.log("mark deleted url : " + url);
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    [csrfHeaderToSend]: csrfToken
+                }
+            });
+
+            // 상태가 200일 때만 처리
+            if (response.ok) {
+                const text = await response.text();
+                if (text === 'SUCCESS') {
+                    alert('파일 삭제(상태 변경) 성공');
+                    window.location.reload();
+
+
+                    // preview.src = "";
+                } else {
+                    alert('파일 삭제(상태 변경) 실패');
+                }
+            } else {
+                const errorText = await response.text();
+                alert('파일 삭제(상태 변경) 요청 처리 중 오류 발생: ' + errorText);
+            }
+        } catch (error) {
+            // 네트워크 오류 등 예외 처리
+            alert('파일 삭제 요청 중 예외가 발생했습니다: ' + error.message);
+        }
+    }
+
+    function removeFile(element, id){
+                console.log("removeFile: " + id);
+                let request = new XMLHttpRequest();
+
+                
+                // ⭐️ CSRF 토큰 가져오기 시작 ⭐️
+                // hidden input 태그에서 name과 value를 가져와.
+                const csrfToken = document.querySelector('input[name="_csrf"]').value;
+                // const csrfHeader = document.querySelector('input[name="_csrf"]').name; // 스프링 기본은 "_csrf"야
+                const csrfHeaderToSend = "X-CSRF-TOKEN"; // 👈 Spring Security가 기본으로 기대하는 헤더 이름!
+                // 만약 parameterName이 다르게 설정되어 있다면, 다음과 같이도 가능해:
+                // const csrfHeader = document.querySelector('input[name="_csrf"]').getAttribute('name');
+
+                // meta 태그로 CSRF 토큰을 저장했다면 이렇게 가져올 수도 있어:
+                // const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+                // const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+                // ⭐️ CSRF 토큰 가져오기 끝 ⭐️
+                request.onreadystatechange = function(){
+                    if(request.readyState == request.DONE && request.status == 200) {
+                        let response = request.responseText;
+                        if(response == 'SUCCESS'){
+                            alert('파일 삭제(상태 변경) 성공');
+
+                            // ⭐️ 클래스를 사용하여 섹션 숨기기/보이기 ⭐️
+                            document.getElementById("existing-file-section").classList.add('hidden');    // 기존 파일 섹션 숨기기
+                            document.getElementById("drop-area").classList.remove('hidden');             // 드롭 영역 보이기
+
+                            // 이미지 업로드 <input> 태그의 값을 비워서 파일 선택 상태 초기화
+                            document.getElementById("image").value = '';
+                            // 미리보기 이미지도 초기 상태로 (src 비우고 hidden 클래스 추가하여 숨김)
+                            document.getElementById("preview").classList.add('hidden'); // 미리보기 img 태그 숨기기
+                            document.getElementById("preview").src = ""; // 미리보기 이미지 src 비우기
+
+                        }else{
+                            alert('파일 삭제(상태 변경) 실패');
+                        }
+                    } else if (request.readyState == request.DONE && request.status != 200) {
+                        alert('파일 삭제(상태 변경) 요청 처리 중 오류 발생: ' + request.responseText);
+                    }
+                }
+
+                const url = `/mypage/markDeleted/${id}`;
+                console.log("mark deleted url : " + url);
+                request.open('POST', url, true);
+                request.setRequestHeader(csrfHeaderToSend, csrfToken);
+                request.send();
+            }
+
     // 초기 로드 시 기존 이미지가 있으면 preview와 imgFile을 적절히 설정
     // 이건 DOMContentLoaded 안에서 처리하는 게 좋아.
     document.addEventListener("DOMContentLoaded", function() {
@@ -147,5 +256,5 @@
             initialPreview.style.display = 'none';
         }
     });
-            </script>
+    </script>
 </div>

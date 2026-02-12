@@ -209,17 +209,22 @@
 
     <select id="campaignId" resultType="com.safeg.user.vo.UserCampaignVO">
         SELECT 
-            campaign_id,
-            user_id,
-            user_no,
-            status,
-            apply_date
+            uc.campaign_id,
+            uc.user_id,
+            uc.user_no,
+            uc.status,
+            uc.apply_date,
+            u.auth_id
         FROM 
-            user_campaign
+            user_campaign uc
+        LEFT OUTER JOIN
+            user u
+        on uc.user_no = u.id
         WHERE 
-            user_no = #{id}
-        AND is_leader = 'Y'
-        AND is_deleted = 'N'
+            uc.user_no = #{id}
+        AND uc.is_leader = 'Y'
+        AND uc.is_deleted = 'N'
+        order by uc.apply_date desc
     </select>
 
     <select id="pointFull">

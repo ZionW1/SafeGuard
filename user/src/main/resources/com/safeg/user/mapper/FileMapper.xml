@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="delete">
         <!-- delete from files
         where id = #{id} -->
-        update campaign_image set del_yn = 'Y' where id = #{id};
+        update files set is_deleted = 'Y' where target_id = #{id} and target_type = 'profile' and is_deleted = 'N';
     </update>
 
     <select id="listByParent" resultType="filesVO">

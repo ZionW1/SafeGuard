@@ -159,9 +159,6 @@
                 },
                 // 이벤트 색상이나 스타일을 다르게 할 때 유용해
                 eventDidMount: function(info) {
-                    console.log("이벤트 데이터: "+ JSON.stringify(info));
-                    console.log("이벤트 데이터: "+ JSON.stringify(info.event.backgroundColor));
-
                     if (info.event.extendedProps.status === '0') {
                         info.el.style.backgroundColor = info.event.backgroundColor; // 신청 날짜는 파란색
                         info.el.style.borderColor = info.event.borderColor;

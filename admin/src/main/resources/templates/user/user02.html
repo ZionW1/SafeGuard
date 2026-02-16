@@ -17,7 +17,7 @@
             <form class="form" th:action="@{/user03}" method="post" id="form" enctype="multipart/form-data">
                 <!-- <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block> -->
                 <!-- <div th:insert="~{fragments/csrfFragments :: inputCsrf}"></div> -->
-                <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
+                <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block>
 
                 <input type="hidden" name="id" id="id" th:value="${userSelect.id}" />
 
@@ -115,6 +115,16 @@
                     </span>
                     <span th:unless="${#strings.isEmpty(userSelect?.memo)}">
                         <input type="text" name="memo" id="memo" th:value="${userSelect.memo}" required />
+                    </span>
+                </div>
+                <div class="form-group">
+                    <label>추천인</label>
+                    <!-- <textarea name="memo" id="memo" rows="4" th:text="${userSelect.memo}"></textarea> -->
+                    <span th:if="${#strings.isEmpty(userSelect?.referrerId)}">
+                        <input type="text" name="referrerId" id="referrerId" value="" placeholder="메모를 입력하세요" />
+                    </span>
+                    <span th:unless="${#strings.isEmpty(userSelect?.referrerId)}">
+                        <input type="text" name="referrerId" id="referrerId" th:value="${userSelect.referrerId}" placeholder="메모를 입력하세요" />
                     </span>
                 </div>
                 <div class="form-row">

@@ -48,8 +48,10 @@ public interface UserMapper {
 
     public int userUpdate(@Param("id") String id, @Param("authRole") String authRole, @Param("authCode") String authCode) throws Exception;
 
-    public int userAuthUpdate(@Param("id") String id, @Param("authRole") String authRole, @Param("authCode") String authCode);
+    public int userAuthUpdate(@Param("id") String id, @Param("authRole") String authRole, @Param("authCode") String authCode) throws Exception;
 
-    public void guardTypeChange(UserVO userVO);
+    public void guardTypeChange(UserVO userVO) throws Exception;
+
+    public Long referrerId(String referrerId) throws Exception;
 
 }

@@ -98,9 +98,20 @@ public class UserController {
     }
     @PostMapping("/user03")
     public String user03(@AuthenticationPrincipal CustomUser authUser, Model model, UserVO userVO) throws Exception {
+        Long referrerNo = 0L;
         log.info(":::::::::: update :::::::::: " + userVO);
         String userId = String.valueOf(userVO.getId());
+        if(userVO.getReferrerId() != null && !userVO.getReferrerId().isEmpty()) {
+            log.info("user03 getReferrerId : " + userVO.getReferrerId());
+            referrerNo = userService.referrerId(userVO.getReferrerId());
+            userVO.setReferrerNo(referrerNo);
+        }
+
         log.info("userId :::::::::: " + userId);
+        log.info("referrerNo :::::::::: " + referrerNo);
+        log.info("getReferrerNo :::::::::: " + userVO.getReferrerNo());
+        log.info("getReferrerId :::::::::: " + userVO.getReferrerId());
+
         int result = userService.userInfoUpdate(userVO);
 
         FilesVO file = fileService.select(userId);
@@ -115,7 +126,7 @@ public class UserController {
             log.info("user03 update fail");
             model.addAttribute("msg", "");
         }
-        return "redirect:/admin/user01";
+        return "redirect:/user01";
         // redirect:/admin/campaign01
     }
     

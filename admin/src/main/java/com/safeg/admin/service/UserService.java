@@ -33,4 +33,6 @@ public interface UserService {
 
     public void guardTypeChange(UserVO userVO) throws Exception;
 
+    public Long referrerId(String referrerId) throws Exception;
+
 }

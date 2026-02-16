@@ -97,4 +97,7 @@ public class UserVO {
     private List<AddressVO> userAddressList; // 해당 유저의 주소 목록
 
     private String guardType; // 경호원 타입
+
+    private Long referrerNo;
+    private String referrerId;
 }

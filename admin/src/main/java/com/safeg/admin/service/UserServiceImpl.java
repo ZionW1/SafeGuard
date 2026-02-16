@@ -167,6 +167,14 @@ public class UserServiceImpl implements UserService{
         userMapper.guardTypeChange(userVO);
     }
 
+    @Override
+    public Long referrerId(String referrerId) throws Exception {
+        // TODO Auto-generated method stub
+        Long referrerNo = userMapper.referrerId(referrerId);
+        log.info("referrerId referrerNo : : : : : : : " + referrerNo);
+        return referrerNo;
+    }
+
     
 
     // // 비밀번호 변경 로직도 유사하게 구현하면 돼

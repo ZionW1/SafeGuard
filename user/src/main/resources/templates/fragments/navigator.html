@@ -93,6 +93,11 @@
     </div>
     </nav>
     <script>
+    document.getElementById('hamburgerMenu').addEventListener('click', function() {
+        const nav = document.getElementById('mobileNav');
+        nav.style.display = nav.style.display === 'block' ? 'none' : 'block';
+    });
+
     document.getElementById('menuLogout').addEventListener('click', function(e) {
         console.log("meta[name=_csrf]: " + document.querySelector('meta[name="_csrf"]').getAttribute('content'));
         alert("로그아웃 되었습니다.");

@@ -1421,7 +1421,60 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
 
 
 
+.mobile-header {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 10px;
+}
 
+.hamburger {
+  font-size: 24px;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+.mobile-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-nav li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.campaign-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+}
+
+.campaign-item {
+  flex: 1 1 45%;
+  box-sizing: border-box;
+  background: #f0f0f0;
+  padding: 20px;
+  text-align: center;
+}
+
+/* PC에서는 모바일 헤더 감추기 */
+@media(min-width: 768px) {
+  .mobile-header,
+  .mobile-nav {
+    display: none;
+  }
+  /* nav-bar 등 기존 메뉴 보이게 조정 필요 */
+}
+
+/* 모바일에선 기존 nav-bar 숨기기 */
+@media(max-width: 767px) {
+  .nav-bar {
+    display: none;
+  }
+}
 
 
 

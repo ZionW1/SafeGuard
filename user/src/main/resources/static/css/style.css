@@ -121,7 +121,7 @@ a {
     width: 90%;
     margin: 0 auto;
     padding: 0 40px;
-    height: 100px;
+    /* height: 100px; */
     background-color: white;
 }
 .header-left {
@@ -130,9 +130,12 @@ a {
     gap: 20px;
 }
 .logo a{
-    font-size: 38px;
-    font-weight: bold;
-    color: #f60;
+    margin-top: 20px;
+}
+
+.logo_image{
+    margin-top: 22px;
+    width: 210px;
 }
 .search {
     width: 210px;

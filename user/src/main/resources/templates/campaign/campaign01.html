@@ -312,7 +312,7 @@
     console.log("calendar_month" + calendar_month);
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth', // 월별 보기
-        initialDate: '2026-03-01',   // ← 원하는 날짜
+        initialDate: calendar_month,   // ← 원하는 날짜
         locale: 'ko', // 한국어 설정
         headerToolbar: {
             right: 'prev next today',

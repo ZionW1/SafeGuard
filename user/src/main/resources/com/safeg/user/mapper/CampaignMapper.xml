@@ -16,6 +16,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             campaign_pay,
             place_Addr,
             mission,
+            leader_code,
             <!-- DATE_FORMAT(App_period_str,'%Y-%m-%d') AS app_period_str,
             DATE_FORMAT(App_period_end,'%Y-%m-%d') AS app_period_end,
             DATE_FORMAT(event_period_str,'%Y-%m-%d') AS event_period_str,

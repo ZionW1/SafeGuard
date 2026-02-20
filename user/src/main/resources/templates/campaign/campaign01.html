@@ -536,7 +536,7 @@
         <div id="calendar">
             <!-- 달력 날짜는 자바스크립트로 동적으로 생성 가정 -->
         </div>
-        <h1>인솔자 사진</h1>
+        <h1>인솔자 <span th:text="${campaignSelect.uesrNm}"></span></h1>
         <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
         <!-- <div class="image-row">
             <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>

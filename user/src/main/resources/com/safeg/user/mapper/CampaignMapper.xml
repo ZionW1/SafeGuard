@@ -17,21 +17,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             place_Addr,
             mission,
             leader_code,
-            <!-- DATE_FORMAT(App_period_str,'%Y-%m-%d') AS app_period_str,
-            DATE_FORMAT(App_period_end,'%Y-%m-%d') AS app_period_end,
-            DATE_FORMAT(event_period_str,'%Y-%m-%d') AS event_period_str,
-            DATE_FORMAT(event_period_str,'%Y-%m-%d') AS event_period_str,
-            DATE_FORMAT(result_date,'%Y-%m-%d') AS result_date -->
+            u.user_nm,
             app_period_str,
             app_period_end,
             event_period_str,
             event_period_end,
             result_date
-            <!-- DATE_FORMAT(event_Period_str,'%Y-%m-%d') AS event_Period_str,
-            DATE_FORMAT(event_Period_end,'%Y-%m-%d') AS event_Period_end -->
-        from campaign 
-        where campaign_id = #{id}
-        and is_deleted = 'N'
+        from campaign c
+        left outer join user u
+        on leader_code = id
+        where campaign_id = #{}
+        and c.is_deleted = 'N'
     </select>
     <select id="appliedCampaign" resultType="UserCampaignVO">
         SELECT

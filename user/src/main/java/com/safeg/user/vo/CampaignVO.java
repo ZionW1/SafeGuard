@@ -66,7 +66,7 @@ public class CampaignVO {
     private MultipartFile fileName;    // 파일명
     private String phoneNum;
     private MultipartFile image; // 첨부 파일 목록
-
+    
     private Long codeId;
     private String codeGroup;
     private String code;

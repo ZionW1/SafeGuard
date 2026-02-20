@@ -56,7 +56,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                                 // .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/mypage", "/mypage/**").hasAnyRole("USER", "LEADER", "ADMIN")
-                                .requestMatchers("/apply", "/apply/**").hasAnyRole( "LEADER", "ADMIN")
+                                // .requestMatchers("/apply", "/apply/**").hasAnyRole( "LEADER", "ADMIN")
                                 .requestMatchers("/**").permitAll()
                                 .anyRequest().permitAll());
         log.info("::::: SecurityFilterChain - 인가 설정 완료 :::::");

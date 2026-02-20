@@ -177,7 +177,7 @@
                     }
                 }
 
-                const url = `/file/markDeleted/${id}`;
+                const url = `/admin/file/markDeleted/${id}`;
                 console.log("mark deleted url : " + url);
                 request.open('POST', url, true);
                 request.setRequestHeader(csrfHeaderToSend, csrfToken);

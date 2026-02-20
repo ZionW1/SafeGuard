@@ -46,7 +46,7 @@
                         </div>
                         <!-- <div th:unless="${userCampaign.status=='8'} || ${userCampaign.status=='9'}"> -->
                         <div th:unless="${userCampaign.status=='8' || userCampaign.status=='9'}">
-                            <img id="imgFile" th:src="|/selectProfile?id=${userCampaign.leaderCode}&args=profile|" alt="파일이미지" width="50" height="50" />
+                            <img id="imgFile" th:src="|/selectProfile?id=${userCampaign.userNo}&args=profile|" alt="파일이미지" width="50" height="50" />
                             <div style="margin-left: 55px; margin-top: -45px;">
                                 <span class="userInfofont" th:text="${userCampaign.userNm}"></span>/<span class="userInfofont" th:text="${userCampaign.phoneNum}"></span><button th:onclick="initStatus([[${index}]], [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]])" class="btn-state mrg5">초기화</button>
                                 <!-- <button class="btn-state"><span th:text="${userCampaign.statusNm}"></span></button> -->

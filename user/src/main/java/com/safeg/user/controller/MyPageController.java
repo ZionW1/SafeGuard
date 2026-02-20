@@ -352,6 +352,14 @@ public class MyPageController {
                     displayTitle = "무단";
                     color = "#e74c3c"; // 회색 계열 (이전 추천 색상)
                     break;
+                case "8": // 예를 들어 '취소' 상태
+                    displayTitle = "신청중";
+                    color = "#95a5a6"; // 회색 계열 (이전 추천 색상)
+                    break;
+                case "9": // 예를 들어 '취소' 상태
+                    displayTitle = "완료";
+                    color = "#28a745"; // 회색 계열 (이전 추천 색상)
+                    break;
                 default: // 그 외의 알 수 없는 상태일 때
                     displayTitle = "알 수 없음";
                     color = "#cccccc"; // 기본 회색

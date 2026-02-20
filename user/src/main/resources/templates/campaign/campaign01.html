@@ -5,7 +5,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>캠페인 신청 안내</title>
-<link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet" href="@{/css/style.css}" />
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 <link href='/css/style.css' rel='stylesheet' />
 <!-- FullCalendar JS -->
@@ -223,6 +223,11 @@
     .fc-icon-chevron-left::before,
     .fc-icon-chevron-right::before {
         font-size: 1.2rem;
+    }
+
+    .profile_img {
+        width: 100%;
+        height: 400px;
     }
 </style>
 
@@ -532,11 +537,10 @@
             <!-- 달력 날짜는 자바스크립트로 동적으로 생성 가정 -->
         </div>
         <h1>인솔자 사진</h1>
-        <div class="image-row">
-            <!-- 이미지 경로는 마이클 환경에 맞게 수정해주세요 -->
-            <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" width="400" height="400" class=""/><br>
-            <!-- <img src="image2.jpg" alt="음식 이미지 2" /> -->
-        </div>
+        <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
+        <!-- <div class="image-row">
+            <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
+        </div> -->
     </div>
 
     <form id="form" class="" action="/apply" method="post">

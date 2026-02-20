@@ -33,14 +33,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             is_deleted = 'N'
     </select>
 
-    <select id="leaderSelect" resultType="UserVO">
-        SELECT 
-            user_nm,
-
+    <select id="leaderSelect" resultType="AdminContentVO">
+        <!-- SELECT 
+            content
         FROM 
             Admin_Content
         where
             is_active = 'Y'
             and content_type='LEADER'
+ -->
+
+        SELECT 
+            Admin_Content_id,
+            title,
+            content,
+            content_type,
+            author,
+            created_at,
+            updated_at
+        FROM 
+            Admin_Content
+        where
+            is_active = 'Y'
+            and content_type='LEADER'
+            and user_no = #{id}
     </select>
 </mapper>

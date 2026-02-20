@@ -19,14 +19,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             Admin_Content
         where
             is_active = 'Y'
-            and content_type='LEADER'
+        AND content_type='LEADER'
+        AND user_no = #{id}
     </select>
 
     <insert id="leaderInsert" parameterType="AdminContentVO">
         INSERT INTO Admin_Content 
-            (content, title, author, content_type) 
+            (content, title, author, content_type, user_no) 
         VALUES 
-            (#{content}, #{title}, #{author}, 'LEADER');
+            (#{content}, #{title}, #{author}, 'LEADER', #{userNo});
     </insert>
 
     <update id="leaderUpdate" parameterType="AdminContentVO">
@@ -36,7 +37,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             author = #{author},
             updated_at = CURRENT_TIMESTAMP
         WHERE content_type = 'LEADER'
-        AND is_active = 'Y';
+        AND is_active = 'Y'
+        AND user_no = #{userNo}
     </update>
 
 

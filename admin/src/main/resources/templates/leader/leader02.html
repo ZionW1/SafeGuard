@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+    <!-- <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block> -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Document</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     
@@ -63,13 +65,14 @@
         <!-- <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div> -->
 
         <!-- 본문 영역 -->
-        <!-- <div class="main-content">
-            <form th:action="@{/leader02}" id="contentForm" method="post">
-                <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
+        <div class="main-content">
+            <form th:action="@{/leader03}" id="contentForm" method="post">
+                <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block>
 
                 <div th:if="${leaderSelect == null}">
-                    <h1><a href="@{/leader01}">인솔자 생성</a></h1>
+                    <h1><a href="@{/leader02}">인솔자 생성</a></h1>
                     <input type="hidden" id="action" name="action" th:value="I"/>
+                    <input type="hidden" id="userNo" name="userNo" th:value="${id}"/>
                     <label for="title">인솔자 제목</label>
                     <input type="text" id="title" name="title"/>
                     <div style="height: 10px;"></div>
@@ -77,7 +80,8 @@
                     <textarea id="content" name="content" rows="10" cols="60" style="width: 900px;"></textarea>
                 </div>
                 <div th:if="${leaderSelect != null}">
-                    <h1><a th:href="@{/leader01}">인솔자 수정</a></h1>
+                    <h1><a th:href="@{/leader02}">인솔자 수정</a></h1>
+                    <input type="hidden" id="userNo" name="userNo" th:value="${id}"/>
                     <label for="content">인솔자 생성/수정</label>
                     <input type="hidden" id="adminContentId" name="adminContentId" th:value="${leaderSelect.adminContentId}"/>
                     <input type="hidden" id="action" name="action" th:value="U"/>
@@ -89,73 +93,78 @@
                 </div>
                 <button style="margin-top: 10px;" type="submit">저장하기</button>
             </form>
-        </div> -->
-        <div class="main-content">
-            <h1><a th:href="@{/leader01}">인솔자 리스트</a></h1>
-
-        <table border="1" cellspacing="0" cellpadding="8">
-            <thead>
-                <tr>
-                    <th>이름</th>
-                    <th>연락처</th>
-                    <th>이메일</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:if="${leaderList == null or #lists.isEmpty(leaderList)}">
-                    <td colspan="3" align="center">조회된 데이터가 없습니다.</td>
-                </tr>
-                <!-- <button th:onclick="|location.href='@{/leader02(id=${leader.id})}'|"> -->
-
-                <tr th:each="leader : ${leaderList}" th:onclick="|location.href='@{/leader02(id=${leader.id})}'|" style="cursor:pointer">
-                    <td th:text="${leader.userNm}"></td>
-                    <td th:text="${leader.phoneNum}"></td>
-                    <td th:text="${leader.email}"></td>
-                </tr>
-            </tbody>
-        </table>
         </div>
     </div>
     
     
     <!-- <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script> -->
     <!-- <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script> -->
-    <!-- <script src="/js/ckeditor.js"></script>  -->
+    <script th:src="@{/js/ckeditor.js}"></script> 
 
 <!-- ⭐️⭐️⭐️ 이 스크립트 블록 안에서 CKEditor 초기화 ⭐️⭐️⭐️ -->
-<script>
+<script th:inline="javascript">
     // 1. MyCustomUploadAdapterPlugin을 전역 함수로 정의 (or 이 스크립트 블록 안에 정의)
     // 이 코드를 너의 <script> 태그 안에 직접 넣는 것이 가장 간단해.
-    function MyCustomUploadAdapterPlugin(editor) {
-        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-            return new MyUploadAdapter(loader);
-        };
+        function MyCustomUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                return new MyUploadAdapter(loader);
+            };
+        }
+
+        // const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        // const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        const csrfToken = /*[[${_csrf.token}]]*/ '';
+        const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+class MyUploadAdapter {
+    constructor(loader) {
+        this.loader = loader;
     }
 
-    class MyUploadAdapter {
-        constructor(loader) {
-            this.loader = loader;
-        }
-        upload() {
-            return this.loader.file
-                .then(file => new Promise((resolve, reject) => {
-                    const data = new FormData();
-                    data.append('upload', file);
+    upload() {
+        return this.loader.file
+            .then(file => new Promise((resolve, reject) => {
+                const data = new FormData();
+                data.append('upload', file);
 
-                    fetch('/upload/image', { method: 'POST', body: data })
-                        .then(response => response.json())
-                        .then(result => {
-                            if (result.uploaded && result.url) {
-                                resolve({ default: result.url });
-                            } else {
-                                reject(result.error && result.error.message ? result.error.message : '이미지 업로드 실패.');
-                            }
-                        })
-                        .catch(err => reject('파일 업로드 중 네트워크 오류: ' + err));
-                }));
-        }
-        abort() { /* 업로드 취소 로직 (필요시) */ }
+                fetch('@{/upload/image}', {
+                    method: 'POST',
+                    headers: {
+                        [csrfHeader]: csrfToken
+                        // ,'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+
+                        // Content-Type 제거
+                    },
+                    body: data
+                })
+                .then(response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error("서버 응답이 JSON이 아닙니다.");
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    if (result.uploaded && result.url) {
+                        resolve({ default: result.url });
+                    } else {
+                        reject(result.error?.message || '이미지 업로드 실패.');
+                    }
+                })
+                .finally(() => console.log('upload finished'))
+                .catch(error => {
+                    console.error('파싱 오류:', error);
+                    alert('서버 응답 형식에 문제가 있습니다. 관리자에게 문의하세요.');
+
+                    reject('파일 업로드 중 오류: ' + error.message);
+                });
+            }));
     }
+
+    abort() {
+        // 필요시 업로드 취소 로직 작성
+    }
+}
 
     // 2. window.ClassicEditor 객체를 사용하여 에디터 생성
     let editorInstance; // 에디터 인스턴스를 저장할 변수

@@ -183,6 +183,9 @@ public class FileController {
     @PostMapping("/upload/image") // CKEditor의 uploadUrl과 일치시켜야 해!
     @ResponseBody // Map 객체를 JSON 형태로 반환하기 위함
     public Map<String, Object> uploadImage(@RequestParam("upload") MultipartFile file) {
+        System.out.println("업로드 API 호출됨!");
+
+        log.info("upload/image uploadImage");
         Map<String, Object> response = new HashMap<>();
 
         if (file.isEmpty()) {
@@ -213,7 +216,7 @@ public class FileController {
             // CKEditor가 요구하는 JSON 형식으로 응답 반환
             // 여기서는 웹에서 접근할 URL을 "/images/" 뒤에 파일 이름 붙여서 만들어.
             // Thymeleaf 등에서 static 폴더는 보통 /로 접근 가능해.
-            String fileUrl = "/images/" + uuidFileName; 
+            String fileUrl = "/admin/images/" + uuidFileName; 
             
             response.put("uploaded", true);
             response.put("url", fileUrl);

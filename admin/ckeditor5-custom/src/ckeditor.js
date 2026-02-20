@@ -65,21 +65,46 @@ class MyCustomUploadAdapter {
         this.loader = loader;
     }
     upload() {
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
         return this.loader.file
             .then(file => new Promise((resolve, reject) => {
                 const data = new FormData();
                 data.append('upload', file);
 
-                fetch('/upload/image', { method: 'POST', body: data })
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.uploaded && result.url) {
-                            resolve({ default: result.url });
-                        } else {
-                            reject(result.error && result.error.message ? result.error.message : '이미지 업로드 실패.');
-                        }
-                    })
-                    .catch(err => reject('파일 업로드 중 네트워크 오류: ' + err));
+
+                fetch('/admin/upload/image', {
+                    method: 'POST',
+                    headers: {
+                        [csrfHeader]: csrfToken
+                    },
+                    body: data
+                })
+                .then(response => {
+                    // 응답 헤더 검사
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error("서버 응답이 JSON 형식이 아닙니다.");
+                    }
+                    if (!response.ok) {
+                        throw new Error(`HTTP 오류: ${response.status} ${response.statusText}`);
+                    }
+                    // JSON 변환
+                    return response.json();
+                })
+                .then(result => {
+                    if (result.uploaded && result.url) {
+                        resolve({ default: result.url });
+                    } else {
+                        reject(result.error?.message || '이미지 업로드 실패.');
+                    }
+                })
+                .catch(error => {
+                    console.error('파일 업로드 오류:', error);
+                    alert('서버 응답에 문제가 있습니다. 관리자에게 문의하세요.');
+                    reject(error);
+                });
             }));
     }
     abort() { /* ... */ }

@@ -306,10 +306,13 @@
 
         var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
     });
-
+    // campaignSelect.eventPeriodStr
     var calendarEl = document.getElementById('calendar');
+    var calendar_month = campaign.eventPeriodStr;
+    console.log("calendar_month" + calendar_month);
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth', // 월별 보기
+        initialDate: '2026-03-01',   // ← 원하는 날짜
         locale: 'ko', // 한국어 설정
         headerToolbar: {
             right: 'prev next today',
@@ -484,8 +487,8 @@
         </div>
         
         <div class="image-row">
+            <img id="imgFile" style="margin: 0 auto" th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" width="480" height="320" class=""/><br>
             <!-- 이미지 경로는 마이클 환경에 맞게 수정해주세요 -->
-            <img id="imgFile" th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" width="480" height="320" class=""/><br>
             <!-- <img src="image2.jpg" alt="음식 이미지 2" /> -->
         </div>
 

@@ -1,5 +1,11 @@
 package com.safeg.admin.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.safeg.admin.service.UseGuideService;
 import com.safeg.admin.vo.AdminContentVO;
@@ -59,33 +67,38 @@ public class UseGuideController {
 
     // 이미지 업로드 요청을 처리하는 컨트롤러 (이전 구현과 동일)
     // 이 메서드는 이미 구현했으니 참고만 해
-    /*
-    @PostMapping("/upload/image")
-    @ResponseBody
-    public Map<String, Object> uploadImage(@RequestParam("upload") MultipartFile file) {
-        Map<String, Object> responseData = new HashMap<>();
-        if (!file.isEmpty()) {
-            try {
-                // 실제 이미지 파일을 서버 특정 경로에 저장
-                String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-                File targetFile = new File("/path/to/your/upload/directory", fileName); // 실제 서버 경로 지정
-                file.transferTo(targetFile);
+    // @PostMapping("/upload/image")
+    // @ResponseBody
+    // public Map<String, Object> uploadImage(@RequestParam("upload") MultipartFile file) {
+    //     log.info("upload/image uploadIamge");
+    //     Map<String, Object> responseData = new HashMap<>();
+    //     if (!file.isEmpty()) {
+    //         try {
+    //             // 실제 이미지 파일을 서버 특정 경로에 저장
+    //             String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+                
+    //             File uploadDir = new File("/path/to/your/upload/directory");
+    //             if (!uploadDir.exists()) {
+    //                 uploadDir.mkdirs();
+    //             }
+    //             File targetFile = new File("/path/to/your/upload/directory", fileName); // 실제 서버 경로 지정
+    //             file.transferTo(targetFile);
 
-                // CKEditor에 반환할 URL (클라이언트에서 접근 가능한 경로)
-                String fileUrl = "/uploads/" + fileName; // /uploads는 스프링 리소스 핸들러에 설정되어야 함
+    //             // CKEditor에 반환할 URL (클라이언트에서 접근 가능한 경로)
+    //             String fileUrl = "/uploads/" + fileName; // /uploads는 스프링 리소스 핸들러에 설정되어야 함
 
-                responseData.put("uploaded", 1);
-                responseData.put("url", fileUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
-                responseData.put("uploaded", 0);
-                responseData.put("error", Map.of("message", "파일 업로드 실패: " + e.getMessage()));
-            }
-        } else {
-            responseData.put("uploaded", 0);
-            responseData.put("error", Map.of("message", "업로드할 파일이 없습니다."));
-        }
-        return responseData;
-    }
-    */
+    //             responseData.put("uploaded", 1);
+    //             responseData.put("url", fileUrl);
+    //         } catch (IOException e) {
+    //             e.printStackTrace();
+    //             responseData.put("uploaded", 0);
+    //             responseData.put("error", Map.of("message", "파일 업로드 실패: " + e.getMessage()));
+    //         }
+    //     } else {
+    //         responseData.put("uploaded", 0);
+    //         responseData.put("error", Map.of("message", "업로드할 파일이 없습니다."));
+    //     }
+    //     return responseData;
+    // }
+
 }

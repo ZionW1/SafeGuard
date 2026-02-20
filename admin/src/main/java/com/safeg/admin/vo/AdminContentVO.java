@@ -22,6 +22,7 @@ public class AdminContentVO {
     private LocalDate createdAt;
     private LocalDate updatedAt;
     private String isActive;
+    private Long userNo;
 
     private String action;
 

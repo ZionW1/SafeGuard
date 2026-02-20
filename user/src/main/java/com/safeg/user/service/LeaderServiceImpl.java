@@ -36,11 +36,11 @@ public class LeaderServiceImpl implements LeaderService{
     }
 
     @Override
-    public UserVO leaderSelect(Long id) throws Exception {
+    public AdminContentVO leaderSelect(Long id) throws Exception {
         // TODO Auto-generated method stub
         log.info("LeaderServiceImpl leaderSelect 호출");
 
-        UserVO leaderSelect = leaderMapper.leaderSelect(id);
+        AdminContentVO leaderSelect = leaderMapper.leaderSelect(id);
         return leaderSelect;
     }
 }

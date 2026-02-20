@@ -31,7 +31,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler{
         log.info("로그인 처리 실패...");
         logger.error("로그인 실패! 예외 타입: {}, 메시지: {}", exception.getClass().getSimpleName(), exception.getMessage());
         // 로그인 페이지로 에러 포함 전달
-        response.sendRedirect("/login?error");
+        response.sendRedirect("/user01?error");
 
     }
     

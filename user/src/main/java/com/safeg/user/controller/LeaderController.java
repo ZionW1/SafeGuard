@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.safeg.user.service.LeaderService;
 import com.safeg.user.vo.AdminContentVO;
@@ -38,16 +39,18 @@ public class LeaderController {
     }
 
     @GetMapping("/leader02")
-    public String leader02(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model, Long id) throws Exception{
+    public String leader02(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model, @RequestParam("id") Long id) throws Exception{
 
         // AdminContentVO leaderSelect = leaderService.leaderSelect();
         // model.addAttribute("leaderSelect", leaderSelect);
         // model.addAttribute("currentURI", request.getRequestURI());
 
-        UserVO leaderSelect = leaderService.leaderSelect(id);
+        AdminContentVO leaderSelect = leaderService.leaderSelect(id);
         log.info("leader01" + leaderSelect);
 
         model.addAttribute("leaderSelect", leaderSelect);
-        return "leader/leader01";
+        model.addAttribute("currentURI", request.getRequestURI());
+
+        return "leader/leader02";
     }
 }

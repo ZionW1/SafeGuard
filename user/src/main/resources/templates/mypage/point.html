@@ -21,7 +21,7 @@
         }
         .table_container {
             float: right;
-            width: 77%;          /* 컨테이너 너비 설정 */
+            width: 77.5%;          /* 컨테이너 너비 설정 */
             display: grid;           /* 가로 나열 */
             justify-content: space-between; /* 테이블 사이 공간 균등 배분 */
             align-items: flex-start; /* 상단 정렬 */
@@ -43,7 +43,8 @@
             <div class="container">
                 <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenu}" />
             </div>
-            
+            <span class="mypage_title">포인트 내역</span>
+
             <div class="table_container">
                 <div class="content-area">
                     <!-- <h2>토탈 포인트 : <span th:text="${totalPoint}">0</span></h2> -->
@@ -112,9 +113,6 @@
                         </th:block>
                     </tbody>
                 </table>
-                <span th:text="${authId}"></span>
-                <span th:text="${leaderPayList}"></span>
-
                 <th:block th:if="${authId == '03'}">
                     <th:block th:if="${leaderPayList != null and !leaderPayList.isEmpty()}">
                         <div class="tableTitle">

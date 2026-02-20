@@ -52,8 +52,14 @@ class MyUploadAdapter {
                 const data = new FormData();
                 data.append('upload', file);
 
-                fetch('/upload/image', { method: 'POST', body: data })
-                    .then(response => response.json())
+                fetch('/admin/upload/image', { 
+                    method: 'POST', 
+                    headers: {
+                        [csrfHeader]: csrfToken
+                    },
+                    body: data,
+                    signal: this.controller.signal // 업로드 중단 시그널
+                })                    .then(response => response.json())
                     .then(result => {
                         if (result.uploaded && result.url) {
                             resolve({ default: result.url });
@@ -61,7 +67,11 @@ class MyUploadAdapter {
                             reject(result.error && result.error.message ? result.error.message : '이미지 업로드 실패.');
                         }
                     })
-                    .catch(err => reject('파일 업로드 중 네트워크 오류: ' + err));
+                    .catch(error => {
+                        console.error('파일 업로드 오류:', error);
+                        alert('파일 업로드 도중 문제가 발생했습니다.');
+                        reject(error);
+                    });
             }));
     }
     abort() { /* ... */ }

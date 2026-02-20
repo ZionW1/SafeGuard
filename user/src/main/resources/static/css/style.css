@@ -104,9 +104,24 @@ a {
     color: #555;
     font-size: 1.1rem;
   }
-    .mypage-menu{
-        margin-top: 25px;
-    }
+
+  .modal {
+    display: none; /* 기본 숨김 */
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0; width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 700px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
 
 .mlr-auto {
     margin-left: auto;
@@ -193,7 +208,6 @@ a {
 .sr-only {
     font-size: 24px;
     font-weight: 700;
-    margin-bottom: 20px;
     /* border-bottom: 2px solid #ddd; */
     padding-bottom: 10px;
     color: #111;
@@ -236,7 +250,7 @@ a {
 /* 배너 */
 .banner_section {
     max-width: 90%;
-    height: 400px;
+    height: 230px;
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
@@ -292,7 +306,7 @@ a {
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         gap: 30px;
-        padding: 0 0 10px 10px;
+        /* padding: 0 0 10px 10px; */
         /* height: ; 스크롤이 생기려면 높이 제한이 있어야겠지? */
         overflow-x: auto; /* 수직 스크롤바가 나타나도록 설정 */
 
@@ -339,6 +353,48 @@ a {
         font-weight: bold;
     }
 
+    .terms-container {
+        max-width: 90%;
+        margin: 0 auto;
+        padding: 40px 20px;
+        line-height: 1.8;
+        font-size: 15px;
+        color: #333;
+    }
+
+    .terms-container h1 {
+        font-size: 28px;
+        margin-bottom: 40px;
+    }
+
+    .terms-container h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .terms-container section {
+        margin-bottom: 28px;
+    }
+
+    .terms-container p {
+        margin: 0;
+    }
+
+    .terms-container ol {
+        margin: 10px 0 0 18px;
+        padding: 0;
+    }
+
+    .terms-container li {
+        margin-bottom: 6px;
+    }
+
+    .terms-footer {
+        margin-top: 50px;
+        padding-top: 20px;
+        border-top: 1px solid #ddd;
+    }
+
   .slider-btn {
     position: absolute;
     top: 50%;
@@ -364,6 +420,8 @@ a {
     object-fit: cover;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
   }
   
   .campaign-info-box {
@@ -523,8 +581,10 @@ a {
     color: #333;
 }
 
-.article-container {     float: right;
-    width: 80%; margin: 0 auto; }
+.article-container {
+    float: center;
+    width: 80%; margin: 0 auto; 
+}
 
 .sidebar-menu {
     list-style: none;
@@ -1051,7 +1111,7 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: left;
-    max-width: 80%;
+    max-width: 90%;
     font-size: larger;
     padding: 30px 0;
     margin: 0 auto;
@@ -1117,6 +1177,13 @@ a {
     
     font-weight: bold;
     font-size: 48px
+}
+
+.mypage_title {
+    font-size: 2.4rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-left: 110px;
 }
 
 .card-box {

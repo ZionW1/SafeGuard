@@ -27,11 +27,13 @@
                             <button class="profile_save" type="submit">프로필 사진 저장하기</button>
                 </div>
             </form> -->
-            
-            <div id="existing-file-section" th:if="${file != null} ? 'hidden'" style="max-width: 100%; margin: 0px auto; ">
+                <div id="existing-file-section" th:if="${file != null}" style="max-width: 100%; margin: 0 auto; text-align: center;">
+
                 <div class="imageDisplayArea">
                     <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
-                    <img th:if="${file != null}" id="imgFile" th:src="|/selectProfile?id=${userId}&args=1|" alt="파일이미지" width="720" height="405" style="max-width: 100%; margin: 0px auto;" />
+                    <div>
+                        <img th:if="${file != null}" id="imgFile" th:src="|/selectProfile?id=${userId}&args=1|" alt="파일이미지" width="80%" height="200" style="max-width: 100%; margin: 0px auto;" />
+                    </div>
                     <img th:if="${file == null}" id="defaultImage" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
                 </div>
                 <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"

@@ -61,7 +61,7 @@ public class SecurityConfig {
                                 .anyRequest().permitAll());
         log.info("::::: SecurityFilterChain - 인가 설정 완료 :::::");
         // 폼 로그인 설정
-        http.formLogin(login -> login.loginPage("/login") // 로그인 페이지 경로
+        http.formLogin(login -> login.loginPage("/user01") // 로그인 페이지 경로
             .loginProcessingUrl("/login")  // 로그인 요청 경로
             .usernameParameter("userId") // 아이디 파라미터
             .passwordParameter("password")// 비밀번호 파라미터

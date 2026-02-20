@@ -1,15 +1,19 @@
 package com.safeg.admin.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.safeg.admin.service.LeaderService;
 import com.safeg.admin.service.UseGuideService;
 import com.safeg.admin.vo.AdminContentVO;
+import com.safeg.admin.vo.UserVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,15 +27,37 @@ public class LeaderController {
     @GetMapping("/leader01")
     public String leader01(Model model) throws Exception {
         log.info("leader01");
-        AdminContentVO leaderSelect = leaderService.leaderSelect();
-        log.info("leader01" + leaderSelect);
+        List<UserVO> leaderList = leaderService.leaderList();
+        log.info("leader01" + leaderList);
 
-        model.addAttribute("leaderSelect", leaderSelect);
+        model.addAttribute("leaderList", leaderList);
         return "leader/leader01";
     }
 
-    @PostMapping("/leader02")
-    public String leader02(AdminContentVO adminContentVO) throws Exception{
+    @GetMapping("/leader02")
+    public String leader02(Model model, @RequestParam("id") Long id) throws Exception{
+        log.info("leader02 userVO : " + id);
+        
+        AdminContentVO leaderSelect = leaderService.leaderSelect(id);
+        log.info("leader01 : " + leaderSelect);
+
+        model.addAttribute("leaderSelect", leaderSelect);
+        model.addAttribute("id", id);
+
+        return "leader/leader02";
+    }
+
+    @PostMapping("/leader03")
+    public String leader03(AdminContentVO adminContentVO) throws Exception{
+
+        // log.info("leader01");
+        // AdminContentVO leaderSelect = leaderService.leaderSelect();
+        // log.info("leader01" + leaderSelect);
+
+        // model.addAttribute("leaderSelect", leaderSelect);
+        // return "leader/leader01";
+
+
         int result = 0;
         // 'content'는 HTML form의 textarea name="content"에서 넘어온 값
         System.out.println("--- CKEditor에서 넘어온 내용 ---");
@@ -53,7 +79,7 @@ public class LeaderController {
         // 3. 성공 시 메시지 출력 또는 다른 페이지로 리다이렉트
 
         // 예시: 간단한 콘솔 출력 후 성공 페이지로 리다이렉트
-        return "redirect:/admin/leader01"; // 저장 성공 후 리다이렉트될 페이지 (예: 목록 페이지)
+        return "redirect:/leader01"; // 저장 성공 후 리다이렉트될 페이지 (예: 목록 페이지)
     }
     // List<UserVO> leaderList = leaderService.leaderList();
     // log.info("leader01" + leaderList);

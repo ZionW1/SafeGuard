@@ -10,7 +10,7 @@ import com.safeg.admin.vo.UserVO;
 @Mapper
 public interface LeaderMapper {
 
-    public AdminContentVO leaderSelect() throws Exception;
+    public AdminContentVO leaderSelect(Long id) throws Exception;
 
     public int leaderInsert(AdminContentVO adminContentVO) throws Exception;
 

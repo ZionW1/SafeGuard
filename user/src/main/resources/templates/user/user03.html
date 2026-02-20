@@ -202,6 +202,8 @@ function execDaumPostcode() {
                 <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenu}" />
             </div>
         <!-- <h2 style="text-align: left; margin-top: 20px;">내 정보</h2> -->
+        <span class="mypage_title">마이페이지</span>
+
         <div class="main-content">
             <!-- <form class="mypage_form" action="/userUpdate" method="post"> -->
             <form class="mypage_form" id="form" action="/mypage/updateInfo" method="post" enctype="multipart/form-data">
@@ -209,7 +211,6 @@ function execDaumPostcode() {
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <input type="hidden" name="id" th:value="${user.id}" />
                 <input type="hidden" name="userId" th:value="${user.userId}" />
-                <h1>마이페이지</h1>
                 <p>환영합니다, <span sec:authentication="name"></span>님! 마이페이지입니다.</p>
                 
                 <!-- 로그인한 사용자만 이 섹션을 볼 수 있도록 함 -->

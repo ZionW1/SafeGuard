@@ -14,6 +14,6 @@ public interface LeaderMapper {
 
     public List<UserVO> leaderList() throws Exception;
 
-    public UserVO leaderSelect(Long id) throws Exception;
+    public AdminContentVO leaderSelect(Long id) throws Exception;
     
 }

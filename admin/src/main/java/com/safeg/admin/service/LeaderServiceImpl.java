@@ -21,11 +21,11 @@ public class LeaderServiceImpl implements LeaderService{
     @Autowired
     LeaderMapper leaderMapper;
 
-    public AdminContentVO leaderSelect() throws Exception{
+    public AdminContentVO leaderSelect(Long id) throws Exception{
 
         log.info("LeaderServiceImpl leaderSelect 호출");
 
-        AdminContentVO leaderSelect = leaderMapper.leaderSelect();
+        AdminContentVO leaderSelect = leaderMapper.leaderSelect(id);
         return leaderSelect;
     }
 

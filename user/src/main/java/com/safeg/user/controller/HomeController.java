@@ -345,4 +345,14 @@ public class HomeController {
         
         return "ask01";
     }
+
+    @GetMapping("/terms")
+    public String terms() {
+        return "terms";
+    }
+
+    @GetMapping("/privacy")
+    public String privacy() {
+        return "privacy";
+    }
 }

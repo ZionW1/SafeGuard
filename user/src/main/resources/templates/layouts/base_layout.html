@@ -17,24 +17,6 @@
     </main>
 
     <div th:replace="~{fragments/footer :: common_footer}"></div>
-    
-    <div id="commonModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="commonModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="commonModalLabel">알림</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- 모달 내용이 들어갈 부분 -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <!-- <button type="button" class="btn btn-primary">확인</button> -->
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- ⭐ 여기에는 layout-dialect의 페이지별 JS 삽그먼트도 넣어두면 좋아! ⭐ -->
     <th:block layout:fragment="script"></th:block>
 </body>

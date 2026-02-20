@@ -7,7 +7,7 @@ import com.safeg.admin.vo.UserVO;
 
 public interface LeaderService {
 
-    public AdminContentVO leaderSelect() throws Exception;
+    public AdminContentVO leaderSelect(Long id) throws Exception;
 
     public int useGuideInsert(AdminContentVO adminContentVO) throws Exception;
 

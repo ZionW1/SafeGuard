@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,6 +41,9 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
+
+    @Value("${upload.path}") // application.properties 에서 지정한 업로드 경로 가져옴
+    private String uploadPath;
 
     /**
      * 이미지 썸네일
@@ -177,9 +181,6 @@ public class FileController {
         return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
     }
 
-    private final String uploadDir = "src/main/resources/static/images/";
-    // private final String uploadDir = "Users/pieck/Documents/upload/images";
-
     @PostMapping("/upload/image") // CKEditor의 uploadUrl과 일치시켜야 해!
     @ResponseBody // Map 객체를 JSON 형태로 반환하기 위함
     public Map<String, Object> uploadImage(@RequestParam("upload") MultipartFile file) {
@@ -196,7 +197,7 @@ public class FileController {
 
         try {
             // 업로드 디렉토리가 없으면 생성
-            File directory = new File(uploadDir);
+            File directory = new File(uploadPath);
             if (!directory.exists()) {
                 directory.mkdirs();
             }
@@ -208,7 +209,7 @@ public class FileController {
                 fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
             }
             String uuidFileName = UUID.randomUUID().toString() + fileExtension; // UUID로 고유한 이름 생성
-            Path filePath = Paths.get(uploadDir + uuidFileName);
+            Path filePath = Paths.get(uploadPath + uuidFileName);
 
             // 파일 저장
             Files.copy(file.getInputStream(), filePath);

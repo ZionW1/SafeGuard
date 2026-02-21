@@ -138,6 +138,7 @@ class MyUploadAdapter {
                     body: data
                 })
                 .then(response => {
+                    console.log("response");
                     const contentType = response.headers.get('content-type');
                     if (!contentType || !contentType.includes('application/json')) {
                         throw new Error("서버 응답이 JSON이 아닙니다.");
@@ -151,7 +152,6 @@ class MyUploadAdapter {
                         reject(result.error?.message || '이미지 업로드 실패.');
                     }
                 })
-                .finally(() => console.log('upload finished'))
                 .catch(error => {
                     console.error('파싱 오류:', error);
                     alert('서버 응답 형식에 문제가 있습니다. 관리자에게 문의하세요.');

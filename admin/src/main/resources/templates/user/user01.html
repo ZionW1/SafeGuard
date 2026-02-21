@@ -29,6 +29,7 @@
                     <option value="0" th:selected="${option.orderCode == 0}">최신순</option>
                     <option value="1" th:selected="${option.orderCode == 1}">포인트순</option>
                     <option value="2" th:selected="${option.orderCode == 2}">추천인</option>
+                    <option value="2" th:selected="${option.orderCode == 3}">역할</option>
                 </select>
                 <input type="text" name="keyword" placeholder="검색어를 입력해 주세요." th:value="${param.keyword}">
                 <input class="optionSubmit" type="submit" value="검색">
@@ -43,8 +44,8 @@
                     <th class="wdt10">추천인</th>
                     <th class="wdt10">휴대폰번호</th>
                     <th class="wdt5">포인트</th>
-                    <th class="wdt15">주소</th>
-                    <th class="wdt5">역할</th>
+                    <!-- <th class="wdt15">주소</th> -->
+                    <th class="wdt10">역할</th>
                     <th class="wdt5">정지</th>
                 </thead>
                 <tbody>
@@ -62,19 +63,14 @@
                             <td><span th:text="${user.referrerId}"></span></td>
                             <td><span th:text="${user.phoneNum}"></span></td>
                             <td><span th:text="${user.pointId}"></span></td>
-                            <td> <!-- ⭐⭐ 주소 정보를 표시할 단 하나의 셀 ⭐⭐ -->
-                                <!-- user.mainAddress가 null이 아니면 주소를 표시, null이면 "주소 없음" 표시 -->
+                            <!-- <td>
                                 <span th:if="${user.fullAddress != null}" th:text="${user.fullAddress}"></span>
                                 <span th:if="${user.fullAddress == null}">- 주소 없음 -</span>
-                                <!-- 만약 한 유저가 여러 주소를 가진다면 (user.addresses)
-                                    <span th:if="${user.addresses != null and !user.addresses.empty}" th:text="${user.addresses[0].fullAddress}"></span>
-                                    <span th:else>- 주소 없음 -</span>
-                                -->
-                            </td>
+                            </td> -->
 
                             
                             <!-- <td><span th:text="${userAdressList.fullAddress}"></span></td> -->
-                            <td><span th:text="${user.role}"></span></td>
+                            <td><span th:text="${user.guardTypeNm}"></span></td>
                             <td><span th:text="${user.isStopped}"></span></td>
                             <!-- <td><button type="button" class="" onclick="leaderUpdate()">인솔자 변경</button></td> -->
 

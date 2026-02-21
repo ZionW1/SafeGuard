@@ -13,10 +13,10 @@
                     <a href="/notice01">공지사항</a>
                 </li>
                 <li class="menu-item" th:classappend="${currentURI.startsWith('/inquiry')} ? 'active' : ''">
-                    <a href="/inquiry">1:1 문의</a>
+                    <a href="javascript:inquiry()">1:1 문의</a>
                 </li>
                 <li class="menu-item" th:classappend="${currentURI.startsWith('/faq')} ? 'active' : ''">
-                    <a href="/faq">자주 묻는 질문</a>
+                    <a href="javascript:faq()">FAQ</a>
                 </li>
                 <li class="menu-item" th:classappend="${currentURI.startsWith('/useGuide01')} ? 'active' : ''">
                     <a href="/useGuide01">이용가이드</a>
@@ -30,4 +30,14 @@
             </ul>
         </nav>
     </aside>
+    <script th:inline="javascript">
+        function faq(){
+            alert("준비 중 입니다.")
+            return false;
+        }
+        function inquiry(){
+            alert("준비 중 입니다.")
+            return false;
+        }
+    </script>
 </div>

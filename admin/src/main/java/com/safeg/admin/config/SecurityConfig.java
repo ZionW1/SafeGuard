@@ -58,7 +58,6 @@ public class SecurityConfig {
         // ✅ 인가 설정
         http.authorizeHttpRequests(auth -> auth
             .requestMatchers("/", "/login", "/join", "/css/**", "/js/**", "/images/**", "/error01", "/error").permitAll() // 로그인 없이도 접근 가능한 정적 파일이나 특정 경로
-            
             .requestMatchers("/auth/**").permitAll()
             .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                                 // .requestMatchers("/user", "/user/**").hasAnyRole("USER", "ADMIN")

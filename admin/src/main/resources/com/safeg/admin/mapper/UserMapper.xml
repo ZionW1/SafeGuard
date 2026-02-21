@@ -27,6 +27,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.phone_num,
             u.address_id, u.point_Id, ua.full_Address,
             auth.auth,
+            (CASE
+                WHEN u.guard_type = '00' THEN '스텝'
+                WHEN u.guard_type = '01' THEN '경호원 신청 중'
+                WHEN u.guard_type = '02' THEN '경호원'
+                WHEN u.guard_type = '03' THEN '수행'
+                WHEN u.guard_type = '04' THEN '인솔자'
+                ELSE null
+            END) AS guard_type_nm, 
+
             DATE_FORMAT(u.created_at, '%Y.%m.%d') created_at,
             u.role, u.is_stopped
         FROM user u
@@ -72,6 +81,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="option.orderCode == 2">
             ORDER BY (u.referrer_no IS NULL) desc, u.created_at desc
+        </if>
+        <if test="option.orderCode == 3">
+            ORDER BY (u.guard_type IS NULL) desc, u.created_at desc
         </if>
     </select>
 
@@ -212,6 +224,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SET 
             role = 'LEADER',
             auth_id = '03',
+            guard_type = '04'
             updated_at = NOW()
         WHERE id = #{id}
     </update>

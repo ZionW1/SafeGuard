@@ -185,10 +185,6 @@
             <input type="text" id="userNm" th:field="*{userNm}" placeholder="이름을 입력하세요" required />
             <div class="error-msg" th:if="${#fields.hasErrors('userNm')}" th:errors="*{userNm}"></div>
             
-            <label for="nickName">닉네임</label>
-            <input type="text" id="nickName" th:field="*{nickName}" placeholder="닉네임을 입력하세요" required />
-            <div class="error-msg" th:if="${#fields.hasErrors('nickName')}" th:errors="*{nickName}"></div>
-            
             <div class="password-input-container">
                 <label for="password">비밀번호</label>
                 <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required />

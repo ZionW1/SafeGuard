@@ -6,6 +6,8 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +44,8 @@ public class FileController {
     @Autowired
     private FileService fileService;
     
-    @Value("${upload.path}") // application.properties 에서 지정한 업로드 경로 가져옴
+    @Value("${upload.path}")
     private String uploadPath;
-
     /**
      * 이미지 썸네일
      * @param id
@@ -181,53 +182,51 @@ public class FileController {
         return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
     }
 
-    // private final String uploadDir = "src/main/resources/static/images/";
+    private final String uploadDir = "src/main/resources/static/images/";
     // private final String uploadDir = "Users/pieck/Documents/upload/images";
 
-    @PostMapping("/upload/image") // CKEditor의 uploadUrl과 일치시켜야 해!
-    @ResponseBody // Map 객체를 JSON 형태로 반환하기 위함
-    public Map<String, Object> uploadImage(@RequestParam("upload") MultipartFile file) {
-        log.info("upload/image uploadImage");
-        Map<String, Object> response = new HashMap<>();
-
-        if (file.isEmpty()) {
-            response.put("uploaded", false);
-            response.put("error", Map.of("message", "파일이 비어있습니다."));
-            return response;
-        }
-
-        try {
-            // 업로드 디렉토리가 없으면 생성
-            File directory = new File(uploadPath);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
-            // 고유한 파일 이름 생성 (중복 방지)
-            String originalFileName = file.getOriginalFilename();
-            String fileExtension = "";
-            if (originalFileName != null && originalFileName.contains(".")) {
-                fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-            }
-            String uuidFileName = UUID.randomUUID().toString() + fileExtension; // UUID로 고유한 이름 생성
-            Path filePath = Paths.get(uploadPath + uuidFileName);
-
-            // 파일 저장
-            Files.copy(file.getInputStream(), filePath);
-
-            // CKEditor가 요구하는 JSON 형식으로 응답 반환
-            // 여기서는 웹에서 접근할 URL을 "/images/" 뒤에 파일 이름 붙여서 만들어.
-            // Thymeleaf 등에서 static 폴더는 보통 /로 접근 가능해.
-            String fileUrl = "/images/" + uuidFileName; 
-            
-            response.put("uploaded", true);
-            response.put("url", fileUrl);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            response.put("uploaded", false);
-            response.put("error", Map.of("message", "파일 저장 중 오류가 발생했습니다: " + e.getMessage()));
-        }
-        return response;
+    @PostMapping("/upload/image")
+@ResponseBody
+public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
+    Map<String, Object> response = new HashMap<>();
+    if (file.isEmpty()) {
+        response.put("uploaded", false);
+        response.put("error", Map.of("message", "파일이 비어있습니다."));
+        return ResponseEntity.badRequest().body(response);
     }
+
+    try {
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String originalFileName = file.getOriginalFilename();
+        String fileExtension = "";
+        if (originalFileName != null && originalFileName.contains(".")) {
+            fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        }
+        String uuidFileName = UUID.randomUUID().toString() + fileExtension;
+
+        Path targetPath = Paths.get(uploadDir).resolve(uuidFileName);
+
+        // 파일 저장 (덮어쓰기는 필요 없으니 삭제 없이 바로 저장)
+        file.transferTo(targetPath.toFile());
+
+        String fileUrl = "/images/" + uuidFileName;
+        response.put("uploaded", true);
+        response.put("url", fileUrl);
+
+        log.info("upload/image uploadImage 저장 완료: " + targetPath);
+        log.info("upload/image uploadImage fileUrl : " + fileUrl);
+
+        return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+        log.error("파일 업로드 중 오류", e);
+        response.put("uploaded", false);
+        response.put("error", Collections.singletonMap("message", "서버 오류로 파일 업로드에 실패했습니다."));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+}
 }

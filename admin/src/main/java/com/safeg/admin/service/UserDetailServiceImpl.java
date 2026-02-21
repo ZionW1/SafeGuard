@@ -42,10 +42,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
         }
 
         // 🔐 CustomUser ➡ UserDetails
-        log.info("- getPassword 1 : " + user.getPassword());
+        // log.info("- getPassword 1 : " + user.getPassword());
 
         CustomUser customUser = new CustomUser(user);
-        log.info("- username 2 : " + customUser);
+        // log.info("- username 2 : " + customUser);
 
         return customUser;
     }

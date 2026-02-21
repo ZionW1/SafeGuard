@@ -52,6 +52,7 @@ public class UserVO {
     private String phoneNum;
     private int pointId;
     private String userRating;
+    private String guardTypeNm;
     private Long commonId;
     private Long addressId;
     private Long gradeId;

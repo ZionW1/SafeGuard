@@ -93,8 +93,8 @@
     </select>
 
     <insert id="join" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user( user_id, user_nm, email, password, phone_num, referrer_no, auth_id, role)
-        VALUES ( #{userId}, #{userNm}, #{email}, #{password}, #{phoneNum}, #{referrerNo}, '02', 'User')
+        INSERT INTO user( user_id, user_nm, email, password, phone_num, referrer_no, auth_id, role, guard_type)
+        VALUES ( #{userId}, #{userNm}, #{email}, #{password}, #{phoneNum}, #{referrerNo}, '02', 'User', '00')
     </insert>
 
     <!-- 회원 권한 등록 -->

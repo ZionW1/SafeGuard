@@ -422,8 +422,13 @@ a {
     border-top-right-radius: 8px;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+    display: flex;
   }
   
+  .leader_name {
+    text-align: center;
+    font-size: x-large;
+  }
   .campaign-info-box {
     font-size: 14px;
   }
@@ -433,6 +438,8 @@ a {
     font-weight: bold;
     gap: 6px;
     margin: 10px 0;
+    justify-content: center;  /* 가로 가운데 정렬 */
+    align-items: center;      /* 세로 가운데 정렬(필요시) */
   }
   
   .campaign-tags .tag {

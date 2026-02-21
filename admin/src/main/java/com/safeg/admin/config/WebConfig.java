@@ -42,4 +42,5 @@ public class WebConfig implements WebMvcConfigurer { // ⬅️ WebMvcConfigurer 
         // 만약 이미지 파일이 'src/main/resources/static' 아래에 있다면 이 설정이 필요 없지만,
         // 지금처럼 외부 경로에 저장한다면 이 설정이 필수적이야.
     }
+
 }

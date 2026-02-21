@@ -26,7 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from campaign c
         left outer join user u
         on leader_code = id
-        where campaign_id = #{}
+        where campaign_id = #{id}
         and c.is_deleted = 'N'
     </select>
     <select id="appliedCampaign" resultType="UserCampaignVO">

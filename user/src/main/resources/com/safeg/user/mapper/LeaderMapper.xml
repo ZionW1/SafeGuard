@@ -23,14 +23,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="leaderList" resultType="UserVO">
-        SELECT 
-            *
-        FROM 
-            user
-        where
-            role = 'LEADER'
+        SELECT
+            u.id,
+            u.user_nm,
+            f.file_path
+        FROM
+            user u
+        LEFT OUTER JOIN files f
+        ON u.id = f.target_id
+        AND f.target_type = 'profile'
+        AND f.is_deleted = 'N'
+        WHERE
+            u.role = 'LEADER'
         AND
-            is_deleted = 'N'
+            u.is_deleted = 'N'
     </select>
 
     <select id="leaderSelect" resultType="AdminContentVO">

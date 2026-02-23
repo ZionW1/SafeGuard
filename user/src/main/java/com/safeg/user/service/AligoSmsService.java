@@ -140,7 +140,7 @@ public class AligoSmsService {
         body.add("key", apiKey);            // @Value 변수 사용
         body.add("user_id", userId);        // @Value 변수 사용
         body.add("sender", sender);         // @Value 변수 사용
-        body.add("receiver", "01045558079");
+        body.add("receiver", "01038966824");
         body.add("msg", "http://행집.com/apply/userCampaignApply/"+userCampaignVO.get(0).getApplyDate() + "?id=" + campaignId);
         
         // 🚨 테스트 완료 후 문자가 실제로 오게 하려면 이 줄을 주석 처리하거나 "N"으로 바꾸세요!

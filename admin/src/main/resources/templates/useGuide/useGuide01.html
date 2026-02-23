@@ -64,7 +64,7 @@
 
         <!-- 본문 영역 -->
         <div class="main-content">
-            <form th:action="@{/admin/useGuide02}" id="contentForm" method="post">
+            <form th:action="@{/useGuide02}" id="contentForm" method="post">
                 <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
 
                 <div th:if="${useGuideSelect == null}">
@@ -96,7 +96,7 @@
     
     <!-- <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script> -->
     <!-- <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script> -->
-    <script src="/js/ckeditor.js"></script> 
+    <script th:src="@{/js/ckeditor.js}"></script> 
 
 <!-- ⭐️⭐️⭐️ 이 스크립트 블록 안에서 CKEditor 초기화 ⭐️⭐️⭐️ -->
 <script>
@@ -118,7 +118,7 @@
                     const data = new FormData();
                     data.append('upload', file);
 
-                    fetch('/upload/image', { method: 'POST', body: data })
+                    fetch('@{/upload/image}', { method: 'POST', body: data })
                         .then(response => response.json())
                         .then(result => {
                             if (result.uploaded && result.url) {

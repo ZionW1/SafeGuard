@@ -62,7 +62,7 @@ public class UseGuideController {
         // 3. 성공 시 메시지 출력 또는 다른 페이지로 리다이렉트
 
         // 예시: 간단한 콘솔 출력 후 성공 페이지로 리다이렉트
-        return "redirect:/admin/useGuide01"; // 저장 성공 후 리다이렉트될 페이지 (예: 목록 페이지)
+        return "redirect:/useGuide01"; // 저장 성공 후 리다이렉트될 페이지 (예: 목록 페이지)
     }
 
     // 이미지 업로드 요청을 처리하는 컨트롤러 (이전 구현과 동일)

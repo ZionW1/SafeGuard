@@ -293,4 +293,11 @@
         SELECT count(*)
         FROM campaign 
     </select>
+
+    <select id="applyDate" resultType="UserCampaignVO">
+        SELECT DISTINCT apply_date
+        FROM user_campaign
+        WHERE
+            campaign_id = #{campaignId}
+    </select>
 </mapper>

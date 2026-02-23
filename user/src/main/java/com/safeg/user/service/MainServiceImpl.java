@@ -116,5 +116,13 @@ public class MainServiceImpl implements MainService{
 
         return totalCampaign;
     }
+
+    @Override
+    public List<UserCampaignVO> applyDate(Long campaignId) throws Exception {
+        // TODO Auto-generated method stub
+        List<UserCampaignVO> applyDate = mainMapper.applyDate(campaignId);
+
+        return applyDate;
+    }
     
 }

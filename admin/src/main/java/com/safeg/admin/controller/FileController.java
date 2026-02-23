@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.safeg.admin.vo.CommonData;
 import com.safeg.admin.vo.FilesVO;
 import com.safeg.admin.mapper.MediaUtil;
 import com.safeg.admin.service.FileService;
@@ -182,50 +183,54 @@ public class FileController {
         return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
     }
 
-    private final String uploadDir = "src/main/resources/static/images/";
-    // private final String uploadDir = "Users/pieck/Documents/upload/images";
+    String uploadDir = CommonData.getUploadPath(); // 여기서 호출!    // private final String uploadDir = "Users/pieck/Documents/upload/images";
 
     @PostMapping("/upload/image")
 @ResponseBody
 public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
     Map<String, Object> response = new HashMap<>();
-    if (file.isEmpty()) {
+
+    if (file == null || file.isEmpty()) {
         response.put("uploaded", false);
         response.put("error", Map.of("message", "파일이 비어있습니다."));
         return ResponseEntity.badRequest().body(response);
     }
 
     try {
+        // 1. 폴더 생성 확인
         File directory = new File(uploadDir);
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
+        // 2. 고유한 파일명 생성
         String originalFileName = file.getOriginalFilename();
-        String fileExtension = "";
-        if (originalFileName != null && originalFileName.contains(".")) {
-            fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        }
+        String fileExtension = (originalFileName != null && originalFileName.contains(".")) 
+                                ? originalFileName.substring(originalFileName.lastIndexOf(".")) 
+                                : "";
         String uuidFileName = UUID.randomUUID().toString() + fileExtension;
-
+        
+        // 3. 파일 저장 (단 한 번만 수행!)
         Path targetPath = Paths.get(uploadDir).resolve(uuidFileName);
-
-        // 파일 저장 (덮어쓰기는 필요 없으니 삭제 없이 바로 저장)
+        
+        // transferTo는 가장 효율적인 파일 저장 방식입니다.
         file.transferTo(targetPath.toFile());
 
-        String fileUrl = "/images/" + uuidFileName;
+        log.info("파일 업로드 성공: " + targetPath.toString());
+
+        // 4. 성공 응답 구성
+        // WebConfig에서 /images/** 를 /Users/pieck/Documents/upload/ 로 매핑했으므로 아래 경로가 맞습니다.
+        String fileUrl = "/admin/images/" + uuidFileName; 
+        
         response.put("uploaded", true);
         response.put("url", fileUrl);
-
-        log.info("upload/image uploadImage 저장 완료: " + targetPath);
-        log.info("upload/image uploadImage fileUrl : " + fileUrl);
 
         return ResponseEntity.ok(response);
 
     } catch (Exception e) {
-        log.error("파일 업로드 중 오류", e);
+        log.error("파일 업로드 중 오류 발생", e);
         response.put("uploaded", false);
-        response.put("error", Collections.singletonMap("message", "서버 오류로 파일 업로드에 실패했습니다."));
+        response.put("error", Map.of("message", "서버 오류: " + e.getMessage()));
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

@@ -3,6 +3,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.safeg.admin.vo.CommonData;
+
 import lombok.extern.slf4j.Slf4j;
 
 // @Configuration
@@ -21,16 +23,23 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration // ⬅️ 이 클래스가 Spring 설정 파일임을 알려주는 어노테이션이야.
 @Slf4j
 public class WebConfig implements WebMvcConfigurer { // ⬅️ WebMvcConfigurer 인터페이스를 구현해야 해.
-
     // 이미지를 실제로 저장하는 경로를 여기에 적어줘야 해.
     // ImageUploadController의 uploadDir과 정확히 일치해야 해!
     // 예: "file:/Users/pieck/Documents/upload/images/" /Users/pieck/Documents/safeg/admin/src/main/resources/static/images
-    private final String imageUploadPath = "/Users/pieck/Documents/safeg/admin/src/main/resources/static/images/";
+    private final String imageUploadPath = "/Users/pieck/Documents/upload/";
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String path = "";
+        try {
+            path = CommonData.getUploadPath();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         log.info("addResourceHandlers " + " addResourceHandlers registry + " + registry);
-        registry.addResourceHandler("/images/**") // ⬅️ 웹에서 접근하는 URL 패턴
-                .addResourceLocations("file:" + imageUploadPath); // ⬅️ 실제 파일이 저장된 절대 경로
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:" + path)
+                .setCachePeriod(0);
     }
 }

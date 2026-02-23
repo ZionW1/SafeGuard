@@ -26,6 +26,7 @@ import com.safeg.user.vo.Page;
 import com.safeg.user.vo.UserCampaignVO;
 import com.safeg.user.vo.UserVO;
 import com.safeg.user.vo.Users;
+import com.safeg.user.service.AuthService;
 import com.safeg.user.service.BannerService;
 import com.safeg.user.service.CampaignService;
 import com.safeg.user.service.MainService;
@@ -48,6 +49,9 @@ public class HomeController {
 
     @Autowired
     BannerService bannerService;
+
+    @Autowired
+    AuthService authService;
 
     @Autowired
     CampaignService campaignService;
@@ -74,6 +78,9 @@ public class HomeController {
     
                 if (campaignFavorite.get(i).getApplicantsNum() == campaignFavorite.get(i).getRecruitmentNum()) {
                     campaignService.updateCampaign(campaignFavorite.get(i).getCampaignId());
+                    List<UserCampaignVO> userCampaignVO = mainService.applyDate(campaignFavorite.get(i).getCampaignId());
+
+                    authService.sendApply(campaignFavorite.get(i).getCampaignId(), userCampaignVO);
                 }
             }
         } else {

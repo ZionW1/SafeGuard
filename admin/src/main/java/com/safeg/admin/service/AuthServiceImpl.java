@@ -48,10 +48,17 @@ public class AuthServiceImpl implements AuthService{
         }
     }
 
+    public void sendSmsApply(String phoneNumber, String authCode) throws JsonMappingException, JsonProcessingException {
+        boolean sent = smsService.sendSmsApply(phoneNumber, authCode);
+        if (!sent) {
+            throw new RuntimeException("문자 전송 실패 - 재시도 필요");
+        }
+    }
+
     // 인증번호 생성 및 SMS 발송, DB 저장
     @Async
     @Transactional
-    public CompletableFuture<Boolean> sendAuthCode(String phoneNumber) {
+    public CompletableFuture<Boolean> sendAuthCode(String phoneNumber) throws Exception{
         log.info("인증 프로세스 시작: " + phoneNumber);
         String authCode = generateAuthCode();
 
@@ -80,7 +87,7 @@ public class AuthServiceImpl implements AuthService{
 
     // 인증번호 검증
     @Transactional
-    public boolean verifyAuthCode(String phoneNumber, String inputCode) {
+    public boolean verifyAuthCode(String phoneNumber, String inputCode) throws Exception{
         LocalDateTime now = LocalDateTime.now();
         var maybeAuth = phoneAuthRepository.findByPhoneNumberAndAuthCodeAndUsedFalseAndExpiresAtAfter(phoneNumber, inputCode, now);
         if (maybeAuth.isPresent()) {
@@ -95,6 +102,35 @@ public class AuthServiceImpl implements AuthService{
     private String generateAuthCode() {
         int code = 100000 + (int)(Math.random() * 900000);
         return String.valueOf(code);
+    }
+
+    @Async
+    @Transactional
+    public CompletableFuture<Boolean> sendApply(String phoneNumber) throws Exception{
+        log.info("인증 프로세스 시작: " + phoneNumber);
+        String authCode = generateAuthCode();
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                // 1. 문자 전송 시도
+                sendSmsApply(phoneNumber, authCode);
+                
+                // 2. 전송 성공 시에만 DB 저장 (유효시간 3분)
+                PhoneAuth phoneAuth = new PhoneAuth();
+                phoneAuth.setPhoneNumber(phoneNumber);
+                phoneAuth.setAuthCode(authCode);
+                phoneAuth.setExpiresAt(LocalDateTime.now().plusMinutes(3));
+                phoneAuthRepository.save(phoneAuth);
+                
+                log.info("인증번호 발송 및 DB 저장 완료: " + phoneNumber);
+                return true;
+                
+            } catch (Exception e) {
+                // 여기서 찍히는 e의 내용을 봐야 왜 실패했는지 알 수 있습니다!
+                log.error("인증 프로세스 중 치명적 에러 발생: ", e); 
+                return false;
+            }
+        }, AsyncConfig.smsExecutor()); // 아까 설정한 smsExecutor를 꼭 넣어주세요!
     }
 }
 

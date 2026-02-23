@@ -38,7 +38,7 @@ public class AuthController {
     // }
 
     @PostMapping("/sendCode")
-    public CompletableFuture<ResponseEntity<String>> sendCode(@RequestParam("phoneNumber") String phoneNumber) {
+    public CompletableFuture<ResponseEntity<String>> sendCode(@RequestParam("phoneNumber") String phoneNumber) throws Exception{
         log.info("sendCode " + phoneNumber);
         return authService.sendAuthCode(phoneNumber)
             .thenApply(success -> {

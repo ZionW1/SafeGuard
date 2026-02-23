@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.safeg.user.config.AsyncConfig;
 import com.safeg.user.vo.PhoneAuth;
+import com.safeg.user.vo.UserCampaignVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,6 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -42,6 +44,13 @@ public class AuthServiceImpl implements AuthService{
     )
     public void sendSmsWithRetry(String phoneNumber, String authCode) throws JsonMappingException, JsonProcessingException {
         boolean sent = smsService.sendAuthSms(phoneNumber, authCode);
+        if (!sent) {
+            throw new RuntimeException("문자 전송 실패 - 재시도 필요");
+        }
+    }
+
+    public void sendSmsApply(Long campaignId, List<UserCampaignVO> userCampaignVO) throws JsonMappingException, JsonProcessingException {
+        boolean sent = smsService.sendSmsApply(campaignId, userCampaignVO);
         if (!sent) {
             throw new RuntimeException("문자 전송 실패 - 재시도 필요");
         }
@@ -94,6 +103,36 @@ public class AuthServiceImpl implements AuthService{
     private String generateAuthCode() {
         int code = 100000 + (int)(Math.random() * 900000);
         return String.valueOf(code);
+    }
+
+
+    @Override
+    public CompletableFuture<Boolean> sendApply(Long campaignId, List<UserCampaignVO> userCampaignVO) throws Exception {
+        // TODO Auto-generated method stub
+        log.info("campaignId: " + campaignId);
+        String authCode = generateAuthCode();
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                // 1. 문자 전송 시도
+                sendSmsApply(campaignId, userCampaignVO);
+                
+                // 2. 전송 성공 시에만 DB 저장 (유효시간 3분)
+                PhoneAuth phoneAuth = new PhoneAuth();
+                phoneAuth.setPhoneNumber("01045558079");
+                phoneAuth.setAuthCode(authCode);
+                phoneAuth.setExpiresAt(LocalDateTime.now().plusMinutes(3));
+                phoneAuthRepository.save(phoneAuth);
+                
+                log.info("인증번호 발송 및 DB 저장 완료: ");
+                return true;
+                
+            } catch (Exception e) {
+                // 여기서 찍히는 e의 내용을 봐야 왜 실패했는지 알 수 있습니다!
+                log.error("인증 프로세스 중 치명적 에러 발생: ", e); 
+                return false;
+            }
+        }, AsyncConfig.smsExecutor()); // 아까 설정한 smsExecutor를 꼭 넣어주세요!
     }
 }
 

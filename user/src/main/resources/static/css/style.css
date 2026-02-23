@@ -590,7 +590,8 @@ a {
 
 .article-container {
     float: center;
-    width: 80%; margin: 0 auto; 
+    width: 80%; 
+    margin: 0 auto; 
 }
 
 .sidebar-menu {

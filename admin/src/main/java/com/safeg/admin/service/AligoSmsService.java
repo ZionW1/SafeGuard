@@ -126,4 +126,48 @@ public class AligoSmsService {
         
         return false;
     }
+
+    public boolean sendSmsApply(String phoneNumber, String authCode) {
+        // TODO Auto-generated method stub
+        log.info("AligoSmsService 전송 시도: {} , 코드: {}", phoneNumber, authCode);
+        
+        RestTemplate restTemplate = new RestTemplate();
+
+        // 1. 반드시 MultiValueMap을 사용해야 하며, @Value로 받은 변수를 넣어야 합니다.
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("key", apiKey);            // @Value 변수 사용
+        body.add("user_id", userId);        // @Value 변수 사용
+        body.add("sender", sender);         // @Value 변수 사용
+        body.add("receiver", phoneNumber);
+        body.add("msg", "[SafeG] 인증번호는 [" + authCode + "] 입니다. 3분 이내에 입력해주세요.");
+        
+        // 🚨 테스트 완료 후 문자가 실제로 오게 하려면 이 줄을 주석 처리하거나 "N"으로 바꾸세요!
+        // body.add("testmode_yn", "Y"); 
+
+        // 2. 헤더 설정 (Form Data 형식)
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // 3. 요청 객체 생성
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+
+        try {
+            // 4. 전송
+            ResponseEntity<String> response = restTemplate.postForEntity(ALIGO_URL, request, String.class);
+            log.info("알리고 전체 응답: " + response.getBody());
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode root = objectMapper.readTree(response.getBody());
+                
+                // 알리고는 성공 시 result_code가 정수 1 또는 문자열 "1"로 옵니다.
+                String resultCode = root.path("result_code").asText();
+                return "1".equals(resultCode);
+            }
+        } catch (Exception e) {
+            log.error("알리고 통신 중 에러 발생: ", e);
+        }
+        
+        return false;
+    }
 }

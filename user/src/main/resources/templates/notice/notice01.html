@@ -42,20 +42,33 @@
         white-space: nowrap; /* 제목 등 셀 너비 유지 */
     }
 
-    .notice-table td.title {
-        text-align: left;
-        color: #333;
-        cursor: pointer;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis; /* 내용이 길면 ...으로 표시 */
-        max-width: 400px; /* 제목 컬럼 최대 너비 */
-    }
+    /* 1. 제목 칸 설정 */
+.notice-table td.title {
+    max-width: 200px; /* 화면 크기에 따라 적절히 조절 (예: 150px~250px) */
+    padding: 10px;
+    vertical-align: middle;
+}
 
-    .notice-table td.title:hover {
-        text-decoration: underline;
-        color: #007bff;
-    }
+/* 2. 실제 스크롤이 발생하는 박스 */
+.title-scroll-box {
+    display: block;
+    width: 100%;           /* 부모 td 너비에 맞춤 */
+    overflow-x: auto;      /* 가로 방향으로 넘치면 스크롤 생성 */
+    white-space: nowrap;   /* 글자가 아래로 떨어지지 않게 한 줄로 고정 */
+    -webkit-overflow-scrolling: touch; /* 모바일에서 부드러운 스크롤 */
+    
+    /* 텍스트 정렬은 원하는 대로 */
+    text-align: left; 
+}
+
+/* 3. 스크롤바 디자인 (모바일에서 깔끔하게 보이도록 숨기거나 최소화) */
+.title-scroll-box::-webkit-scrollbar {
+    height: 2px; /* 아주 얇게 설정 */
+}
+.title-scroll-box::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.1); /* 살짝 보일듯 말듯한 회색 */
+    border-radius: 10px;
+}
 
     .notice-table tr:hover {
         background-color: #fdfdfd;
@@ -78,13 +91,13 @@
         <div class="container">
             <th:block th:replace="~{fragments/noticeSidebar :: sidebarMenu}" />
         </div>
-        <span class="notice-title">공지사항</span>
+        <span class="notice_title_list">공지사항</span>
         <table class="notice-table">
             <thead>
                 <tr>
-                    <th style="width:60px;">번호</th>
+                    <th style="">번호</th>
                     <th>제목</th>
-                    <th style="width:100px;">날짜</th>
+                    <th style="">날짜</th>
                 </tr>
             </thead>
             <tbody>
@@ -94,6 +107,37 @@
                                 <td style="text-align: center;" ><span th:text="${stat.size - stat.index}"></span></td>
                                 <td class="title"><span th:text="${notice.title}"></span></td>
                                 <td style="text-align: center;" ><span th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}"></span></td>
+                            </tr>
+                            <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
+                                <td style="text-align: center;" ><span>2</span></td>
+                                <td class="title"><div class="title-scroll-box">
+                                    여기에 아주아주 긴 공지사항 제목이 들어갑니다. 옆으로 밀어서 전체 내용을 확인하세요!
+                                </div></td>
+                                <td style="text-align: center;" ><span th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}"></span></td>
+                            </tr>
+                        </th:block>
+                    <!-- 실제 데이터는 서버에서 가져와서 반복문으로 채워질 부분 -->
+            </tbody>
+        </table>
+        <table class="notice-table_mobile">
+            <thead>
+                <tr>
+                    <th style="">번호</th>
+                    <th>제목</th>
+                </tr>
+            </thead>
+            <tbody>
+                <th:block th:each="notice, stat : ${noticeList}">
+                            <!-- <a th:href="|/admin/campaign/select?id=${campaign.id}|"> -->
+                            <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
+                                <td style="text-align: center;" ><span th:text="${stat.size - stat.index}"></span></td>
+                                <td class="title"><span th:text="${notice.title}"></span></td>
+                            </tr>
+                            <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
+                                <td style="text-align: center;" ><span>2</span></td>
+                                <td class="title"><div class="title-scroll-box">
+                                    여기에 아주아주 긴 공지사항 제목이 들어갑니다. 옆으로 밀어서 전체 내용을 확인하세요!
+                                </div></td>
                             </tr>
                         </th:block>
                     <!-- 실제 데이터는 서버에서 가져와서 반복문으로 채워질 부분 -->

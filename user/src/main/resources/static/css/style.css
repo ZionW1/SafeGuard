@@ -346,7 +346,7 @@ a {
         color: #950505;
         font-size: 1.5em;
         padding: 8px 15px;
-        margin: 0px 5px ;
+        margin: 0px 10px ;
         border-radius: 4px;
         align-self: flex-start; /* 뱃지를 왼쪽 정렬 */
         font-weight: bold;
@@ -464,20 +464,26 @@ a {
   }
   
   .campaign-title-text {
-    width: 100%;             /* px 대신 100%로 유연하게 대응 */
-    font-size: 1.1em;        /* 살짝 크기 조절 */
-    font-weight: 500;
-    margin: 8px 0;
-    
-    /* 두 줄 말줄임 설정 (가장 추천하는 모바일 방식) */
+    /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
     display: -webkit-box;
-    -webkit-line-clamp: 2;    /* 보여줄 줄 수 (2줄) */
     -webkit-box-orient: vertical;
+    
+    /* 2. 핵심 설정: 최대 몇 줄까지 보여줄지 결정 */
+    -webkit-line-clamp: 2; 
+    
+    /* 3. 넘치는 부분 처리 */
     overflow: hidden;
     text-overflow: ellipsis;
     
-    /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
-    /* white-space: nowrap; */ 
+    /* 4. 기존 한 줄 고정 코드는 반드시 삭제하거나 주석 처리하세요 */
+    /* white-space: nowrap;  <- 이 줄이 있으면 무조건 한 줄만 나옵니다. 삭제 필수! */
+
+    /* 추가 디자인 제안 */
+    width: 100%;
+    font-size: 1.1em;
+    font-weight: 500;
+    line-height: 1.4;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
+    height: 2.8em;      /* (선택사항) 높이를 고정하면 카드들의 높이가 일정해져서 더 보기 좋습니다 */
 }
   .recruitment-num{
     font-weight: normal;
@@ -490,6 +496,15 @@ a {
     line-height: 1.4;
     color: #333;
     word-wrap: break-word; /* 긴 단어도 줄 바꿈되도록 */
+     /* 두 줄 말줄임 설정 (가장 추천하는 모바일 방식) */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;    /* 보여줄 줄 수 (2줄) */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
+    /* white-space: nowrap; */ 
   }
 
 
@@ -1695,6 +1710,11 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
         text-align: center;
     }
 
+    .campaign-info-box {
+        width: 165px;
+        font-size: 14px;
+    }
+
     .nav-bar {
         display: none;
     }
@@ -1875,6 +1895,15 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
         color: #333;
         margin-bottom: 5px;
         line-height: 1.3;
+         /* 두 줄 말줄임 설정 (가장 추천하는 모바일 방식) */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;    /* 보여줄 줄 수 (2줄) */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
+    /* white-space: nowrap; */ 
     }
     
     .notice-table {
@@ -2018,6 +2047,15 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
         color: #333;
         margin-bottom: 5px;
         line-height: 1.3;
+         /* 두 줄 말줄임 설정 (가장 추천하는 모바일 방식) */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;    /* 보여줄 줄 수 (2줄) */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
+    /* white-space: nowrap; */ 
     }
     
     .card-badge {
@@ -2025,7 +2063,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
         color: #950505;
         font-size: 1em;
         padding: 8px 10px;
-        margin: 0px 7px ;
+        margin: 0px 10px ;
         border-radius: 4px;
         align-self: flex-start; /* 뱃지를 왼쪽 정렬 */
         font-weight: bold;

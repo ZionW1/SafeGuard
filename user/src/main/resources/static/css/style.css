@@ -282,6 +282,7 @@ a {
     width: 90%;
     margin: 0 auto;
     box-sizing: border-box;
+    justify-content: flex-start;
 }
 .parent {
     padding: 30px 0;
@@ -463,15 +464,21 @@ a {
   }
   
   .campaign-title-text {
-    max-width: 300px;
-    font-size: 1.2em;
+    width: 100%;             /* px 대신 100%로 유연하게 대응 */
+    font-size: 1.1em;        /* 살짝 크기 조절 */
     font-weight: 500;
-    /* margin: 6px 0; */
-    text-overflow: ellipsis; /* 내용이 길면 ...으로 표시 */
-    white-space: nowrap; /* 텍스트를 한 줄로 유지 */
-    overflow: hidden; /* 넘치는 텍스트 숨김 */
-     /* 텍스트가 길어질 때 ...으로 표시 */
-  }
+    margin: 8px 0;
+    
+    /* 두 줄 말줄임 설정 (가장 추천하는 모바일 방식) */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;    /* 보여줄 줄 수 (2줄) */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
+    /* white-space: nowrap; */ 
+}
   .recruitment-num{
     font-weight: normal;
     color:#888;
@@ -2018,7 +2025,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
         color: #950505;
         font-size: 1em;
         padding: 8px 10px;
-        margin: 0px 5px ;
+        margin: 0px 7px ;
         border-radius: 4px;
         align-self: flex-start; /* 뱃지를 왼쪽 정렬 */
         font-weight: bold;

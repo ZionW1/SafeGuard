@@ -755,9 +755,8 @@ a {
     margin: 0 auto;
 }
 .stats-info {
-    text-align: left; 
-    font-size: 25px; 
-    /* margin-top: 10px; */
+    text-align: left;
+    font-size: 25px;
     padding: 15px 0;
     max-width: 90%;
     margin: 0 auto;
@@ -2183,8 +2182,9 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
         margin: 25px auto;
     }
     .stats-info {
-        text-align: left; 
-        font-size: 25px; 
+        text-align: left;
+        padding: 15px 0;
+        font-size: 1em;
         max-width: 90%;
         margin: 0 auto;
     }

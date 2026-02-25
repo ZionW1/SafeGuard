@@ -149,7 +149,7 @@ a {
 }
 
 .logo_image{
-    margin-top: 22px;
+    margin-top: 10px;
     width: 210px;
 }
 .search {
@@ -281,7 +281,6 @@ a {
 .campaignContainer {
     width: 90%;
     margin: 0 auto;
-    /* padding: 20campaign-listpx 0; */
     box-sizing: border-box;
 }
 .parent {
@@ -302,14 +301,13 @@ a {
   
     /* 캠페인 리스트 (추가) */
     .campaign-list {
-        display: flex;
+        display: -webkit-inline-box;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         gap: 30px;
         /* padding: 0 0 10px 10px; */
         /* height: ; 스크롤이 생기려면 높이 제한이 있어야겠지? */
         overflow-x: auto; /* 수직 스크롤바가 나타나도록 설정 */
-
     }
     
     /* 스크롤바 스타일 (선택사항) */
@@ -436,10 +434,10 @@ a {
   .campaign-tags {
     display: flex;
     font-weight: bold;
-    gap: 6px;
     margin: 10px 0;
-    justify-content: center;  /* 가로 가운데 정렬 */
-    align-items: center;      /* 세로 가운데 정렬(필요시) */
+    /* justify-content: center;
+    align-items: center; */
+      /* 가로 가운데 정렬 세로 가운데 정렬(필요시) */
   }
   
   .campaign-tags .tag {
@@ -476,9 +474,7 @@ a {
     height: auto; /* ⭐ 여기! 사진 크기(개념적)에 맞게 높이를 고정 ⭐ */
     overflow-y: auto; /* ⭐ 내용이 넘칠 때만 스크롤바가 생기도록 ⭐ */
     overflow-x: hidden; /* 가로 스크롤은 숨김 */
-    margin-bottom: 10px;
     /* border: 1px solid #eee; 시각적 확인을 위한 테두리 */
-    padding: 5px;
     /* background-color: #fafafa; */
   }
   .recruitment-num{
@@ -487,7 +483,7 @@ a {
   }
 
   .card-title {
-    margin: 0; /* 기본 마진 제거 */
+    margin: 10px 0; /* 기본 마진 제거 */
     font-size: 1.2rem;
     line-height: 1.4;
     color: #333;
@@ -500,7 +496,7 @@ a {
     font-size: 1.5em;
     /* padding: 10px 0px; */
     color: #333;
-    margin-top: 10px;
+    margin-bottom: 10px;
   }
   
   .tag.status {
@@ -696,7 +692,91 @@ a {
     .desktop-header {
         display: none;
     }
+/* 모바일 헤더 스타일 */
+.mobile-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
 
+.campaign-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    display: flex;
+  }
+
+.header-inner {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 햄버거 막대기 디자인 */
+.hamburger {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.hamburger span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: #333;
+    margin: 5px 0;
+    transition: 0.3s;
+}
+
+/* 모바일 네비게이션 본체 */
+.mobile-nav {
+    position: fixed;
+    top: 0;
+    right: -100%; /* 처음엔 화면 밖 */
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    transition: 0.3s ease;
+    display: flex; /* 숨김/보임 처리를 transform으로 조절 */
+}
+
+.mobile-nav.active {
+    right: 0;
+}
+
+.nav-content {
+    width: 70%; /* 메뉴 너비 */
+    background: #fff;
+    height: 100%;
+    padding: 20px;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    z-index: 1001;
+}
+
+.nav-overlay {
+    width: 30%;
+    background: rgba(0,0,0,0.5);
+}
+
+.mobile-menu-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.mobile-menu-list li {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
     .menu-toggle {
         font-size: 24px;
         background: none;
@@ -767,7 +847,6 @@ a {
 
     .campaign-card {
       min-width: calc(50% - 10px); /* 한 줄에 2개씩 보여지도록 */
-      margin-right: 20px; /* 카드 간격 */
     }
     /* JavaScript에서 cardWidth, cardMarginRight 재계산되도록 initializeSlider() 호출 */
     
@@ -888,6 +967,12 @@ a {
     .slide-img img {
         width: 150px;
     }
+    .card-title {
+        font-size: 1.4em;
+        color: #333;
+        margin-bottom: 5px;
+        line-height: 1.3;
+    }
 }
 
   /* 더 작은 모바일 화면 (예: 480px 이하) */
@@ -986,9 +1071,50 @@ a {
         padding: 0 10px; /* 버튼 공간 더 줄이기 */
     }
     .campaign-card {
-      min-width: 100%; /* 한 줄에 1개씩만 보여지도록 */
-      margin-right: 0; /* 마진도 없애서 꽉 차게 */
+        width: 165px;
+        min-width: calc(50% - 10px); /* 한 줄에 2개씩 보여지도록 */
     }
+
+    .leader_name {
+        text-align: center;
+        font-size: large;
+    }
+
+    .campaign-tags .leader {
+        padding: 8px 10px;
+        font-size: 1em;
+        background: #f8e1ff;
+        color: #b151ff;
+    }
+
+    .card-title {
+        font-size: 1.4em;
+        color: #333;
+        margin-bottom: 5px;
+        line-height: 1.3;
+    }
+    
+    .card-badge {
+        background-color: #f6c1c4; /* 기본 뱃지 색상 */
+        color: #950505;
+        font-size: 1em;
+        padding: 8px 10px;
+        margin: 0px 5px ;
+        border-radius: 4px;
+        align-self: flex-start; /* 뱃지를 왼쪽 정렬 */
+        font-weight: bold;
+    }
+    
+    .campaign-list {
+        display: -webkit-inline-box;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 5px;
+        /* padding: 0 0 10px 10px; */
+        /* height: ; 스크롤이 생기려면 높이 제한이 있어야겠지? */
+        overflow-x: auto; /* 수직 스크롤바가 나타나도록 설정 */
+    }
+
     .slide-button {
       /* 버튼 위치를 카드 위로 옮기거나 아예 숨길 수도 있음 */
     }
@@ -1407,13 +1533,6 @@ height: 60px;
 margin-bottom: 20px;
 }
 
-.card-title {
-font-size: 1.4em;
-color: #333;
-margin-bottom: 15px;
-line-height: 1.3;
-}
-
 .card-description {
 font-size: 1em;
 color: #666;
@@ -1724,7 +1843,6 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     color: #ff7448;
     font-size: 12px;
     font-weight: bold;
-    margin-bottom: 12px;
 }
 
 .slide-item h3 {
@@ -1822,30 +1940,6 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     /* 추가: z-index를 주면 다른 요소에 가려지지 않아 */
     z-index: 10; 
 }
-
-/* 반응형: 더 작은 화면에서는 카드 개수 줄이기 */
-@media (max-width: 1024px) {
-    .card {
-    flex: 0 0 calc((100% / 5) - 16px * (4 / 5)); /* 5개 카드 보이도록 */
-    }
-    .card.highlight {
-    flex: 0 0 calc(((100% / 5) - 16px * (4 / 5)) * 1.3);
-    }
-
-    .card-grid-container.three-cols {
-        grid-template-columns: repeat(1, 1fr); /* 3개였던 것을 2개로 */
-    }
-    .card-grid-container.four-cols {
-        grid-template-columns: repeat(2, 1fr); /* 4개였던 것을 2개로 */
-    }
-    .card-box1 {
-        padding: 25px; /* 패딩 조절 */
-    }
-    .card-title {
-        font-size: 1.3em;
-    }
-}
-
 
 /* .number {
     margin-left: 10px;

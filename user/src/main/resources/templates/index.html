@@ -50,7 +50,7 @@
     <section class="banner_section">
         <th:block th:each="banner : ${bannerList}">
             <div class="banner-card">
-                <a th:href="|${banner.url}|"><img id="imgFile1" th:src="|/bannerFile?id=${banner.bannerId}|" alt="파일이미지" style="max-width: 100%; height: -webkit-fill-available;" class="campaign-image"/><br></a>
+                <a th:href="|${banner.url}|"><img id="imgFile1" th:src="|/bannerFile?id=${banner.bannerId}|" alt="파일이미지" style="max-width: 100%; height: -webkit-fill-available;" class="campaign-image"/></a>
             </div>
         </th:block>
     </section>
@@ -58,7 +58,7 @@
     <section class="banner_section_mobile">
         <th:block th:each="banner : ${bannerList}">
             <div class="banner-card">
-                <a th:href="|${banner.url}|"><img id="imgFile1" th:src="|/bannerFile?id=${banner.bannerId}|" alt="파일이미지" style="max-width: 100%; height: -webkit-fill-available;" class="campaign-image"/><br></a>
+                <a th:href="|${banner.url}|"><img id="imgFile1" th:src="|/bannerFile?id=${banner.bannerId}|" alt="파일이미지" style="max-width: 100%; height: -webkit-fill-available;" class="campaign-image"/></a>
             </div>
         </th:block>
     </section>
@@ -73,7 +73,7 @@
                     <div sec:authorize="!isAuthenticated()" class="guest-message">
                         <a th:href="|/campaign01?id=${campaign.campaignId}&userId=''|">
                             <div class="campaign-card">
-                                <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/><br>
+                                <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                 <div class="campaign-info-box">
                                     <div class="campaign-tags">
                                         <span class="tag leader">
@@ -89,15 +89,15 @@
                                         <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
                                     </div>
                                     
-                                    <p class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></p>
+                                    <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                 </div>
                             </div>
                         </a>
                     </div>
                     <div sec:authorize="isAuthenticated()" class="guest-message">
                         <a th:href="|/campaign01?id=${campaign.campaignId}&userId=${user.id}&eventPeriodStr=${campaign.eventPeriodStr}&eventPeriodEnd=${campaign.eventPeriodEnd}|">
-                            <div class="campaign-card1">
-                                <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/><br>
+                            <div class="campaign-card">
+                                <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                 <div class="campaign-info-box">
                                     <div class="campaign-tags">
                                         <span class="tag leader">
@@ -114,7 +114,7 @@
                                         </h3>
                                     </div>
                                     
-                                    <p class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></p>
+                                    <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                 </div>
                             </div>
                         </a>
@@ -123,64 +123,67 @@
                 
             </div>
         </section>
-        <hr/>
-        <section class="chanceSection" id="chanceSection">
-            <h2 class="campaign-title" >선정 확률 높은 캠페인<span class="allView"><a href="/campaign08?orderCode=2">전체보기</a></span></h2>
-            <div class="campaign-list" id="chanceList">
-                <th:block th:each="campaign : ${campaignWorkable}">
-                    <div sec:authorize="!isAuthenticated()" class="guest-message">
-                        <a th:href="|/campaign01?id=${campaign.campaignId}&userId=''|">
-                            <div class="campaign-card1">
-                                <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/><br>
-                                <div class="campaign-info-box">
-                                    <div class="campaign-tags">
-                                        <span class="tag leader">
-                                            <span th:text="|${campaign.userNm}|"></span>
-                                            <span class="sub-text">인솔자</span>
-                                        </span> 
-                                        <span class="card-badge"
-                                        th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
-                                        th:data-campaign-id="${campaign.campaignId}"></span>
+        
+        <div th:if="${campaignWorkable.size() != 0}" class="no-campaign-message">
+            <hr/>
+            <section class="chanceSection" id="chanceSection">
+                <h2 class="campaign-title" >선정 확률 높은 캠페인<span class="allView"><a href="/campaign08?orderCode=2">전체보기</a></span></h2>
+                <div class="campaign-list" id="chanceList">
+                    <th:block th:each="campaign : ${campaignWorkable}">
+                        <div sec:authorize="!isAuthenticated()" class="guest-message">
+                            <a th:href="|/campaign01?id=${campaign.campaignId}&userId=''|">
+                                <div class="campaign-card">
+                                    <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
+                                    <div class="campaign-info-box">
+                                        <div class="campaign-tags">
+                                            <span class="tag leader">
+                                                <span th:text="|${campaign.userNm}|"></span>
+                                                <span class="sub-text">인솔자</span>
+                                            </span> 
+                                            <span class="card-badge"
+                                            th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
+                                            th:data-campaign-id="${campaign.campaignId}"></span>
+                                        </div>
+                                        <div class="title-overlay">
+                                            <h3 class="card-title">
+                                        <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
+                                            </h3>
+                                        </div>
+                                        
+                                        <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                     </div>
-                                    <div class="title-overlay">
-                                        <h3 class="card-title">
-                                    <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
-                                        </h3>
-                                    </div>
-                                    
-                                    <p class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></p>
                                 </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div sec:authorize="isAuthenticated()" class="guest-message">
-                        <a th:href="|/campaign01?id=${campaign.campaignId}&userId=${user.id}|">
-                            <div class="campaign-card1">
-                                <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/><br>
-                                <div class="campaign-info-box">
-                                    <div class="campaign-tags">
-                                        <span class="tag leader">
-                                            <span th:text="|${campaign.userNm}|"></span>
-                                            <span class="sub-text">인솔자</span>
-                                        </span> 
-                                        <span class="card-badge"
-                                        th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
-                                        th:data-campaign-id="${campaign.campaignId}"></span>
+                            </a>
+                        </div>
+                        <div sec:authorize="isAuthenticated()" class="guest-message">
+                            <a th:href="|/campaign01?id=${campaign.campaignId}&userId=${user.id}|">
+                                <div class="campaign-card">
+                                    <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
+                                    <div class="campaign-info-box">
+                                        <div class="campaign-tags">
+                                            <span class="tag leader">
+                                                <span th:text="|${campaign.userNm}|"></span>
+                                                <span class="sub-text">인솔자</span>
+                                            </span> 
+                                            <span class="card-badge"
+                                            th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
+                                            th:data-campaign-id="${campaign.campaignId}"></span>
+                                        </div>
+                                        <div class="title-overlay">
+                                            <h3 class="card-title">
+                                        <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
+                                            </h3>
+                                        </div>
+                                        
+                                        <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                     </div>
-                                    <div class="title-overlay">
-                                        <h3 class="card-title">
-                                    <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
-                                        </h3>
-                                    </div>
-                                    
-                                    <p class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></p>
                                 </div>
-                            </div>
-                        </a>
-                    </div>
-                </th:block>
-            </div>
-        </section>
+                            </a>
+                        </div>
+                    </th:block>
+                </div>
+            </section>
+        </div>
         <hr/>
         <section id="newSection">
             <h2 class="campaign-title">새로 오픈한 캠페인<span class="allView"><a href="/campaign08?orderCode=0">전체보기</a></span></h2>
@@ -188,8 +191,8 @@
                 <th:block th:each="campaign : ${campaignNew}">
                     <div sec:authorize="!isAuthenticated()" class="guest-message">
                         <a th:href="|/campaign01?id=${campaign.campaignId}&userId=''|">
-                            <div class="campaign-card1">
-                                <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/><br>
+                            <div class="campaign-card">
+                                <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                 <div class="campaign-info-box">
                                     <div class="campaign-tags">
                                         <span class="tag leader">
@@ -206,15 +209,15 @@
                                         </h3>
                                     </div>
                                     
-                                    <p class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></p>
+                                    <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                 </div>
                             </div>
                         </a>
                     </div>
                     <div sec:authorize="isAuthenticated()" class="guest-message">
                         <a th:href="|/campaign01?id=${campaign.campaignId}&userId=${user.id}|">
-                            <div class="campaign-card1">
-                                <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/><br>
+                            <div class="campaign-card">
+                                <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                 <div class="campaign-info-box">
                                     <div class="campaign-tags">
                                         <span class="tag leader">
@@ -231,7 +234,7 @@
                                         </h3>
                                     </div>
                                     
-                                    <p class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></p>
+                                    <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></ㅇ>
                                 </div>
                             </div>
                         </a>

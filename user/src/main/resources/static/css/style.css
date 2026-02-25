@@ -1520,7 +1520,12 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
 .w80vw {
     width: 80vw;
 }
-
+.profile_img {
+    width: 60%;
+    height: 250px;
+    margin: 0 auto;
+    display: block;
+}
 
   /* 모바일 화면 (예: 768px 이하) */
   @media (max-width: 768px) {
@@ -1730,10 +1735,10 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     }
     
     .profile_img {
-        width: 70%;
-        height: 200px;
+        width: 60%;
+        height: 180px;
     }
-
+    .fc .fc-toolbar-title  { font-size: 1.5em !important; white-space: nowrap; }
     .sidebar {
         display: none;
     }

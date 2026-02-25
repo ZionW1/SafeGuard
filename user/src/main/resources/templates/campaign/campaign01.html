@@ -104,6 +104,7 @@
         font-weight: 900;
     }
     .right-view .period-info {
+        text-align: left;
         font-size: 0.9rem;
         margin-bottom: 20px;
     }
@@ -176,7 +177,7 @@
         font-size: 1rem;
         padding: 12px 0;
         border-radius: 16px;
-        cursor: pointer;
+        /* cursor: pointer; */
     }
     .calendar-day {
         position: relative;
@@ -225,12 +226,7 @@
         font-size: 1.2rem;
     }
 
-    .profile_img {
-        width: 80%;
-        height: 200px;
-        margin: 0 auto;
-        display: block;
-    }
+    
 </style>
 
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
@@ -323,8 +319,8 @@
         locale: 'ko', // 한국어 설정
         headerToolbar: {
             right: 'prev next today',
-            
         },
+        width: '100%',
         height: 600,
         events: function(fetchInfo, successCallback, failureCallback) {
             console.log("cmpaign.apapPeriodStr + "  + campaign.campaignId);
@@ -527,7 +523,8 @@
     </section>
 
     <section class="right-view">
-        
+        <h1>인솔자 : <span th:text="${campaignSelect.userNm}"></span></h1>
+        <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
         <h2><span class="d-Day"th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
             th:data-campaign-id="${campaignSelect.campaignId}"></span></h2>
         <div class="period-info">
@@ -538,15 +535,13 @@
         <div id="calendar">
             <!-- 달력 날짜는 자바스크립트로 동적으로 생성 가정 -->
         </div>
-        <h1>인솔자 : <span th:text="${campaignSelect.userNm}"></span></h1>
-        <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
+        
         <!-- <div class="image-row">
             <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
         </div> -->
     </div>
 
     <form id="form" class="" action="/apply" method="post">
-        
         <div sec:authorize="!isAuthenticated()" class="guest-message">
             <button class="btn-apply" type="button" onclick="login()">로그인하고 캠페인 신청하기</button>
         </div>
@@ -560,9 +555,9 @@
                 </a>
             
                 <!-- 신청 불가능할 때 (기간이 겹치거나 날짜 정보가 없거나) -->
-                <div th:unless="${campaign.eventActive}" class="campaign-status-unavailable">
+                <!-- <div th:unless="${campaign.eventActive}" class="campaign-status-unavailable">
                     신청 불가 (기간 중복)
-                </div>
+                </div> -->
             
                 <!-- "상세보기" 버튼은 보통 기간이 겹쳐도 보이게 하는 경우가 많지만, 숨기고 싶다면 위와 같은 로직으로 제어 -->
                 <!-- <a th:href="@{/campaign/detail/{id}(id=${campaign.campaignId})}" class="btn-detail">
@@ -582,10 +577,42 @@
                 <button class="btn-apply" type="submit">신청하기</button>
             </div>
             <div th:if="${campaignApply != null}">
-                <span>신청 했습니다.</span>
+                <button class="btn-apply" type="submit">신청완료</button>
             </div>
         </div>
     </form>
+    <!-- <form id="form" action="/apply" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    
+        <div sec:authorize="!isAuthenticated()" class="guest-message">
+            <button class="btn-apply" type="button" onclick="login()">로그인하고 캠페인 신청하기</button>
+        </div>
+    
+        <div sec:authorize="isAuthenticated()" class="user-action-area">
+            
+            <div th:if="${campaignApply != null}">
+                <button type="button" class="btn-apply applied" disabled>신청 완료</button>
+            </div>
+    
+            <div th:unless="${campaignApply != null}">
+                
+                <th:block th:if="${campaignSelect.eventActive}">
+                    <input type="hidden" name="userNo" th:value="${user.id}">
+                    <input type="hidden" name="userId" th:value="${user.userId}">
+                    <input type="hidden" name="campaignId" th:value="${campaignSelect.campaignId}">
+                    <input type="hidden" name="applicantsNum" th:value="${campaignSelect.applicantsNum}">
+                    <input type="hidden" name="eventPeriodStr" th:value="${campaignSelect.eventPeriodStr}">
+                    <input type="hidden" name="eventPeriodEnd" th:value="${campaignSelect.eventPeriodEnd}">
+                    
+                    <a th:if="${campaign.eventActive}" th:href="@{/campaign/apply/{id}(id=${campaign.campaignId})}" class="btn-apply">신청하기</a>
+                </th:block>
+    
+                <div th:unless="${campaignSelect.eventActive}" class="campaign-status-unavailable">
+                    신청 불가 (기간 중복)
+                </div>
+            </div>
+        </div>
+    </form> -->
     </section>
     </div>
     </main>

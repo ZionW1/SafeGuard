@@ -820,7 +820,7 @@ a {
 }
 .footer-links {
     display: flex;
-    gap: 6titlepx;
+    gap: 6px;
 }
 .certification-logos {
     display: flex;
@@ -2175,5 +2175,17 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
         /* margin: 5%; */
         /* padding-bottom: 10px; */
         color: #111;
+    }
+
+    .footer-separator {
+        border: none;
+        /* border-top: 1px solid #ddd; */
+        margin: 25px auto;
+    }
+    .stats-info {
+        text-align: left; 
+        font-size: 25px; 
+        max-width: 90%;
+        margin: 0 auto;
     }
 }

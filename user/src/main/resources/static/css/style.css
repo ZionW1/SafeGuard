@@ -467,6 +467,10 @@ a {
     font-size: 1.2em;
     font-weight: 500;
     /* margin: 6px 0; */
+    text-overflow: ellipsis; /* 내용이 길면 ...으로 표시 */
+    white-space: nowrap; /* 텍스트를 한 줄로 유지 */
+    overflow: hidden; /* 넘치는 텍스트 숨김 */
+     /* 텍스트가 길어질 때 ...으로 표시 */
   }
   .recruitment-num{
     font-weight: normal;

@@ -67,7 +67,7 @@
             FROM campaign c 
         LEFT OUTER JOIN files f 
         ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN team_leader t
+        LEFT OUTER JOIN user t
         on c.leader_code = t.id
         Where f.is_deleted = 'N'
         and f.target_type = 'campaign'
@@ -139,7 +139,7 @@
             FROM campaign c 
         LEFT OUTER JOIN files f 
         ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN team_leader t
+        LEFT OUTER JOIN user t
         on c.leader_code = t.id
         Where f.is_deleted = 'N'
         and f.target_type = 'campaign'

@@ -1378,7 +1378,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
 .tag {
     display: inline-block;
     padding: 4px 10px;
-    border: 1px solid #ff7448;
+    /* border: 1px solid #ff7448; */
     border-radius: 12px;
     color: #ff7448;
     font-size: 12px;

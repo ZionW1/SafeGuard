@@ -1926,6 +1926,15 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
         /* padding-bottom: 10px; */
         color: #111;
     }
+
+    .mission-box {
+        white-space: pre-wrap;    /* 핵심: 엔터 친 곳은 줄바꿈하고, 화면 끝에서도 자동으로 줄바꿈함 */
+        word-break: break-all;    /* 긴 영문/숫자도 화면 밖으로 안 나가게 끊어줌 */
+        line-height: 1.6;         /* 가독성을 위해 줄 간격을 약간 넓힘 */
+        font-size: 14px;
+        color: #444;
+        padding: 10px 0;
+    }
 }
 
   /* 더 작은 모바일 화면 (예: 480px 이하) */

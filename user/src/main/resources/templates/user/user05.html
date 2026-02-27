@@ -6,25 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="@{/css/style.css}" />
     <style>
         table {
-            width: 80%;
+            width: 45%;
             border-collapse: collapse;
             margin: 20px auto;
         }
-        table.bestAgentList {
-            float: left;
-            width: 48%;
-            border-collapse: collapse;
-            margin: 20px auto;
-        }
-        table.bestPayList {
-            float: right;
-            width: 48%;
-            border-collapse: collapse;
-            margin: 20px auto;
-        }
+        
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
@@ -44,11 +33,11 @@
             <div class="container">
                 <!-- <th:block th:replace="~{fragments/noticeSidebar :: sidebarMenu}" /> -->
             </div>
-            <div class="article-container">
-                <!-- <h1>경호 캠페인 참여 랭킹</h1> -->
-                <div class="notice-title">경호 캠페인 참여 랭킹</div>
+            <div class="ranking-container">
+                <div class="ranking-section">
+                <!-- <div class="bestAgent_title">경호 캠페인 참여 랭킹</div> -->
                 <div>
-                    <div class="bestAgent-title">출석<span style="margin-left: 49.5%">포인트</span></div>
+                    <div class="section-title">출석</div>
                     <table class="bestAgentList">
                         <thead>
                             <tr>
@@ -66,12 +55,14 @@
                                 <td th:text="${userRank.count}"></td>
                             </tr>
                             <tr th:if="${bestAgentList.empty}">
-                                <td colspan="4">참여 캠페인 정보가 없습니다.</td>
+                                <td colspan="4">유저가 없습니다.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <table class="bestPayList">
+                <div class="ranking-section">
+                    <span class="section-title-point">포인트</span>
+                    <table class="bestPayList">
                     <thead>
                         <tr>
                             <th>랭킹</th>
@@ -88,7 +79,7 @@
                             <td th:text="${userRank.pay}"></td>
                         </tr>
                         <tr th:if="${bestPayList.empty}">
-                            <td colspan="4">참여 캠페인 정보가 없습니다.</td>
+                            <td colspan="4">유저가 없습니다.</td>
                         </tr>
                     </tbody>
                 </table>

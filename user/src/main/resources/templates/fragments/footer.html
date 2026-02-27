@@ -40,8 +40,8 @@
     <hr />
     <div class="footer-bottom">
         <div class="footer-links">
-            <a href="/terms">이용약관 | </a>
-            <a href="/privacy">개인정보처리방침 | </a>
+            <a href="javascript:terms()">이용약관 | </a>
+            <a href="javascript:privacy()">개인정보처리방침 | </a>
             <span><a href="javascript:contact()">고객센터</a></span>
         </div>
     </div>
@@ -68,6 +68,14 @@
         function contact(){
             alert("준비 중입니다.");
             return false;
+        }
+        function terms(){
+            window.location.href = '/terms';
+            return true;
+        }
+        function privacy(){
+            window.location.href = '/privacy';
+            return true;
         }
         // }
         // document.getElementById('menuLogout').addEventListener('click', function(e) {

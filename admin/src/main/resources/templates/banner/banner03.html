@@ -1,18 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="@{/css/style.css}" />
-  <title>배너 등록</title>
-  <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <title>전체 배너 목록</title>
     <style>
-    body {
-      font-family: 'Pretendard', sans-serif;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
     .container {
       max-width: 1200px;
       margin: 0 auto;

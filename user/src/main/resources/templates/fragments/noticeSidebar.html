@@ -10,7 +10,7 @@
 
                 </li>
                 <li class="menu-item" th:classappend="${currentURI.startsWith('/notice01') || currentURI.startsWith('/notice02')} ? 'active' : ''">
-                    <a href="/notice01">공지사항</a>
+                    <a href="javascript:notice()">공지사항</a>
                 </li>
                 <li class="menu-item" th:classappend="${currentURI.startsWith('/inquiry')} ? 'active' : ''">
                     <a href="javascript:inquiry()">1:1 문의</a>
@@ -19,7 +19,7 @@
                     <a href="javascript:faq()">FAQ</a>
                 </li>
                 <li class="menu-item" th:classappend="${currentURI.startsWith('/useGuide01')} ? 'active' : ''">
-                    <a href="/useGuide01">이용가이드</a>
+                    <a href="javascript:useGuide()">이용가이드</a>
                 </li>
                 <!-- <li class="menu-item" th:classappend="${currentURI.startsWith('/leader01')} ? 'active' : ''">
                     <a href="/leader01">행집인솔자</a>
@@ -34,13 +34,21 @@
         
         
         <nav class="m-scroll-menu">
-            <a href="/notice01">공지사항</a>
+            <a href="javascript:notice()">공지사항</a>
             <a href="javascript:inquiry()">1:1 문의</a>
             <a href="javascript:faq()">FAQ</a>
-            <a href="/useGuide01">이용가이드</a>
+            <a href="javascript:useGuide()">이용가이드</a>
         </nav>
     </div>
     <script th:inline="javascript">
+        function notice(){
+            window.location.href = '/notice01';
+            return true;
+        }
+        function useGuide(){
+            window.location.href = '/useGuide01';
+            return false;
+        }
         function faq(){
             alert("준비 중 입니다.")
             return false;

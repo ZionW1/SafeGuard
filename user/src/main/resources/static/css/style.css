@@ -203,8 +203,9 @@ a {
 .bestAgent-title {
     font-size: 24px;
     font-weight: 700;
-    margin-top: 30px;
+    margin-top: 10px;
 }
+
 .sr-only {
     font-size: 24px;
     font-weight: 700;
@@ -605,7 +606,7 @@ a {
 }
 .notice-title {
     margin: 10px 0 10px 5%;
-    font-size: 40px;
+    font-size: 2.4em;
     font-weight: 700;
     /* margin: 5%; */
     /* padding-bottom: 10px; */
@@ -1552,6 +1553,75 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     display: block;
 }
 
+.bestAgent_container table {
+    width: 45%;
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+
+table.bestAgentList {
+    float: left;
+    width: 48%;
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+
+table.bestPayList {
+    float: right;
+    width: 48%;
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+
+.bestAgent_title {
+    margin-top: 0px;
+    font-size: 2.4em;
+    font-weight: 700;
+    /* margin: 5%; */
+    /* padding-bottom: 10px; */
+    color: #111;
+}
+
+.bestAgent-header {
+    display: flex;
+    justify-content: space-between; /* 양 끝 정렬 */
+    max-width: 1200px;             /* 테이블의 전체 너비와 맞춤 */
+}
+
+.ranking-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    /* 만약 글자가 너무 양 끝으로 붙는다면 margin으로 세밀하게 조정 가능합니다 */
+}
+
+.ranking-container {
+    display: flex;
+    justify-content: space-between; /* 두 섹션 사이 간격 */
+    gap: 40px; /* 두 테이블 사이의 여백 */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.ranking-section {
+    flex: 1; /* 두 테이블이 1:1 비율로 너비를 나눠 가짐 */
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: left; /* 제목을 항상 테이블 왼쪽 끝에 맞춤 */
+}
+.section-title-point {
+    margin-top: -28px;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: left; /* 제목을 항상 테이블 왼쪽 끝에 맞춤 */
+}
+
   /* 모바일 화면 (예: 768px 이하) */
   @media (max-width: 768px) {
     .desktop-header {
@@ -1920,10 +1990,16 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     
     .notice-title {
         margin-left: 0;
-        font-size: 40px;
+        font-size: 2em;
         font-weight: 700;
         /* margin: 5%; */
         /* padding-bottom: 10px; */
+        color: #111;
+    }
+    .bestAgent_title {
+        margin-top: 10px;
+        font-size: 2em;
+        font-weight: 700;
         color: #111;
     }
 
@@ -1934,6 +2010,31 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
         font-size: 14px;
         color: #444;
         padding: 10px 0;
+    }
+
+    .bestAgent_container table {
+        width: 45%;
+        border-collapse: collapse;
+        margin: 20px auto;
+    }
+
+    table.bestAgentList {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px auto;
+    }
+
+    table.bestPayList {
+        float: right;
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px auto;
+    }
+
+
+    .bestAgent-header {
+        flex-direction: column;    /* 모바일에서는 위아래로 배치 */
+        gap: 20px;
     }
 }
 
@@ -2178,7 +2279,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
 
     .notice-title {
         margin-left: 0;
-        font-size: 40px;
+        font-size: 2em;
         font-weight: 700;
         /* margin: 5%; */
         /* padding-bottom: 10px; */

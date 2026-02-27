@@ -88,8 +88,8 @@
     <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
 
     <div class="main-content">
-        <h1><a href="@{/admin/banner03}">배너 등록</a></h1>
-        <form class="form" action="@{/admin/banner03}" method="post" enctype="multipart/form-data">
+        <h1><a th:href="@{/banner03}">배너 등록</a></h1>
+        <form class="form" th:action="@{/banner03}" method="post" enctype="multipart/form-data">
             <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
 
             <div class="form-item">

@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where banner_id = #{bannerId};
     </update>
 
-    <insert id="bannerInsert" parameterType="BannerVO" useGeneratedKeys="true" keyProperty="id">
+    <insert id="bannerInsert" parameterType="BannerVO" useGeneratedKeys="true" keyProperty="bannerId">
         <!-- insert into files (id, file_name, file_path, file_size, 
             type, parent_table, parent_no)
             values (

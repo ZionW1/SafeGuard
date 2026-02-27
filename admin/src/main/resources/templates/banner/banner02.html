@@ -112,7 +112,7 @@
                         <p>이미지를 여기에 끌어다 놓거나 클릭하여 업로드하세요</p>
                         <input type="file" name="file" id="file" accept="image/*" width="720" height="405" style="display: none;">
                         <img id="preview-image" class="preview-image" alt="배너 이미지 미리보기">
-                        <img id="imgFile" th:src="|/banner/img?id=${bannerSelect.bannerId}|" alt="파일이미지" width="720" height="405" />
+                        <img id="imgFile" th:src="@{|/banner/img?id=${bannerSelect.bannerId}|}" alt="파일이미지" width="720" height="405" />
 
                     </div>
                     <p class="help-text">배너 이미지를 업로드해 주세요</p>

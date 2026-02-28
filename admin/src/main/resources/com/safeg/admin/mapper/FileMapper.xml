@@ -120,9 +120,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
-    <update id="bannerFileRemove" parameterType="BannerVO">
+    <update id="bannerRemoveFile" parameterType="BannerVO">
         update files
         set is_Deleted = 'Y'
         where target_Id = #{id}
+        AND target_type = 'banner';
     </update>
 </mapper>

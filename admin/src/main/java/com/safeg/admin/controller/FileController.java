@@ -186,52 +186,68 @@ public class FileController {
     String uploadDir = CommonData.getUploadPath(); // 여기서 호출!    // private final String uploadDir = "Users/pieck/Documents/upload/images";
 
     @PostMapping("/upload/image")
-@ResponseBody
-public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
-    Map<String, Object> response = new HashMap<>();
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("upload") MultipartFile file) {
+        Map<String, Object> response = new HashMap<>();
 
-    if (file == null || file.isEmpty()) {
-        response.put("uploaded", false);
-        response.put("error", Map.of("message", "파일이 비어있습니다."));
-        return ResponseEntity.badRequest().body(response);
-    }
-
-    try {
-        // 1. 폴더 생성 확인
-        File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs();
+        if (file == null || file.isEmpty()) {
+            response.put("uploaded", false);
+            response.put("error", Map.of("message", "파일이 비어있습니다."));
+            return ResponseEntity.badRequest().body(response);
         }
 
-        // 2. 고유한 파일명 생성
-        String originalFileName = file.getOriginalFilename();
-        String fileExtension = (originalFileName != null && originalFileName.contains(".")) 
-                                ? originalFileName.substring(originalFileName.lastIndexOf(".")) 
-                                : "";
-        String uuidFileName = UUID.randomUUID().toString() + fileExtension;
-        
-        // 3. 파일 저장 (단 한 번만 수행!)
-        Path targetPath = Paths.get(uploadDir).resolve(uuidFileName);
-        
-        // transferTo는 가장 효율적인 파일 저장 방식입니다.
-        file.transferTo(targetPath.toFile());
+        try {
+            // 1. 폴더 생성 확인
+            File directory = new File(uploadDir);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
 
-        log.info("파일 업로드 성공: " + targetPath.toString());
+            // 2. 고유한 파일명 생성
+            String originalFileName = file.getOriginalFilename();
+            String fileExtension = (originalFileName != null && originalFileName.contains(".")) 
+                                    ? originalFileName.substring(originalFileName.lastIndexOf(".")) 
+                                    : "";
+            String uuidFileName = UUID.randomUUID().toString() + fileExtension;
+            
+            // 3. 파일 저장 (단 한 번만 수행!)
+            Path targetPath = Paths.get(uploadDir).resolve(uuidFileName);
+            
+            // transferTo는 가장 효율적인 파일 저장 방식입니다.
+            file.transferTo(targetPath.toFile());
 
-        // 4. 성공 응답 구성
-        // WebConfig에서 /images/** 를 /Users/pieck/Documents/upload/ 로 매핑했으므로 아래 경로가 맞습니다.
-        String fileUrl = "/admin/images/" + uuidFileName; 
-        
-        response.put("uploaded", true);
-        response.put("url", fileUrl);
+            log.info("파일 업로드 성공: " + targetPath.toString());
 
-        return ResponseEntity.ok(response);
+            // 4. 성공 응답 구성
+            // WebConfig에서 /images/** 를 /Users/pieck/Documents/upload/ 로 매핑했으므로 아래 경로가 맞습니다.
+            String fileUrl = "/admin/images/" + uuidFileName; 
+            
+            response.put("uploaded", true);
+            response.put("url", fileUrl);
 
-    } catch (Exception e) {
-        log.error("파일 업로드 중 오류 발생", e);
-        response.put("uploaded", false);
-        response.put("error", Map.of("message", "서버 오류: " + e.getMessage()));
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("파일 업로드 중 오류 발생", e);
+            response.put("uploaded", false);
+            response.put("error", Map.of("message", "서버 오류: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
-}
+
+    // 삭제 처리
+    @PostMapping("/bannerRemoveFile")
+    @ResponseBody
+    public String bannerRemoveFile(@RequestParam("id") String id) throws Exception{
+
+        log.info("=========================== deleteFile ========================= " + id);
+        
+        log.info("삭제 처리 : " + id);
+        int result = fileService.bannerRemoveFile(id);
+        log.info("=========================== result ========================= " + result);
+        if(result > 0){
+            return "SUCCESS";
+        }
+        return "FAIL";
+    }
 }

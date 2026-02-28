@@ -32,6 +32,6 @@ public interface FileMapper {
     // public int bannerUpload(@Param("file") Files uploadFile) throws Exception;
     public int bannerUpdate(FilesVO file) throws Exception;
 
-    public int bannerFileRemove(FilesVO uploadFile) throws Exception;
+    public int bannerRemoveFile(String id) throws Exception;
     
 }

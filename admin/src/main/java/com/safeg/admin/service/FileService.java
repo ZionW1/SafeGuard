@@ -29,7 +29,7 @@ public interface FileService {
     public FilesVO bannerSelect(Long id) throws Exception;
 
     public boolean bannerUpload(FilesVO uploadFile) throws Exception;
-    public int bannerFileRemove(FilesVO uploadFile) throws Exception;
+    public int bannerRemoveFile(String id) throws Exception;
 
     public boolean bannerUpdate(FilesVO file) throws Exception;
 

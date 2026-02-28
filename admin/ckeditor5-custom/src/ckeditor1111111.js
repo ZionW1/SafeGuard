@@ -134,7 +134,7 @@ ClassicEditor.defaultConfig = {
 	language: 'ko',
     licenseKey: 'GPL',
 };
-
+ckeditor.js, my-custom-adapter.js, ckeditor-init.js
 ClassicEditor.builtinPlugins = [
 	Essentials,
 	Autoformat,

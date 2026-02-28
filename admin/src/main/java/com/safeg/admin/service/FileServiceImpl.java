@@ -261,10 +261,10 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public int bannerFileRemove(FilesVO uploadFile) throws Exception {
+    public int bannerRemoveFile(String id) throws Exception {
         // TODO Auto-generated method stub
-        log.info("파일 삭제 서비스 impl : " + uploadFile);
-        int result = fileMapper.bannerFileRemove(uploadFile);
+        log.info("파일 삭제 서비스 impl : " + id);
+        int result = fileMapper.bannerRemoveFile(id);
 
         return result;
     }

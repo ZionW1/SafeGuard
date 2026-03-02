@@ -16,12 +16,7 @@
         max-width: 90%;
         margin: 0 auto;
     }
-    .left-view, .right-view {
-        background: #fff;
-        box-shadow: 0 0 12px rgb(0 0 0 / 0.05);
-        border-radius: 20px;
-        padding: 24px 32px;
-    }
+    
     .left-view {
         flex: 2;
     }
@@ -51,7 +46,6 @@
     .section-title {
         font-weight: 700;
         font-size: 1rem;
-        margin-top: 20px;
         margin-bottom: 10px;
     }
     .highlight-pink {
@@ -89,7 +83,7 @@
     /* 주소 */
     .address {
         margin-top: 20px;
-        font-size: 0.9rem;
+        font-size: 1.5em;
         color: #333;
     }
 
@@ -501,18 +495,18 @@
 
         <hr />
 
-        <h2 class="">안내 사항</h2>
+        <div class="campaign_mission">안내 사항</div>
         <div class="visit-info">
             <div>
-                <div th:text="${campaignSelect.mission}" class="mission-box"></div>
+                <div th:text="${mission}" class="mission-box"></div>
             </div>
         </div>
 
-        <div class="section-title address">
-            주소
+        <div class="campaign_mission address">
+            주소 : <span th:text="${campaignSelect.placeAddr}"></span>
         </div>
         <div class="content-text">
-            <span th:text="${campaignSelect.placeAddr}"></span>
+            
         </div>
         <div class="map">
             <div class="col-6">
@@ -528,8 +522,8 @@
             th:data-campaign-id="${campaignSelect.campaignId}"></span></h2>
         <div class="period-info">
             <div>신청기간 : <span th:text="${campaignSelect.appPeriodStr}"></span> ~<span th:text="${campaignSelect.appPeriodEnd}"></span></div>
-            <div>결과발표 : <span th:text="${campaignSelect.resultDate}">11.03</span></div>
-            <div>날짜 : <span th:text="${campaignSelect.eventPeriodStr}"></span> ~<span th:text="${campaignSelect.eventPeriodEnd}"></span></div>
+            <!-- <div>결과발표 : <span th:text="${campaignSelect.resultDate}">11.03</span></div> -->
+            <div>이벤트 날짜 : <span th:text="${campaignSelect.eventPeriodStr}"></span> ~<span th:text="${campaignSelect.eventPeriodEnd}"></span></div>
         <br>
         <div id="calendar">
             <!-- 달력 날짜는 자바스크립트로 동적으로 생성 가정 -->

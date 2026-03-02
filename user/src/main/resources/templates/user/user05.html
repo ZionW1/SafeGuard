@@ -11,7 +11,6 @@
         table {
             width: 45%;
             border-collapse: collapse;
-            margin: 20px auto;
         }
         
         th, td {
@@ -34,56 +33,54 @@
                 <!-- <th:block th:replace="~{fragments/noticeSidebar :: sidebarMenu}" /> -->
             </div>
             <div class="ranking-container">
-                <div class="ranking-section">
                 <!-- <div class="bestAgent_title">경호 캠페인 참여 랭킹</div> -->
                 <div>
-                    <div class="section-title">출석</div>
-                    <table class="bestAgentList">
-                        <thead>
-                            <tr>
-                                <th>랭킹</th>
-                                <th>유저 ID</th>
-                                <th>유저 이름</th>
-                                <th>캠페인 수</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="userRank, stat : ${bestAgentList}">
-                                <td th:text="${stat.count}"></td>
-                                <td th:text="${userRank.userId}"></td>
-                                <td th:text="${userRank.userNm}"></td>
-                                <td th:text="${userRank.count}"></td>
-                            </tr>
-                            <tr th:if="${bestAgentList.empty}">
-                                <td colspan="4">유저가 없습니다.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="ranking-section">
-                    <span class="section-title-point">포인트</span>
-                    <table class="bestPayList">
+                <div class="section-title">출석</div>
+                <table class="bestAgentList">
                     <thead>
                         <tr>
                             <th>랭킹</th>
                             <th>유저 ID</th>
                             <th>유저 이름</th>
-                            <th>수행 점수</th>
+                            <th>캠페인 수</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="userRank, stat : ${bestPayList}">
+                        <tr th:each="userRank, stat : ${bestAgentList}">
                             <td th:text="${stat.count}"></td>
                             <td th:text="${userRank.userId}"></td>
                             <td th:text="${userRank.userNm}"></td>
-                            <td th:text="${userRank.pay}"></td>
+                            <td th:text="${userRank.count}"></td>
                         </tr>
-                        <tr th:if="${bestPayList.empty}">
+                        <tr th:if="${bestAgentList.empty}">
                             <td colspan="4">유저가 없습니다.</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <div>
+                <div class="section-title-point">포인트</div>
+                <table class="bestPayList">
+                <thead>
+                    <tr>
+                        <th>랭킹</th>
+                        <th>유저 ID</th>
+                        <th>유저 이름</th>
+                        <th>수행 점수</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="userRank, stat : ${bestPayList}">
+                        <td th:text="${stat.count}"></td>
+                        <td th:text="${userRank.userId}"></td>
+                        <td th:text="${userRank.userNm}"></td>
+                        <td th:text="${userRank.pay}"></td>
+                    </tr>
+                    <tr th:if="${bestPayList.empty}">
+                        <td colspan="4">유저가 없습니다.</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </main>
 </body>

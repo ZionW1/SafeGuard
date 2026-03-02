@@ -210,10 +210,19 @@
             f.file_path, 
             event_period_str period_str,
             event_Period_End period_end,
+            
+            c.app_period_str,
+            c.app_period_end,
+            event_Period_str,
+            event_Period_End,
+            t.user_nm,
+
             DATE_FORMAT(c.created_at, '%Y.%m.%d') as created_at
         FROM campaign c 
         LEFT OUTER JOIN files f 
         ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN user t
+        on c.leader_code = t.id
         and f.target_type = 'campaign'
         and c.is_deleted = 'N'
         Where f.is_deleted = 'N'

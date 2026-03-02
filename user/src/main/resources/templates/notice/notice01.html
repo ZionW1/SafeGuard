@@ -8,7 +8,7 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>공지사항</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="@{/css/style.css}" />
     <style>
     /* 메인 콘텐츠 스타일 */
     .main-content {
@@ -93,6 +93,11 @@
         </div>
         <span class="notice_title_list">공지사항</span>
         <table class="notice-table">
+            <colgroup>
+                <col style="width: 60px;" /> 
+                <col style="width: auto;" />
+                <col style="width: 150px;" />
+            </colgroup>
             <thead>
                 <tr>
                     <th style="">번호</th>
@@ -108,39 +113,35 @@
                                 <td class="title"><span th:text="${notice.title}"></span></td>
                                 <td style="text-align: center;" ><span th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}"></span></td>
                             </tr>
-                            <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
+                            <!-- <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
                                 <td style="text-align: center;" ><span>2</span></td>
                                 <td class="title"><div class="title-scroll-box">
                                     여기에 아주아주 긴 공지사항 제목이 들어갑니다. 옆으로 밀어서 전체 내용을 확인하세요!
                                 </div></td>
                                 <td style="text-align: center;" ><span th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}"></span></td>
-                            </tr>
+                            </tr> -->
                         </th:block>
                     <!-- 실제 데이터는 서버에서 가져와서 반복문으로 채워질 부분 -->
             </tbody>
         </table>
         <table class="notice-table_mobile">
+            <colgroup>
+                <col style="width: 60px;" /> 
+                <col style="width: auto;" />
+            </colgroup>
             <thead>
                 <tr>
-                    <th style="">번호</th>
+                    <th>번호</th>
                     <th>제목</th>
                 </tr>
             </thead>
             <tbody>
                 <th:block th:each="notice, stat : ${noticeList}">
-                            <!-- <a th:href="|/admin/campaign/select?id=${campaign.id}|"> -->
-                            <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
-                                <td style="text-align: center;" ><span th:text="${stat.size - stat.index}"></span></td>
-                                <td class="title"><span th:text="${notice.title}"></span></td>
-                            </tr>
-                            <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
-                                <td style="text-align: center;" ><span>2</span></td>
-                                <td class="title"><div class="title-scroll-box">
-                                    여기에 아주아주 긴 공지사항 제목이 들어갑니다. 옆으로 밀어서 전체 내용을 확인하세요!
-                                </div></td>
-                            </tr>
-                        </th:block>
-                    <!-- 실제 데이터는 서버에서 가져와서 반복문으로 채워질 부분 -->
+                    <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
+                        <td style="text-align: center;" ><span th:text="${stat.size - stat.index}"></span></td>
+                        <td class="title"><span th:text="${notice.title}"></span></td>
+                    </tr>
+                </th:block>
             </tbody>
         </table>
     </div>

@@ -32,17 +32,19 @@
         }
     
         .card-title {
-            font-size: 1.1em;
-            font-weight: bold;
+            font-size: 1.4em;
             color: #333;
-            margin: 0;
+            margin-bottom: 5px;
             line-height: 1.3;
-            height: 2.6em; /* 두 줄까지 표시하고 넘치면 ... 처리 (선택 사항) */
+            /* 두 줄 말줄임 설정 (가장 추천하는 모바일 방식) */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;    /* 보여줄 줄 수 (2줄) */
+            -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2; /* 2줄까지만 표시 */
-            -webkit-box-orient: vertical;
+            
+            /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
+            /* white-space: nowrap; */ 
         }
 
         .card-desc {
@@ -57,12 +59,13 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         }
+        
         .all_view_container{
             width: 90%;
             margin: 20px auto;
             display: flex;
-            flex-wrap: wrap;
-            gap: 16px; /* 카드 간의 가로세로 간격 */
+            /* flex-wrap: wracampaign-imagep; */
+            gap: 10px; /* 카드 간의 가로세로 간격 */
             justify-content: flex-start;
         }
 
@@ -83,15 +86,15 @@
         }
 
 
-        .card-badge {
-            background-color: #e0f2f7; /* 기본 뱃지 색상 */
+        /* .card-badge {
+            background-color: #e0f2f7;
             color: #01579b;
             font-size: 0.8em;
             padding: 4px 8px;
             border-radius: 4px;
-            align-self: flex-start; /* 뱃지를 왼쪽 정렬 */
+            align-self: flex-start;
             font-weight: bold;
-        }
+        } */
         
         .modal {
             display: none; /* 기본 숨김 */
@@ -220,7 +223,7 @@
             today.setHours(0, 0, 0, 0);
             
             document.querySelectorAll('.card-badge').forEach(function(badge) {
-                const dateStr = badge.dataset.eventEndDateStr; // ${item.eventPeriodEnd != null ? #temporals.format(item.eventPeriodEnd, 'yyyy/MM/dd') : ''}
+                const dateStr = badge.dataset.appEndDateStr; // ${item.eventPeriodEnd != null ? #temporals.format(item.eventPeriodEnd, 'yyyy/MM/dd') : ''}
                 console.log("dataStr : " + dateStr)
                 if (!dateStr) {
                 badge.textContent = '기간 미정';
@@ -290,21 +293,17 @@
 <body>
     <main layout:fragment="content">
     <form class="optionForm" action="/campaign08" method="get" id="form">
-        <select id="orderCode" name="orderCode">
-            <option th:value="0" th:selected="${option.orderCode==0}">최신 순</option>
-            <option th:value="1" th:selected="${option.orderCode==1}">인기 순</option>
-            <option th:value="2" th:selected="${option.orderCode==2}">선정확률 높은 순</option>
-            <option th:value="3" th:selected="${option.orderCode==3}">마감임박 순</option>
-
-        </select>
     </form>
-    <div class="all_view_container">
-        
+    <div class="campaign-container">
+        <!-- <div class="campaign-list" id="popularList"> -->
+
         <th:block th:each="campaign : ${allView}">
             <div sec:authorize="!isAuthenticated()" class="guest-message">
                 <a th:href="|/campaign01?id=${campaign.campaignId}&userId=''|">
-                    <div class="campaign-card1">
-                        <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/><br>
+                    <div class="campaign-item">
+
+                    <div class="campaign-card">
+                        <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                         <div class="campaign-info-box">
                             <div class="campaign-tags">
                                 <span class="tag leader">
@@ -316,43 +315,42 @@
                                 th:data-campaign-id="${campaign.campaignId}"></span>
                             </div>
                             <div class="title-overlay">
-                                <h3 class="card-title">
-                            <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
-                                </h3>
+                                <div class="card-title">
+                                    <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
+                                </div>
                             </div>
                             
-                            <p class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></p>
+                            <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                         </div>
+                    </div>
                     </div>
                 </a>
             </div>
             <div sec:authorize="isAuthenticated()" class="guest-message">
-                <a th:href="|/campaign01?id=${campaign.campaignId}&userId=${user.id}|">
-                    <div class="campaign-card1">
-                        <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/><br>
+                <a th:href="|/campaign01?id=${campaign.campaignId}&userId=${user.id}&eventPeriodStr=${campaign.eventPeriodStr}&eventPeriodEnd=${campaign.eventPeriodEnd}|">
+                    <div class="campaign-card">
+                        <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                         <div class="campaign-info-box">
                             <div class="campaign-tags">
                                 <span class="tag leader">
                                     <span th:text="|${campaign.userNm}|"></span>
                                     <span class="sub-text">인솔자</span>
                                 </span> 
-                                <span class="card-badge"
-                                th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
-                                th:data-campaign-id="${campaign.campaignId}"></span>
+                                <span class="card-badge" th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}" th:data-campaign-id="${campaign.campaignId}"></span>
                             </div>
                             <div class="title-overlay">
-                                <h3 class="card-title">
-                            <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
-                                </h3>
+                                <div class="card-title">
+                                    <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
+                                </div>
                             </div>
                             
-                            <p class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></p>
+                            <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                         </div>
                     </div>
                 </a>
-            </div>
+            <!-- </div> -->
         </th:block>
-
+</div>
         <!-- <div class="campaign_card" th:each="item : ${allView}">
             <img th:src="|/img?id=${item.campaignId}|" alt="캠페인 이미지" class="card-image"/>
         

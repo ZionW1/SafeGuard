@@ -112,7 +112,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             event_Period_End,
             t.user_nm
             FROM campaign c 
-        LEFT OUTER JOIN files f 
+        LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN team_leader t
         on c.leader_code = t.id
@@ -120,7 +120,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND f.target_type = 'campaign'
         AND c.is_deleted = 'N'
         AND c.is_active = 'N'
-        AND c.app_Period_end < now()
         AND c.applicants_Num = c.recruitment_Num
         ORDER BY c.campaign_id desc
         ]]>

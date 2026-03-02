@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,6 +45,9 @@ public class CampaignController {
        // 캠페인 상세 정보 조회
         CampaignVO campaignSelect = campaignsService.campaignSelect(id);
         log.info(":::::::::: campaign01 campaignSelect :::::::::: " + campaignSelect);
+
+        String formattedContent = campaignSelect.getMission();
+        model.addAttribute("mission", formattedContent);
 
         model.addAttribute("campaignSelect", campaignSelect);
 
@@ -210,8 +214,15 @@ public class CampaignController {
     // }
 
     @GetMapping("/closedCampaign")
-    public String closedCampaign(Model model) throws Exception{
+    public String closedCampaign(@AuthenticationPrincipal CustomUser authUser, Model model, @ModelAttribute("option") Option option, Page page) throws Exception{
         log.info("closedCampaign");
+        
+        if(authUser != null){
+            UserVO user = authUser.getUserVo();
+            // UserCampaignVO campaignApply = mainService.campaignApply(user.getUserId());
+            model.addAttribute("user", user);
+            // model.addAttribute("campaignApply", campaignApply);
+        }
 
         List<CampaignVO> closedCampaign = campaignsService.closedCampaign();
         log.info("closedCampaign" + closedCampaign);

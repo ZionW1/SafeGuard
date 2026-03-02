@@ -2260,7 +2260,7 @@ table.bestPayList {
         color: #01579b;
         font-size: 1em;
         padding: 8px 10px;
-        margin: 0px 10px ;
+        margin: 0px 5px ;
         border-radius: 4px;
         align-self: flex-start; /* 뱃지를 왼쪽 정렬 */
         font-weight: bold;

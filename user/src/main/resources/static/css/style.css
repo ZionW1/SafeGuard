@@ -906,7 +906,7 @@ a {
     font-size: 2.4rem;
     font-weight: 900;
     line-height: 1.2;
-    margin-left: 110px;
+    margin-left: 120px;
 }
 
 .card-box {
@@ -1635,12 +1635,6 @@ table.bestPayList {
     flex: 1; /* 두 테이블이 1:1 비율로 너비를 나눠 가짐 */
 }
 
-.section-title {
-    font-size: 1.1em;
-    font-weight: bold;
-    margin-top: 15px;
-    text-align: left; /* 제목을 항상 테이블 왼쪽 끝에 맞춤 */
-}
 .section-title-point {
     margin-top: -28px;
     font-size: 24px;
@@ -1656,6 +1650,46 @@ table.bestPayList {
     font-size: 14px;
     color: #444;
     padding: 10px 0;
+}
+
+.section-title {
+    width: 80%;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #555;
+    padding-bottom: 2px;
+}
+
+.form-row {
+    width: 70%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.mypage_form {
+    max-width: 55%;
+    margin-top: 20px;
+    margin: 20px auto;
+}
+
+.table_container {
+    float: right;
+    width: 77.5%;          /* 컨테이너 너비 설정 */
+    display: grid;           /* 가로 나열 */
+    justify-content: space-between; /* 테이블 사이 공간 균등 배분 */
+    align-items: flex-start; /* 상단 정렬 */
+    gap: 20px;               /* 테이블 사이 간격 */
+}
+
+.point_List {
+    width: 300%;
+    max-width: 1200px;
+    border-collapse: collapse;
+    margin: 0px auto;
 }
 
   /* 모바일 화면 (예: 768px 이하) */
@@ -1918,7 +1952,7 @@ table.bestPayList {
         width: 60%;
         height: 180px;
     }
-    .fc .fc-toolbar-title  { font-size: 1.5em !important; white-space: nowrap; }
+    .fc .fc-toolbar-title  { font-size: 1em !important; white-space: nowrap; }
     .sidebar {
         display: none;
     }
@@ -2124,6 +2158,47 @@ table.bestPayList {
     .bestAgent-header {
         flex-direction: column;    /* 모바일에서는 위아래로 배치 */
         gap: 20px;
+    }
+
+    .section-title {
+        width: 100%;
+        margin-top: 30px;
+        margin-bottom: 10px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border-bottom: 2px solid #555;
+        padding-bottom: 2px;
+    }
+
+    .form-row {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+        align-items: center;
+    }
+
+    .mypage_form {
+        max-width: 100%;
+        margin-top: 20px;
+        margin: 20px auto;
+    }
+
+    .table_container {
+        float: right;
+        width: 100%;          /* 컨테이너 너비 설정 */
+        display: grid;           /* 가로 나열 */
+        justify-content: space-between; /* 테이블 사이 공간 균등 배분 */
+        align-items: flex-start; /* 상단 정렬 */
+        gap: 20px;               /* 테이블 사이 간격 */
+    }
+
+    .point_List {
+        width: 100%;
+        max-width: 1200px;
+        border-collapse: collapse;
+        margin: 0px auto;
+        font-size: 0.99em;
     }
 }
 
@@ -2408,4 +2483,13 @@ table.bestPayList {
         height: auto;
         display: block;
     }
+
+    .mypage_title {
+        font-size: 2.4rem;
+        font-weight: 900;
+        line-height: 1.3;
+        margin-left: 0px;
+        margin-top: 120px;
+    }
+
 }

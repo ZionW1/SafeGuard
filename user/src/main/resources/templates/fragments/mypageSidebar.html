@@ -73,7 +73,8 @@
                     <a href="/notice01">공지사항</a>
                 </li> -->
                 <li class="menu-item" th:classappend="${(currentURI.startsWith('/mypage/calendarPage')) ? 'active' : ''}">
-                    <a href="/mypage/calendarPage">경호 캘린더</a></li>
+                    <a href="/mypage/calendarPage">경호 캘린더</a>
+                </li>
                 <li class="menu-item" th:classappend="${currentURI.startsWith('/mypage/infoUpdate')} ? 'active' : ''">
                     <a href="/mypage/infoUpdate">내 정보</a>
                 </li>
@@ -90,6 +91,16 @@
         </div>
         </nav>
     </aside>
+
+    <div class="mobile-sticky-nav">
+        <nav class="m-scroll-menu">
+            <a href="/mypage/calendarPage">경호 캘린더</a>
+            <a href="/mypage/infoUpdate">내 정보</a>
+            <a href="/mypage/point">포인트 내역</a>
+            <a href="/mypage/changePasswordPage">비밀번호 변경</a>
+        </nav>
+    </div>
+
     <script th:inline="javascript">
     const dropArea = document.getElementById("drop-area");
     const imageInput = document.getElementById("image"); // ⭐ id="image"로 변경됨 ⭐

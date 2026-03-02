@@ -208,12 +208,10 @@
             c.applicants_Num, 
             f.saved_name, 
             f.file_path, 
-            event_period_str period_str,
-            event_Period_End period_end,
             c.app_period_str,
             c.app_period_end,
-            event_Period_str,
-            event_Period_End,
+            c.event_Period_str,
+            c.event_Period_End,
             t.user_nm,
             DATE_FORMAT(c.created_at, '%Y.%m.%d') as created_at
         FROM campaign c 
@@ -225,6 +223,7 @@
         and c.is_deleted = 'N'
         Where f.is_deleted = 'N'
         and c.app_Period_End > now()
+        and id is not null 
         and is_active = 'Y'
         ]]>
         <if test="option.orderCode == 0"> <!-- 최신 순 -->

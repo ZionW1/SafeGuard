@@ -228,17 +228,17 @@
         and is_active = 'Y'
         ]]>
         <if test="option.orderCode == 0"> <!-- 최신 순 -->
-            ORDER BY c.created_At DESC
+            ORDER BY c.created_At DESC, c.campaign_id desc
         </if>
         <if test="option.orderCode == 1"> <!-- 인기 순 -->
             ORDER BY c.applicants_Num DESC, c.campaign_id desc
         </if>
         <if test="option.orderCode == 2"> <!-- 마감임박 순 -->
-            ORDER BY ABS(DATEDIFF(App_Period_End, CURDATE())) ASC;
+            ORDER BY ABS(DATEDIFF(App_Period_End, CURDATE())) ASC, c.campaign_id desc;
         </if>
         <if test="option.orderCode == 3"> <!-- 선정확률 높은 순 -->
             and applicants_Num = 0
-            ORDER BY c.created_At DESC
+            ORDER BY c.created_At DESC, c.campaign_id desc
         </if>
         
     </select>

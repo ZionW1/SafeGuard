@@ -223,7 +223,7 @@
         and c.is_deleted = 'N'
         Where f.is_deleted = 'N'
         and c.app_Period_End > now()
-        and id is not null 
+        and t.id is not null 
         and is_active = 'Y'
         ]]>
         <if test="option.orderCode == 0"> <!-- 최신 순 -->

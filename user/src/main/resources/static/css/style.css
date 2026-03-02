@@ -274,7 +274,7 @@ a {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 .banner-card img {
-    width: 100%;
+    max-width: 100%;
     height: auto;
     display: block;
 }
@@ -2181,12 +2181,12 @@ table.bestPayList {
     
     .banner_section_mobile {
         max-width: 90%;
-        height: 10%;
+        height: 50px;
         display: flex;
         justify-content: space-between;
         padding: 10px 0;
         margin: 60px auto 0px auto;
-        gap: 20px;
+        gap: 10px;
         text-align: center;
     }
 
@@ -2254,11 +2254,11 @@ table.bestPayList {
     /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
     /* white-space: nowrap; */ 
     }
-    .footer_mobile{
+    /* .footer_mobile{
         display: block;
         text-align: center;
         padding: 90px 0;
-    }
+    } */
     .card-badge {
         background-color: #e0f2f7; /* 기본 뱃지 색상 */
         color: #01579b;

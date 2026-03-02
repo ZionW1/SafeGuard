@@ -243,6 +243,15 @@ a {
     color: #333;
     text-decoration: none;
 }
+
+.login_link {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    text-decoration: none;
+    margin-top: 5px;
+    margin-left: auto;
+}
 .auth-link:hover {
     text-decoration: none;
     color: #333;
@@ -1963,7 +1972,7 @@ table.bestPayList {
         display: block;
         position: sticky;
         top: 0;
-        z-index: 1000;
+        /* z-index: 1000; */
         background: #fff;
         /* border-bottom: 1px solid #eee; */
     }
@@ -2187,7 +2196,7 @@ table.bestPayList {
     .table_container {
         float: right;
         width: 100%;          /* 컨테이너 너비 설정 */
-        display: grid;           /* 가로 나열 */
+        display: block;           /* 가로 나열 */
         justify-content: space-between; /* 테이블 사이 공간 균등 배분 */
         align-items: flex-start; /* 상단 정렬 */
         gap: 20px;               /* 테이블 사이 간격 */

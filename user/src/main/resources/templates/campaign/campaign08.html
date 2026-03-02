@@ -293,6 +293,13 @@
 <body>
     <main layout:fragment="content">
     <form class="optionForm" action="/campaign08" method="get" id="form">
+        <select id="orderCode" name="orderCode">
+            <option th:value="0" th:selected="${option.orderCode==0}">최신 순</option>
+            <option th:value="1" th:selected="${option.orderCode==1}">인기 순</option>
+            <option th:value="2" th:selected="${option.orderCode==2}">선정확률 높은 순</option>
+            <option th:value="3" th:selected="${option.orderCode==3}">마감임박 순</option>
+
+        </select>
     </form>
     <div class="campaign-container">
         <!-- <div class="campaign-list" id="popularList"> -->

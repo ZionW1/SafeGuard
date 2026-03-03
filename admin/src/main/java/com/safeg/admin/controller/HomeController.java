@@ -158,10 +158,10 @@ public class HomeController {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     // ⭐️ 1. DB에서 복사해온 BCrypt 비밀번호 해시 ⭐️
-    String dbEncodedPassword = "$2a$10$WjYSTDOL90Bn3IQuzmxH/ONmAMj9BYGjIprR.pxUDo4cE59.oxX.e"; // ⭐️여기에 DB에서 복사한 값을 넣어줘!⭐️
+    String dbEncodedPassword = "$2a$10$edid1psfTBLaBtDvuWV0O.nJmkpbbqNOppCSM0/DGL19n0MV3BPyS"; // ⭐️여기에 DB에서 복사한 값을 넣어줘!⭐️
 
     // ⭐️ 2. 네가 로그인 시도할 때 입력하는 평문 비밀번호 ⭐️
-    String enteredPlainPassword = "MJordan23!"; // ⭐️여기에 네가 웹 폼에 입력하는 비밀번호를 넣어줘!⭐️
+    String enteredPlainPassword = "aosqkf12!!"; // ⭐️여기에 네가 웹 폼에 입력하는 비밀번호를 넣어줘!⭐️
     //1234qwer!!       zxcvasdf1           1234qwer!!
     // ⭐️ 비교 수행 ⭐️
     boolean isMatch = encoder.matches(enteredPlainPassword, dbEncodedPassword);

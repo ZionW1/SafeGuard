@@ -51,12 +51,17 @@
     <script th:inline="javascript">
         const loginForm = document.getElementById('loginForm');
         loginForm.addEventListener('submit', (e) => {
+            const rememberMeChecked = document.getElementById('remember-me-check').checked;
+
             e.preventDefault();
 
             const formData = new URLSearchParams();
             formData.append('userId', document.getElementById('userId').value);
             formData.append('password', document.getElementById('password').value);
-
+            // 또는 체크박스가 선택되었을 때만 보낼 수도 있어요.
+            if (rememberMeChecked) {
+                formData.append('remember-me', 'on');
+            }
             fetch('/login', {
                 method: 'POST',
                 headers: { 

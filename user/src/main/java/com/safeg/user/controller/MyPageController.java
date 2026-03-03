@@ -412,6 +412,7 @@ public class MyPageController {
     }
 
     @PostMapping("/uploadIdttImage")
+    @ResponseBody
     public String uploadIdttImage(@AuthenticationPrincipal CustomUser authUser, UserVO userVO, Model model) throws Exception{
         // log.info(":::::::::: uploadIdttImage :::::::::: + " + authUser.getUserVo().getUserId());
         log.info(":::::::::: uploadIdttImage :::::::::: + " + userVO);

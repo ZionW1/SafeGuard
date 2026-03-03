@@ -150,7 +150,7 @@
             <!-- pay = COALESCE(pay, 0) + (select campaign_pay from campaign where campaign_id = #{campaignId}) -->
         FROM user
         WHERE
-            role = 'USER'
+            role in ('USER', 'LEADER')
         GROUP BY
             user_id, user_nm, pay
         ORDER BY

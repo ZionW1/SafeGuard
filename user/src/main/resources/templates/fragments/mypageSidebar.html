@@ -27,7 +27,7 @@
                             <button class="profile_save" type="submit">프로필 사진 저장하기</button>
                 </div>
             </form> -->
-                <div id="existing-file-section" th:if="${file != null}" style="max-width: 100%; margin: 0 auto; text-align: center;">
+            <div id="existing-file-section" th:if="${file != null}" style="max-width: 100%; margin: 0 auto; text-align: center;">
 
                 <div class="imageDisplayArea">
                     <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
@@ -98,6 +98,43 @@
             <a href="/mypage/infoUpdate">내 정보</a>
             <a href="/mypage/point">포인트 내역</a>
             <a href="/mypage/changePasswordPage">비밀번호 변경</a>
+        </nav>
+            <div id="existing-file-section" th:if="${file != null}" style="max-width: 100%; margin: 30px auto; text-align: center;">
+
+                <div class="imageDisplayArea">
+                    <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
+                    <div>
+                        <img th:if="${file != null}" id="imgFile" th:src="|/selectProfile?id=${userId}&args=1|" alt="파일이미지" width="80%" height="200" style="max-width: 100%; margin: 0px auto;" />
+                    </div>
+                    <img th:if="${file == null}" id="defaultImage" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
+                </div>
+                <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
+                        th:onclick="markFileDeleted([[${userId}]])">기존 이미지 삭제</button>
+            </div>
+            
+            <!-- ⭐️ 파일 업로드 영역: ID 추가 및 hidden 클래스 조건부 추가 ⭐️ -->
+            <!-- file 객체가 null이 아니면 hidden 클래스를 추가해서 숨기고, null이면 hidden 클래스 없이 보여줌 -->
+            <form class="profile-preview" action="/updateProfile" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="id" id="id" th:value="${userId}" />
+                <input type="hidden" name="userId" id="userId" th:value="${username}" />
+                
+
+                <div th:unless="${file != null} ? 'hidden'">
+                    <div id="drop-area" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px;">
+                        <p>이미지를 클릭하거나 끌어다 놓으세요</p>
+                        <div>
+                            <input type="file" name="image" id="image" accept="image/*" style="display: none" />
+                            <img th:if="${file == null}" id="defaultImage" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
+
+                            <!-- ⭐️ 여기 hidden 클래스 추가 ⭐️ -->
+                            <img id="preview" src="" alt="미리보기" class="hidden" style="max-width: 100%; margin-top: 10px;" />
+                        </div>
+                    </div>
+                    <button class="profile_save" type="submit">프로필 사진 저장하기</button>
+                </div>
+
+            </form>
         </nav>
     </div>
 

@@ -31,8 +31,9 @@ form.optionForm {
     display: flex; 
     justify-content: flex-end;
 }
+
 .profile_save {
-    margin-top: 00px;
+    margin-top: 10px;
     padding: 10px 20px;
     font-size: 1.1rem;
     border: none;
@@ -88,7 +89,7 @@ a {
 .profile-preview img {
     width: 100px;
     height: 100px;
-    border-radius: 50%;
+    border-radius: 0%;
     background: #eee;
     object-fit: cover;
   }

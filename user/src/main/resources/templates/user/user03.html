@@ -79,7 +79,7 @@
 
         });
 
-        const csrfToken = /*[[${_csrf.token}]]*/ '';
+        // const csrfToken = /*[[${_csrf.token}]]*/ '';
         const csrfHeaderName = /*[[${_csrf.headerName}]]*/ '';
 
 var element_wrap = document.getElementById('address_search_wrap');
@@ -354,6 +354,7 @@ function execDaumPostcode() {
     const certPreview = document.getElementById("cert_preview");
     const certPlaceholderMessage = document.getElementById("cert_placeholder_message");
     const certUploadForm = document.querySelector(".certificate-preview"); // 폼 자체를 선택
+    const csrfToken = document.getElementById('csrfToken').value;
 
     // --- 추가된 부분: 폼 제출 이벤트 리스너 ---
     if (certUploadForm) {
@@ -448,7 +449,6 @@ function execDaumPostcode() {
 
 document.getElementById('certificateUploadBtn').addEventListener('click', function() {
     const form = document.getElementById('certForm');
-    const csrfToken = document.getElementById('csrfToken').value;
     const inputFile = document.getElementById('cert_image').files[0];
 
     if (!inputFile) {
@@ -501,7 +501,7 @@ document.getElementById('certificateUploadBtn').addEventListener('click', functi
             // ⭐ ⭐ ⭐ csrfHeader와 csrfToken 변수명을 명확히 사용! ⭐ ⭐ ⭐
             // Thymeleaf가 값을 여기에 넣어줄 거야.
             const csrfHeader = /*[[${_csrf.headerName}]]*/ ''; // 'X-CSRF-TOKEN' 또는 비어있는 문자열 등이 될 수 있음
-            const csrfToken = /*[[${_csrf.token}]]*/ '';      // 실제 토큰 값 또는 비어있는 문자열 등이 될 수 있음
+            // const csrfToken = /*[[${_csrf.token}]]*/ '';      // 실제 토큰 값 또는 비어있는 문자열 등이 될 수 있음
 
             const userId = document.getElementById('id').value; // 이 부분은 그대로
             const form = document.getElementById('form');      // 이 부분도 그대로

@@ -36,7 +36,7 @@ public class SecurityConfig {
     private UserDetailServiceImpl userDetailServiceImpl;
 
     @Autowired
-    private LoginSuccessHandler LoginSuccessHandler;
+    private LoginSuccessHandler loginSuccessHandler;
 
     @Autowired
     private LoginFailureHandler loginFailureHandler;
@@ -45,8 +45,16 @@ public class SecurityConfig {
     private CustomAccessDeniedHandler customAccessDeniedHandler;
     // 스프링 시큐리티 설정 메소드
 
-    public SecurityConfig(DataSource dataSource) {
+    public SecurityConfig(DataSource dataSource,
+        UserDetailServiceImpl userDetailServiceImpl,
+        LoginSuccessHandler loginSuccessHandler,
+        LoginFailureHandler loginFailureHandler,
+        CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.dataSource = dataSource;
+        this.userDetailServiceImpl = userDetailServiceImpl;
+        this.loginSuccessHandler = loginSuccessHandler;
+        this.loginFailureHandler = loginFailureHandler;
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
     @Bean
@@ -66,7 +74,7 @@ public class SecurityConfig {
             .usernameParameter("userId") // 아이디 파라미터
             .passwordParameter("password")// 비밀번호 파라미터
             //.defaultSuccessUrl("/?success") // 로그인 성공 경로
-            .successHandler(LoginSuccessHandler) // 로그인 성공 처리자 설정
+            .successHandler(loginSuccessHandler) // 로그인 성공 처리자 설정
             // .failureUrl("/login?error") // 로그인 실패 경로
             .failureHandler(loginFailureHandler) // 로그인 실패 처리자 설정
             );
@@ -82,9 +90,6 @@ public class SecurityConfig {
 
         //인증 예외 처리
         http.exceptionHandling(exception -> exception
-            // 예외 처리 페이지 설정
-            // .accessDeniedPage("/exception")
-            // 접근 거부 처리자 설정
             .accessDeniedHandler(customAccessDeniedHandler));
 
         http.logout(logout -> logout

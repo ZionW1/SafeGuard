@@ -248,7 +248,7 @@ function execDaumPostcode() {
                         </div>
                     </form>
                     
-                    <form class="certificate-preview" action="/mypage/uploadIdttImage" method="post" enctype="multipart/form-data">
+                    <form id="idenFrom" class="certificate-preview" action="/mypage/uploadIdttImage" method="post" enctype="multipart/form-data">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <input type="hidden" name="id" th:value="${user.id}" />
                         <input type="hidden" name="userId" th:value="${user.userId}" />
@@ -263,7 +263,7 @@ function execDaumPostcode() {
                             <!-- <input type="file" name="image" id="image" accept="image/*" style="display: none" /> -->
                             <div class="profile" th:if="${getIdentity == null}">
                                 <div id="cert_drop" style="width: 75%; border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px">
-                                    <input type="file" name="IdttImage" id="cert_image" accept="image/*" style="display: none" />
+                                    <input type="file" name="IdttImage" id="idtt_image" accept="image/*" style="display: none" />
                                     <div id="imageDisplayArea">
                                         <img id="cert_preview" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
                                         
@@ -274,7 +274,7 @@ function execDaumPostcode() {
                                             신분증 이미지를 선택해주세요. (신분증 업로드 시 뒷자리 마스킹 처리할 것)
                                         </p>
                                     </div>
-                                </div>identification
+                                </div>
                                 <button class="mypage_button" id="identificationUploadBtn" type="submit">신분증 이미지 업로드</button>
                             </div>
                             <!-- <div th:if="${file != null}">
@@ -444,6 +444,41 @@ function execDaumPostcode() {
         }
 
     } 
+});
+
+document.getElementById('identificationUploadBtn').addEventListener('click', function() {
+    const form = document.getElementById('idenFrom');
+    const csrfToken = document.getElementById('csrfToken').value;
+    const inputFile = document.getElementById('cert_image').files[0];
+
+    if (!inputFile) {
+        alert("먼저 이수증 이미지를 선택해주세요.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('certImage', inputFile);
+    formData.append('id', form.querySelector('input[name="id"]').value);
+    formData.append('userId', form.querySelector('input[name="userId"]').value);
+
+    fetch('/mypage/uploadCertImage', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken // CSRF 토큰 헤더에 포함
+        },
+        body: formData,
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('업로드 실패');
+        return response.text();
+    })
+    .then(data => {
+        alert('이수증 이미지가 성공적으로 업로드되었습니다.');
+        // 필요시 UI 업데이트
+    })
+    .catch(error => {
+        alert('업로드 중 문제가 발생했습니다: ' + error.message);
+    });
 });
 
 document.getElementById('certificateUploadBtn').addEventListener('click', function() {

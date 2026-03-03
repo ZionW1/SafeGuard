@@ -60,11 +60,7 @@ public class SecurityConfig {
             .requestMatchers("/", "/login", "/join", "/css/**", "/js/**", "/images/**", "/error01", "/error").permitAll() // 로그인 없이도 접근 가능한 정적 파일이나 특정 경로
             .requestMatchers("/auth/**").permitAll()
             .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
-                                // .requestMatchers("/user", "/user/**").hasAnyRole("USER", "ADMIN")
-                                // .requestMatchers("/**").permitAll()
-                                
-                                // .anyRequest().permitAll());
-                                .anyRequest().authenticated());
+            .anyRequest().authenticated());
         log.info("::::: SecurityFilterChain - 인가 설정 완료 :::::");
         // 폼 로그인 설정
         http.formLogin(login -> login.loginPage("/login") // 로그인 페이지 경로
@@ -84,13 +80,10 @@ public class SecurityConfig {
         http.rememberMe(me -> me.key("23emperor")
             .rememberMeParameter("auto-login")
             .tokenRepository(tokenRepository())
-            .tokenValiditySeconds(60 * 60 * 24 * 7)); // 7일 유효시간 (초단위)
+            .tokenValiditySeconds(60 * 60 * 24 * 7)); 
 
         //인증 예외 처리
         http.exceptionHandling(exception -> exception
-            // 예외 처리 페이지 설정
-            // .accessDeniedPage("/exception")
-            // 접근 거부 처리자 설정
             .accessDeniedHandler(customAccessDeniedHandler)
             .authenticationEntryPoint(customAuthenticationEntryPoint)); // 필드 주입된 핸들러);
 

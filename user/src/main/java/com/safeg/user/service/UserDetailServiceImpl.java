@@ -11,6 +11,9 @@ import com.safeg.user.vo.UserVO;
 import com.safeg.user.vo.Users;
 import com.safeg.user.mapper.UserMapper;
 
+import java.util.Optional;
+
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,6 +33,17 @@ public class UserDetailServiceImpl implements UserDetailsService {
         log.info("- 사용자 정의 인증을 위해, 사용자 정보 조회");
         log.info("- username : " + username);
 
+// Optional<UserVO> userEntity = userMapper.findByUsername(username);
+//     if (!userEntity.isPresent()) {
+//         throw new UsernameNotFoundException("존재하지 않는 아이디입니다.");
+//     }
+//     UserVO user = userEntity.get();
+//     return new org.springframework.security.core.userdetails.User(
+//         user.getUserId(),
+//         user.getPassword(), // 암호화된 비밀번호
+//         getAuthorities(user)
+//     );
+
         UserVO user = null;
         try {
             // 👩‍💼 사용자 정보 및 권한 조회
@@ -46,6 +60,5 @@ public class UserDetailServiceImpl implements UserDetailsService {
         log.info("- username : " + customUser);
 
         return customUser;
-    }
-    
+    }    
 }

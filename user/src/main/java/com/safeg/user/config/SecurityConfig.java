@@ -45,16 +45,8 @@ public class SecurityConfig {
     private CustomAccessDeniedHandler customAccessDeniedHandler;
     // 스프링 시큐리티 설정 메소드
 
-    public SecurityConfig(DataSource dataSource,
-        UserDetailServiceImpl userDetailServiceImpl,
-        LoginSuccessHandler loginSuccessHandler,
-        LoginFailureHandler loginFailureHandler,
-        CustomAccessDeniedHandler customAccessDeniedHandler) {
+    public SecurityConfig(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.userDetailServiceImpl = userDetailServiceImpl;
-        this.loginSuccessHandler = loginSuccessHandler;
-        this.loginFailureHandler = loginFailureHandler;
-        this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
     @Bean

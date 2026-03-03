@@ -1,6 +1,7 @@
 package com.safeg.user.mapper;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -35,6 +36,4 @@ public interface UserMapper {
     public Long getReferrerNo(UserVO userVo) throws Exception;
 
     public Long getReferrerNoById(Long userNo) throws Exception;
-
-
 }

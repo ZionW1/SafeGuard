@@ -8,30 +8,17 @@
     <title>뤼튼 로그인</title>
     <!-- <link rel="stylesheet" href="/css/style.css" /> -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <script>
-        function togglePasswordVisibility(fieldId) {
-            const passwordField = document.getElementById(fieldId);
-            const toggleButton = passwordField.nextElementSibling; // 바로 다음 형제 요소 (👁️ 버튼)
-
-            if (passwordField.type === "password") {
-                passwordField.type = "text"; // 비밀번호 보이게
-                toggleButton.textContent = "🔒"; // 아이콘 변경 (선택 사항)
-            } else {
-                passwordField.type = "password"; // 비밀번호 숨기게
-                toggleButton.textContent = "👁️"; // 아이콘 변경 (선택 사항)
-            }
-        }
-    </script>
+    
 </head>
 <body>
     <div class="login-container">
         <!-- 뤼튼 이미지 경로 넣기 -->
         <h1>행집 어드민</h1>
-        <form th:action="@{/login}" method="post">
+        <form id="loginForm" th:action="@{/login}" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-            <input class="id" type="text" name="userId" placeholder="아이디를 입력하세요" required />
-            <input class="pw" type="password" name="password" placeholder="비밀번호를 입력하세요" required />
+            <input class="id" type="text" id="userId" name="userId" placeholder="아이디를 입력하세요" required />
+            <input class="pw" type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required />
             <button type="submit">로그인</button>
 
             <div class="checkbox-group">
@@ -49,5 +36,47 @@
             <a th:href="@{/join}">Create New</a>
         </div>
     </div>
+    <script th:inline="javascript">
+        function togglePasswordVisibility(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleButton = passwordField.nextElementSibling; // 바로 다음 형제 요소 (👁️ 버튼)
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text"; // 비밀번호 보이게
+                toggleButton.textContent = "🔒"; // 아이콘 변경 (선택 사항)
+            } else {
+                passwordField.type = "password"; // 비밀번호 숨기게
+                toggleButton.textContent = "👁️"; // 아이콘 변경 (선택 사항)
+            }
+        }
+
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formData = new URLSearchParams();
+            formData.append('userId', document.getElementById('userId').value);
+            formData.append('password', document.getElementById('password').value);
+
+            fetch('/login', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+                },
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => { throw new Error(data.error); });
+                }
+                // 성공 시 바로 이동
+                window.location.href = '/admin/campaign01';
+            })
+            .catch(err => {
+                alert(err.message);
+            });
+        });
+    </script>
 </body>
 </html>

@@ -190,7 +190,7 @@ public class CampaignController {
         log.info("삭제 처리 : " + id);
         int result = campaignsService.campaignDelete(id);
         if(result > 0){
-            return "redirect:/admin/campaign01";
+            return "redirect:/campaign01";
         }
         return "redirect:/campaign02?error&id="+id;
     }

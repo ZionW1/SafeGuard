@@ -188,10 +188,10 @@ public class CampaignController {
     @PostMapping("/campaign06")
     public String campaign06(@RequestParam("id") String id) throws Exception{
         log.info("삭제 처리 : " + id);
-        // int result = campaignsService.campaignDelete(id);
-        // if(result > 0){
-        //     return "redirect:/admin/campaign01";
-        // }
+        int result = campaignsService.campaignDelete(id);
+        if(result > 0){
+            return "redirect:/admin/campaign01";
+        }
         return "redirect:/campaign02?error&id="+id;
     }
 

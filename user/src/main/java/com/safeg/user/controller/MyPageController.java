@@ -411,27 +411,14 @@ public class MyPageController {
         return "redirect:/mypage/infoUpdate";
     }
 
-    @PostMapping("/uploadIdttImage")
-    // @ResponseBody
-    public String uploadIdttImage(@AuthenticationPrincipal CustomUser authUser, UserVO userVO, Model model) throws Exception{
-        // log.info(":::::::::: uploadIdttImage :::::::::: + " + authUser.getUserVo().getUserId());
-        log.info(":::::::::: uploadIdttImage :::::::::: + " + userVO);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal() instanceof CustomUser) { // CustomUser 클래스로 확인
-            boolean result = myPageService.uploadIdttImage(userVO);
-        }
-
-        return "redirect:/mypage/infoUpdate";
-    }
-
-    @PostMapping("/uploadCertImage")
+    @PostMapping("/uploadImage")
     @ResponseBody
-    public String uploadCertImage(@AuthenticationPrincipal CustomUser authUser, UserVO userVO, Model model) throws Exception{
-        // log.info(":::::::::: uploadCertImage :::::::::: + " + authUser.getUserVo().getUserId());
-        log.info(":::::::::: uploadCertImage :::::::::: + " + userVO);
+    public String uploadImage(@AuthenticationPrincipal CustomUser authUser, UserVO userVO, Model model) throws Exception{
+        // log.info(":::::::::: uploadImage :::::::::: + " + authUser.getUserVo().getUserId());
+        log.info(":::::::::: uploadImage :::::::::: + " + userVO);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof CustomUser) { // CustomUser 클래스로 확인
-            boolean result = myPageService.uploadCertImage(userVO);
+            boolean result = myPageService.uploadImage(userVO);
         }
 
         // if (!userVO.isPasswordConfirmed()) {
@@ -562,5 +549,27 @@ public class MyPageController {
 
         }
         return "mypage/point";
+    }
+
+    @PostMapping("/deleteImage")
+    @ResponseBody
+    public ResponseEntity<String> deleteImage(@AuthenticationPrincipal CustomUser authUser, UserVO userVO) throws Exception {
+        log.info("deleteImage : userVO : " + userVO);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof CustomUser) {
+            CustomUser customUser = (CustomUser) authentication.getPrincipal();
+            // String.valueOf(customUser.getId()); // DB의 실제 ID를 문자열로 반환
+            userVO.setId(customUser.getId()); // userVO의 id를 null로 설정하여 삭제할 파일의 ID로 사용
+            log.info("deleteImage : userVO : " + userVO);
+            int result = fileService.deleteImage(userVO);
+            if (result > 0) {
+                return ResponseEntity.ok("SUCCESS");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("FAIL");
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+        
     }
 }

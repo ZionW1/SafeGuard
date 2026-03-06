@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.safeg.user.mapper.FileMapper;
 import com.safeg.user.vo.FilesVO;
 import com.safeg.user.vo.UserCampaignVO;
+import com.safeg.user.vo.UserVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -282,4 +283,39 @@ public class FileServiceImpl implements FileService{
 
         return outputStream.toByteArray();
     }
+
+    @Override
+    public int deleteImage(UserVO userVO) throws Exception {
+        // TODO Auto-generated method stub
+        FilesVO file = new FilesVO();
+        file.setTargetId(userVO.getId());
+
+        // 파일 정보
+        if("1".equals(userVO.getType())){
+            log.info("getIdImage + " + userVO.getIdImage());
+            file.setTargetType("identification");
+        } else if("2".equals(userVO.getType())){
+            log.info("getCertImage + " + userVO.getCertImage());
+            file.setTargetType("certificate");
+        } else {
+            log.warn("알 수 없는 파일 타입: {}. '1'은 신분증, '2'는 이수증입니다.", userVO.getType());
+            return 0; // 잘못된 타입이므로 삭제하지 않고 종료
+        }
+
+        log.info("delete file + " + file);
+        int result = fileMapper.deleteImage(file);
+        try {
+            if(result > 0){
+                log.info("파일 삭제 성공: targetId={}, targetType={}", file.getTargetId(), file.getTargetType());
+            } else {
+                log.warn("삭제할 파일이 없습니다: targetId={}, targetType={}", file.getTargetId(), file.getTargetType());
+            }
+            return result;
+        } catch (Exception e) {
+            log.error("기존 파일 삭제 중 오류 발생: " + e.getMessage());
+            return result;
+        }
+    }
+
+    
 }

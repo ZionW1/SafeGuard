@@ -80,4 +80,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="bannerFile" resultType="filesVO">
         select * from files where target_id = #{id} and target_type='BANNER' and is_deleted = 'N';
     </select>
+
+    <update id="deleteImage">
+        UPDATE files 
+        SET is_deleted = 'Y' 
+        WHERE target_id = #{targetId} 
+        AND target_type = #{targetType} 
+        AND is_deleted = 'N'
+    </update>
 </mapper>

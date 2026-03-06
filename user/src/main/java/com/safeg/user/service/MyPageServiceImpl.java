@@ -85,45 +85,20 @@ public class MyPageServiceImpl implements MyPageService {
     }
 
     @Override
-    public boolean uploadIdttImage(UserVO userVo) throws Exception {
-        // TODO Auto-generated method stub
-        
-        MultipartFile getIdttImage = userVo.getIdttImage();
-        log.info("MultipartFile : : : : : : : : " + getIdttImage);
-        if (userVo.getId() == null) {
-            // 캠페인 ID를 가져오지 못했다면 예외 처리
-            throw new RuntimeException("신분증 사진 등록 실패: 유저의 ID를 가져올 수 없습니다.");
-        }
-        boolean result = false;
-        if(getIdttImage != null){
-            FilesVO uploadFile = new FilesVO();
-            uploadFile.setFile(getIdttImage);
-            uploadFile.setFileSize(getIdttImage.getSize());
-            uploadFile.setFileType("user_File");
-            uploadFile.setTargetType("identification");
-            uploadFile.setTargetId(userVo.getId());
-            uploadFile.setUserId(userVo.getUserId());
-            uploadFile.setMimeType("");
-            log.info("등록 처리 uploadFile : " + uploadFile);
-
-            result = fileService.upload(uploadFile);
-            
-        }
-        
-        return result;
-    }
-
-    @Override
-    public boolean uploadCertImage(UserVO userVo) throws Exception {
+    public boolean uploadImage(UserVO userVo) throws Exception {
         // TODO Auto-generated method stub
         
         MultipartFile getCertImage = userVo.getCertImage();
-        log.info("MultipartFile : : : : : : : : " + getCertImage);
+        MultipartFile getIdImage = userVo.getIdImage();
+        
         if (userVo.getId() == null) {
             // 캠페인 ID를 가져오지 못했다면 예외 처리
             throw new RuntimeException("인수증 사진 등록 실패: 유저의 ID를 가져올 수 없습니다.");
         }
         boolean result = false;
+        FilesVO uploadFileCert = new FilesVO();
+        FilesVO uploadFileId = new FilesVO();
+
         if(getCertImage != null){
             
             // Files uploadFile = new Files();
@@ -133,18 +108,30 @@ public class MyPageServiceImpl implements MyPageService {
             // uploadFile.setType("main");
             // fileService.upload(uploadFile);
             
-            FilesVO uploadFile = new FilesVO();
-            uploadFile.setFile(getCertImage);
-            uploadFile.setFileSize(getCertImage.getSize());
-            uploadFile.setFileType("user_File");
-            uploadFile.setTargetType("certificate");
-            uploadFile.setTargetId(userVo.getId());
-            uploadFile.setUserId(userVo.getUserId());
-            uploadFile.setMimeType("");
-            log.info("등록 처리 uploadFile : " + uploadFile);
+            uploadFileCert.setFile(getCertImage);
+            uploadFileCert.setFileSize(getCertImage.getSize());
+            uploadFileCert.setFileType("user_File");
+            uploadFileCert.setTargetType("certificate");
+            uploadFileCert.setTargetId(userVo.getId());
+            uploadFileCert.setUserId(userVo.getUserId());
+            uploadFileCert.setMimeType("");
+            log.info("등록 처리 uploadFile : " + uploadFileCert);
 
-            result = fileService.upload(uploadFile);
+            result = fileService.upload(uploadFileCert);
             
+        } 
+        
+        if(getIdImage != null){
+            uploadFileId.setFile(getIdImage);
+            uploadFileId.setFileSize(getIdImage.getSize());
+            uploadFileId.setFileType("user_File");
+            uploadFileId.setTargetType("identification");
+            uploadFileId.setTargetId(userVo.getId());
+            uploadFileId.setUserId(userVo.getUserId());
+            uploadFileId.setMimeType("");
+            log.info("등록 처리 uploadFile : " + uploadFileId);
+
+            result = fileService.upload(uploadFileId);
         }
         
         return result;

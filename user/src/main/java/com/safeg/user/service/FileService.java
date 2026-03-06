@@ -6,6 +6,7 @@ import org.springframework.core.io.Resource;
 
 import com.safeg.user.vo.FilesVO;
 import com.safeg.user.vo.UserCampaignVO;
+import com.safeg.user.vo.UserVO;
 
 public interface FileService {
 
@@ -35,5 +36,7 @@ public interface FileService {
     public Resource createZipFile(Long userNos) throws Exception;
 
     public byte[] ApplicationExcel(List<UserCampaignVO> applications, String finalCampaignName) throws Exception;
+
+    public int deleteImage(UserVO userVO) throws Exception;
 
 }

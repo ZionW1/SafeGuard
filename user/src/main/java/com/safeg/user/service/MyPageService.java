@@ -20,9 +20,7 @@ public interface MyPageService {
 
     public int updateInfo(UserVO userVo) throws Exception;
 
-    public boolean uploadCertImage(UserVO userVo) throws Exception;
-
-    public boolean uploadIdttImage(UserVO userVO) throws Exception;
+    public boolean uploadImage(UserVO userVo) throws Exception;
 
     public List<UserCampaignVO> pointList(Long id) throws Exception;
 

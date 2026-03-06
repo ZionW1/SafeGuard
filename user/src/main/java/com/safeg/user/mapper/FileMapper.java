@@ -31,4 +31,6 @@ public interface FileMapper {
     public FilesVO getMypageImage(@Param("id") String id, @Param("targetType") String targetType) throws Exception;
 
     public List<Long> userList(@Param("id") Long campaignId) throws Exception;
+
+    public int deleteImage(FilesVO file) throws Exception;
 }

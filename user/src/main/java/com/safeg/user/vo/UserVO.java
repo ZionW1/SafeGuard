@@ -163,7 +163,7 @@ public class UserVO {
     private List<UserAuth> authList;
     private MultipartFile image; // 첨부 파일 목록
     private MultipartFile certImage;
-    private MultipartFile IdttImage;
+    private MultipartFile idImage;
 
     private String zoneCode; // 우편번호 (예: 06130), sigunguCode
     private String province; // 시/도 (예: 서울특별시), sido
@@ -182,5 +182,7 @@ public class UserVO {
     private String referrerId;
 
     private String guardType;
+
+    private String type;
 
 }

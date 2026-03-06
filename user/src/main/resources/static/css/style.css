@@ -1260,6 +1260,9 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
   text-align: center;
 }
 
+.imageUploadBtn {
+    margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;
+}
 /* PC에서는 모바일 헤더 감추기 */
 @media(min-width: 768px) {
   .mobile-header,

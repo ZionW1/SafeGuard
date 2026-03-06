@@ -1,4 +1,4 @@
-<div th:fragment="mypageSidebarMenu">
+<div th:fragment="mypageSidebarMenuDesktop" class="desktop_sidebar">
     <aside class="sidebar">
         <nav>
             <div class="sr-only">
@@ -65,6 +65,8 @@
         </nav>
     </aside>
 
+</div>
+<div th:fragment="mypageSidebarMenuMobile" class="mobile_sidebar_menu">
     <div class="mobile-sticky-nav">
         <nav class="m-scroll-menu">
             <a href="/mypage/calendarPage">경호 캘린더</a>
@@ -72,7 +74,11 @@
             <a href="/mypage/point">포인트 내역</a>
             <a href="/mypage/changePasswordPage">비밀번호 변경</a>
         </nav>
+    </div>
+</div>
+<div th:fragment="mypageSidebarProfileMobile" class="mobile_sidebar_profile">
         <div class="sr-only">
+            <div class="mrg20_b">프로필 사진</div>
             <div id="existing_file_section_mobile" th:if="${file != null}" style="max-width: 100%; margin: 0 auto; text-align: center;">
                 <div class="imageDisplayArea">
                     <img id="preview_mobile" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
@@ -106,9 +112,8 @@
                 </form>
             </div>
         </div>
-    </div>
 
-    <script th:inline="javascript">
+<script th:inline="javascript">
     const dropArea = document.getElementById("drop-area");
     const imageInput = document.getElementById("image"); // ⭐ id="image"로 변경됨 ⭐
     const preview = document.getElementById("preview");
@@ -346,4 +351,5 @@
         }
     });
     </script>
-</div>
+    </div>
+

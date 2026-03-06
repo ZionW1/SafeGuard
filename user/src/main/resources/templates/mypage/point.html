@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css" />
-    <style>        
+    <style>
         .point_List th, td {
             border: 1px solid #ddd;
             padding: 8px;
@@ -26,7 +26,10 @@
     <main layout:fragment="content">
         <div class="main-side-content">
             <div class="container">
-                <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenu}" />
+                <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenuDesktop}" />
+            </div>
+            <div class="container_mobile">
+                <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenuMobile}" />
             </div>
             <span class="mypage_title">포인트 내역</span>
 
@@ -146,6 +149,10 @@
                         </table>
                     </th:block>
                 </th:block>
+            </div>
+            <hr class="mypage_hr">
+            <div class="container">
+                <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarProfileMobile}" />
             </div>
         </div>
     </main>

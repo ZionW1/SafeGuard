@@ -104,11 +104,7 @@
         @import url('https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css');
 
         /* 캘린더 컨테이너 스타일 */
-        #calendar {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 auto;
-        }
+        
     </style>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <script>
@@ -177,11 +173,17 @@
 <main layout:fragment="content">
     <div class="main-side-content">
         <div class="container">
-            <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenu}" />
+            <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenuDesktop}" />
+        </div>
+        <div class="container_mobile">
+            <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenuMobile}" />
         </div>
         <span class="mypage_title">나의 캠페인</span>
-        <div id="calendar"></div>
-        
+        <div id="calendar" class="calendar"></div>
+        <hr class="mypage_hr">
+        <div class="container">
+            <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarProfileMobile}" />
+        </div>
     </div>
 </main>
 </body>

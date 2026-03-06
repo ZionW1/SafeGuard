@@ -209,8 +209,6 @@ a {
 .sr-only {
     font-size: 24px;
     font-weight: 700;
-    /* border-bottom: 2px solid #ddd; */
-    padding-bottom: 10px;
     color: #111;
 }
 .nav-list {
@@ -626,7 +624,7 @@ a {
 }
 
 .sidebar h3, .sidebar h4 {
-    margin-top: 0;
+    margin-top: 15px;
     margin-bottom: 15px;
     font-weight: bold;
     font-size: 18px;
@@ -1242,7 +1240,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
 
 .campaign-container {
     width: 90%;
-    justify-content: center;  /* 수직 가운데 정렬 */
+    justify-content: left;  /* 수직 가운데 정렬 */
     align-items: center;      /* 수평 가운데 정렬 */
     display: flex;
     flex-wrap: wrap;      /* 아이템들이 줄을 넘으면 자동으로 다음 줄로 넘기기 */
@@ -1256,7 +1254,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
 .campaign-item {
   box-sizing: border-box;
   /* background: #f0f0f0; */
-  padding: 20px;
+  padding: 0px;
   text-align: center;
 }
 
@@ -1287,10 +1285,15 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
   }
 }
 
-
-
-
-
+.desktop_sidebar {
+    display: block;
+}
+.mobile_sidebar_menu {
+    display: none;
+}
+.mobile_sidebar_profile {
+    display: none;
+}
 
   .container-ask {
     max-width: 1200px;
@@ -1302,7 +1305,12 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     justify-content: center;
     align-items: center;
   }
-
+    .container_campaign {
+        display: flex;
+        gap: 40px;
+        max-width: 90%;
+        margin: 0 auto;
+    }
   .text-area {
     flex: 1 1 400px;
     min-width: 320px;
@@ -1690,14 +1698,23 @@ table.bestPayList {
 }
 
 .mypage_form {
-    max-width: 55%;
+    max-width: 54%;
     margin-top: 20px;
     margin: 20px auto;
 }
 
+.mypage_hr {
+    display: none;
+    border: none;
+    border-top: 0.5px solid #eee;
+    margin: 20px auto;
+    width: 100%;
+    margin: 20px 0; border: 0.5px solid #eee;
+}
+
 .table_container {
     float: right;
-    width: 77.5%;          /* 컨테이너 너비 설정 */
+    width: 77%;          /* 컨테이너 너비 설정 */
     display: grid;           /* 가로 나열 */
     justify-content: space-between; /* 테이블 사이 공간 균등 배분 */
     align-items: flex-start; /* 상단 정렬 */
@@ -1710,7 +1727,12 @@ table.bestPayList {
     border-collapse: collapse;
     margin: 0px auto;
 }
-
+.calendar {
+    max-width: 900px;
+    height: auto;
+    margin: 20px auto;
+    padding: 0 auto;
+}
   /* 모바일 화면 (예: 768px 이하) */
   @media (max-width: 768px) {
     .desktop-header {
@@ -1953,11 +1975,18 @@ table.bestPayList {
         margin-top: -250px;
     }
 
-    .container {
+    .container_mobile {
         flex-direction: column;
         gap: 40px;
         padding-top: 60px;
         text-align: center;
+    }
+
+    .container_campaign {
+        display: block;
+        gap: 40px;
+        max-width: 90%;
+        margin: 60px auto 0 auto;
     }
     .image-area {
         max-width: 280px;
@@ -2185,7 +2214,6 @@ table.bestPayList {
         margin-bottom: 10px;
         font-weight: 700;
         font-size: 1.1rem;
-        border-bottom: 2px solid #555;
         padding-bottom: 2px;
     }
 
@@ -2204,7 +2232,7 @@ table.bestPayList {
     }
 
     .table_container {
-        float: right;
+        float: none;
         width: 100%;          /* 컨테이너 너비 설정 */
         display: block;           /* 가로 나열 */
         justify-content: space-between; /* 테이블 사이 공간 균등 배분 */
@@ -2226,6 +2254,38 @@ table.bestPayList {
         flex-wrap: wrap;
         margin-bottom: 15px;
         align-items: center;
+    }
+
+    .desktop_sidebar {
+        display: none;
+    }
+    .mobile_sidebar_menu {
+        display: block;
+    }
+    .mobile_sidebar_profile {
+        width: 100%;
+        height: auto;
+        margin: 0 auto;
+        display: flow-root;
+    }
+
+    .mrg20_b {
+        margin-bottom: 20px;
+    }
+
+    .calendar {
+        max-width: 900px;
+        height: 455px;
+        margin: 20px auto;
+        padding: 0 auto;
+    }
+    .mypage_hr {
+        display: block;
+        border: none;
+        border-top: 0.5px solid #eee;
+        margin: 20px auto;
+        width: 100%;
+        margin: 20px 0; border: 0.5px solid #eee;
     }
 }
 

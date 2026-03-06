@@ -81,18 +81,6 @@
         transform: translateY(-5px);
         box-shadow: 0 6px 15px rgba(0,0,0,0.15);
         }
-
-
-        .card-badge {
-            background-color: #e0f2f7; /* 기본 뱃지 색상 */
-            color: #01579b;
-            font-size: 0.8em;
-            padding: 4px 8px;
-            border-radius: 4px;
-            align-self: flex-start; /* 뱃지를 왼쪽 정렬 */
-            font-weight: bold;
-        }
-        
         
         .close-btn {
             font-size: 28px;
@@ -294,33 +282,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             </div>
                         </a>
-                    <!-- </div> -->
-                </th:block>
-
-
-
-
-                <!-- <div class="campaign-container">
-                    <div class="campaign_card" th:each="item : ${closedCampaign}">
-                        <img th:src="|/img?id=${item.campaignId}|" alt="캠페인 이미지" class="card-image"/>
-                    
-                        <div class="card-info">
-                            <h3 class="card-title" th:text="${item.campaignTitle}">캠페인 제목</h3>
-                            <div class="campaign-tags">
-                                <span class="tag leader">
-                                    <span th:text="|${item.userNm}|"></span>
-                                    <span class="sub-text">인솔자</span>
-                                </span> 
-                                <span class="card-badge"
-                                th:data-app-end-date-str="${item.appPeriodEnd != null ? #temporals.format(item.appPeriodEnd, 'yyyy-MM-dd') : ''}"
-                                th:data-campaign-id="${item.campaignId}"></span>
-                            </div>
-                            <p class="card-desc">
-                                모집: <span th:text="${item.applicantsNum}"></span>/<span th:text="${item.recruitmentNum}"></span>
-                            </p>
-                        </div>
                     </div>
-                </div> -->
+                </th:block>
             </th:block>
             <th:block th:unless="${!closedCampaign.isEmpty()}">
                 <div class="no-campaign-message">

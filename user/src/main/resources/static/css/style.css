@@ -1986,7 +1986,7 @@ table.bestPayList {
         display: block;
         gap: 40px;
         max-width: 90%;
-        margin: 60px auto 0 auto;
+        margin: 60px auto auto;
     }
     .image-area {
         max-width: 280px;

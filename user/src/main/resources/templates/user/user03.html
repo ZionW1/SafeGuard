@@ -34,7 +34,7 @@
       cursor: not-allowed;
     }
     .mypage_button {
-      margin-top: 00px;
+      margin-top: 10px;
       padding: 10px 20px;
       font-size: 1.1rem;
       border: none;
@@ -44,6 +44,18 @@
       margin-right: 5px;
       cursor: pointer;
     }
+        .mypage_button_width {
+            width: 100%;
+        margin-top: 0px;
+        padding: 10px 20px;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 5px;
+        background-color: #f09a67;
+        color: white;
+        margin-right: 5px;
+        cursor: pointer;
+        }
     button:hover {
       background-color: #e28342;
     }
@@ -246,8 +258,7 @@ function execDaumPostcode() {
                             <input type="hidden" name="fullAddress" id="fullAddress" value="">
                         </div>
                         <div class="form-row">
-                            <button class="mypage_button" type="submit">저장하기</button>
-                            <button class="mypage_button" type="button" onclick="ApplyBodyguard('01')">경호원 신청하기</button>
+                            <button class="mypage_button_width" type="submit">저장하기</button>
                         </div>
                     </form>
                     <hr style="margin: 20px 0; border: 0.5px solid #eee;">
@@ -323,7 +334,6 @@ function execDaumPostcode() {
                                 </div>
                             </div>
                         </div>
-                    
                         <div th:if="${getIdentity == null && getCertificate == null}" style="margin-top: 20px;">
                             <button type="button" id="imageUploadBtnBoth" class="mypage_button">
                                 <span th:if="${getIdentity == null && getCertificate == null}">신분증 & 이수증 업로드</span>
@@ -340,6 +350,13 @@ function execDaumPostcode() {
                             </button>
                         </div>
                     </form>
+                    <hr style="margin: 20px 0; border: 0.5px solid #eee;">
+                    <div class="section">
+                        <h1>경호원 신청</h1>
+                        <div class="form-row">
+                            <button class="mypage_button_width" type="button" onclick="ApplyBodyguard('01')">경호원 신청하기</button>
+                        </div>
+                    </div>
             </div>
         </div>
     

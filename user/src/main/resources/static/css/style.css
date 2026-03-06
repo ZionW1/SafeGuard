@@ -1263,6 +1263,14 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
 .imageUploadBtn {
     margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;
 }
+
+.form-remove {
+    width: 70%;
+    display: block;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    align-items: center;
+}
 /* PC에서는 모바일 헤더 감추기 */
 @media(min-width: 768px) {
   .mobile-header,
@@ -2210,6 +2218,14 @@ table.bestPayList {
         border-collapse: collapse;
         margin: 0px auto;
         font-size: 0.99em;
+    }
+
+    .form-remove {
+        width: 100%;
+        display: block;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+        align-items: center;
     }
 }
 

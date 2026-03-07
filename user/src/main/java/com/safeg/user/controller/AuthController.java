@@ -85,6 +85,23 @@ public class AuthController {
         );
     }
 
+    @PostMapping("/sendCodeFindId")
+    public CompletableFuture<ResponseEntity<String>> sendCodeFindId(@RequestParam("phoneNumber") String phoneNumber) throws Exception {
+        log.info("sendCode " + phoneNumber);
+
+        String publicIp = new RestTemplate().getForObject("http://checkip.amazonaws.com/", String.class);
+        log.info("현재 서버의 실제 외부에 노출되는 IP: " + publicIp.trim());
+        return authService.sendAuthCode(phoneNumber)
+            .thenApply(success -> {
+                if (success) {
+                    return ResponseEntity.ok("인증번호 발송 성공");
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("문자 발송 실패");
+                }
+            }
+        );
+    }
+
     @PostMapping("/verifyCode")
     public String verifyCode(@RequestParam("phoneNumber") String phoneNumber, @RequestParam("inputCode") String code) throws Exception {
         if (authService.verifyAuthCode(phoneNumber, code)) {

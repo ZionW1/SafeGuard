@@ -7,6 +7,7 @@ import com.safeg.user.vo.UserVO;
 import com.safeg.user.vo.Users;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 public interface UserService {
 
@@ -34,5 +35,7 @@ public interface UserService {
     public List<UserVO> bestPayList() throws Exception;
 
     public boolean phoneDuplicate(String phoneNum) throws Exception;
+
+    public String findUserId(String userNm, String phoneNum) throws Exception;
 
 }

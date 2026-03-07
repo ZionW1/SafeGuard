@@ -221,4 +221,12 @@ public class UserServiceImpl implements UserService {
         log.info("isDuplicate : " + isDuplicate);
         return isDuplicate;
     }
+
+    public String findUserId(String userNm, String phoneNum) throws Exception{
+        // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
+        log.info("phoneNum : " + phoneNum + ", userNm : " + userNm);
+        String findUserId = userMapper.findUserId(userNm, phoneNum);
+        log.info("findUserId : " + findUserId);
+        return findUserId;
+    }
 }

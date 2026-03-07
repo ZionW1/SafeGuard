@@ -350,6 +350,22 @@ public class UserController {
         return "user/user06";
     }
 
+    @PostMapping("/findId")
+    @ResponseBody // JSON 응답을 위해 추가
+    public ResponseEntity<?> findIdPost(@RequestParam("userNm") String userNm, @RequestParam("phoneNum") String phoneNumber, HttpServletRequest request) throws Exception {
+        log.info("아이디 찾기 요청: 이름={}, 번호={}", userNm, phoneNumber);
+        // // 2. 유효성 검사 에러 처리
+        
+        String userId = userService.findUserId(userNm, phoneNumber);
+        
+        if (userId != null) {
+                return ResponseEntity.ok(Map.of("success", userId));
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(Map.of("success", false, "message", "아이디 찾는 중 오류가 발생했습니다."));
+    }
+
     // public boolean isPhoneNumberDuplicate(String phoneNumber) {
     //     // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
     //     return userMapper.existsByPhoneNumber(phoneNumber); 

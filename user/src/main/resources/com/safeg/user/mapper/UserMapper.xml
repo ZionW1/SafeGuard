@@ -181,10 +181,19 @@
     <![CDATA[
     SELECT IF(COUNT(*) > 0, TRUE, FALSE) AS is_Duplicate
     FROM user
-    WHERE phone_num = #{phoneNum};
+    WHERE phone_num = #{phoneNum}
     ]]>
     <!-- SELECT 
     CONCAT(LEFT(phone, 3), '-****-', RIGHT(phone, 4)) AS masked_phone
 FROM member; -->
+    </select>
+
+    <select id="findUserId" resultType="String">
+        SELECT 
+            CONCAT(LEFT(user_id, 3), REPEAT('*', CHAR_LENGTH(user_id) - 3)) AS masked_id
+        FROM user
+        WHERE REPLACE(phone_num, '-', '') = #{phoneNum}
+        AND user_nm = #{userNm}
+        LIMIT 1
     </select>
 </mapper>

@@ -11,15 +11,19 @@
 <body>
     <div class="login-box">
         <h1>로그인</h1>
-        <form action="/login" id="loginForm" method="post">
+        <form id="loginForm" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
             <div class="form-group">
             <input type="text" name="userNm" id="userNm" placeholder="이름" required />
         </div>
         <div class="form-group phone-group">
-                <input type="text" id="phoneNumber" name="phoneNumber" placeholder="01012345678" required pattern="\d{10,11}" />
+                <input type="text" id="phoneNum" name="phoneNum" placeholder="01012345678" required pattern="\d{10,11}" />
                 <button type="button" id="sendBtn">인증번호 발송</button>
+        </div>
+
+        <div class="form-group phone-group hidden">
+            <input type="text" id="userId" name="userId" placeholder="01012345678" required pattern="\d{10,11}" />
         </div>
         <div class="form-group auth-group hidden" id="authCodeGroup">
             <div id="authSection">
@@ -29,7 +33,7 @@
             </div>
             <p id="resultMessage"></p>
         </div>
-            <button type="submit">아이디 찾기</button>
+            <button type="submit" id="findIdButton">아이디 찾기</button>
         
         
             <div class="links">
@@ -89,7 +93,7 @@
         const sendBtn = document.getElementById('sendBtn');
         const authCodeGroup = document.getElementById('authCodeGroup');
         const authSection = document.getElementById('authSection');
-        const phoneInput = document.getElementById('phoneNumber');
+        const phoneInput = document.getElementById('phoneNum');
         const authCodeInput = document.getElementById('authCode');
         const verifyBtn = document.getElementById('verifyBtn');
         const timerDisplay = document.getElementById('timer');
@@ -149,40 +153,40 @@
     // });
     
         sendBtn.addEventListener('click', function() {
-            const phoneNumber = document.getElementById('phoneNumber').value;
+            const phoneNumber = document.getElementById('phoneNum').value;
     
             if(!phoneNumber) {
                 alert("번호를 입력해주세요.");
                 return;
             }
             
-            fetch('/auth/sendCode', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    ...requestHeaders  // 반드시 객체 병합 형태로 추가
-                },
-                credentials: 'include',  // 이 옵션이 중요합니다!
-                body: new URLSearchParams({ phoneNumber: phoneNumber })
-            })
-            .then(response => response.text()) // json() 대신 text()로 받기
-            .then(data => {
-                console.log("서버 응답 데이터:", data);
+            // fetch('/auth/sendCodeFindId', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/x-www-form-urlencoded',
+            //         ...requestHeaders  // 반드시 객체 병합 형태로 추가
+            //     },
+            //     credentials: 'include',  // 이 옵션이 중요합니다!
+            //     body: new URLSearchParams({ phoneNumber: phoneNumber })
+            // })
+            // .then(response => response.text()) // json() 대신 text()로 받기
+            // .then(data => {
+            //     console.log("서버 응답 데이터:", data);
                 
-                // 서버에서 리턴한 문자열에 '성공'이라는 글자가 포함되어 있는지 확인
-                if (data.includes("성공") || data === "Test OK") {
-                    resultMessage.style.color = 'blue';
-                    resultMessage.textContent = '인증번호가 발송되었습니다.';
-                    startTimer(); 
-                } else {
-                    resultMessage.style.color = 'red';
-                    resultMessage.textContent = '발송 실패: ' + data;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                resultMessage.textContent = '서버와 통신 중 오류가 발생했습니다.';
-            });
+            //     // 서버에서 리턴한 문자열에 '성공'이라는 글자가 포함되어 있는지 확인
+            //     if (data.includes("성공") || data === "Test OK") {
+            //         resultMessage.style.color = 'blue';
+            //         resultMessage.textContent = '인증번호가 발송되었습니다.';
+            //         startTimer(); 
+            //     } else {
+            //         resultMessage.style.color = 'red';
+            //         resultMessage.textContent = '발송 실패: ' + data;
+            //     }
+            // })
+            // .catch(error => {
+            //     console.error('Error:', error);
+            //     resultMessage.textContent = '서버와 통신 중 오류가 발생했습니다.';
+            // });
         });
     
         let timeLeft = 180; // 3분
@@ -210,7 +214,7 @@
         // 인증확인 버튼 클릭 이벤트
         document.getElementById('verifyBtn').addEventListener('click', () => {
             const inputCode = document.getElementById('authCode').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
+            const phoneNumber = document.getElementById('phoneNum').value;
             fetch('/auth/verifyCode', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...requestHeaders },
@@ -224,7 +228,7 @@
                     clearInterval(timerInterval);
                     resultMessage.textContent = "인증되었습니다.";
                     // 추가로 인증번호 입력창과 버튼을 비활성화하거나 숨길 수도 있습니다.
-                    document.getElementById('phoneNumber').disabled = true;
+                    document.getElementById('phoneNum').disabled = true;
                     // document.getElementById('sendCode').disabled = true;
                     document.getElementById('authCode').disabled = true;
                     document.getElementById('verifyBtn').disabled = true;
@@ -235,17 +239,43 @@
         });
     
         function togglePasswordVisibility(fieldId) {
-                const passwordField = document.getElementById(fieldId);
-                const toggleButton = passwordField.nextElementSibling; // 바로 다음 형제 요소 (👁️ 버튼)
-    
-                if (passwordField.type === "password") {
-                    passwordField.type = "text"; // 비밀번호 보이게
-                    toggleButton.textContent = "🔒"; // 아이콘 변경 (선택 사항)
-                } else {
-                    passwordField.type = "password"; // 비밀번호 숨기게
-                    toggleButton.textContent = "👁️"; // 아이콘 변경 (선택 사항)
-                }
+            const passwordField = document.getElementById(fieldId);
+            const toggleButton = passwordField.nextElementSibling; // 바로 다음 형제 요소 (👁️ 버튼)
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text"; // 비밀번호 보이게
+                toggleButton.textContent = "🔒"; // 아이콘 변경 (선택 사항)
+            } else {
+                passwordField.type = "password"; // 비밀번호 숨기게
+                toggleButton.textContent = "👁️"; // 아이콘 변경 (선택 사항)
             }
+        }
+
+        const findIdButton = document.getElementById("findIdButton");
+        findIdButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const userNm = document.getElementById('userNm').value;
+            const phoneNumber = document.getElementById('phoneNum').value;
+
+            const params = new URLSearchParams();
+            params.append('userNm', userNm);
+
+            params.append('phoneNum', phoneNumber); // 자바의 @RequestParam("phoneNum")과 일치
+            fetch('/findId', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...requestHeaders },
+                body: params
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.success);
+                document.getElementById('userId').parentElement.style.display = 'block';
+                document.getElementById('userId').value = data.success;
+                document.getElementById('userId').readOnly = true;
+                document.getElementById('userId').style.backgroundColor = "#e9ecef"; // 회색조로 변경
+                document.getElementById('userId').style.cursor = "not-allowed";      // 금지 아이콘 표시
+            });
+        });
     </script>
 </body>
 </html>

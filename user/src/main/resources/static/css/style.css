@@ -1733,6 +1733,7 @@ table.bestPayList {
     margin: 20px auto;
     padding: 0 auto;
 }
+
   /* 모바일 화면 (예: 768px 이하) */
   @media (max-width: 768px) {
     .desktop-header {

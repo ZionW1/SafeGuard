@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.safeg.user.vo.UserAuth;
 import com.safeg.user.vo.UserVO;
@@ -38,4 +39,6 @@ public interface UserMapper {
     public Long getReferrerNoById(Long userNo) throws Exception;
 
     public boolean phoneDuplicate(String phoneNumber) throws Exception;
+
+    public String findUserId(@Param("userNm") String userNm, @Param("phoneNum") String phoneNum) throws Exception;
 }

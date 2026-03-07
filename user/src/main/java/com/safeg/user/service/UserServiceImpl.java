@@ -214,4 +214,11 @@ public class UserServiceImpl implements UserService {
         return bestPayList;
     }
     
+    @Override
+    public boolean phoneDuplicate(String phoneNumber) throws Exception{
+        // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
+        boolean isDuplicate = userMapper.phoneDuplicate(phoneNumber); 
+        log.info("isDuplicate : " + isDuplicate);
+        return isDuplicate;
+    }
 }

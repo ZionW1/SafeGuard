@@ -5,8 +5,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -104,79 +108,45 @@ public class UserController {
      * @throws Exception
      */
     @PostMapping("/user02")
-    public String joinPost(@Valid @ModelAttribute("userVO") UserVO userVO, BindingResult bindingResult, HttpServletRequest request) throws Exception {
-        log.info(":::::::::: 회원 가입 처리 ::::::::::");
-        log.info("user : " + userVO);
-        log.info("getreferrerId : " + userVO.getReferrerId());
+    @ResponseBody // JSON 응답을 위해 추가
+    public ResponseEntity<?> joinPost(@Valid @ModelAttribute("userVO") UserVO userVO, BindingResult bindingResult, HttpServletRequest request) throws Exception {
+        log.info(":::::::::: 회원 가입 처리 (Async) :::::::::: " + userVO);
 
+        // 1. 비밀번호 일치 확인
         if (!userVO.isPasswordConfirmed()) {
-            log.info("비밀번호 불일치 (평문 비교) + " + userVO.isPasswordConfirmed());
             bindingResult.rejectValue("passwordConfirm", "password.mismatch", "비밀번호가 일치하지 않습니다.");
         }
 
+        // 2. 유효성 검사 에러 처리
         if (bindingResult.hasErrors()) {
-            log.info("bindingResult.hasErrors");
-            return "user/user02";
+            // 모든 에러 메시지를 수집하여 반환
+            List<String> errors = bindingResult.getFieldErrors().stream()
+                    .map(e -> e.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ResponseEntity.badRequest().body(Map.of("success", false, "errors", errors));
         }
 
+        // 3. 비밀번호 암호화 및 저장
         String rawPassword = userVO.getPassword();
-        String encodedPassword = passwordEncoder.encode(rawPassword);
+        userVO.setPassword(passwordEncoder.encode(rawPassword));
         
-        userVO.setPassword(encodedPassword);
-        
-        // 회원가입 DB 저장
         int result = userService.join(userVO);
         
-        boolean loginResult = false;
-        
         if (result > 0) {
-            // 로그인용 객체에 평문 비밀번호 세팅 (userVO를 새로 만들거나 복사해도 좋음)
+            // 4. 자동 로그인 시도
             UserVO loginUser = new UserVO();
             loginUser.setUserId(userVO.getUserId());
-            loginUser.setPassword(rawPassword);  // 반드시 평문 비밀번호 사용
-        
-            loginResult = userService.login(loginUser, request);
-        }
-        
-            log.info("loginResult + " + loginResult);
-
-
-
-
-
-
-        // String rawPasswordToEncode = userVO.getPassword(); // 평문 비밀번호 가져오기
-        // String encodedPassword = passwordEncoder.encode(rawPasswordToEncode); // BCrypt로 암호화
-        // log.info("rawPasswordToEncode" + rawPasswordToEncode);
-
-        // userVO.setPassword(encodedPassword);
-        // // 암호화 전 비밀번호
-        // String plainPassword = userVO.getPassword();
-
-        // log.info(":::::::::: 어드민 가입 처리 최종 (암호화 후) :::::::::: Password=" + userVO.getPassword());
-
-        // // // 회원 가입 요청
-        // int result = userService.join(userVO);
-
-        // // // 회원 가입 성공 시, 바로 로그인
-        // boolean loginResult = false;
-        
-        // if( result > 0 ) {
-        //     // 암호화 전 비밀번호 다시 세팅
-        //     // 회원가입 시, 비밀번호 암호화하기 때문에, 
-        //     userVO.setPassword(plainPassword);
-
-        //     log.info("plainPassword : " + plainPassword);
-        //     loginResult = userService.login(userVO, request);
-        //     log.info("loginResult + " + loginResult);
-
-        // }
-        if (loginResult){
-            return "redirect:/"; // 메인 화면으로 이동
+            loginUser.setPassword(rawPassword);
+            
+            boolean loginResult = userService.login(loginUser, request);
+            
+            if (loginResult) {
+                return ResponseEntity.ok(Map.of("success", true, "url", "/"));
+            }
         }
 
-        return "redirect:/join?error";
-        
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(Map.of("success", false, "message", "회원가입 처리 중 오류가 발생했습니다."));
     }
 
     @GetMapping("/mypage")
@@ -371,5 +341,17 @@ public class UserController {
 
     }
 
-    
+    @GetMapping("/findId")
+    public String findId(Model model) {
+        log.info(":::::::::: 아이디 찾기 화면 ::::::::::");
+
+        model.addAttribute("userVO", new UserVO());
+
+        return "user/user06";
+    }
+
+    // public boolean isPhoneNumberDuplicate(String phoneNumber) {
+    //     // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
+    //     return userMapper.existsByPhoneNumber(phoneNumber); 
+    // }
 }

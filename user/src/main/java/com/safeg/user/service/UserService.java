@@ -33,4 +33,6 @@ public interface UserService {
 
     public List<UserVO> bestPayList() throws Exception;
 
+    public boolean phoneDuplicate(String phoneNum) throws Exception;
+
 }

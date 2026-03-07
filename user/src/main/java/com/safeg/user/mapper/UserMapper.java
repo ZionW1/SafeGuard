@@ -36,4 +36,6 @@ public interface UserMapper {
     public Long getReferrerNo(UserVO userVo) throws Exception;
 
     public Long getReferrerNoById(Long userNo) throws Exception;
+
+    public boolean phoneDuplicate(String phoneNumber) throws Exception;
 }

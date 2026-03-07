@@ -185,4 +185,6 @@ public class UserVO {
 
     private String type;
 
+    private boolean isDuplicate;
+
 }

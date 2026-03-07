@@ -139,7 +139,7 @@
         ORDER BY
             count DESC,
             u.id ASC
-        LIMIT 10;
+        LIMIT 10
     </select>
 
     <select id="bestPayList" resultType="UserVO">
@@ -156,7 +156,7 @@
         ORDER BY
             pay desc,
             user_id asc
-        LIMIT 10;
+        LIMIT 10
     </select>
     
     <select id="getReferrerNo" resultType="Long">
@@ -175,5 +175,16 @@
             user 
         WHERE
             id = #{userNo}
+    </select>
+
+    <select id="phoneDuplicate" resultType="boolean">
+    <![CDATA[
+    SELECT IF(COUNT(*) > 0, TRUE, FALSE) AS is_Duplicate
+    FROM user
+    WHERE phone_num = #{phoneNum};
+    ]]>
+    <!-- SELECT 
+    CONCAT(LEFT(phone, 3), '-****-', RIGHT(phone, 4)) AS masked_phone
+FROM member; -->
     </select>
 </mapper>

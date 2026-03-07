@@ -359,7 +359,7 @@ public class UserController {
         String userId = userService.findUserId(userNm, phoneNumber);
         
         if (userId != null) {
-                return ResponseEntity.ok(Map.of("success", userId));
+                return ResponseEntity.ok(Map.of("success", true, "userId", userId));
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

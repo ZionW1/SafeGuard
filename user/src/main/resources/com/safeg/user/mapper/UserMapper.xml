@@ -190,7 +190,8 @@ FROM member; -->
 
     <select id="findUserId" resultType="String">
         SELECT 
-            CONCAT(LEFT(user_id, 3), REPEAT('*', CHAR_LENGTH(user_id) - 3)) AS masked_id
+            <!-- CONCAT(LEFT(user_id, 3), REPEAT('*', CHAR_LENGTH(user_id) - 3)) AS masked_id -->
+            user_id
         FROM user
         WHERE REPLACE(phone_num, '-', '') = #{phoneNum}
         AND user_nm = #{userNm}

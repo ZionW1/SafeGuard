@@ -25,15 +25,16 @@
         <div class="form-group phone-group hidden">
             <input type="text" id="userId" name="userId" placeholder="01012345678" required pattern="\d{10,11}" />
         </div>
-        <div class="form-group auth-group hidden" id="authCodeGroup">
+        <div class="form-group auth-group phone-group hidden" id="authCodeGroup">
             <div id="authSection">
-                <input type="text" id="authCode" placeholder="인증번호 6자리 입력">
+                <input class="mrg-top10" type="text" id="authCode" placeholder="인증번호 6자리 입력">
                 <span id="timer">03:00</span>
                 <button type="button" id="verifyBtn">인증확인</button>
             </div>
-            <p id="resultMessage"></p>
         </div>
-            <button type="submit" id="findIdButton">아이디 찾기</button>
+        <p class="hidden" id="resultMessage"></p>
+
+            <button type="submit" id="findIdButton" class="mrg-top10">아이디 찾기</button>
         
         
             <div class="links">
@@ -51,42 +52,6 @@
         </form>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- <script th:inline="javascript">
-        const loginForm = document.getElementById('loginForm');
-        loginForm.addEventListener('submit', (e) => {
-            const rememberMeChecked = document.getElementById('remember-me-check').checked;
-
-            e.preventDefault();
-
-            const formData = new URLSearchParams();
-            formData.append('userId', document.getElementById('userId').value);
-            formData.append('password', document.getElementById('password').value);
-            // 또는 체크박스가 선택되었을 때만 보낼 수도 있어요.
-            if (rememberMeChecked) {
-                formData.append('remember-me', 'on');
-            }
-            fetch('/login', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
-                },
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => { throw new Error(data.error); });
-                }
-                // 성공 시 바로 이동
-                window.location.href = '/';
-            })
-            .catch(err => {
-                alert(err.message);
-            });
-        });
-    </script> -->
-
-
     <script th:inline="javascript">
         const form = document.getElementById('smsForm');
         const resultMessage = document.getElementById('resultMessage');
@@ -107,51 +72,7 @@
         if (csrfHeader && csrfToken) {
             requestHeaders[csrfHeader] = csrfToken;
         }
-    
-        // 기존 joinButton click 리스너를 submit 리스너로 변경하는 것이 좋습니다.
-    // const registerForm = document.getElementById('registerForm');
-    
-    // registerForm.addEventListener('submit', function(e) {
-    //     e.preventDefault(); // 폼 전송 막기
-    
-    //     // 1. 인증 여부 확인
-    //     if (typeof verifyBtnCode === 'undefined' || verifyBtnCode === false) {
-    //         alert("인증번호 입력 후 가입해주세요.");
-    //         return;
-    //     }
-    
-    //     // 2. FormData 생성
-    //     const formData = new URLSearchParams(new FormData(registerForm));
-    
-    //     // 3. Fetch 전송
-    //     fetch('/user02', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/x-www-form-urlencoded',
-    //             [csrfHeader]: csrfToken // 상단에서 정의한 CSRF 변수 사용
-    //         },
-    //         body: formData
-    //     })
-    //     .then(response => response.json()) // 응답을 JSON으로 파싱
-    //     .then(data => {
-    //         if (data.success) {
-    //             alert("회원가입 및 로그인이 완료되었습니다!");
-    //             window.location.href = data.url; // 메인으로 리다이렉트
-    //         } else {
-    //             // 에러 처리
-    //             if (data.errors) {
-    //                 alert("입력 정보를 확인해주세요:\n" + data.errors.join("\n"));
-    //             } else {
-    //                 alert(data.message || "회원가입에 실패했습니다.");
-    //             }
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error('Error:', error);
-    //         alert("서버 통신 중 오류가 발생했습니다.");
-    //     });
-    // });
-    
+        
         sendBtn.addEventListener('click', function() {
             const phoneNumber = document.getElementById('phoneNum').value;
     
@@ -160,33 +81,38 @@
                 return;
             }
             
-            // fetch('/auth/sendCodeFindId', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/x-www-form-urlencoded',
-            //         ...requestHeaders  // 반드시 객체 병합 형태로 추가
-            //     },
-            //     credentials: 'include',  // 이 옵션이 중요합니다!
-            //     body: new URLSearchParams({ phoneNumber: phoneNumber })
-            // })
-            // .then(response => response.text()) // json() 대신 text()로 받기
-            // .then(data => {
-            //     console.log("서버 응답 데이터:", data);
-                
-            //     // 서버에서 리턴한 문자열에 '성공'이라는 글자가 포함되어 있는지 확인
-            //     if (data.includes("성공") || data === "Test OK") {
-            //         resultMessage.style.color = 'blue';
-            //         resultMessage.textContent = '인증번호가 발송되었습니다.';
-            //         startTimer(); 
-            //     } else {
-            //         resultMessage.style.color = 'red';
-            //         resultMessage.textContent = '발송 실패: ' + data;
-            //     }
-            // })
-            // .catch(error => {
-            //     console.error('Error:', error);
-            //     resultMessage.textContent = '서버와 통신 중 오류가 발생했습니다.';
-            // });
+            fetch('/auth/sendCodeFindId', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    ...requestHeaders  // 반드시 객체 병합 형태로 추가
+                },
+                credentials: 'include',  // 이 옵션이 중요합니다!
+                body: new URLSearchParams({ phoneNumber: phoneNumber })
+            })
+            .then(response => response.text()) // json() 대신 text()로 받기
+            .then(data => {
+                console.log("서버 응답 데이터:", data);
+                // 서버에서 리턴한 문자열에 '성공'이라는 글자가 포함되어 있는지 확인
+                if (data.includes("성공") || data === "Test OK") {
+                    resultMessage.style.color = 'blue';
+                    resultMessage.textContent = '인증번호가 발송되었습니다.';
+                    document.getElementById('resultMessage').style.display = 'block';
+                    startTimer(); 
+                } else {
+                    resultMessage.style.color = 'red';
+                    resultMessage.textContent = '발송 실패: ' + data;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultMessage.textContent = '서버와 통신 중 오류가 발생했습니다.';
+            });
+
+            // resultMessage.style.color = 'blue';
+            // resultMessage.textContent = '인증번호가 발송되었습니다.';
+            // document.getElementById('resultMessage').style.display = 'block';
+            // startTimer();
         });
     
         let timeLeft = 180; // 3분
@@ -237,19 +163,6 @@
                 }
             });
         });
-    
-        function togglePasswordVisibility(fieldId) {
-            const passwordField = document.getElementById(fieldId);
-            const toggleButton = passwordField.nextElementSibling; // 바로 다음 형제 요소 (👁️ 버튼)
-
-            if (passwordField.type === "password") {
-                passwordField.type = "text"; // 비밀번호 보이게
-                toggleButton.textContent = "🔒"; // 아이콘 변경 (선택 사항)
-            } else {
-                passwordField.type = "password"; // 비밀번호 숨기게
-                toggleButton.textContent = "👁️"; // 아이콘 변경 (선택 사항)
-            }
-        }
 
         const findIdButton = document.getElementById("findIdButton");
         findIdButton.addEventListener('click', (e) => {
@@ -257,9 +170,13 @@
             const userNm = document.getElementById('userNm').value;
             const phoneNumber = document.getElementById('phoneNum').value;
 
+            if (typeof verifyBtnCode === 'undefined' || verifyBtnCode === false) {
+                alert("인증 확인 후 ID 찾아주세요.");
+                return;
+            }
+
             const params = new URLSearchParams();
             params.append('userNm', userNm);
-
             params.append('phoneNum', phoneNumber); // 자바의 @RequestParam("phoneNum")과 일치
             fetch('/findId', {
                 method: 'POST',
@@ -268,12 +185,14 @@
             })
             .then(res => res.json())
             .then(data => {
-                alert(data.success);
-                document.getElementById('userId').parentElement.style.display = 'block';
-                document.getElementById('userId').value = data.success;
-                document.getElementById('userId').readOnly = true;
-                document.getElementById('userId').style.backgroundColor = "#e9ecef"; // 회색조로 변경
-                document.getElementById('userId').style.cursor = "not-allowed";      // 금지 아이콘 표시
+                console.log("data : " + JSON.stringify(data));
+                if(data.success == true){
+                    document.getElementById('userId').parentElement.style.display = 'block';
+                    document.getElementById('userId').value = data.userId;
+                    document.getElementById('userId').readOnly = true;
+                    document.getElementById('userId').style.backgroundColor = "#e9ecef"; // 회색조로 변경
+                    document.getElementById('userId').style.cursor = "not-allowed";      // 금지 아이콘 표시
+                }
             });
         });
     </script>

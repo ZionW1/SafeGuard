@@ -140,6 +140,8 @@
             uc.status = '2'
         WHERE
             u.role = 'USER'
+        OR
+            u.role = 'LEADER'
         GROUP BY
             u.id, u.user_nm, u.email
         ORDER BY

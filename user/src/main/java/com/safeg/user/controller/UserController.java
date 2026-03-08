@@ -366,6 +366,15 @@ public class UserController {
                             .body(Map.of("success", false, "message", "아이디 찾는 중 오류가 발생했습니다."));
     }
 
+    @GetMapping("/findPassword")
+    public String findPassword(Model model) {
+        log.info(":::::::::: 비밀번호 재등록 화면 ::::::::::");
+
+        model.addAttribute("userVO", new UserVO());
+
+        return "user/user07";
+    }
+
     // public boolean isPhoneNumberDuplicate(String phoneNumber) {
     //     // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
     //     return userMapper.existsByPhoneNumber(phoneNumber); 

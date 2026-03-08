@@ -100,50 +100,6 @@
         requestHeaders[csrfHeader] = csrfToken;
     }
 
-    // 기존 joinButton click 리스너를 submit 리스너로 변경하는 것이 좋습니다.
-const registerForm = document.getElementById('registerForm');
-
-registerForm.addEventListener('submit', function(e) {
-    e.preventDefault(); // 폼 전송 막기
-
-    // 1. 인증 여부 확인
-    if (typeof verifyBtnCode === 'undefined' || verifyBtnCode === false) {
-        alert("인증 확인 후 가입해주세요.");
-        return;
-    }
-
-    // 2. FormData 생성
-    const formData = new URLSearchParams(new FormData(registerForm));
-
-    // 3. Fetch 전송
-    fetch('/user02', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            [csrfHeader]: csrfToken // 상단에서 정의한 CSRF 변수 사용
-        },
-        body: formData
-    })
-    .then(response => response.json()) // 응답을 JSON으로 파싱
-    .then(data => {
-        if (data.success) {
-            alert("회원가입 및 로그인이 완료되었습니다!");
-            window.location.href = data.url; // 메인으로 리다이렉트
-        } else {
-            // 에러 처리
-            if (data.errors) {
-                alert("입력 정보를 확인해주세요:\n" + data.errors.join("\n"));
-            } else {
-                alert(data.message || "회원가입에 실패했습니다.");
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert("서버 통신 중 오류가 발생했습니다.");
-    });
-});
-
 sendBtn.addEventListener('click', function() {
     const phoneNumber = document.getElementById('phoneNum').value;
 
@@ -262,6 +218,50 @@ sendBtn.addEventListener('click', function() {
                 toggleButton.textContent = "👁️"; // 아이콘 변경 (선택 사항)
             }
         }
+
+
+    // 기존 joinButton click 리스너를 submit 리스너로 변경하는 것이 좋습니다.
+const registerForm = document.getElementById('registerForm');
+registerForm.addEventListener('submit', function(e) {
+    e.preventDefault(); // 폼 전송 막기
+
+    // 1. 인증 여부 확인
+    if (typeof verifyBtnCode === 'undefined' || verifyBtnCode === false) {
+        alert("인증 확인 후 가입해주세요.");
+        return;
+    }
+
+    // 2. FormData 생성
+    const formData = new URLSearchParams(new FormData(registerForm));
+
+    // 3. Fetch 전송
+    fetch('/user02', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            [csrfHeader]: csrfToken // 상단에서 정의한 CSRF 변수 사용
+        },
+        body: formData
+    })
+    .then(response => response.json()) // 응답을 JSON으로 파싱
+    .then(data => {
+        if (data.success) {
+            alert("회원가입 및 로그인이 완료되었습니다!");
+            window.location.href = data.url; // 메인으로 리다이렉트
+        } else {
+            // 에러 처리
+            if (data.errors) {
+                alert("입력 정보를 확인해주세요:\n" + data.errors.join("\n"));
+            } else {
+                alert(data.message || "회원가입에 실패했습니다.");
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("서버 통신 중 오류가 발생했습니다.");
+    });
+});
 </script>
 </body>
 </html>

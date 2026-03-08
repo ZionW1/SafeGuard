@@ -30,6 +30,8 @@ public interface UserMapper {
 
     public int totalUser() throws Exception;
 
+    public int totalGuard() throws Exception;
+
     public List<UserVO> bestAgentList() throws Exception;
 
     public List<UserVO> bestPayList() throws Exception;
@@ -41,4 +43,5 @@ public interface UserMapper {
     public boolean phoneDuplicate(String phoneNumber) throws Exception;
 
     public String findUserId(@Param("userNm") String userNm, @Param("phoneNum") String phoneNum) throws Exception;
+
 }

@@ -25,10 +25,12 @@ public interface UserService {
 
     // 회원 권한 등록
     public int insertAuth(UserAuth userAuth) throws Exception;
-    
+
     public boolean updateProfile(UserVO userVo) throws Exception;
 
     public int totalUser() throws Exception;
+
+    public int totalGuard() throws Exception;
 
     public List<UserVO> bestAgentList() throws Exception;
 

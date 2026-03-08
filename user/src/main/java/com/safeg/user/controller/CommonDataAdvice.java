@@ -27,9 +27,11 @@ public class CommonDataAdvice {
         CommonData data = new CommonData();
         try {
             int totalUsers = userService.totalUser();
+            int totalGuard = userService.totalGuard();
             int totalCampaign = mainService.totalCampaign();
             
             data.setTotalUser(totalUsers);
+            data.setTotalGuard(totalGuard);
             data.setTotalCampaign(totalCampaign);
             
             log.info("CommonData successfully prepared: {}", data);

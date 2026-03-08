@@ -201,6 +201,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int totalGuard() throws Exception {
+        // TODO Auto-generated method stub
+        int result = userMapper.totalGuard();
+
+        return result;
+    }
+
+    @Override
     public List<UserVO> bestAgentList() throws Exception {
         // TODO Auto-generated method stub
         List<UserVO> bestAgentList = userMapper.bestAgentList();

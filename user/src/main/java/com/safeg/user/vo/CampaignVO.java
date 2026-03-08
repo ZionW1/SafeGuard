@@ -62,7 +62,8 @@ public class CampaignVO {
     private String leaderName; // 인솔자 이름
     private String leaderPhone; // 인솔자 연락처
     private String leaderNo; // 인솔자 번호
-    
+    private int campaignPay;
+
     private MultipartFile fileName;    // 파일명
     private String phoneNum;
     private MultipartFile image; // 첨부 파일 목록

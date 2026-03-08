@@ -14,6 +14,7 @@ public class CommonData {
     public static final String USER_PROFILE_IMAGE_PATH = "/uploads/profiles/";
     
     private int totalUser;
+    private int totalGuard;
     private int totalCampaign;
     private int totalReview;
     private int totalDonation;

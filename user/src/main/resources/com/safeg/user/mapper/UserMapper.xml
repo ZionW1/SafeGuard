@@ -118,7 +118,11 @@
     
 
     <select id="totalUser" resultType="int">
-        SELECT COUNT(*) FROM user
+        SELECT COUNT(*) FROM user WHERE role = 'USER'
+    </select>
+
+    <select id="totalGuard" resultType="int">
+        SELECT COUNT(*) FROM user WHERE role = 'LEADER'
     </select>
 
     <select id="bestAgentList" resultType="UserVO">
@@ -132,6 +136,8 @@
             user_campaign uc 
         ON 
             u.user_id = uc.user_id
+        AND
+            uc.status = '2'
         WHERE
             u.role = 'USER'
         GROUP BY

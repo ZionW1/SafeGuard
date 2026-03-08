@@ -481,6 +481,11 @@
             <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
             <h1 th:text="${campaignSelect.campaignTitle}"></h1>
         </div>
+
+        <div class="campaignTitle">
+            <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
+            급여 : <span th:text="${campaignSelect.campaignPay}"></ㄴ>
+        </div>
         
         <div class="image-row">
             <img id="imgFile" style="margin: 0 auto" th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" width="480" height="320" class=""/><br>

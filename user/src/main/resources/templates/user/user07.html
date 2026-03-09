@@ -64,7 +64,7 @@
         const verifyBtn = document.getElementById('verifyBtn');
         const timerDisplay = document.getElementById('timer');
         const joinButton = document.getElementById('joinButton');
-        let verifyBtnCode = true; // 인증번호 확인 버튼 클릭 여부를 추적하는 변수
+        let verifyBtnCode = false; // 인증번호 확인 버튼 클릭 여부를 추적하는 변수
         const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
         const csrfToken = /*[[${_csrf.token}]]*/ '';
     
@@ -194,6 +194,14 @@
                 if(data.success == true){
                     alert("비밀번호 변경이 성공 되었습니다.\n로그인 페이지로 이동합니다.")
                     window.history.back();
+                }
+                else {
+                    if(data.success == false) {
+                        alert("정보가 맞지 않습니다.\n확인 후 다시 시도 해주세요.")
+                    } else {
+                        alert(data.errors);
+                    }
+                    
                 }
             })
             .catch(error => {

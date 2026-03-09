@@ -385,7 +385,7 @@ public class UserController {
             bindingResult.rejectValue("passwordConfirm", "password.mismatch", "비밀번호가 일치하지 않습니다.");
         }
         log.info("phone Num + " + userVO.getPhoneNum());
-        
+
         // 2. 유효성 검사 에러 처리
         if (bindingResult.hasErrors()) {
             // 모든 에러 메시지를 수집하여 반환
@@ -401,16 +401,7 @@ public class UserController {
         int result = userService.reRegPw(userVO);
         
         if (result > 0) {
-            // 4. 자동 로그인 시도
-            UserVO loginUser = new UserVO();
-            loginUser.setUserId(userVO.getUserId());
-            loginUser.setPassword(rawPassword);
-            
-            boolean loginResult = userService.login(loginUser, request);
-            
-            if (loginResult) {
                 return ResponseEntity.ok(Map.of("success", true));
-            }
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

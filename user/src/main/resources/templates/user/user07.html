@@ -154,7 +154,7 @@
                     clearInterval(timerInterval);
                     resultMessage.textContent = "인증되었습니다.";
                     // 추가로 인증번호 입력창과 버튼을 비활성화하거나 숨길 수도 있습니다.
-                    document.getElementById('phoneNum').disabled = true;
+                    document.getElementById('phoneNum').readOnly = true;
                     // document.getElementById('sendCode').disabled = true;
                     document.getElementById('authCode').disabled = true;
                     document.getElementById('verifyBtn').disabled = true;

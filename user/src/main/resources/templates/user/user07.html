@@ -22,10 +22,6 @@
                 <input type="text" id="phoneNum" name="phoneNum" placeholder="-없이 숫자만 입력해주세요." required pattern="\d{10,11}" />
                 <button type="button" id="sendBtn">인증번호 발송</button>
             </div>
-
-            <div class="form-group phone-group hidden">
-                <!-- <input type="text" id="userId" name="userId" placeholder="01012345678" required pattern="\d{10,11}" /> -->
-            </div>
             <div class="form-group auth-group phone-group hidden" id="authCodeGroup">
                 <div id="authSection">
                     <input class="mrg-top10" type="text" id="authCode" placeholder="인증번호 6자리 입력">
@@ -198,11 +194,6 @@
                 if(data.success == true){
                     alert("비밀번호 변경이 성공 되었습니다.\n로그인 페이지로 이동합니다.")
                     window.history.back();
-                    // document.getElementById('userId').parentElement.style.display = 'block';
-                    // document.getElementById('userId').value = data.userId;
-                    // document.getElementById('userId').readOnly = true;
-                    // document.getElementById('userId').style.backgroundColor = "#e9ecef"; // 회색조로 변경
-                    // document.getElementById('userId').style.cursor = "not-allowed";      // 금지 아이콘 표시
                 }
             })
             .catch(error => {

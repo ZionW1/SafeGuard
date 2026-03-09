@@ -92,6 +92,10 @@ public class SecurityConfig {
                 // .logoutSuccessHandler("null") // 로그아웃 성공 처리자 설정
         );
 
+        http.requiresChannel(channel -> 
+            channel.anyRequest().requiresSecure() // 모든 요청에 대해 보안 연결(HTTPS)을 강제함
+        );
+
         return http.build();
         
     }

@@ -384,7 +384,8 @@ public class UserController {
         if (!userVO.isPasswordConfirmed()) {
             bindingResult.rejectValue("passwordConfirm", "password.mismatch", "비밀번호가 일치하지 않습니다.");
         }
-
+        log.info("phone Num + " + userVO.getPhoneNum());
+        
         // 2. 유효성 검사 에러 처리
         if (bindingResult.hasErrors()) {
             // 모든 에러 메시지를 수집하여 반환

@@ -237,4 +237,30 @@ public class UserServiceImpl implements UserService {
         log.info("findUserId : " + findUserId);
         return findUserId;
     }
+
+    @Override
+    @Transactional // 트랜잭션 처리를 설정 (회원정보, 회원권한)
+    public int reRegPw(UserVO userVo) throws Exception {
+        String userId = userVo.getUserId();
+        String userNm = userVo.getUserNm();
+        String password = userVo.getPassword();
+
+        log.info("reRegPw Impl : " + "userId : " + userId + ", name : " + userNm + ", password : " + password);
+        // String password = userVo.getPassword();
+        // String encodedPassword = passwordEncoder.encode(password);  // 🔒 비밀번호 암호화
+        // userVo.setPassword(encodedPassword);
+        // getInputReferrerUserId
+        
+        // 회원 패스워드 재 등록
+        int result = 0;
+        try {
+            result= userMapper.reRegPw(userVo); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!    
+            log.info("result + " + result);
+        } catch (Exception e) {
+            // TODO: handle exception
+            log.error("비밀번호 재설정 중 에러 발생: ", e);        }
+        
+
+        return result;
+    }
 }

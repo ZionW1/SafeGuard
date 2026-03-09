@@ -203,4 +203,15 @@ FROM member; -->
         AND user_nm = #{userNm}
         LIMIT 1
     </select>
+
+    <update id="reRegPw">
+        UPDATE user SET
+            password = #{password}
+        WHERE
+            user_id = #{userId}
+        AND
+            user_nm =  #{userNm}
+        AND
+            REPLACE(phone_num, '-', '') = REPLACE(#{phoneNum}, '-', '')
+    </update>
 </mapper>

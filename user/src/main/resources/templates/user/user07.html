@@ -16,14 +16,15 @@
 
             <div class="form-group">
                 <input type="text" name="userNm" id="userNm" placeholder="이름" required />
+                <input type="text" name="userId" id="userId" placeholder="아이디" required />
             </div>
             <div class="form-group phone-group">
-                <input type="text" id="phoneNum" name="phoneNum" placeholder="01012345678" required pattern="\d{10,11}" />
+                <input type="text" id="phoneNum" name="phoneNum" placeholder="-없이 숫자만 입력해주세요." required pattern="\d{10,11}" />
                 <button type="button" id="sendBtn">인증번호 발송</button>
             </div>
 
             <div class="form-group phone-group hidden">
-                <input type="text" id="userId" name="userId" placeholder="01012345678" required pattern="\d{10,11}" />
+                <!-- <input type="text" id="userId" name="userId" placeholder="01012345678" required pattern="\d{10,11}" /> -->
             </div>
             <div class="form-group auth-group phone-group hidden" id="authCodeGroup">
                 <div id="authSection">
@@ -34,7 +35,7 @@
             </div>
             <div class="form-group">
                 <input class="mrg-top10" type="password" name="password" id="password" placeholder="비밀번호" required />
-                <input class="" type="password" name="password" id="passwordConfirm" placeholder="비밀번호 확인" required />
+                <input class="" type="password" name="passwordConfirm" id="passwordConfirm" placeholder="비밀번호 확인" required />
             </div>
             <p class="hidden" id="resultMessage"></p>
 
@@ -113,10 +114,10 @@
                 resultMessage.textContent = '서버와 통신 중 오류가 발생했습니다.';
             });
 
-            // resultMessage.style.color = 'blue';
-            // resultMessage.textContent = '인증번호가 발송되었습니다.';
-            // document.getElementById('resultMessage').style.display = 'block';
-            // startTimer();
+            resultMessage.style.color = 'blue';
+            resultMessage.textContent = '인증번호가 발송되었습니다.';
+            document.getElementById('resultMessage').style.display = 'block';
+            startTimer();
         });
     
         let timeLeft = 180; // 3분
@@ -153,7 +154,6 @@
             .then(res => res.text())
             .then(data => {
                 if (data === "인증 성공") {
-                    alert("✅ 인증되었습니다!");
                     verifyBtnCode = true;
                     clearInterval(timerInterval);
                     resultMessage.textContent = "인증되었습니다.";
@@ -167,36 +167,47 @@
                 }
             });
         });
-
+        
         const reRegPw = document.getElementById("reRegPw");
-        reRegPw.addEventListener('click', (e) => {
+        const loginForm = document.getElementById("loginForm");
+
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const userNm = document.getElementById('userNm').value;
             const phoneNumber = document.getElementById('phoneNum').value;
 
+            // 2. FormData 생성
+            const formData = new URLSearchParams(new FormData(loginForm));
+
             if (typeof verifyBtnCode === 'undefined' || verifyBtnCode === false) {
-                alert("인증 확인 후 ID 찾아주세요.");
+                alert("인증 확인 후 패스워드 재 등록 해주세요.");
                 return;
             }
 
             const params = new URLSearchParams();
             params.append('userNm', userNm);
             params.append('phoneNum', phoneNumber); // 자바의 @RequestParam("phoneNum")과 일치
-            fetch('/findId', {
+            fetch('/reRegPw', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...requestHeaders },
-                body: params
+                body: formData
             })
             .then(res => res.json())
             .then(data => {
                 console.log("data : " + JSON.stringify(data));
                 if(data.success == true){
-                    document.getElementById('userId').parentElement.style.display = 'block';
-                    document.getElementById('userId').value = data.userId;
-                    document.getElementById('userId').readOnly = true;
-                    document.getElementById('userId').style.backgroundColor = "#e9ecef"; // 회색조로 변경
-                    document.getElementById('userId').style.cursor = "not-allowed";      // 금지 아이콘 표시
+                    alert("비밀번호 변경이 성공 되었습니다.\n로그인 페이지로 이동합니다.")
+                    window.history.back();
+                    // document.getElementById('userId').parentElement.style.display = 'block';
+                    // document.getElementById('userId').value = data.userId;
+                    // document.getElementById('userId').readOnly = true;
+                    // document.getElementById('userId').style.backgroundColor = "#e9ecef"; // 회색조로 변경
+                    // document.getElementById('userId').style.cursor = "not-allowed";      // 금지 아이콘 표시
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultMessage.textContent = '서버와 통신 중 오류가 발생했습니다.';
             });
         });
     </script>

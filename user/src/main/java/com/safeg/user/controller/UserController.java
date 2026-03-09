@@ -375,6 +375,47 @@ public class UserController {
         return "user/user07";
     }
 
+    @PostMapping("/reRegPw")
+    @ResponseBody // JSON 응답을 위해 추가
+    public ResponseEntity<?> reRegPw(@Valid @ModelAttribute("userVO") UserVO userVO, BindingResult bindingResult, HttpServletRequest request) throws Exception {
+        log.info(":::::::::: 회원 가입 처리 (Async) :::::::::: " + userVO);
+
+        // 1. 비밀번호 일치 확인
+        if (!userVO.isPasswordConfirmed()) {
+            bindingResult.rejectValue("passwordConfirm", "password.mismatch", "비밀번호가 일치하지 않습니다.");
+        }
+
+        // 2. 유효성 검사 에러 처리
+        if (bindingResult.hasErrors()) {
+            // 모든 에러 메시지를 수집하여 반환
+            List<String> errors = bindingResult.getFieldErrors().stream()
+                    .map(e -> e.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ResponseEntity.badRequest().body(Map.of("success", false, "errors", errors));
+        }
+
+        // 3. 비밀번호 암호화 및 저장
+        String rawPassword = userVO.getPassword();
+        userVO.setPassword(passwordEncoder.encode(rawPassword));
+        int result = userService.reRegPw(userVO);
+        
+        if (result > 0) {
+            // 4. 자동 로그인 시도
+            UserVO loginUser = new UserVO();
+            loginUser.setUserId(userVO.getUserId());
+            loginUser.setPassword(rawPassword);
+            
+            boolean loginResult = userService.login(loginUser, request);
+            
+            if (loginResult) {
+                return ResponseEntity.ok(Map.of("success", true));
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(Map.of("success", false, "message", "패스워드 변경 처리 중 오류가 발생했습니다."));
+    }
+
     // public boolean isPhoneNumberDuplicate(String phoneNumber) {
     //     // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
     //     return userMapper.existsByPhoneNumber(phoneNumber); 

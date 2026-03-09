@@ -57,33 +57,37 @@ public class AuthServiceImpl implements AuthService{
     }
 
     // 인증번호 생성 및 SMS 발송, DB 저장
-    @Async
-    @Transactional
+    @Async("smsExecutor")
     public CompletableFuture<Boolean> sendAuthCode(String phoneNumber) {
         log.info("인증 프로세스 시작: " + phoneNumber);
         String authCode = generateAuthCode();
 
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                // 1. 문자 전송 시도
-                sendSmsWithRetry(phoneNumber, authCode);
-                
-                // 2. 전송 성공 시에만 DB 저장 (유효시간 3분)
-                PhoneAuth phoneAuth = new PhoneAuth();
-                phoneAuth.setPhoneNumber(phoneNumber);
-                phoneAuth.setAuthCode(authCode);
-                phoneAuth.setExpiresAt(LocalDateTime.now().plusMinutes(3));
-                phoneAuthRepository.save(phoneAuth);
-                
-                log.info("인증번호 발송 및 DB 저장 완료: " + phoneNumber);
-                return true;
-                
-            } catch (Exception e) {
-                // 여기서 찍히는 e의 내용을 봐야 왜 실패했는지 알 수 있습니다!
-                log.error("인증 프로세스 중 치명적 에러 발생: ", e); 
-                return false;
-            }
-        }, AsyncConfig.smsExecutor()); // 아까 설정한 smsExecutor를 꼭 넣어주세요!
+        try {
+            // STEP 1: 문자 전송 (외부 API 호출 - 트랜잭션 외부)
+            sendSmsWithRetry(phoneNumber, authCode);
+            
+            // STEP 2: DB 저장 (별도의 트랜잭션 메서드 호출)
+            savePhoneAuthData(phoneNumber, authCode);
+            
+            log.info("인증번호 발송 및 DB 저장 완료: " + phoneNumber);
+            return CompletableFuture.completedFuture(true);
+            
+        } catch (Exception e) {
+            log.error("인증 프로세스 중 치명적 에러 발생: ", e);
+            return CompletableFuture.completedFuture(false);
+        }
+    }
+
+    // 2. DB 저장은 따로 분리하여 트랜잭션 보장
+    @Transactional
+    public void savePhoneAuthData(String phoneNumber, String authCode) {
+        PhoneAuth phoneAuth = new PhoneAuth();
+        phoneAuth.setPhoneNumber(phoneNumber);
+        phoneAuth.setAuthCode(authCode);
+        phoneAuth.setExpiresAt(LocalDateTime.now().plusMinutes(3));
+        phoneAuth.setUsed(false); // 기본값 설정
+        
+        phoneAuthRepository.save(phoneAuth);
     }
 
     // 인증번호 검증

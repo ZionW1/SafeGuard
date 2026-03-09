@@ -40,4 +40,6 @@ public interface UserService {
 
     public String findUserId(String userNm, String phoneNum) throws Exception;
 
+    public int reRegPw(UserVO userVO) throws Exception;
+
 }

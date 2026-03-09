@@ -44,4 +44,6 @@ public interface UserMapper {
 
     public String findUserId(@Param("userNm") String userNm, @Param("phoneNum") String phoneNum) throws Exception;
 
+    public int reRegPw(UserVO userVo) throws Exception;
+
 }

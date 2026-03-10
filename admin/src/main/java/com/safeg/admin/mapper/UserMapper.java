@@ -46,6 +46,8 @@ public interface UserMapper {
 
     public List<UserVO> userAddressList() throws Exception;
 
+    public int resetPointHistory() throws Exception;
+
     public int userUpdate(@Param("id") String id, @Param("authRole") String authRole, @Param("authCode") String authCode) throws Exception;
 
     public int userAuthUpdate(@Param("id") String id, @Param("authRole") String authRole, @Param("authCode") String authCode) throws Exception;

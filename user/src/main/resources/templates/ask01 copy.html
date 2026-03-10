@@ -49,40 +49,21 @@
                 <!-- 한 줄에 3개 카드가 나오는 컨테이너 (예시) -->
                 <div class="card-grid-container four-cols">
                     <div class="card-box">
-                        <div class="card-box-no" th:text="${totalUsers} + ' +'"+></div>
-                    <h3 class="card-box-text">
-                        누적 유저<br>
-                    </h3>
-                    <div>
-                        <img src="/images/business_icon_04.png" alt="통계 분석 아이콘" class="card-icon" />
+                        <!-- 아이콘 이미지 (예시: site에서 사용하는 SVG 아이콘) -->
+                        <img src="/images/business_icon_01.png" alt="고객 발굴 아이콘" class="card-icon" />
+                        <h3 class="card-title">매출 2배 달성, <br>잠재 고객 발굴</h3>
                     </div>
-                </div>
                     <div class="card-box">
-                        <div class="card-box-no" th:text="${totalGuard} + ' +'"+></div>
-                    <h3 class="card-box-text">
-                        누적 인솔자<br>
-                    </h3>
-                    <div>
-                        <img src="/images/business_icon_04.png" alt="통계 분석 아이콘" class="card-icon" />
+                        <img src="/images/business_icon_02.png" alt="캠페인 세팅 아이콘" class="card-icon" />
+                        <h3 class="card-title">원하는 상품군, <br>원하는 키워드</h3>
                     </div>
-                </div>
                     <div class="card-box">
-                        <div class="card-box-no" th:text="${totalGuard} + ' +'"+></div>
-                    <h3 class="card-box-text">
-                        누적 협력업체<br>
-                    </h3>
-                    <div>
-                        <img src="/images/business_icon_04.png" alt="통계 분석 아이콘" class="card-icon" />
+                        <img src="/images/business_icon_03.png" alt="통계 분석 아이콘" class="card-icon" />
+                        <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
                     </div>
-                </div>
                     <div class="card-box">
-                            <div class="card-box-no" th:text="${totalCampaign} + ' +'"+></div>
-                        <h3 class="card-box-text">
-                            누적 캠페인<br>
-                        </h3>
-                        <div>
-                            <img src="/images/business_icon_04.png" alt="통계 분석 아이콘" class="card-icon" />
-                        </div>
+                        <img src="/images/business_icon_03.png" alt="통계 분석 아이콘" class="card-icon" />
+                        <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
                     </div>
                     <!-- 카드가 더 있다면 여기에 추가 -->
                     <!-- 만약 4개라면 four-cols 클래스를 주거나, @media 쿼리로 3개에서 4개로 전환되도록 설정 -->
@@ -164,24 +145,13 @@
                 <div class="card"> <div class="number">119-87-00800 +</div> <div class="desc">사업자등록</div> </div>
                 <div class="card"> <div class="number">1688-2352 +</div> <div class="desc">고객센터</div> </div>
                 <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
-                <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
-                <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
-                <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
-                <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
-
                 </div>
             </div>
         </div>
         
         <div class="ads-reason-container">
             <!-- 좌측 번호 리스트 -->
-            <div class="spacer">
-                <span>하나부터 열까지</span><br />
-                <span class="highlight">행집</span>의 기술력 기반 리뷰
-            </div>
-            <div>
             <ul class="reason-list">
-                
                 <li class="active" data-index="0">
                     <span class="num-circle active">01</span>
                     <span class="text">맞춤형 리뷰어 선별</span>
@@ -210,16 +180,11 @@
                     <span class="tag">No. 1</span>
                     <h3>나에게 맞는 리뷰어로<br>맞춤형 리뷰어 선별</h3>
                     <ul class="desc-list">
-                        
-                        <pre>
-<li>광고주 업종과 지역에 딱 맞는 리뷰어를 선별해
-타깃 고객층의 마음을 사로잡습니다.</li>
-<li>업종과 지역에 최적화된 인플루언서 매칭으로 
-고객과 광고주 모두의 신뢰를 확보합니다.</li>
-                        </pre>
+                        <li>광고주 업종과 지역에 딱 맞는 리뷰어를 선별해 타깃 고객층의 마음을 사로잡습니다.</li>
+                        <li>업종과 지역에 최적화된 인플루언서 매칭으로 고객과 광고주 모두의 신뢰를 확보합니다.</li>
                     </ul>
                     <div class="slide-img">
-                        <img src="/images/tablet_review.png" alt="맞춤형 리뷰어 이미지" />
+                        <img src="/images/tablet_review.svg" alt="맞춤형 리뷰어 이미지" />
                     </div>
                 </div>
         
@@ -270,16 +235,11 @@
                     </div>
                 </div>
         
-                <!-- 이전 버튼-->
-                <button type="button" class="slide-prev" aria-label="이전 슬라이드">
-                    &lt;
-                </button>
                 <!-- 다음 버튼 -->
                 <button type="button" class="slide-next" aria-label="다음 슬라이드">
                     &gt;
                 </button>
             </div>
-        </div>
         </div>
 
         <div class="h80vh w100vw mlr-auto" style="background-color: #333; color: white; padding-top: 40px; padding-bottom: 40px; ">
@@ -295,12 +255,10 @@
                     <div class="card-box2">
                         <!-- 아이콘 이미지 (예시: site에서 사용하는 SVG 아이콘) -->
                         <img src="/images/business_icon_01.svg" alt="고객 발굴 아이콘" class="card-icon" />
-                        <pre>
-                            <h3 class="card-title">매출 2배 달성, <br>잠재 고객 발굴</h3>
-                            <p class="card-description">
-                                정확한 타겟팅과 빅데이터 기반으로 <br>잠재 고객을 발굴하고 브랜드 인지도를 높여보세요.
-                            </p>
-                        </pre>
+                        <h3 class="card-title">매출 2배 달성, <br>잠재 고객 발굴</h3>
+                        <p class="card-description">
+                            정확한 타겟팅과 빅데이터 기반으로 <br>잠재 고객을 발굴하고 브랜드 인지도를 높여보세요.
+                        </p>
                     </div>
                     <div class="card-box2">
                         <img src="/images/business_icon_02.svg" alt="캠페인 세팅 아이콘" class="card-icon" />
@@ -362,12 +320,12 @@
                     <label for="email">이메일</label>
                     <input type="email" id="email" name="email" placeholder="이메일을 입력해 주세요" required autocomplete="email" />
             
-                    <!-- <label>자동등록방지</label>
+                    <label>자동등록방지</label>
                     <div class="captcha-wrapper">
                         <img src="/captcha-image-path" alt="보안문자 이미지" class="captcha-img" />
                         <input type="text" name="captcha" placeholder="보안문자를 입력해 주세요" class="captcha-input" required />
                         <button type="button" class="captcha-refresh" aria-label="보안문자 새로고침">⟳</button>
-                    </div> -->
+                    </div>
                     <div class="privacy-consent">
                         <input type="checkbox" id="privacyAgree" name="privacyAgree" required />
                         <label for="privacyAgree">개인정보 수집동의 <a href="#" class="privacy-link" target="_blank" rel="noopener">약관보기</a></label>
@@ -386,7 +344,7 @@
                 const sliderTrack = document.getElementById('sliderTrack');
                 const originalCards = Array.from(sliderTrack.children);
                 const originalCardCount = originalCards.length; // 원본 카드 개수 (7개)
-                const highlightPosition = 3; // 0-indexed: 4번째 카드를 의미 (index 3)
+                const highlightPosition = 4; // 0-indexed: 4번째 카드를 의미 (index 3)
                 const gap = 30; // CSS와 동일하게 설정
 
                 let currentIndex = 0; // 슬라이드 트랙의 이동 인덱스
@@ -413,7 +371,7 @@
 
                 function calculateCardWidth() {
                     if (sliderTrack.children.length > 0) {
-                        const firstCard = sliderTrack.children[2];
+                        const firstCard = sliderTrack.children[3];
                         cardWidthWithGap = parseFloat(getComputedStyle(firstCard).width) + gap;
                     } else {
                         cardWidthWithGap = 200 + gap; // 기본값
@@ -494,8 +452,6 @@
                 const listItems = document.querySelectorAll('.reason-list li');
                 const slides = document.querySelectorAll('.slide-item');
                 const nextBtn = document.querySelector('.slide-next');
-                const prevBtn = document.querySelector('.slide-prev');
-
 
                 let currentIndex = 0;
                 let slideTimer = null;
@@ -519,19 +475,13 @@
                     activateSlide(nextIndex);
                 }
 
-                function prevSlide() {
-                    let prevIndex = (currentIndex - 1) % slides.length;
-                    activateSlide(prevIndex);
-                }
-                
-
                 // 리스트 클릭 이벤트에 연결
                 listItems.forEach((li) => {
                     li.addEventListener('click', () => {
                         clearInterval(slideTimer);
                         let idx = Number(li.dataset.index);
                         activateSlide(idx);
-                        // slideTimer = setInterval(nextSlide, 5000);
+                        slideTimer = setInterval(nextSlide, 5000);
                     });
                 });
 
@@ -542,15 +492,8 @@
                     slideTimer = setInterval(nextSlide, 5000);
                 });
 
-                prevBtn.addEventListener('click', () => {
-                    clearInterval(slideTimer);
-                    prevSlide();
-                    slideTimer = setInterval(nextSlide, 5000);
-                });
-
-
                 // 자동 슬라이드 시작 (5초 간격)
-                // slideTimer = setInterval(nextSlide, 5000);
+                slideTimer = setInterval(nextSlide, 5000);
 
                 // 초기 슬라이드 활성화
                 activateSlide(0);

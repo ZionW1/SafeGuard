@@ -341,6 +341,11 @@ public class HomeController {
         //, @RequestParam String param
         log.info(":::::::::: ask 화면 :::::::::: " + authUser + " :::::::::: ");
         int campaignCount = mainService.campaignCount();
+
+        int totalUsers = userService.totalUser();
+        int totalGuard = userService.totalGuard();
+        int totalCampaign = mainService.totalCampaign();
+
         log.info("campaignCount : : : : " + campaignCount);
         List<CampaignVO> campaignDeleted = mainService.campaignDeleted();
         if(authUser != null){
@@ -349,7 +354,10 @@ public class HomeController {
         }
         model.addAttribute("campaignCount", campaignCount);
         model.addAttribute("campaignDeleted", campaignDeleted);
-        
+        model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("totalGuard", totalGuard);
+        model.addAttribute("totalCampaign", totalCampaign);
+
         return "ask01";
     }
 

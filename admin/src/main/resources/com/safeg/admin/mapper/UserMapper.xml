@@ -250,9 +250,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="resetAllUserPay">
         UPDATE 
             USER 
-        SET pay = 0
+        SET pay = 0,
+        point_full = 0
         WHERE 
-            CURRENT_DATE() = LAST_DAY(CURRENT_DATE());
+            CURRENT_DATE() = LAST_DAY(CURRENT_DATE())
+    </update>
+
+    <update id="resetPointHistory">
+        UPDATE 
+            point_history 
+        SET is_deleted = 'Y'
+        WHERE 
+            is_deleted = 'N'
     </update>
 
     <select id="userAddressList" resultType="userVO">

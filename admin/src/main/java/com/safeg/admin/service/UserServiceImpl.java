@@ -147,9 +147,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public int resetAllUserPay() throws Exception {
         // TODO Auto-generated method stub
         int result = userMapper.resetAllUserPay();
+        userMapper.resetPointHistory();
+
         return result;
     }
 

@@ -372,7 +372,10 @@ button[type="submit"] {
     text-decoration: none; /* 밑줄 없애기 */
     /* color: inherit;       링크 색상을 부모 요소와 같게 설정 (선택사항) */
     color: darkgray
+}
 
+.mrg10-left{
+    margin-left: 10px;
 }
 
 /* 팝업창 */

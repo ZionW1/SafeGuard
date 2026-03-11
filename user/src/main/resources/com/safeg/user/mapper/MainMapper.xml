@@ -216,6 +216,7 @@
             c.event_Period_str,
             c.event_Period_End,
             t.user_nm,
+            c.campaign_pay,
             DATE_FORMAT(c.created_at, '%Y.%m.%d') as created_at
         FROM campaign c 
         LEFT OUTER JOIN files f 

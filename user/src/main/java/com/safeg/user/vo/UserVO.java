@@ -7,6 +7,10 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.safeg.user.converter.StringCryptoConverter;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -118,10 +122,15 @@ public class UserVO {
     public boolean isPasswordConfirmed() {
         return password != null && password.equals(passwordConfirm);
     }
-    private String accountNumber;
+
+@Convert(converter = StringCryptoConverter.class)
+private String email;
+
+@Convert(converter = StringCryptoConverter.class)
+private String accountNumber;
+
     private String bankNm;
     private String depositor;
-    private String email;
     private String isDeleted;
     private String isStopped;
     private String nickname;
@@ -169,11 +178,16 @@ public class UserVO {
     private String province; // 시/도 (예: 서울특별시), sido
     private String city; // 시/군/구 (예: 강남구), sigungu
     private String roadName; // 도로명 (예: 테헤란로), roadname
-    private String roadAddress; // 도로명 주소 전체 (예: 서울 강남구 테헤란로 123), roadAddress
     private String jibunAddress; // 지번 주소, jibunAddress
     private String extraAddress; // 참고 항목 (예: 역삼동), bname
-    private String detailAddress; // 사용자가 직접 입력하는 상세 주소 (예: 101동 1503호)
+    @Convert(converter = StringCryptoConverter.class)
+    private String roadAddress;
+
+    @Convert(converter = StringCryptoConverter.class)
     private String fullAddress;
+
+    @Convert(converter = StringCryptoConverter.class)
+    private String detailAddress;
     private boolean isDefault; // 대표 주소 여부, -- 한 사용자의 여러 주소 중 대표 주소를 지정하고 싶을 때
     
     private String filePath;

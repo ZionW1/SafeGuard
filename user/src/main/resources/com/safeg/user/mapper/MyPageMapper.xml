@@ -4,7 +4,12 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.safeg.user.mapper.MyPageMapper">
-
+    <resultMap id="UserAddressMap" type="com.safeg.user.vo.UserAddressVO">
+        <result property="roadAddress" column="road_address" 
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+        <result property="fullAddress" column="full_address" 
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+    </resultMap>
     <select id="getAppliedDatesForUser" resultType="java.time.LocalDate">
         SELECT 
             applied_str_date,
@@ -72,12 +77,12 @@
             #{province}, 
             #{city}, 
             #{roadName},
-            #{roadAddress}, 
+            #{roadAddress, typeHandler=com.safeg.user.util.CryptoTypeHandler},
             #{jibunAddress},
             #{extraAddress},
             #{detailAddress}, 
             #{isDefault},
-            #{fullAddress}
+            #{fullAddress, typeHandler=com.safeg.user.util.CryptoTypeHandler}
         )
     </insert>
 

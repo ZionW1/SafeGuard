@@ -492,7 +492,8 @@
         </div>
         <div class="campaignTitle">
             <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
-            <h2>급여 : <span th:text="${campaignSelect.campaignPay}"></span></h2>
+            <h2>포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span></h2>
+            
         </div>
         <div class="campaign_mission">안내 사항</div>
         <div class="visit-info">

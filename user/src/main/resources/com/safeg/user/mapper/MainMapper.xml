@@ -59,6 +59,7 @@
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
             END) as type_code,
+            campaign_pay,
             c.app_period_str,
             c.app_period_end,
             event_Period_str,
@@ -96,6 +97,7 @@
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
             END) as type_code,
+            campaign_pay,
             c.app_period_str,
             c.app_period_end,
             event_Period_str,
@@ -131,6 +133,7 @@
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
             END) as type_code,
+            campaign_pay,
             c.app_period_str,
             c.app_period_end,
             event_Period_str,

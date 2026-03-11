@@ -90,6 +90,11 @@
                                             <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
                                         </div>
                                     </div>
+                                    <div class="title-overlay">
+                                        <div class="card-title">
+                                            포인트 : <span class="campaign-title-text" th:text="${#numbers.formatInteger(campaign.campaignPay, 3, 'COMMA')}"></span>
+                                        </div>
+                                    </div>
                                     
                                     <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                 </div>
@@ -115,7 +120,11 @@
                                             <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
                                         </div>
                                     </div>
-                                    
+                                    <div class="title-overlay">
+                                        <div class="card-title">
+                                            포인트 : <span class="campaign-title-text" th:text="${#numbers.formatInteger(campaign.campaignPay, 3, 'COMMA')}"></span>
+                                        </div>
+                                    </div>
                                     <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                 </div>
                             </div>
@@ -151,7 +160,11 @@
                                                 <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
                                             </div>
                                         </div>
-                                        
+                                        <div class="title-overlay">
+                                            <div class="card-title">
+                                                포인트 : <span class="campaign-title-text" th:text="${#numbers.formatInteger(campaign.campaignPay, 3, 'COMMA')}"></span>
+                                            </div>
+                                        </div>
                                         <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                     </div>
                                 </div>

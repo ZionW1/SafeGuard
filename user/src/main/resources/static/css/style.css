@@ -486,7 +486,7 @@ a {
   
   .campaign-title-text {
     /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
-    display: -webkit-box;
+    /* display: -webkit-box; */
     -webkit-box-orient: vertical;
     
     /* 2. 핵심 설정: 최대 몇 줄까지 보여줄지 결정 */
@@ -504,7 +504,6 @@ a {
     font-size: 1.1em;
     font-weight: 500;
     line-height: 1.4;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
-    height: 2.8em;      /* (선택사항) 높이를 고정하면 카드들의 높이가 일정해져서 더 보기 좋습니다 */
 }
   .recruitment-num{
     font-weight: normal;

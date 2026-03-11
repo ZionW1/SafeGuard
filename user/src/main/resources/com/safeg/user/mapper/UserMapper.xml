@@ -122,7 +122,7 @@
     </select>
 
     <select id="totalGuard" resultType="int">
-        SELECT COUNT(*) FROM user WHERE role = 'LEADER'
+        SELECT COUNT(*) FROM user WHERE guard_type IN('02','03')
     </select>
 
     <select id="bestAgentList" resultType="UserVO">

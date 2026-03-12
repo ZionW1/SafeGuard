@@ -483,7 +483,7 @@ a {
     margin-left: 4px; /* 사용자 이름과 인솔자 사이의 간격 */
     color: #b151ff; /* 글자색을 살짝 연하게 할 수도 있어 */
   }
-  
+
   .campaign-title-text {
     /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
     /* display: -webkit-box; */
@@ -505,6 +505,29 @@ a {
     font-weight: 500;
     line-height: 1.4;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
 }
+
+.campaign-point-text {
+    /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
+    /* display: -webkit-box; */
+    -webkit-box-orient: vertical;
+    
+    /* 2. 핵심 설정: 최대 몇 줄까지 보여줄지 결정 */
+    -webkit-line-clamp: 2; 
+    
+    /* 3. 넘치는 부분 처리 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* 4. 기존 한 줄 고정 코드는 반드시 삭제하거나 주석 처리하세요 */
+    /* white-space: nowrap;  <- 이 줄이 있으면 무조건 한 줄만 나옵니다. 삭제 필수! */
+
+    /* 추가 디자인 제안 */
+    width: 100%;
+    font-size: 1.1em;
+    font-weight: 500;
+    line-height: 1.4;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
+}
+
   .recruitment-num{
     font-weight: normal;
     color:#888;
@@ -2184,8 +2207,8 @@ table.bestPayList {
     .card-title {
         font-size: 1.4em;
         color: #333;
-        margin-bottom: 5px;
-        line-height: 1.3;
+        margin-bottom: 10px;
+        line-height: 1;
          /* 두 줄 말줄임 설정 (가장 추천하는 모바일 방식) */
     display: -webkit-box;
     -webkit-line-clamp: 2;    /* 보여줄 줄 수 (2줄) */
@@ -2270,11 +2293,10 @@ table.bestPayList {
 
     .section-title {
         width: 100%;
-        margin-top: 30px;
+        margin-top: 10px;
         margin-bottom: 10px;
         font-weight: 700;
-        font-size: 1.1rem;
-        padding-bottom: 2px;
+        font-size: 1.2rem;
     }
 
     .form-row {
@@ -2347,6 +2369,53 @@ table.bestPayList {
         width: 100%;
         margin: 20px 0; border: 0.5px solid #eee;
     }
+    .campaign-title-text {
+        /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
+        /* display: -webkit-box; */
+        -webkit-box-orient: vertical;
+        
+        /* 2. 핵심 설정: 최대 몇 줄까지 보여줄지 결정 */
+        -webkit-line-clamp: 2; 
+        
+        /* 3. 넘치는 부분 처리 */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        
+        /* 4. 기존 한 줄 고정 코드는 반드시 삭제하거나 주석 처리하세요 */
+        /* white-space: nowrap;  <- 이 줄이 있으면 무조건 한 줄만 나옵니다. 삭제 필수! */
+    
+        /* 추가 디자인 제안 */
+        width: 100%;
+        font-size: 0.8em;
+        font-weight: 700;
+        line-height: 0.8;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
+    }
+
+    .campaign-point-text {
+        /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
+        /* display: -webkit-box; */
+        -webkit-box-orient: vertical;
+        
+        /* 2. 핵심 설정: 최대 몇 줄까지 보여줄지 결정 */
+        -webkit-line-clamp: 2; 
+        
+        /* 3. 넘치는 부분 처리 */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        
+        /* 4. 기존 한 줄 고정 코드는 반드시 삭제하거나 주석 처리하세요 */
+        /* white-space: nowrap;  <- 이 줄이 있으면 무조건 한 줄만 나옵니다. 삭제 필수! */
+    
+        /* 추가 디자인 제안 */
+        width: 100%;
+        font-size: 1em;
+        font-weight: 700;
+        line-height: 1.6;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
+    }
+      .recruitment-num{
+        font-weight: normal;
+        color:#888;
+      }
 }
 
   /* 더 작은 모바일 화면 (예: 480px 이하) */
@@ -2462,21 +2531,6 @@ table.bestPayList {
         color: #b151ff;
     }
 
-    .card-title {
-        font-size: 1.4em;
-        color: #333;
-        margin-bottom: 5px;
-        line-height: 1.3;
-         /* 두 줄 말줄임 설정 (가장 추천하는 모바일 방식) */
-    display: -webkit-box;
-    -webkit-line-clamp: 2;    /* 보여줄 줄 수 (2줄) */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    
-    /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
-    /* white-space: nowrap; */ 
-    }
     /* .footer_mobile{
         display: block;
         text-align: center;

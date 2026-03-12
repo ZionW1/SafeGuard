@@ -206,7 +206,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where 
         c.id = #{id} -->
         update campaign set
-
             company_nm = #{companyNm},
             company_ph = #{companyPh},
             campaign_title = #{campaignTitle},

@@ -55,7 +55,7 @@ public class ApplyServiceImpl implements ApplyService {
                     log.info("referrerId" + referrerId);
 
                     if (referrerId != null && referrerId != 0) { // 추천인이 있다면 (referrer_no가 유효하다면)
-                        int pointAmount = 5000; // ⭐ 지급할 추천인 포인트 (이 값은 설정 등으로 관리하는 게 좋아!)
+                        int pointAmount = 10000; // ⭐ 지급할 추천인 포인트 (이 값은 설정 등으로 관리하는 게 좋아!)
                         
                         PointHistoryVO pointHistory = new PointHistoryVO();
                         pointHistory.setUserId(referrerId);             // 포인트를 받은 사람: 추천인

@@ -16,6 +16,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             campaign_pay,
             place_Addr,
             mission,
+            (CASE
+                WHEN type_code = '01' THEN '경호'
+                WHEN type_code = '02' THEN '진행'
+                WHEN type_code = '03' THEN '수행'
+                ELSE 'X'
+            END) AS typeNm,
             leader_code,
             u.user_nm,
             app_period_str,

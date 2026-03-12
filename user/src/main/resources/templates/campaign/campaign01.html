@@ -479,7 +479,7 @@
     <section class="left-view">
         <div class="campaignTitle">
             <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
-            <h1 th:text="${campaignSelect.campaignTitle}"></h1>
+            <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span>
         </div>        
         <div class="image-row">
             <img id="imgFile" style="margin: 0 auto" th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" width="480" height="320" class=""/><br>

@@ -14,7 +14,7 @@ public interface CampaignService {
 
     public List<UserCampaignVO> appliedCampaign(String userId) throws Exception;
 
-    public List<UserCampaignVO> campaignApplied(String userId, String campaignId) throws Exception;
+    public List<UserCampaignVO> campaignApplied(String userId, Long campaignId) throws Exception;
 
     public List<CampaignVO> allView(Option option) throws Exception;
 

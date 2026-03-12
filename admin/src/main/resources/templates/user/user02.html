@@ -118,6 +118,18 @@
                         <input type="text" name="referrerId" id="referrerId" th:value="${userSelect.referrerId}" placeholder="메모를 입력하세요" />
                     </span>
                 </div>
+                <div class="">
+                    <!-- <label>추천인</label>
+                    <span th:if="${#strings.isEmpty(userSelect?.referrerId)}">
+                        <input type="text" name="referrerId" id="referrerId" value="" placeholder="메모를 입력하세요" />
+                    </span> -->
+                    <!-- <span th:unless="${#strings.isEmpty(userSelect?.referrerId)}">
+                        <input type="text" name="referrerId" id="referrerId" th:value="${userSelect.referrerId}" placeholder="메모를 입력하세요" />
+                    </span> -->
+                    <span>프로필 : </span><span th:text="${profile}"></span>
+                    <span>신분증 : </span><span th:text="${identification}"></span>
+                    <span>이수증 : </span><span th:text="${certificate}"></span>
+                </div>
                 <div class="form-row">
                     <div class="">
                         <button type="submit" class="update-btn">유저 수정</button>
@@ -134,6 +146,8 @@
                             <button type="button" class="stop-btn" onclick="guardTypeChnage('02')">경호원 변경</button>
                         </span>
                         
+
+
                         <button type="button" class="stop-btn" th:if="${userSelect.role == 'LEADER'}" onclick="userUpdate()">일반 유저 변경</button>
                         <button type="button" class="stop-btn" th:unless="${userSelect.role == 'LEADER'}" onclick="leaderUpdate()">인솔자 변경</button>
                         <button type="button" class="stop-btn" th:if="${userSelect.isStopped == 'N'}" onclick="userStop()">정지하기</button>

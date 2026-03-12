@@ -120,7 +120,7 @@ public class CampaignServiceImpl implements CampaignService{
     }
 
     @Override
-    public List<UserCampaignVO> campaignApplied(String userId, String campaignId) throws Exception {
+    public List<UserCampaignVO> campaignApplied(String userId, Long campaignId) throws Exception {
         // TODO Auto-generated method stub
         List<UserCampaignVO> campaignApplied = campaignMapper.campaignApplied(userId, campaignId);
 

@@ -268,4 +268,10 @@ public class FileServiceImpl implements FileService{
 
         return result;
     }
+
+    public List<FilesVO> userImageFile(String id) throws Exception{
+        log.info("userImageFile = " + id);
+        List<FilesVO> image = fileMapper.userImageFile(id);
+        return image;
+    }
 }

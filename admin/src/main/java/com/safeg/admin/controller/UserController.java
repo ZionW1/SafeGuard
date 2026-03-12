@@ -90,6 +90,24 @@ public class UserController {
         FilesVO file = fileService.select(id);
         log.info("DEBUG: nickName value before passing to template: [{}]", userSelect.getNickName());
 
+        List<FilesVO> profileImage = fileService.userImageFile(id);
+        if(profileImage != null){
+            log.info("user02 profileImage : " + profileImage.toString());
+            for(int i = 0; i <profileImage.size(); i++) {
+                if (profileImage.get(i).getTargetType() != null) {
+                    log.info("profileImage.get(i) : " + profileImage.get(i).getTargetType());
+                    model.addAttribute("" + profileImage.get(i).getTargetType(), "Y");
+
+                    // certificate, profile, identification
+
+                }
+            }
+        }else {
+            model.addAttribute("profile", "N");
+            model.addAttribute("identification", "N");
+            model.addAttribute("certificate", "N");
+        }
+        
         model.addAttribute("userSelect", userSelect);
         if(file != null){
             model.addAttribute("file", file);

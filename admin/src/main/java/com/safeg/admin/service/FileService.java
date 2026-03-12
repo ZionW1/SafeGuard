@@ -22,16 +22,17 @@ public interface FileService {
     // 부모 테이블 기준 파일 목록
     public List<FilesVO> listByParent(FilesVO file) throws Exception;
 
-    
     // 부모 테이블 기준 파일 삭제
     public int deleteByParent(FilesVO file) throws Exception;
 
     public FilesVO bannerSelect(Long id) throws Exception;
 
     public boolean bannerUpload(FilesVO uploadFile) throws Exception;
+
     public int bannerRemoveFile(String id) throws Exception;
 
     public boolean bannerUpdate(FilesVO file) throws Exception;
 
+    public List<FilesVO> userImageFile(String id) throws Exception;
 
 }

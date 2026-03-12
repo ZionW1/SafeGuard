@@ -126,4 +126,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where target_Id = #{id}
         AND target_type = 'banner';
     </update>
+
+    <select id="userImageFile" resultType="FilesVO">
+        select target_type from files where file_type = 'user_File' and is_deleted ='N' and target_id = #{id}
+    </select>
 </mapper>

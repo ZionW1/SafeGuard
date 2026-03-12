@@ -33,5 +33,7 @@ public interface FileMapper {
     public int bannerUpdate(FilesVO file) throws Exception;
 
     public int bannerRemoveFile(String id) throws Exception;
+
+    public List<FilesVO> userImageFile(String id) throws Exception;
     
 }

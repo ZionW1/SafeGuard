@@ -301,7 +301,7 @@
 
     <select id="totalCampaign" resultType="int">
         SELECT count(*)
-        FROM campaign 
+        FROM campaign where is_deleted = 'N'
     </select>
 
     <select id="applyDate" resultType="UserCampaignVO">

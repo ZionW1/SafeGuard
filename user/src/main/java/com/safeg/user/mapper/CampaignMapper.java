@@ -29,6 +29,6 @@ public interface CampaignMapper {
 
     public List<UserCampaignVO> appliedCampaign(String userId) throws Exception;
 
-    public List<UserCampaignVO> campaignApplied(@Param("userId") String userId, @Param("campaignId") String campaignId) throws Exception;
+    public List<UserCampaignVO> campaignApplied(@Param("userId") String userId, @Param("campaignId") Long campaignId) throws Exception;
 
 }

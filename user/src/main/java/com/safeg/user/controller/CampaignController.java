@@ -57,9 +57,9 @@ public class CampaignController {
             model.addAttribute("user", user);
 
             // 현재 조회하는 캠페인에 대한 사용자의 신청 내역이 있는지 확인
-            log.info(":::::::::: campaignApply 전 :::::::::: " + authUser);
+            log.info(":::::::::: campaignApply 전 :::::::::: " + user);
 
-            List<UserCampaignVO> campaignApply = campaignsService.campaignApplied(user.getUserId(), id);
+            List<UserCampaignVO> campaignApply = campaignsService.campaignApplied(user.getUserId(), user.getId());
             log.info(":::::::::: campaignApply 후 :::::::::: " + campaignApply);
 
             // 기본적으로 현재 캠페인 신청이 '가능'하다고 가정

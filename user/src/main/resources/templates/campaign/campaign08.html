@@ -306,7 +306,7 @@
         <th:block th:each="campaign : ${allView}">
             <div sec:authorize="!isAuthenticated()" class="guest-message">
                 <a th:href="|/campaign01?id=${campaign.campaignId}&userId=''|">
-                    <div class="campaign-item">
+                    <!-- <div class="campaign-item"> -->
 
                     <div class="campaign-card">
                         <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
@@ -333,7 +333,7 @@
                             <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                         </div>
                     </div>
-                    </div>
+                    <!-- </div> -->
                 </a>
             </div>
             <div sec:authorize="isAuthenticated()" class="guest-message">

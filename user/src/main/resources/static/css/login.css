@@ -195,11 +195,11 @@ button[type="submit"] {
 /* 입력창 스타일 */
 .password-input-container input {
     width: 100%;
-    padding: 12px 40px 12px 12px; /* 오른쪽 패딩을 40px 주어 아이콘 공간 확보 */
+    padding: 10px; /* 오른쪽 패딩을 40px 주어 아이콘 공간 확보 */
     border: 1px solid #ddd;
     border-radius: 8px;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 /* 아이콘 위치 잡기 (중요) */
@@ -209,7 +209,7 @@ button[type="submit"] {
     /* 라벨 높이만큼 아래로 내려가야 하므로 하단에서 고정 */
     bottom: 20px; 
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
     color: #888;
     user-select: none;
     line-height: 1; /* 아이콘 높이 정렬 */

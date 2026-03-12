@@ -13,16 +13,16 @@
     <form id="registerForm" class="" th:object="${userVO}">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div class="form-group">
-            <input type="text" name="userNm" id="userNm" th:field="*{userNm}" placeholder="이름" required />
+            <input type="text" name="userNm" id="userNm" class="" th:field="*{userNm}" placeholder="이름" required maxlength="11"/>
         </div>
         <div class="form-group phone-group">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <input type="text" id="phoneNumber" name="phoneNumber" placeholder="숫지만 입력해 주세요." required pattern="\d{10,11}" />
+                <input type="text" id="phoneNumber" name="phoneNumber" class="max-check" placeholder="휴대폰 번호 입력해 주세요." required pattern="\d{10,11}"/>
                 <button type="button" id="sendBtn">인증번호 발송</button>
         </div>
         <div class="form-group auth-group hidden" id="authCodeGroup">
             <div id="authSection">
-                <input type="text" id="authCode" placeholder="인증번호 6자리 입력">
+                <input type="text" id="authCode" class="max-check" placeholder="인증번호 6자리 입력" maxlength="6" oninput="checkLength()">
                 <span id="timer">03:00</span>
                 <button type="button" id="verifyBtn">인증확인</button>
             </div>
@@ -120,6 +120,58 @@
     if (csrfHeader && csrfToken) {
         requestHeaders[csrfHeader] = csrfToken;
     }
+
+    // function checkLength(obj) {
+    //     // if(obj.value.length >= obj.maxlength) {
+    //     //     alert(obj.maxlength + "자 까지 입력 가능합니다.");
+    //     // }
+    // }
+
+    // document.getElementById('phoneNumber').addEventListener('input', function(){
+    //     console.log("input")
+    //     const maxlength = this.getAttribute('maxlength');
+    //     if(this.value.length > maxlength){
+    //         alert(maxlength + "자를 초과할 수 없습니다.");
+    //         this.value = this.value.slice(0, maxlength);
+    //     }
+    // });
+
+    // document.addEventListener('input', function(event) {
+    //     // 이벤트가 발생한 대상이 'max-check' 클래스를 가지고 있는지 확인
+    //     if (event.target.classList.contains('max-check')) {
+    //         const el = event.target;
+    //         const maxlength = el.getAttribute('maxlength');
+
+    //         if (maxlength && el.value.length > maxlength) {
+    //             alert(maxlength + "자를 초과할 수 없습니다.");
+    //             el.value = el.value.slice(0, maxlength);
+    //         }
+    //     }
+    // });
+
+    document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('max-check')) {
+        const el = e.target;
+        const maxlength = parseInt(el.getAttribute('maxlength'));
+        
+        // 1. 숫자가 아닌 문자가 들어왔는지 체크
+        if (/[^0-9]/.test(el.value)) {
+            alert("숫자만 입력 가능합니다.");
+            el.value = el.value.replace(/[^0-9]/g, '');
+            return; // 여기서 종료
+        }
+
+        // 2. 글자 수 초과 체크
+        // maxlength가 작동 중이면 이 조건문은 보통 '붙여넣기' 시에만 작동합니다.
+        if(document.getElementById("phoneNumber")){
+            const maxlength11 = 11
+            if (el.value.length > maxlength11) {
+                alert(maxlength11 + "자를 초과할 수 없습니다.");
+                el.value = el.value.slice(0, maxlength11);
+            }
+        }
+    }
+});
 
     // 기존 joinButton click 리스너를 submit 리스너로 변경하는 것이 좋습니다.
 const registerForm = document.getElementById('registerForm');

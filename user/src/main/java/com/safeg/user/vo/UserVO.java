@@ -123,17 +123,19 @@ public class UserVO {
         return password != null && password.equals(passwordConfirm);
     }
 
-@Convert(converter = StringCryptoConverter.class)
-private String email;
+    @Convert(converter = StringCryptoConverter.class)
+    private String email;
 
-@Convert(converter = StringCryptoConverter.class)
-private String accountNumber;
+    @Convert(converter = StringCryptoConverter.class)
+    private String accountNumber;
 
     private String bankNm;
+    @Convert(converter = StringCryptoConverter.class)
     private String depositor;
     private String isDeleted;
     private String isStopped;
     private String nickname;
+    @Convert(converter = StringCryptoConverter.class)
     private String phoneNum;
     private String authCode;
     private int pointId;

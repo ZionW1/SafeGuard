@@ -60,6 +60,7 @@ public class MyPageServiceImpl implements MyPageService {
     @Transactional
     public int updateInfo(UserVO userVo) throws Exception {
         // TODO Auto-generated method stub
+        log.info("MypageServiceImpl updaetInfo + " + userVo.toString());
         int result = myPageMapper.updateInfo(userVo);
         log.info("result : " + result);
         log.info("userVo.getFullAddress : " + userVo.getFullAddress());

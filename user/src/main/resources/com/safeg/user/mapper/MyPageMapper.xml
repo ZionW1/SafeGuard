@@ -92,11 +92,11 @@
     <update id="updateInfo">
         UPDATE user set 
             nickname = #{nickname},
-            email = #{email},
-            phone_num = #{phoneNum},
+            email = #{email, typeHandler=com.safeg.user.util.CryptoTypeHandler},
+            phone_num = #{phoneNum, typeHandler=com.safeg.user.util.CryptoTypeHandler},
             bank_nm = #{bankNm},
-            account_Number = #{accountNumber},
-            depositor = #{depositor},
+            account_Number = #{accountNumber, typeHandler=com.safeg.user.util.CryptoTypeHandler},
+            depositor = #{depositor, typeHandler=com.safeg.user.util.CryptoTypeHandler},
             updated_at = now()
         WHERE id= #{id}
     </update>

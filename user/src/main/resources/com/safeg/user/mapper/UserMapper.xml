@@ -4,45 +4,24 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.safeg.user.mapper.UserMapper">
-    <resultMap type="UserVO" id="userMap">
-        <!-- <id property="no" column="no" />
-        <result property="id" column="id" />
-        <result property="accountNumber" column="account_number" />
-        <result property="bank" column="bank" />
-        <result property="depositor" column="depositor" />
-        <result property="name" column="name" />
-        <result property="email" column="email" />
-        <result property="isDeleted" column="is_deleted" />
-        <result property="isStopped" column="is_stopped" />
-        <result property="nickname" column="nickname" />
-        <result property="password" column="password" />
-        <result property="phone" column="phone" />
-        <result property="point" column="point" />
-        <result property="roleCd" column="role_cd" />
-        <result property="addressId" column="address_id" />
-        <result property="stoppedDate" column="stopped_date" />
-        <result property="memo" column="memo" />
-        <result property="profileImage" column="profile_image" />
-        <result property="createdAt" column="created_at" />
-        <result property="updatedAt" column="updated_at" />
-        <result property="referrer" column="referrer" />
-        <result property="enabled" column="enabled" />
-        <collection property="authList" resultMap="authMap"></collection> -->
-
-
+    <resultMap type="com.safeg.user.vo.UserVO" id="userMap">
         <id property="id" column="id" />
         <result property="id" column="id" />
         <result property="userId" column="user_id" />
         <result property="userNm" column="user_nm" />
         <result property="password" column="password" />
-        <result property="accountNumber" column="account_number" />
+        <result property="accountNumber" column="account_number"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
         <result property="bankNm" column="bank_nm" />
-        <result property="depositor" column="depositor" />
-        <result property="email" column="email" />
+        <result property="depositor" column="depositor"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+        <result property="email" column="email"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
         <result property="isDeleted" column="is_deleted" />
         <result property="isStopped" column="is_stopped" />
         <result property="nickname" column="nickname" />
-        <result property="phoneNum" column="phone_num" />
+        <result property="phoneNum" column="phone_num"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
         <result property="pointId" column="point_id" />
         <result property="userRating" column="user_rating" />
         <result property="commonId" column="common_id" />
@@ -93,8 +72,28 @@
     </select>
 
     <insert id="join" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user( user_id, user_nm, email, password, phone_num, referrer_no, auth_id, role, guard_type)
-        VALUES ( #{userId}, #{userNm}, #{email}, #{password}, #{phoneNum}, #{referrerNo}, '02', 'User', '00')
+        INSERT INTO user
+        (
+            user_id,
+            user_nm,
+            email,
+            password,
+            phone_num,
+            referrer_no,
+            auth_id, role,
+            guard_type
+        )
+        VALUES ( 
+            #{userId},
+            #{userNm},
+            #{email, typeHandler=com.safeg.user.util.CryptoTypeHandler},
+            #{password},
+            #{phoneNum, typeHandler=com.safeg.user.util.CryptoTypeHandler},
+            #{referrerNo},
+            '02',
+            'User',
+            '00'
+        )
     </insert>
 
     <!-- 회원 권한 등록 -->

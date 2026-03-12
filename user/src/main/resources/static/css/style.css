@@ -1742,7 +1742,8 @@ table.bestPayList {
     margin-top: 30px;
     margin-bottom: 10px;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.4rem;
+    line-height: 1.8;
     padding-bottom: 2px;
 }
 

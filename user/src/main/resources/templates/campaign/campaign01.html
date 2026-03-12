@@ -32,7 +32,7 @@
     .image-row {
         display: flex;
         gap: 20px;
-        margin-bottom: 20px;
+        margin: 20px 0px;
     }
     .image-row img {
         max-width: 100%; 
@@ -45,7 +45,7 @@
     /* 제공내역 */
     .section-title {
         font-weight: 700;
-        font-size: 1rem;
+        font-size: 1.4rem;
         margin-bottom: 10px;
     }
     .highlight-pink {
@@ -221,6 +221,8 @@
 
     
 </style>
+    <link rel="stylesheet" href="/css/style.css" />
+
 
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js'></script> <!-- 한글 지원을 위해 -->
@@ -490,9 +492,10 @@
         <div class="section-title">
             모집인 <span class="highlight-pink">총 <span th:text="${campaignSelect.applicantsNum}"></span> / <span th:text="${campaignSelect.recruitmentNum}"></span>명</span>
         </div>
-        <div class="campaignTitle">
+        <div class="section-title">
             <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
-            <h2>포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span></h2>
+            <div class="campaign-title-text">포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span></div>
+            <div class="campaign-title-text"> [만근포인트 : 10,000]</div>
             
         </div>
         <div class="campaign_mission">안내 사항</div>
@@ -510,7 +513,7 @@
         </div>
         <div class="map">
             <div class="col-6">
-                <div class="map_area  mb20" id="map" style="width:100%; height:350px;"></div>
+                <div class="map_area  mb20" id="map" style="width:100%; height:500px;"></div>
             </div>
         </div>
     </section>

@@ -131,4 +131,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ]]>
     </select>
 
+    <select id="searchCampaign" resultType="CampaignVO">
+    <![CDATA[
+        SELECT 
+            c.campaign_id, 
+            c.campaign_Title, 
+            c.recruitment_Num, 
+            c.applicants_Num, 
+            f.saved_name, 
+            f.file_path,
+            (CASE
+                WHEN type_code = '01' THEN '경호'
+                WHEN type_code = '02' THEN '진행'
+                WHEN type_code = '03' THEN '수행'
+                ELSE ''
+            END) as typeNm,
+            campaign_pay,
+            c.app_period_str,
+            c.app_period_end,
+            event_Period_str,
+            event_Period_End,
+            t.user_nm
+            FROM campaign c 
+        LEFT OUTER JOIN files f 
+        ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN user t
+        on c.leader_code = t.id
+        Where f.is_deleted = 'N'
+        and f.target_type = 'campaign'
+        and c.is_deleted = 'N'
+        and c.app_Period_end >= now()
+        and c.applicants_Num <= c.recruitment_Num
+        and c.is_active = 'Y'
+        and campaign_title like CONCAT('%', #{schCamp}, '%')
+        ORDER BY c.applicants_Num DESC, c.campaign_id desc
+        ]]>
+    </select>
 </mapper>

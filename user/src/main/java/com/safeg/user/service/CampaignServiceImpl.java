@@ -25,7 +25,7 @@ public class CampaignServiceImpl implements CampaignService{
     CampaignMapper campaignMapper;
 
     @Override
-    public CampaignVO campaignSelect(String id) throws Exception{
+    public CampaignVO campaignSelect(Long id) throws Exception{
         // TODO Auto-generated method stub
         CampaignVO campaignSelect = campaignMapper.campaignSelect(id);
 
@@ -127,4 +127,10 @@ public class CampaignServiceImpl implements CampaignService{
         return campaignApplied;
     }
     
+    public List<CampaignVO> searchCampaign(String schCamp) throws Exception {
+        // TODO Auto-generated method stub
+        List<CampaignVO> searchCampaign = campaignMapper.searchCampaign(schCamp);
+
+        return searchCampaign;
+    }
 }

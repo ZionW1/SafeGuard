@@ -153,16 +153,35 @@ a {
 }
 .search {
     width: 210px;
-    padding: 5px;
-    font-size: 13px;
+    padding: 10px;
+    font-size: 1em;
     border: none;
     border-bottom: 2px solid #ccc;
-    background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat right 5px center;
-    background-size: 16px;
-    padding-right: 28px;
+    padding-right: 90px;
     outline: none;
+    position: relative;
+    top: 20px;
+    left: 3%;
 }
 
+.optionSubmit {
+    display: inline-block;
+    width: 25px;  /* 아이콘이 잘 안 보이면 크기를 조금 키워보세요 */
+    height: 25px;
+    margin-top: 2px;
+    border: 0 none;
+    cursor: pointer; /* 마우스 올렸을 때 손가락 모양 추가 */
+    text-indent: -9999em;
+    
+    /* 배경 설정 수정 */
+    background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat center;
+    background-size: contain; /* 아이콘이 버튼 크기에 딱 맞게 조절됩니다 */
+    background-color: transparent; /* 배경색 투명하게 */
+
+    position: relative;
+    top: 18px;
+    left: -7%;
+}
 /* 광고 */
 .header-right {
     display: flex;
@@ -241,14 +260,6 @@ a {
     text-decoration: none;
 }
 
-.login_link {
-    font-size: 16px;
-    font-weight: 500;
-    color: #333;
-    text-decoration: none;
-    margin-top: 5px;
-    margin-left: auto;
-}
 .auth-link:hover {
     text-decoration: none;
     color: #333;
@@ -2412,14 +2423,121 @@ table.bestPayList {
         font-weight: 700;
         line-height: 1.6;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
     }
-      .recruitment-num{
-        font-weight: normal;
-        color:#888;
-      }
+    .recruitment-num{
+    font-weight: normal;
+    color:#888;
+    }
+
+    .login_link {
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        text-decoration: none;
+        margin-top: 5px;
+        margin-left: auto;
+        width: 65px;
+    }
+    
+    .mypage_link{
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        text-decoration: none;
+        margin-top: 5px;
+        margin-left: auto;
+        width: 65px;
+    }
+
+    .search {
+        width: 210px;
+        padding: 10px;
+        font-size: 1em;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        padding-right: 90px;
+        outline: none;
+        position: relative;
+        top: 0px;
+        left: 3%;
+    }
+    
+    .optionSubmit {
+        display: inline-block;
+        width: 25px;  /* 아이콘이 잘 안 보이면 크기를 조금 키워보세요 */
+        height: 25px;
+        margin-top: 2px;
+        border: 0 none;
+        cursor: pointer; /* 마우스 올렸을 때 손가락 모양 추가 */
+        text-indent: -9999em;
+        
+        /* 배경 설정 수정 */
+        background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat center;
+        background-size: contain; /* 아이콘이 버튼 크기에 딱 맞게 조절됩니다 */
+        background-color: transparent; /* 배경색 투명하게 */
+    
+        position: relative;
+        top: 0px;
+        left: -7%;
+    }
 }
 
   /* 더 작은 모바일 화면 (예: 480px 이하) */
 @media (max-width: 480px) {
+    .login_link {
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        text-decoration: none;
+        margin-top: 5px;
+        margin-left: 45px;
+        width: 65px;
+    }
+    
+    .mypage_link{
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        text-decoration: none;
+        margin-top: 5px;
+        margin-left: auto;
+        width: 65px;
+    }
+
+    .search {
+        width: 80px;
+        padding: 5px;
+        font-size: 1em;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        padding-right: 40px;
+        outline: none;
+        position: relative;
+        top: 20px;
+        left: 8%;
+    }
+    
+    .optionSubmit {
+        display: inline-block;
+        width: 25px;  /* 아이콘이 잘 안 보이면 크기를 조금 키워보세요 */
+        height: 25px;
+        margin-top: 2px;
+        border: 0 none;
+        cursor: pointer; /* 마우스 올렸을 때 손가락 모양 추가 */
+        text-indent: -9999em;
+        
+        /* 배경 설정 수정 */
+        background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat center;
+        background-size: contain; /* 아이콘이 버튼 크기에 딱 맞게 조절됩니다 */
+        background-color: transparent; /* 배경색 투명하게 */
+    
+        position: relative;
+        top: -13px;
+        left: 110px;
+    }
+    .search_from {
+        height: 60px;
+    }
+
     .desktop-header {
         display: none;
     }

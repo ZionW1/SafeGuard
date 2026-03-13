@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <th:block th:if="${!closedCampaign.isEmpty()}">
                 <th:block th:each="campaign : ${closedCampaign}">
                     <div sec:authorize="!isAuthenticated()" class="guest-message">
-                        <a th:href="|/campaign01?id=${campaign.campaignId}&userId=''|">
+                        <a th:href="@{/campaign/{id}(id=${campaign.campaignId})}">
                             <div class="campaign-item">
         
                             <div class="campaign-card">
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </a>
                     </div>
                     <div sec:authorize="isAuthenticated()" class="guest-message">
-                        <a th:href="|/campaign01?id=${campaign.campaignId}&userId=${user.id}&eventPeriodStr=${campaign.eventPeriodStr}&eventPeriodEnd=${campaign.eventPeriodEnd}|">
+                        <a th:href="@{/campaign/{id}(id=${campaign.campaignId})}">
                             <div class="campaign-card">
                                 <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                 <div class="campaign-info-box">

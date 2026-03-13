@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>오류 발생</title>
+</head>
+<body>
+    <h1>문제가 발생했습니다!</h1>
+    <p>상세 내용: <span th:text="${message}">에러 메시지</span></p>
+    <p>상태 코드: <span th:text="${status}">500</span></p>
+    <a href="/">홈으로 돌아가기</a>
+</body>
+</html>

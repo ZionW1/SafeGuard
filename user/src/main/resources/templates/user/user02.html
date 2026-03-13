@@ -17,7 +17,7 @@
         </div>
         <div class="form-group phone-group">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <input type="text" id="phoneNumber" name="phoneNumber" class="max-check" placeholder="휴대폰 번호 입력해 주세요." required pattern="\d{10,11}"/>
+                <input type="text" id="phoneNum" name="phoneNum" class="max-check" placeholder="휴대폰 번호 입력해 주세요." required pattern="\d{10,11}"/>
                 <button type="button" id="sendBtn">인증번호 발송</button>
         </div>
         <div class="form-group auth-group hidden" id="authCodeGroup">
@@ -105,7 +105,7 @@
     const sendBtn = document.getElementById('sendBtn');
     const authCodeGroup = document.getElementById('authCodeGroup');
     const authSection = document.getElementById('authSection');
-    const phoneInput = document.getElementById('phoneNumber');
+    const phoneInput = document.getElementById('phoneNum');
     const authCodeInput = document.getElementById('authCode');
     const verifyBtn = document.getElementById('verifyBtn');
     const timerDisplay = document.getElementById('timer');
@@ -127,7 +127,7 @@
     //     // }
     // }
 
-    // document.getElementById('phoneNumber').addEventListener('input', function(){
+    // document.getElementById('phoneNum').addEventListener('input', function(){
     //     console.log("input")
     //     const maxlength = this.getAttribute('maxlength');
     //     if(this.value.length > maxlength){
@@ -163,7 +163,7 @@
 
         // 2. 글자 수 초과 체크
         // maxlength가 작동 중이면 이 조건문은 보통 '붙여넣기' 시에만 작동합니다.
-        if(document.getElementById("phoneNumber")){
+        if(document.getElementById("phoneNum")){
             const maxlength11 = 11
             if (el.value.length > maxlength11) {
                 alert(maxlength11 + "자를 초과할 수 없습니다.");
@@ -220,7 +220,7 @@ registerForm.addEventListener('submit', function(e) {
 });
 
     sendBtn.addEventListener('click', function() {
-        const phoneNumber = document.getElementById('phoneNumber').value;
+        const phoneNumber = document.getElementById('phoneNum').value;
         if(!phoneNumber) {
             alert("번호를 입력해주세요.");
             return;
@@ -284,7 +284,7 @@ registerForm.addEventListener('submit', function(e) {
     // 인증확인 버튼 클릭 이벤트
     document.getElementById('verifyBtn').addEventListener('click', () => {
         const inputCode = document.getElementById('authCode').value;
-        const phoneNumber = document.getElementById('phoneNumber').value;
+        const phoneNumber = document.getElementById('phoneNum').value;
         fetch('/auth/verifyCode', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...requestHeaders },
@@ -298,7 +298,7 @@ registerForm.addEventListener('submit', function(e) {
                 clearInterval(timerInterval);
                 resultMessage.textContent = "인증되었습니다.";
                 // 추가로 인증번호 입력창과 버튼을 비활성화하거나 숨길 수도 있습니다.
-                document.getElementById('phoneNumber').readOnly = true;
+                document.getElementById('phoneNum').readOnly = true;
                 // document.getElementById('sendCode').disabled = true;
                 document.getElementById('authCode').disabled = true;
                 document.getElementById('verifyBtn').disabled = true;

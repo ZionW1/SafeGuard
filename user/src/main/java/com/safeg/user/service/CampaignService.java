@@ -8,7 +8,7 @@ import com.safeg.user.vo.UserCampaignVO;
 
 public interface CampaignService {
 
-    public CampaignVO campaignSelect(String id) throws Exception;
+    public CampaignVO campaignSelect(Long id) throws Exception;
 
     public int campaignApply(UserCampaignVO userCampaignVO) throws Exception;
 
@@ -23,5 +23,7 @@ public interface CampaignService {
     public int updateCampaign(Long campaignId) throws Exception;
 
     public List<UserCampaignVO> userCampaignApply(String id) throws Exception;
+
+    public List<CampaignVO> searchCampaign(String schCamp) throws Exception;
 
 }

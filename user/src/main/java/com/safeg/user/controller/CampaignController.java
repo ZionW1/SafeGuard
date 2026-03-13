@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.safeg.user.service.CampaignService;
 import com.safeg.user.service.FileService;
+import com.safeg.user.service.UserService;
 import com.safeg.user.vo.CampaignVO;
 import com.safeg.user.vo.CustomUser;
 import com.safeg.user.vo.FilesVO;
@@ -32,20 +34,27 @@ public class CampaignController {
     @Autowired
     private CampaignService campaignsService;
 
+    @Autowired
+    private UserService userService;
+
     // @Autowired
     // private FileService fileService;
 
     @SuppressWarnings("null")
-    @GetMapping("/campaign01")
-    public String campaign01(@AuthenticationPrincipal CustomUser authUser, Model model, @RequestParam("id") String id, @RequestParam("userId") String userId, 
-        @RequestParam(value = "eventPeriodStr", required = false) LocalDate eventPeriodStr, @RequestParam(value = "eventPeriodEnd", required = false) LocalDate eventPeriodEnd) throws Exception{
-        log.info(":::::::::: campaign01 화면 :::::::::: " + id +" :::::::::: " +  userId + " :::::::::: " + eventPeriodStr + " :::::::::: " + eventPeriodEnd); ;
+    @GetMapping("/campaign/{campaignId}")
+    public String campaign01( @PathVariable("campaignId") Long campaignId, @AuthenticationPrincipal CustomUser authUser, Model model) throws Exception { // , @RequestParam("id") String id, @RequestParam("userId") String userId) throws Exception{
+        // log.info(":::::::::: campaign01 화면 :::::::::: " + id +" :::::::::: " +  userId); ;
         log.info(":::::::::: campaign01 화면 authUser :::::::::: " + authUser);
 
        // 캠페인 상세 정보 조회
-        CampaignVO campaignSelect = campaignsService.campaignSelect(id);
-        log.info(":::::::::: campaign01 campaignSelect :::::::::: " + campaignSelect);
-
+        CampaignVO campaignSelect = campaignsService.campaignSelect(campaignId);
+        if (campaignSelect == null) {
+            log.error("ID가 {}인 캠페인을 찾을 수 없습니다.", campaignId);
+            // 에러 페이지로 바로 보내거나 리다이렉트
+            return "error/404"; 
+        }
+        
+        
         String formattedContent = campaignSelect.getMission();
         model.addAttribute("mission", formattedContent);
 
@@ -60,78 +69,65 @@ public class CampaignController {
             log.info(":::::::::: campaignApply 전 :::::::::: " + user);
 
             List<UserCampaignVO> campaignApply = campaignsService.campaignApplied(user.getUserId(), user.getId());
+            UserVO userSelect = userService.select(user.getUserId());
+            log.info(":::::::::: userSelect :::::::::: " + userSelect);
+
+            model.addAttribute("guardType", userSelect.getGuardType());
+            
             log.info(":::::::::: campaignApply 후 :::::::::: " + campaignApply);
 
+            // 2. 리스트 데이터 접근 시 안전하게 처리
+            if (campaignApply != null && !campaignApply.isEmpty()) {
+                model.addAttribute("campaignApply", campaignApply.get(0));
+            }
+        
             // 기본적으로 현재 캠페인 신청이 '가능'하다고 가정
             // 하지만 아래 로직을 통해 신청 불가능할 수 있음
             boolean canApply = true; 
 
             // 만약 사용자가 이 캠페인을 이미 신청했다면 신청 불가능
-            if (campaignApply.size() > 0) {
+            // --- 수정 및 보완된 주요 부분 ---
+
+            if (campaignApply != null && !campaignApply.isEmpty()) {
+                // 1. 이미 신청한 경우
                 canApply = false; 
-                for(int i = 0; i < campaignApply.size(); i++){
-                    campaignApply.get(i).setEventActive(false); // 신청 내역이 있으면 '활성화' 상태를 false로
+                for (UserCampaignVO vo : campaignApply) {
+                    vo.setEventActive(false); 
                 }
-                model.addAttribute("campaignApply", campaignApply.get(0));
+                model.addAttribute("campaignApply", campaignApply.get(0)); // 안전하게 리스트 안에서 꺼냄
 
             } else {
-                log.info(":::::::::: campaignApply else :::::::::: " + campaignApply);
-
-                // 사용자가 이 캠페인을 신청하지 않았다면, 다른 캠페인과의 기간 중복 여부 확인
+                // 2. 신청하지 않은 경우 -> 기간 중복 체크
                 List<UserCampaignVO> appliedCampaigns = campaignsService.appliedCampaign(user.getUserId());
-                model.addAttribute("appliedCampaign", appliedCampaigns); // 이미 신청한 캠페인 목록도 모델에 추가
+                model.addAttribute("appliedCampaign", appliedCampaigns);
 
-                // 현재 캠페인의 신청 가능 기간
-                LocalDate currentCampaignStartDate = campaignSelect.getAppPeriodStr(); // ⭐ AppPeriodStr -> start Date
-                LocalDate currentCampaignEndDate = campaignSelect.getAppPeriodEnd();   // ⭐ AppPeriodEnd -> end Date
+                LocalDate currentStart = campaignSelect.getAppPeriodStr();
+                LocalDate currentEnd = campaignSelect.getAppPeriodEnd();
 
-                // 기간이 유효한지 먼저 확인 (null 체크 등)
-                if (currentCampaignStartDate == null || currentCampaignEndDate == null) {
-                    log.warn("현재 캠페인 ID: {} 의 신청 기간 정보가 유효하지 않습니다.", id);
-                    canApply = false; // 기간 정보가 없으면 신청 불가능
-                } else {
-                    // 이미 신청한 캠페인들과 현재 캠페인 기간이 겹치는지 확인
-                    for (UserCampaignVO existingAppliedCampaign : appliedCampaigns) {
-                        LocalDate existingStartDate = existingAppliedCampaign.getAppliedStrDate();
-                        LocalDate existingEndDate = existingAppliedCampaign.getAppliedEndDate();
+                if (currentStart == null || currentEnd == null) {
+                    canApply = false;
+                } else if (appliedCampaigns != null) { // null 체크 추가
+                    for (UserCampaignVO existing : appliedCampaigns) {
+                        LocalDate existStart = existing.getAppliedStrDate();
+                        LocalDate existEnd = existing.getAppliedEndDate();
 
-                        // 기존 신청 기간 정보도 유효한지 확인
-                        if (existingStartDate == null || existingEndDate == null) {
-                            log.warn("사용자 {} 님의 기존 신청 캠페인 ID: {} 기간 정보가 유효하지 않습니다.", user.getUserId(), existingAppliedCampaign.getCampaignId());
-                            continue; // 이 캠페인은 건너뛰고 다음 캠페인 확인
-                        }
+                        if (existStart == null || existEnd == null) continue;
 
-                        // ⭐ 핵심 로직: 두 기간이 겹치는지 확인 ⭐
-                        // 현재 캠페인의 시작일이 기존 캠페인의 종료일보다 빠르거나 같고 (겹치는 시작점),
-                        // 현재 캠페인의 종료일이 기존 캠페인의 시작일보다 늦거나 같으면 (겹치는 종료점)
-                        // 즉, `(Start1 <= End2) AND (End1 >= Start2)` 이면 기간이 겹침.
-                        boolean isOverlap = 
-                            !currentCampaignStartDate.isAfter(existingEndDate) && 
-                            !currentCampaignEndDate.isBefore(existingStartDate);
-
-                        // 또는 더 직관적인 표현:
-                        // (!currentCampaignStartDate.isAfter(existingEndDate)) : 현재 캠페인 시작일이 기존 캠페인 종료일보다 뒤가 아니다 (즉, 같거나 빠르다)
-                        // (!currentCampaignEndDate.isBefore(existingStartDate)) : 현재 캠페인 종료일이 기존 캠페인 시작일보다 앞이 아니다 (즉, 같거나 뒤다)
+                        // 기간 중복 조건 (하나라도 참이면 겹침)
+                        boolean isOverlap = !currentStart.isAfter(existEnd) && !currentEnd.isBefore(existStart);
                         
                         if (isOverlap) {
-                            canApply = false; // 기간이 겹치므로 현재 캠페인은 신청 불가능
-                            log.info("캠페인 ID: {} 이 기존 신청 캠페인 ID: {} 와 기간이 겹침. 시작일: {}, 종료일: {} vs 시작일: {}, 종료일: {}",
-                                    id, existingAppliedCampaign.getCampaignId(), currentCampaignStartDate, currentCampaignEndDate, existingStartDate, existingEndDate);
-                            // campaignApply.setEventActive(false); // 신청 내역이 있으면 '활성화' 상태를 false로
-                            break; // 하나라도 겹치면 더 이상 검사할 필요 없음
+                            canApply = false;
+                            break;
                         }
                     }
                 }
             }
-            
-            // 최종적으로 이 캠페인이 신청 가능한지 여부를 model에 추가
-            // `campaignSelect` VO 내에 `setCanApply` 같은 필드를 추가해서 사용하면 뷰에서 편리
-            if(campaignSelect != null){
-                campaignSelect.setApplyPossible(canApply); // CampaignVO에 `canApply` 필드를 추가해야 함
+
+            // 최종 상태 저장
+            if(campaignSelect != null) {
+                campaignSelect.setApplyPossible(canApply);
             }
-            
-            // `campaignApply`가 null이더라도 model에 넣어서 뷰에서 null 체크하도록
-            // model.addAttribute("campaignApply", campaignApply.get(0)); 
         }
         return "campaign/campaign01";
     }
@@ -233,5 +229,43 @@ public class CampaignController {
     }
     
 
+    @GetMapping("/search")
+    public String searchCampaign(@RequestParam("schCamp") String schCamp, Model model) throws Exception {
+        log.info("1. 검색 시작: " + schCamp);
     
+        List<CampaignVO> list = null;
+
+        if (schCamp != null && !schCamp.trim().isEmpty()) {
+            // 검색어가 있으면 검색 결과 조회
+            list = campaignsService.searchCampaign(schCamp);
+            log.info("페이지 이동 검색 결과 개수: " + list.size());
+        } else {
+            // 검색어가 없으면 전체 목록 조회
+            // list = campaignsService.selectAllCampaigns();
+        }
+        model.addAttribute("campaignList", list); // HTML에서 사용하는 이름과 일치해야 함
+        model.addAttribute("keyword", schCamp);    // 검색창에 검색어 유지용
+        log.info("3. 모델 담기 완료, 조각 리턴 직전");
+        // "파일명 :: 조각이름" 형태로 리턴 (Thymeleaf Fragment 활용)
+        return "campaign/campaignSearch";
+    }
+
+//     @GetMapping("/campaign/list")
+// public String campaignList(@RequestParam(value = "schCamp", required = false) String schCamp, Model model) {
+//     List<CampaignVO> list;
+
+//     if (schCamp != null && !schCamp.trim().isEmpty()) {
+//         // 검색어가 있으면 검색 결과 조회
+//         list = campaignsService.searchCampaign(schCamp);
+//         log.info("페이지 이동 검색 결과 개수: " + list.size());
+//     } else {
+//         // 검색어가 없으면 전체 목록 조회
+//         list = campaignsService.selectAllCampaigns();
+//     }
+
+//     model.addAttribute("campaignList", list); // HTML에서 사용하는 이름과 일치해야 함
+//     model.addAttribute("keyword", schCamp);    // 검색창에 검색어 유지용
+    
+//     return "campaign/list"; // 전체 페이지 리턴
+// }
 }

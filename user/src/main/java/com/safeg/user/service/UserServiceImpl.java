@@ -102,6 +102,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVO select(String username) throws Exception {
+        log.info("userSelect");
         UserVO user = userMapper.select(username);
         return user;
     }

@@ -1,0 +1,11 @@
+<div th:fragment="campaignList">
+    <div th:each="campaign : ${campaignList}" class="item">
+        <h2 th:text="${campaign.campaignTitle}">캠페인 제목</h2>
+        <!-- <p th:text="${campaign.content}">내용</p> -->
+        <a th:href="@{/campaign/{id}(id=${campaign.campaignId})}">상세보기</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(campaignList)}">
+        <p>검색 결과가 없습니다.</p>
+    </div>
+</div>

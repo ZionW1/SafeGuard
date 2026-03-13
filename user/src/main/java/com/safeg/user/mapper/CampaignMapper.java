@@ -21,7 +21,7 @@ public interface CampaignMapper {
 
     public int updateCampaign(Long campaignId) throws Exception;
 
-    public CampaignVO campaignSelect(String id) throws Exception;
+    public CampaignVO campaignSelect(Long id) throws Exception;
 
     public List<CampaignVO> allView(Option option) throws Exception;
 
@@ -30,5 +30,7 @@ public interface CampaignMapper {
     public List<UserCampaignVO> appliedCampaign(String userId) throws Exception;
 
     public List<UserCampaignVO> campaignApplied(@Param("userId") String userId, @Param("campaignId") Long campaignId) throws Exception;
+
+    public List<CampaignVO> searchCampaign(String schCamp) throws Exception;
 
 }

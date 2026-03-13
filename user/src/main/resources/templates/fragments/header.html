@@ -5,6 +5,12 @@
                 <div class="logo">
                     <a href="/"><img src="/images/행집.jpeg" alt="행집_로고" class="logo_image" /></a>
                 </div>
+                <div>
+                    <form class="search_from" id="searchForm">
+                        <input type="text" class="search" id="schCamp" name="schCamp" placeholder="검색어를 입력하세요" />
+                        <input class="optionSubmit" type="submit" id="search_btn" value="">
+                    </form>
+                </div>
             </div>
             <div class="header-right">
                 <div class="ad-section">
@@ -46,12 +52,22 @@
         </nav>
 
         <div class="mobile-top-bar">
-            <div class="mobile-logo"><a href="/"><img src="/images/행집.jpeg" alt="행집_로고" class="logo_image" style="width: 80px; height: 40px;"/></a></div>
+            <div class="mobile-logo">
+                <a href="/">
+                    <img src="/images/행집.jpeg" alt="행집_로고" class="logo_image" style="width: 80px; height: 40px;"/>
+                </a>
+            </div>
+            <form class="search_from" id="searchForm">
+                <input type="text" class="search" id="schCamp" name="schCamp" placeholder="검색어를 입력하세요" />
+                <input class="optionSubmit" type="submit" id="search_btn" value="">
+            </form>
             <th:block sec:authorize="!isAuthenticated()">
                 <a href="/user01" class="login_link">로그인</a>
             </th:block>
+            
+
             <th:block sec:authorize="isAuthenticated()">
-                <a th:href="@{/mypage/calendarPage(userId=${#authentication.principal.username})}" class="login_link">마이페이지</a>
+                <a th:href="@{/mypage/calendarPage(userId=${#authentication.principal.username})}" class="mypage_link">마이페이지</a>
             </th:block>
             <button class="hamburger-btn" id="mMenuOpen">☰</button>
         </div>
@@ -222,5 +238,47 @@
         function ask() {
             alert("준비 중 입니다.")
         }
+
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            const resultArea = document.getElementById('resultArea');
+            const keyword = document.getElementById('schCamp').value;
+
+            // 1. 현재 페이지에 결과창이 있는 경우 (비동기 fetch 검색)
+           
+                fetch(`/search?schCamp=${encodeURIComponent(keyword)}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error("검색 실패");
+                        return response.text();
+                    })
+                    .then(html => {
+                        resultArea.innerHTML = html; // 결과 조각 교체
+                    })
+                    .catch(error => console.error('Error:', error));
+            
+            // 2. 다른 페이지(메인 등)에 있는 경우 (일반 submit 이동)
+           
+        });
+
+
+        // document.getElementById('searchForm').addEventListener('submit', function(e) {
+        //     console.log("search");
+        //     const resultArea = document.getElementById('resultArea');
+        //     const keyword = document.getElementById('schCamp').value;
+
+        //     if (resultArea) {
+        //         alert("a");
+        //         // 1. 현재 목록 페이지에 있다면? fetch로 부분 교체
+        //         e.preventDefault();
+        //         fetch(`/search?schCamp=${encodeURIComponent(keyword)}`)
+        //             .then(res => res.text())
+        //             .then(html => resultArea.innerHTML = html);
+        //     } else {
+        //         alert("b");
+        //         // 2. 다른 페이지라면? 검색어를 들고 목록 페이지로 이동 (일반 submit)
+        //         // e.preventDefault()를 호출하지 않으므로 action 주소로 이동합니다.
+        //         this.action = "/campaign08/"; 
+        //         this.method = "get";
+        //     }
+        // });
     </script>
 </header>

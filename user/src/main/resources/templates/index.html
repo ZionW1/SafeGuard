@@ -72,8 +72,7 @@
             <div class="campaign-list" id="popularList">
                 <th:block th:each="campaign : ${campaignFavorite}">
                     <div sec:authorize="!isAuthenticated()" class="guest-message">
-                        <a th:href="|/campaign01?id=${campaign.campaignId}&userId=''|">
-                            <div class="campaign-card">
+                        <a th:href="@{/campaign/{id}(id=${campaign.campaignId})}">                            <div class="campaign-card">
                                 <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                 <div class="campaign-info-box">
                                     <div class="campaign-tags">
@@ -102,7 +101,7 @@
                         </a>
                     </div>
                     <div sec:authorize="isAuthenticated()" class="guest-message">
-                        <a th:href="|/campaign01?id=${campaign.campaignId}&userId=${user.id}&eventPeriodStr=${campaign.eventPeriodStr}&eventPeriodEnd=${campaign.eventPeriodEnd}|">
+                        <a th:href="@{/campaign/{id}(id=${campaign.campaignId})}">
                             <div class="campaign-card">
                                 <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                 <div class="campaign-info-box">
@@ -142,7 +141,7 @@
                 <div class="campaign-list" id="chanceList">
                     <th:block th:each="campaign : ${campaignWorkable}">
                         <div sec:authorize="!isAuthenticated()" class="guest-message">
-                            <a th:href="|/campaign01?id=${campaign.campaignId}&userId=''|">
+                            <a th:href="@{/campaign/{id}(id=${campaign.campaignId})}">
                                 <div class="campaign-card">
                                     <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                     <div class="campaign-info-box">
@@ -171,7 +170,7 @@
                             </a>
                         </div>
                         <div sec:authorize="isAuthenticated()" class="guest-message">
-                            <a th:href="|/campaign01?id=${campaign.campaignId}&userId=${user.id}|">
+                            <a th:href="@{/campaign/{id}(id=${campaign.campaignId})}">
                                 <div class="campaign-card">
                                     <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                     <div class="campaign-info-box">
@@ -209,7 +208,7 @@
             <div class="campaign-list" id="newList">
                 <th:block th:each="campaign : ${campaignNew}">
                     <div sec:authorize="!isAuthenticated()" class="guest-message">
-                        <a th:href="|/campaign01?id=${campaign.campaignId}&userId=''|">
+                        <a th:href="@{/campaign/{id}(id=${campaign.campaignId})}">
                             <div class="campaign-card">
                                 <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                 <div class="campaign-info-box">
@@ -238,7 +237,7 @@
                         </a>
                     </div>
                     <div sec:authorize="isAuthenticated()" class="guest-message">
-                        <a th:href="|/campaign01?id=${campaign.campaignId}&userId=${user.id}|">
+                        <a th:href="@{/campaign/{id}(id=${campaign.campaignId})}">
                             <div class="campaign-card">
                                 <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                 <div class="campaign-info-box">

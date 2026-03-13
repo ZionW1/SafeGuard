@@ -91,22 +91,72 @@ public class UserController {
         log.info("DEBUG: nickName value before passing to template: [{}]", userSelect.getNickName());
 
         List<FilesVO> profileImage = fileService.userImageFile(id);
-        if(profileImage != null){
-            log.info("user02 profileImage : " + profileImage.toString());
-            for(int i = 0; i <profileImage.size(); i++) {
-                if (profileImage.get(i).getTargetType() != null) {
-                    log.info("profileImage.get(i) : " + profileImage.get(i).getTargetType());
-                    model.addAttribute("" + profileImage.get(i).getTargetType(), "Y");
+        
+        log.info("profileImage.size() : " + profileImage.size());
+        log.info("profileImage : " + profileImage.toString());
 
-                    // certificate, profile, identification
+                if(profileImage.size() == 0){
+                    log.info("user02 profile 0");
+                    model.addAttribute("profile", "N");
+                    model.addAttribute("identification", "N");
+                    model.addAttribute("certificate", "N");
+                } else if(profileImage.size() == 1) { 
+                    if("profile".equals(profileImage.get(0).getTargetType())) {
+                        model.addAttribute("profile", "Y");
+                        model.addAttribute("identification", "N");
+                        model.addAttribute("certificate", "N");
+                    } else if("identification".equals(profileImage.get(0).getTargetType())) {
+                        model.addAttribute("profile", "N");
+                        model.addAttribute("identification", "Y");
+                        model.addAttribute("certificate", "N");
+                    } else if("certificate".equals(profileImage.get(0).getTargetType())) {
+                        model.addAttribute("profile", "N");
+                        model.addAttribute("identification", "N");
+                        model.addAttribute("certificate", "Y");
+                    }
+                } else if(profileImage.size() == 2) {
+                    if ("profile".equals(profileImage.get(0).getTargetType()) && "identification".equals(profileImage.get(1).getTargetType())) {
+                        model.addAttribute("profile", "Y");
+                        model.addAttribute("identification", "Y");
+                        model.addAttribute("certificate", "N");
+                    } else if ("profile".equals(profileImage.get(0).getTargetType()) && "certificate".equals(profileImage.get(1).getTargetType())){
+                        model.addAttribute("profile", "Y");
+                        model.addAttribute("identification", "N");
+                        model.addAttribute("certificate", "Y");
+                    } else if ("identification".equals(profileImage.get(0).getTargetType()) && "certificate".equals(profileImage.get(1).getTargetType())){
+                        model.addAttribute("profile", "N");
+                        model.addAttribute("identification", "Y");
+                        model.addAttribute("certificate", "Y");
+                    }
 
-                }
+                } else if(profileImage.size() == 3) {
+                    model.addAttribute("profile", "Y");
+                    model.addAttribute("identification", "Y");
+                    model.addAttribute("certificate", "Y");
+                } 
+                    // if(i == 0 || i == 1 || i == 2 && profileImage.get(i).getTargetType() != null){
+                    //     model.addAttribute("" + profileImage.get(i).getTargetType(), "Y");
+                    // }
+                    // if(i == 0 && "profile".equals(profileImage.get(i).getTargetType())) {
+                    //     if(i == 1 && profileImage.get(i).getTargetType() == null){
+                    //         model.addAttribute("identification", "N");
+                    //     } else if (i == 2 && profileImage.get(i).getTargetType() == null) {
+                    //         model.addAttribute("certificate", "N");
+                    //     }
+                    // } else if(i == 0 && "identification".equals(profileImage.get(i).getTargetType())) {
+                    //     if(i == 1 && profileImage.get(i).getTargetType() == null){
+                    //         model.addAttribute("profile", "N");
+                    //         model.addAttribute("certificate", "N");
+                    //     }
+                    // } else if(i == 0 && "certificate".equals(profileImage.get(i).getTargetType())) {
+                    //     if(i == 1 && profileImage.get(i).getTargetType() == null){
+                    //         model.addAttribute("profile", "N");
+                    //         model.addAttribute("identification", "N");
+                    //     }
+                    // }
+                    for(int i = 0; i < profileImage.size(); i++) {
+
             }
-        }else {
-            model.addAttribute("profile", "N");
-            model.addAttribute("identification", "N");
-            model.addAttribute("certificate", "N");
-        }
         
         model.addAttribute("userSelect", userSelect);
         if(file != null){

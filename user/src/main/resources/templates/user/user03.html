@@ -350,8 +350,8 @@ function execDaumPostcode() {
                             </button>
                         </div>
                     </form>
-                    <hr style="margin: 20px 0; border: 0.5px solid #eee;">
-                    <div class="section">
+                    <div class="section" th:if="${user.guardType == '00'}">
+                        <hr style="margin: 20px 0; border: 0.5px solid #eee;">
                         <h1>경호원 신청</h1>
                         <div class="form-row">
                             <button class="mypage_button_width" type="button" onclick="ApplyBodyguard('01')">경호원 신청하기</button>
@@ -549,11 +549,65 @@ function execDaumPostcode() {
             .catch(err => alert(err));
         }
         
+
+
+
+
+        // <div class="form-row">
+        //                     <label for="bankNm">은행명</label>
+        //                     <input type="text" id="bankNm" name="bankNm" th:value="${user.bankNm}" placeholder="은행명 입력" />
+        //                 </div>
+        //                 <div class="form-row">
+        //                     <label for="accountNumber">계좌번호</label>
+        //                     <input type="text" id="accountNumber" name="accountNumber" th:value="${user.accountNumber}" placeholder="계좌번호 입력" />
+        //                 </div>
+        //                 <div class="form-row">
+        //                     <label for="depositor">예금주명</label>
+        //                     <input type="text" id="depositor" name="depositor" th:value="${user.depositor}" placeholder="예금주명 입력" />
+        //                 </div>
+        //                 <div th:if="${getAddress != null}">
+        //                     <div class="form-row">
+        //                         <label for="address">주소</label>
+        //                         <input type="text" id="getfullAddress" name="getfullAddress" th:value="${getAddress.fullAddress}" placeholder="" readonly/>
+        //                     </div>
+        //                 </div>
+
+
+
+
+
+
         // --- [6] 경호원 신청 함수 (전역) ---
         function ApplyBodyguard(param) {
-            const img = document.getElementById('imgCertFile');
-            if (!img || !img.src || img.src.includes('not-image')) {
-                alert('이수증 이미지가 없습니다. 이미지를 등록해주세요.');
+            let user = /*[[${user}]]*/ null;
+            let getAddress = /*[[${getAddress}]]*/ null;
+            
+            // console.log(JSON.stringify(user.bankNm));
+            // console.log(JSON.stringify(getAddress.fullAddress));
+
+            const imgCertFile = document.getElementById('imgCertFile');
+            const imgIdttFile = document.getElementById('imgIdttFile');
+            const imgFile = document.getElementById('imgFile');
+            const bankNm = user?.bankNm;
+            const accountNumber = user?.accountNumber;
+            const depositor = user?.depositor;
+            const getfullAddress = getAddress?.fullAddress;
+
+            if (!imgFile?.src || imgFile.src.includes('not-image')) {
+                alert('프로필 이미지가 없습니다.'); return;
+            }
+            if (!imgIdttFile?.src || imgIdttFile.src.includes('not-image')) {
+                alert('신분증 이미지가 없습니다.'); return;
+            }
+            if (!imgCertFile?.src || imgCertFile.src.includes('not-image')) {
+                alert('이수증 이미지가 없습니다.'); return;
+            }
+            if (!bankNm || !accountNumber || !depositor) {
+                alert('계좌 정보(은행, 계좌번호, 예금주)를 모두 입력하고 저장해주세요.');
+                return;
+            }
+            if (!getfullAddress) {
+                alert('주소를 등록하고 저장해주세요.');
                 return;
             }
         

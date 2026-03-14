@@ -31,6 +31,8 @@
                 <textarea id="content" name="content" rows="10" cols="60" style="width: 900px;" th:text="${noticeSelect.content}"></textarea>
                 <div style="height: 30px;"></div>
                 <button type="submit">수정하기</button>
+                <button type="button" onclick="noticeRemove()">삭제</button>
+
             </form>
         </div>
 <!-- 
@@ -235,10 +237,24 @@
             // 에디터 로딩 후에 필요한 추가적인 초기화 작업을 여기에 넣을 수 있어.
         })
         .catch(error => {
-            console.log("aaa");
             console.log('에러 발생했어요 : '+error);
             // console.error('CKEditor 로딩 중 오류 발생:', error);
         });
+
+    function noticeRemove() {
+        const params = new URLSearchParams(location.search);
+        const form = document.getElementById("contentForm");
+        const id = params.get("id");
+
+        console.log(id);
+        if(!confirm('정말로 이 공지사항을 삭제하시겠습니까?')){
+            return;
+        }
+
+        form.action = '/admin/notice06?id=' + id; // action 속성 변경
+        form.submit(); // 요청 전송
+    }
+    
 
     // 폼 제출 시 에디터 내용을 textarea에 반영
     document.getElementById('contentForm').addEventListener('ss', function(event) {

@@ -25,10 +25,12 @@
                 <!-- <label><input type="checkbox" name="rememberId" /> 아이디 저장</label>
                 <label><input type="checkbox" name="autoLogin" /> 자동 로그인</label> -->
                 <div class="item">
-                    <label><input class="form-check-input" type="checkbox" name="remember-id" id="remember-id-check" th:checked="${rememberId}"/> 아이디 저장</label>
+                    <!-- <label><input class="form-check-input" type="checkbox" name="remember-id" id="remember-id-check" th:checked="${rememberId}"/> 아이디 저장</label> -->
+                    <label><input class="form-check-input" type="checkbox" name="remember-id" id="remember-id-check" th:checked="${rememberId}"/><span class="mrg10-left">아이디 저장</span></label>
                 </div>
                 <div class="item">
-                    <label><input class="form-check-input" type="checkbox" name="auto-login" id="remember-me-check" /> 자동 로그인</label>
+                    <!-- <label><input class="form-check-input" type="checkbox" name="auto-login" id="remember-me-check" /> 자동 로그인</label> -->
+                    <label><input class="form-check-input" type="checkbox" name="auto-login" id="remember-me-check" /><span class="mrg10-left" value="true">자동 로그인</span></label>
                 </div>
             </div>
         </form>
@@ -54,9 +56,21 @@
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
+            const rememberIdChecked = document.getElementById('remember-id-check').checked;
+            const rememberMeChecked = document.getElementById('remember-me-check').checked;
+
             const formData = new URLSearchParams();
             formData.append('userId', document.getElementById('userId').value);
-            formData.append('password', document.getElementById('password').value);
+            formData.append('password', document.getElementById('password').value);            
+
+            if (rememberIdChecked) {
+                formData.append('remember-id', 'on');
+            }
+
+            // 명칭을 SecurityConfig와 동일하게 'auto-login'으로 변경합니다.
+            if (rememberMeChecked) {
+                formData.append('auto-login', 'on'); 
+            }
 
             fetch('/admin/login', {
                 method: 'POST',

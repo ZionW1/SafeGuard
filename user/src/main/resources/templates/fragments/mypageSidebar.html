@@ -17,7 +17,7 @@
                     </form>
                 </div>
                 <div th:unless="${file != null} ? 'hidden'">
-                    <form class="profile-preview" action="/updateProfile" method="post" enctype="multipart/form-data">
+                    <form class="profile-preview" id="updateForm" action="/updateProfile" method="post" enctype="multipart/form-data">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <input type="hidden" name="id" id="id" th:value="${userId}" />
                         <input type="hidden" name="userId" id="userId" th:value="${username}" />
@@ -91,24 +91,24 @@
                         th:onclick="markFileDeleted([[${userId}]])">기존 이미지 삭제</button>
             </div>
             <div th:unless="${file != null} ? 'hidden'">
-                <form class="profile-preview" action="/updateProfile" method="post" enctype="multipart/form-data">
+                <form class="profile-preview" id="updateFormMobile" action="/updateProfile" method="post" enctype="multipart/form-data">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                     <input type="hidden" name="id" id="" th:value="${userId}" />
                     <input type="hidden" name="userId" id="" th:value="${username}" />
-                        <div id="drop_area_mobile" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px;">
-                            <div>
-                                <input type="file" name="image" id="image_mobile" accept="image/*" style="display: none" />
-                                <img th:if="${file == null}" id="defaultImage_mobile" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
+                    <div id="drop_area_mobile" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px;">
+                        <div>
+                            <input type="file" name="image" id="image_mobile" accept="image/*" style="display: none" />
+                            <img th:if="${file == null}" id="defaultImage_mobile" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
 
-                                <!-- ⭐️ 여기 hidden 클래스 추가 ⭐️ -->
-                                <img id="preview_mobile" src="" alt="미리보기" class="hidden" style="max-width: 100%; margin-top: 10px;" />
-                                <div id="placeholder_message_mobile" class="message"
-                                            style="color: #888; font-size: 0.9em; margin-top: 10px; display: block;">
-                                            프로필 이미지를 선택해주세요.
-                                        </div>
-                            </div>
+                            <!-- ⭐️ 여기 hidden 클래스 추가 ⭐️ -->
+                            <img id="preview_mobile" src="" alt="미리보기" class="hidden" style="max-width: 100%; margin-top: 10px;" />
+                            <div id="placeholder_message_mobile" class="message"
+                                        style="color: #888; font-size: 0.9em; margin-top: 10px; display: block;">
+                                        프로필 이미지를 선택해주세요.
+                                    </div>
                         </div>
-                        <button class="profile_save" type="submit">프로필 사진 저장하기</button>
+                    </div>
+                    <button class="profile_save" type="submit">프로필 사진 저장하기</button>
                 </form>
             </div>
         </div>
@@ -349,6 +349,62 @@
             if (initialDefaultImage) initialDefaultImage.style.display = 'block';
             initialPreview.style.display = 'none';
         }
+    const updateForm = document.getElementById('updateForm');
+    const updateFormMobile = document.getElementById('updateFormMobile');
+    
+    const handleFormSubmit = function(e) {
+        e.preventDefault();
+        // 현재 클릭된 폼 내부의 input 찾기
+        const imageInput = this.querySelector('input[type="file"]');
+        
+        if (!imageInput || imageInput.files.length === 0) {
+            alert("프로필 이미지를 선택해주세요.");
+            return;
+        }
+        
+        alert("검증 성공! 비동기 전송을 시작합니다.");
+        // 여기서 fetch 로직 실행...
+    };
+
+        // 2. 폼 이벤트 리스너 (updateForm이 존재할 때만 등록)
+    // if (updateForm) {
+    //     updateForm.addEventListener('submit', function(e) {
+    //         e.preventDefault(); // 폼 동기 전송 중단
+            
+    //         const imageMobile = document.getElementById("image_mobile");
+    //         const image = document.getElementById("image");
+
+    //         // 이미지 선택 여부 확인 (files.length로 체크하는 것이 정확함)
+    //         if (!imageMobile || imageMobile.files.length === 0) {
+    //             alert("프로필 이미지를 선택해주세요.");
+    //             return;
+    //         }
+
+    //         // 비동기 전송 로직 (필요시 사용)
+    //         const formData = new FormData(this);
+    //         const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+    //         const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+    //         fetch(this.action, {
+    //             method: 'POST',
+    //             headers: {
+    //                 [csrfHeader]: csrfToken
+    //             },
+    //             body: formData
+    //         })
+    //         .then(res => res.ok ? res.text() : Promise.reject('전송 실패'))
+    //         .then(data => {
+    //             alert('프로필 사진이 저장되었습니다.');
+    //             location.reload();
+    //         })
+    //         .catch(err => {
+    //             console.error(err);
+    //             alert('저장 중 오류가 발생했습니다.');
+    //         });
+    //     });
+    // } else {
+    //     console.error("updateForm을 찾을 수 없습니다.");
+    // }
     });
     </script>
     </div>

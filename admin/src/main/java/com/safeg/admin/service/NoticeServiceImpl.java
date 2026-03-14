@@ -51,5 +51,12 @@ public class NoticeServiceImpl implements NoticeService {
         return result;
     }
 
+    @Override
+    public int noticeDelete(String noticeId) throws Exception {
+        // TODO Auto-generated method stub
+        log.info("Admin FaqServiceImpl faqDelete() 호출" + noticeId);
+        int result = noticeMapper.noticeDelete(noticeId);
+        return result;    }
+
     
 }

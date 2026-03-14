@@ -80,7 +80,7 @@ public class NoticeController {
         if(result > 0){
             return "redirect:/notice01";
         }
-        return "redirect:/notice03?error";
+        return "redirect:/notice01?error";
     }
 
     // 수정 처리
@@ -95,8 +95,20 @@ public class NoticeController {
         if(result > 0){
             return "redirect:/notice01";
         }
-        return "redirect:/notice02?error";
+        return "redirect:/notice01?error";
         // return "redirect:/board/insert?error";
     }
     
+    @PostMapping("/notice06")
+    public String notice06(@RequestParam("id") String noticeId) throws Exception {
+        
+        log.info("Admin NoticeController notice06() 호출");
+        log.info("notice06 : " + noticeId);
+        
+        int result = noticeService.noticeDelete(noticeId);
+        if(result > 0){
+            return "redirect:/notice01";
+        }
+        return "redirect:/notice01?error";
+    }
 }

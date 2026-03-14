@@ -13,12 +13,14 @@ import com.safeg.admin.vo.Page;
 @Mapper
 public interface NoticeMapper {
 
-    public List<AdminContentVO> noticeList(@Param("option") Option option, @Param("page")Page page) throws Exception;
+    public List<AdminContentVO> noticeList(@Param("option") Option option, @Param("page") Page page) throws Exception;
 
     public AdminContentVO noticeSelect(String noticeId) throws Exception;
 
     public int noticeInsert(AdminContentVO adminContentVO) throws Exception;
 
     public int noticeUpdate(AdminContentVO adminContentVO) throws Exception;
+
+    public int noticeDelete(String noticeId) throws Exception;
     
 }

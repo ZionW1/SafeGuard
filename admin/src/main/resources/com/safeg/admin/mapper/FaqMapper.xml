@@ -3,9 +3,9 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.safeg.admin.mapper.NoticeMapper">
+<mapper namespace="com.safeg.admin.mapper.FaqMapper">
 
-    <select id="noticeList" resultType="AdminContentVO">
+    <select id="faqList" resultType="AdminContentVO">
         <![CDATA[
         SELECT 
             Admin_Content_id,
@@ -33,14 +33,14 @@
         <if test="option.code == 3">
             content_type like CONCAT('%', #{option.keyword}, '%')
         </if>
-        and content_type='NOTICE'
+        and content_type='FAQ'
         and is_active = 'Y'
         <if test="option.orderCode == 0">
             order by Admin_Content_id desc
         </if>
     </select>
 
-    <select id="noticeSelect" resultType="AdminContentVO">
+    <select id="faqSelect" resultType="AdminContentVO">
         <![CDATA[
         SELECT 
             Admin_Content_id,
@@ -53,20 +53,20 @@
         FROM 
             Admin_Content
         where
-            Admin_Content_id = #{noticeId}
+            Admin_Content_id = #{faqId}
             and is_active = 'Y'
-            and content_type='NOTICE'
+            and content_type='FAQ'
         ]]>
     </select>
 
-    <insert id="noticeInsert" parameterType="AdminContentVO">
+    <insert id="faqInsert" parameterType="AdminContentVO">
         <![CDATA[
         INSERT INTO Admin_Content (title, content, content_type, author)
         VALUES (#{title}, #{content}, #{contentType}, #{author})
         ]]>
     </insert>
 
-    <update id="noticeUpdate" parameterType="AdminContentVO">
+    <update id="faqUpdate" parameterType="AdminContentVO">
         <![CDATA[
         UPDATE Admin_Content
         SET title = #{title},
@@ -76,13 +76,13 @@
         ]]>
     </update>
 
-    <update id="noticeDelete">
+    <update id="faqDelete">
         update ADMIN_CONTENT set
             is_active = 'N',
             updated_at = NOW()
         where
-        ADMIN_CONTENT_ID = #{noticeId}
+        ADMIN_CONTENT_ID = #{faqId}
         AND
-        CONTENT_TYPE = 'NOTICE'
+        CONTENT_TYPE = 'FAQ'
     </update>
 </mapper>

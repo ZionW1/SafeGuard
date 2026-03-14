@@ -29,7 +29,7 @@
                     <label><input class="form-check-input" type="checkbox" name="remember-id" id="remember-id-check" th:checked="${rememberId}"/><span class="mrg10-left">아이디 저장</span></label>
                 </div>
                 <div class="item">
-                    <label><input class="form-check-input" type="checkbox" name="auto-login" id="remember-me-check" /><span class="mrg10-left">자동 로그인</span></label>
+                    <label><input class="form-check-input" type="checkbox" name="auto-login" id="remember-me-check" /><span class="mrg10-left" value="true">자동 로그인</span></label>
                 </div>
             </div>
         
@@ -95,19 +95,24 @@
         const rememberIdChecked = document.getElementById('remember-id-check').checked;
         const rememberMeChecked = document.getElementById('remember-me-check').checked;
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        
+        // const isAutoLogin = document.getElementById('remember-me-check').checked;
+        // formData.append('auto-login', isAutoLogin);
 
         const formData = new URLSearchParams();
         formData.append('userId', userId);
         formData.append('password', password);
         
         // 아이디 저장 체크 시 서버로 전송
+        
+
         if (rememberIdChecked) {
             formData.append('remember-id', 'on');
         }
-        
-        // 자동 로그인 체크 시 서버로 전송
+
+        // 명칭을 SecurityConfig와 동일하게 'auto-login'으로 변경합니다.
         if (rememberMeChecked) {
-            formData.append('remember-me', 'on');
+            formData.append('auto-login', 'on'); 
         }
 
         fetch('/login', {

@@ -16,4 +16,6 @@ public interface NoticeService {
     public int noticeInsert(AdminContentVO adminContentVO) throws Exception;
 
     public int noticeUpdate(AdminContentVO adminContentVO) throws Exception;
+
+    public int noticeDelete(String noticeId) throws Exception;
 }

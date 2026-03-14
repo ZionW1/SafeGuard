@@ -28,8 +28,6 @@ public class NoticeController {
         List<AdminContentVO> noticeList = noticeService.noticeList();
         log.info("NoticeController noticeList() 호출" + noticeList.toString()); ;
         
-        model.addAttribute("currentURI", request.getRequestURI());
-
         model.addAttribute("noticeList", noticeList);
         model.addAttribute("currentURI", request.getRequestURI()); // ⭐ 모델에 currentURI 추가
 

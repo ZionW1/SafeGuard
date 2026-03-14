@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.safeg.user.mapper.FaqMapper">
+
+    <select id="faqList" resultType="AdminContentVO">
+        <![CDATA[
+        SELECT 
+            Admin_Content_id,
+            title,
+            content,
+            content_type,
+            author,
+            created_at,
+            updated_at
+        FROM 
+            Admin_Content
+        where
+        ]]>
+        <!-- <if test="option.code == 0">
+            (title like CONCAT('%', #{option.keyword}, '%')
+            or content like CONCAT('%', #{option.keyword}, '%')
+            or content_type like CONCAT('%', #{option.keyword}, '%'))
+        </if>
+        <if test="option.code == 1">
+            title like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 2">
+            content like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 3">
+            content_type like CONCAT('%', #{option.keyword}, '%')
+        </if> -->
+        content_type='FAQ'
+        and is_active = 'Y'
+        order by Admin_Content_id desc
+        <!-- <if test="option.orderCode == 0">
+            
+        </if> -->
+    </select>
+
+    <select id="faqSelect" resultType="AdminContentVO">
+        <![CDATA[
+        SELECT 
+            Admin_Content_id,
+            title,
+            content,
+            content_type,
+            author,
+            created_at,
+            updated_at
+        FROM 
+            Admin_Content
+        where
+            Admin_Content_id = #{faqId}
+            and is_active = 'Y'
+            and content_type='FAQ'
+        ]]>
+    </select>
+</mapper>

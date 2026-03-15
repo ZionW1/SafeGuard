@@ -408,6 +408,11 @@ public class UserController {
                             .body(Map.of("success", false, "message", "패스워드 변경 처리 중 오류가 발생했습니다."));
     }
 
+    public String inquiryPhoneNum(String inquiryPhoneNum) throws Exception{
+        String phoneNUm = userService.inquiryPhoneNum(inquiryPhoneNum);
+
+        return phoneNUm;
+    }
     // public boolean isPhoneNumberDuplicate(String phoneNumber) {
     //     // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
     //     return userMapper.existsByPhoneNumber(phoneNumber); 

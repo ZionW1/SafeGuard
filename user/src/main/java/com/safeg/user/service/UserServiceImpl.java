@@ -268,4 +268,10 @@ public class UserServiceImpl implements UserService {
 
         return result;
     }
+
+    public String inquiryPhoneNum(String inquiryPhoneNum) throws Exception {
+        String result = userMapper.inquiryPhoneNum(inquiryPhoneNum); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!    
+
+        return result;
+    }
 }

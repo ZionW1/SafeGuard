@@ -46,4 +46,6 @@ public interface UserMapper {
 
     public int reRegPw(UserVO userVo) throws Exception;
 
+    public String inquiryPhoneNum(String inquiryPhoneNum);
+
 }

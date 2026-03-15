@@ -185,11 +185,11 @@
     </select>
 
     <select id="phoneDuplicate" resultType="boolean">
-    <![CDATA[
-    SELECT IF(COUNT(*) > 0, TRUE, FALSE) AS is_Duplicate
-    FROM user
-    WHERE phone_num = #{phoneNum}
-    ]]>
+        <![CDATA[
+        SELECT IF(COUNT(*) > 0, TRUE, FALSE) AS is_Duplicate
+        FROM user
+        WHERE phone_num = #{phoneNum}
+        ]]>
     <!-- SELECT 
     CONCAT(LEFT(phone, 3), '-****-', RIGHT(phone, 4)) AS masked_phone
 FROM member; -->

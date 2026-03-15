@@ -759,10 +759,10 @@ a {
     max-width: 400px; /* 제목 컬럼 최대 너비 */
 }
 
-.notice-table td.title:hover {
+/* .notice-table td.title:hover {
     text-decoration: underline;
     color: #007bff;
-}
+} */
 
 .notice-table tr:hover {
     background-color: #fdfdfd;

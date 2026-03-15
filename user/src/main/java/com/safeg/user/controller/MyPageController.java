@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,8 +32,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safeg.user.service.FileService;
 import com.safeg.user.service.MyPageService;
+import com.safeg.user.service.UserService;
 import com.safeg.user.vo.CalendarEventVO;
 import com.safeg.user.vo.CustomUser;
 import com.safeg.user.vo.FilesVO;
@@ -55,6 +59,12 @@ public class MyPageController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    private ObjectMapper objectMapper; // 2. 의존성 주입
 
     @GetMapping("/calendarPage")
     public String getUserPage(Model model, HttpServletRequest request) throws Exception {
@@ -234,7 +244,7 @@ public class MyPageController {
                 result = myPageService.applyBodyguard(userIdFromDb, userVO.getGuardType());
 
                 response.put("success", true);
-                response.put("message", "사용자가 성공적으로 정지 해제 상태로 변경되었습니다.");
+                response.put("message", "사용자가 성공적으로 경호원 요청 되었습니다.");
             } catch (Exception e) {
                 response.put("success", false);
                 response.put("message", "사용자 변경 중 오류가 발생했습니다: " + e.getMessage());
@@ -392,23 +402,126 @@ public class MyPageController {
     }
 
     @PostMapping("/updateInfo")
-    public String updateInfo(@AuthenticationPrincipal CustomUser authUser, UserVO userVO, BindingResult bindingResult, Model model) throws Exception{
+    @ResponseBody
+    // public String updateInfo(@AuthenticationPrincipal CustomUser authUser, UserVO userVO, BindingResult bindingResult, Model model) throws Exception{
+    public Map<String, Object> updateInfo(@AuthenticationPrincipal CustomUser authUser, UserVO userVO, BindingResult bindingResult, Model model) throws Exception{
+
+        // log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + authUser.getUserVo().getUserId());
+        // log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + userVO);
+        // log.info(":::::::::: userVO.getFullAddress() :::::::::: + " + userVO.getFullAddress());
+        // if (bindingResult.hasErrors()) {
+        //     return "/join";
+        // }
+        // int result = 0;
+        // if(authUser != null){
+        //     // result = userService.mypageUpdate(userVo);
+        //     result = myPageService.updateInfo(userVO);
+        // }
+        // log.info(":::::::::: 회원 마이 페이지 완료 :::::::::: + " + result);
+
+        // // Users mypageSelect = userService.mypageSelect(authUser.getUser().getId());
+
+        // return "redirect:/mypage/infoUpdate";
+
+        // CustomUser customUser = (CustomUser) authentication.getPrincipal();
+        // Long userIdFromDb = customUser.getId(); // ⭐ 이 값이 실제 PK (id)
+        
+        // // [중요!] 넘어온 객체에 현재 로그인한 사람의 ID를 세팅합니다.
+        // userVO.setId(userIdFromDb); 
+        
+        // // 만약 userId(아이디 문자열)도 필요하다면 세팅
+        // userVO.setUserId(customUser.getUsername());
+    
+        // try {
+        //     // 이제 userVO 안에는 수정할 데이터와 'id=48' 같은 기준값이 모두 들어있습니다.
+        //     result = myPageService.updateInfo(userVO);
+    
+        //     if(result > 0) {
+        //         response.put("success", true);
+        //         response.put("message", "사용자의 정보가 성공적으로 변경되었습니다.");
+        //     } else {
+        //         // 쿼리는 실행됐으나 수정된 행이 0개인 경우
+        //         response.put("success", false);
+        //         response.put("message", "수정된 정보가 없습니다. ID를 확인해주세요.");
+        //     }
+        
+
         log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + authUser.getUserVo().getUserId());
         log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + userVO);
-        log.info(":::::::::: userVO.getFullAddress() :::::::::: + " + userVO.getFullAddress());
-        if (bindingResult.hasErrors()) {
-            return "/join";
-        }
+        log.info(":::::::::: userVO.getFullAddress() :::::::::: + " + userVO.getFullAddress());        Map<String, Object> response = new HashMap<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int result = 0;
-        if(authUser != null){
-            // result = userService.mypageUpdate(userVo);
-            result = myPageService.updateInfo(userVO);
+
+        if(authentication.getPrincipal() instanceof CustomUser){
+            
+            boolean phoneDuplicate = userService.phoneDuplicate(userVO.getPhoneNum());
+            if (phoneDuplicate) {
+                log.info("휴대폰 같단다.");
+                Map<String, Object> response1 = Map.of(
+                    "success", phoneDuplicate,
+                    "message", "이미 가입된 휴대폰 번호입니다."
+                );
+                
+                return response1;
+            }
+            CustomUser customUser = (CustomUser) authentication.getPrincipal();
+            Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
+            String username = customUser.getUsername(); // 로그인 아이디 (userId)
+            log.info("userIdFromDb : " + userIdFromDb);
+            log.info("username : " + username);
+            // result = myPageService.applyBodyguard(userVo);
+            userVO.setId(userIdFromDb); 
+        
+            // 만약 userId(아이디 문자열)도 필요하다면 세팅
+            userVO.setUserId(customUser.getUsername());
+            try {
+                // 일반 유저로 변경하는 서비스 로직 호출
+                result = myPageService.updateInfo(userVO);
+
+                if (result > 0) {
+                    // [여기에 추가!] 세션 정보 갱신 로직 시작
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    
+                    // customUser는 이미 위에서 선언하셨으므로 그대로 사용합니다.
+                    // 주의: userVO에 담긴 최신 내용을 customUser 내부의 Vo에도 반영해줘야 합니다.
+                    customUser.getUserVo().setPhoneNum(userVO.getPhoneNum());
+                    customUser.getUserVo().setBankNm(userVO.getBankNm());
+                    customUser.getUserVo().setAccountNumber(userVO.getAccountNumber());
+                    customUser.getUserVo().setDepositor(userVO.getDepositor());
+                    customUser.getUserVo().setAddress(userVO.getAddress());
+                    customUser.getUserVo().setDetailAddress(userVO.getDetailAddress());
+
+                    // 새로운 인증 객체 생성
+                    Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                        customUser, 
+                        auth.getCredentials(), 
+                        auth.getAuthorities()
+                    );
+
+                    // 세션 매니저에 새로운 인증 정보 덮어쓰기
+                    SecurityContextHolder.getContext().setAuthentication(newAuth);
+                    // [갱신 로직 끝]
+
+                    response.put("success", true);
+                    response.put("message", "사용자의 정보가 성공적으로 변경되었습니다.");
+                    
+                } else {
+                    // 쿼리는 실행됐으나 수정된 행이 0개인 경우
+                    response.put("success", false);
+                    response.put("message", "수정된 정보가 없습니다. ID를 확인해주세요.");
+                }
+            } catch (Exception e) {
+                response.put("success", false);
+                response.put("message", "사용자 변경 중 오류가 발생했습니다: " + e.getMessage());
+                // 필요하다면 에러 코드 등 추가 정보 포함
+            }
         }
-        log.info(":::::::::: 회원 마이 페이지 완료 :::::::::: + " + result);
+
+        log.info(":::::::::: 회원 프로필 업데이트 완료 :::::::::: + " + result);
 
         // Users mypageSelect = userService.mypageSelect(authUser.getUser().getId());
 
-        return "redirect:/mypage/infoUpdate";
+        return response;
     }
 
     @PostMapping("/uploadImage")

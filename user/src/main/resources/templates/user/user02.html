@@ -240,9 +240,9 @@ registerForm.addEventListener('submit', function(e) {
             console.log("서버 응답 데이터:", data);
             
             if (data.duplicate) {
-            alert("이미 가입된 번호입니다. 로그인 페이지로 이동하세요.");
-            return;
-        }
+                alert("이미 가입된 번호입니다. 로그인 페이지로 이동하세요.");
+                return;
+            }
             // 서버에서 리턴한 문자열에 '성공'이라는 글자가 포함되어 있는지 확인
             if (data.includes("성공") || data === "Test OK") {
                 resultMessage.style.color = 'blue';

@@ -11,6 +11,8 @@
                 typeHandler="com.safeg.user.util.CryptoTypeHandler" />
         <result property="fullAddress" column="full_address"
                 typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+        <result property="phoneNum" column="phone_num"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
     </resultMap>
 
     <select id="getAppliedDatesForUser" resultType="java.time.LocalDate">

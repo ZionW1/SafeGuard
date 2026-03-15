@@ -42,4 +42,6 @@ public interface UserService {
 
     public int reRegPw(UserVO userVO) throws Exception;
 
+    public String inquiryPhoneNum(String inquiryPhoneNum) throws Exception;
+
 }

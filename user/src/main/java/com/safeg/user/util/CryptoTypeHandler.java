@@ -20,6 +20,7 @@ public class CryptoTypeHandler extends BaseTypeHandler<String> {
         try {
             // DB에 저장하기 전 암호화
             ps.setString(i, EncryptionUtil.encrypt(parameter));
+            ps.setString(i, EncryptionUtil.hash(parameter));
         } catch (Exception e) {
             throw new SQLException("Encryption failed", e);
         }

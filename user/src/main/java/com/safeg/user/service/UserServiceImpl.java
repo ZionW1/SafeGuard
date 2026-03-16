@@ -18,6 +18,7 @@ import com.safeg.user.vo.UserCampaignVO;
 import com.safeg.user.vo.UserVO;
 import com.safeg.user.vo.Users;
 import com.safeg.user.mapper.UserMapper;
+import com.safeg.user.util.EncryptionUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -117,6 +118,16 @@ public class UserServiceImpl implements UserService {
         // userVo.setPassword(encodedPassword);
         // getInputReferrerUserId
         Long referrerNo = userMapper.getReferrerNo(userVo);
+
+        String hashedPhone = EncryptionUtil.hash(userVo.getPhoneNum());
+        log.info("hashedPhone : " + hashedPhone);
+        
+        if (userMapper.phoneDuplicate(hashedPhone, null)) {
+            throw new RuntimeException("이미 등록된 번호입니다.");
+        }
+        
+        // 2. 저장 (해시값 세팅)
+        userVo.setPhoneHash(hashedPhone);
 
         if (referrerNo == null || referrerNo == 0) {
             userVo.setReferrerNo(null); // DB에 NULL 저장
@@ -224,9 +235,12 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-    public boolean phoneDuplicate(String phoneNumber) throws Exception{
+    public boolean phoneDuplicate(String phoneNumber, String userId) throws Exception{
+        log.info("phoneNum : " + phoneNumber + ", userId : " + userId);
+        String hashedPhone = EncryptionUtil.hash(phoneNumber);
+        log.info("hashedPhone : " + hashedPhone);
         // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
-        boolean isDuplicate = userMapper.phoneDuplicate(phoneNumber); 
+        boolean isDuplicate = userMapper.phoneDuplicate(hashedPhone, userId); 
         log.info("isDuplicate : " + isDuplicate);
         return isDuplicate;
     }

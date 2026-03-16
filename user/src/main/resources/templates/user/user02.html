@@ -235,11 +235,14 @@ registerForm.addEventListener('submit', function(e) {
             credentials: 'include',  // 이 옵션이 중요합니다!
             body: new URLSearchParams({ phoneNumber: phoneNumber })
         })
-        .then(response => response.text()) // json() 대신 text()로 받기
+        .then(response => response.json()) // 자동으로 JSON 객체로 변환!
         .then(data => {
             console.log("서버 응답 데이터:", data);
-            
-            if (data.duplicate) {
+            console.log("서버 응답 데이터:", data.success);
+            console.log("서버 응답 데이터:", data.duplicate);
+
+
+            if (!data.success) {
                 alert("이미 가입된 번호입니다. 로그인 페이지로 이동하세요.");
                 return;
             }

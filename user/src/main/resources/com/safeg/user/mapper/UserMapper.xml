@@ -34,6 +34,8 @@
         <result property="updatedAt" column="updated_at" />
         <result property="enabled" column="enabled" />
         <result property="guardType" column="guard_type" />
+        <result property="fullAddress" column="full_Address"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
         <collection property="authList" resultMap="authMap"></collection>
     </resultMap>
         
@@ -63,6 +65,7 @@
             u.updated_at,
             u.auth_id,
             guard_type,
+            full_Address,
             (CASE
                 WHEN auth_id = '01' THEN 'ROLE_ADMIN'
                 WHEN auth_id = '02' THEN 'ROLE_USER'
@@ -70,6 +73,8 @@
                 ELSE 'X'
             END) AS auth
         FROM user u 
+        LEFT OUTER JOIN user_address ua
+        on ua.user_id = u.id
         WHERE u.user_id = #{id}
     </select>
 
@@ -81,6 +86,7 @@
             email,
             password,
             phone_num,
+            phone_hash,
             referrer_no,
             auth_id, role,
             guard_type
@@ -91,6 +97,7 @@
             #{email, typeHandler=com.safeg.user.util.CryptoTypeHandler},
             #{password},
             #{phoneNum, typeHandler=com.safeg.user.util.CryptoTypeHandler},
+            #{phoneHash},
             #{referrerNo},
             '02',
             'User',
@@ -188,8 +195,13 @@
         <![CDATA[
         SELECT IF(COUNT(*) > 0, TRUE, FALSE) AS is_Duplicate
         FROM user
-        WHERE phone_num = #{phoneNum}
         ]]>
+        WHERE phone_hash = #{phoneHash}
+        
+        <if test="userId != null and userId != ''">
+            AND user_id != #{userId}
+        </if>
+        
     <!-- SELECT 
     CONCAT(LEFT(phone, 3), '-****-', RIGHT(phone, 4)) AS masked_phone
 FROM member; -->

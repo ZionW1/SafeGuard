@@ -201,6 +201,7 @@ public class UserVO {
 
     private String type;
 
+    private String phoneHash;
     private boolean isDuplicate;
 
 }

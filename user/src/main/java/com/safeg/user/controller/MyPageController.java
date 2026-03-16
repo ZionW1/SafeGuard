@@ -454,7 +454,15 @@ public class MyPageController {
 
         if(authentication.getPrincipal() instanceof CustomUser){
             
-            boolean phoneDuplicate = userService.phoneDuplicate(userVO.getPhoneNum());
+            
+            CustomUser customUser = (CustomUser) authentication.getPrincipal();
+            Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
+            String username = customUser.getUsername(); // 로그인 아이디 (userId)
+            log.info("userIdFromDb : " + userIdFromDb);
+            log.info("username : " + username);
+            // result = myPageService.applyBodyguard(userVo);
+
+            boolean phoneDuplicate = userService.phoneDuplicate(userVO.getPhoneNum(), customUser.getUsername());
             if (phoneDuplicate) {
                 log.info("휴대폰 같단다.");
                 Map<String, Object> response1 = Map.of(
@@ -464,12 +472,7 @@ public class MyPageController {
                 
                 return response1;
             }
-            CustomUser customUser = (CustomUser) authentication.getPrincipal();
-            Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
-            String username = customUser.getUsername(); // 로그인 아이디 (userId)
-            log.info("userIdFromDb : " + userIdFromDb);
-            log.info("username : " + username);
-            // result = myPageService.applyBodyguard(userVo);
+
             userVO.setId(userIdFromDb); 
         
             // 만약 userId(아이디 문자열)도 필요하다면 세팅

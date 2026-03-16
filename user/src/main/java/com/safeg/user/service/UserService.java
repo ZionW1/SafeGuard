@@ -36,7 +36,7 @@ public interface UserService {
 
     public List<UserVO> bestPayList() throws Exception;
 
-    public boolean phoneDuplicate(String phoneNum) throws Exception;
+    public boolean phoneDuplicate(String phoneNum, String userId) throws Exception;
 
     public String findUserId(String userNm, String phoneNum) throws Exception;
 

@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.safeg.user.mapper.MyPageMapper;
+import com.safeg.user.mapper.UserMapper;
+import com.safeg.user.util.EncryptionUtil;
 import com.safeg.user.vo.CalendarEventVO;
 import com.safeg.user.vo.FilesVO;
 import com.safeg.user.vo.PointHistoryVO;
@@ -34,6 +36,9 @@ public class MyPageServiceImpl implements MyPageService {
     
     @Autowired
     private MyPageMapper myPageMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
     private FileService fileService;
@@ -61,6 +66,16 @@ public class MyPageServiceImpl implements MyPageService {
     public int updateInfo(UserVO userVo) throws Exception {
         // TODO Auto-generated method stub
         log.info("MypageServiceImpl updaetInfo + " + userVo.toString());
+
+        String hashedPhone = EncryptionUtil.hash(userVo.getPhoneNum());
+        log.info("hashedPhone : " + hashedPhone);
+        
+        if (userMapper.phoneDuplicate(hashedPhone, userVo.getUserId())) {
+            throw new RuntimeException("이미 등록된 번호입니다.");
+            // return 0;
+        }
+        userVo.setPhoneHash(hashedPhone);
+
         int result = myPageMapper.updateInfo(userVo);
         log.info("result : " + result);
         log.info("userVo.getFullAddress : " + userVo.getFullAddress());

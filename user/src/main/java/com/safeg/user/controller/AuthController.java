@@ -51,11 +51,12 @@ public class AuthController {
     @PostMapping("/sendCode")
     public CompletableFuture<ResponseEntity<String>> sendCode(@RequestParam("phoneNumber") String phoneNumber) throws Exception {
         log.info("sendCode " + phoneNumber);
-        boolean phoneDuplicate = userService.phoneDuplicate(phoneNumber);
+        boolean phoneDuplicate = userService.phoneDuplicate(phoneNumber, null);
         if (phoneDuplicate) {
             Map<String, Object> response = Map.of(
-                "success", phoneDuplicate,
-                "message", "이미 가입된 휴대폰 번호입니다."
+            "success", false, 
+            "duplicate", true, // 차라리 이 필드를 추가하는 게 명확합니다.
+            "message", "이미 가입된 휴대폰 번호입니다."
             );
             
             // Map 객체를 "{\"success\":false, ...}" 형태의 문자열로 변환

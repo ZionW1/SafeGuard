@@ -59,8 +59,8 @@
     </select>
 
     <insert id="join">
-        INSERT INTO user( id, name, email, password, phone)
-        VALUES ( #{id}, #{name}, #{email}, #{password}, #{phone} )
+        INSERT INTO user( id, name, email, password, phone, phone_hash)
+        VALUES ( #{id}, #{name}, #{email}, #{password}, #{phone}, #{phone_hash})
     </insert>
 
     <!-- 회원 권한 등록 -->

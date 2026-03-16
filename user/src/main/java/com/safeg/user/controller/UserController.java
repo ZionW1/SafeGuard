@@ -36,6 +36,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import com.safeg.user.service.UserService;
+import com.safeg.user.util.EncryptionUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -125,6 +126,15 @@ public class UserController {
                     .collect(Collectors.toList());
             return ResponseEntity.badRequest().body(Map.of("success", false, "errors", errors));
         }
+
+        // String hashedPhone = EncryptionUtil.hash(userVO.getPhoneNum());
+    
+        // // 2. 중복 체크 (DB의 phone_hash 컬럼과 비교)
+        // if (userService.phoneDuplicate(hashedPhone)) {
+        //     throw new RuntimeException("이미 사용 중인 번호입니다.");
+        // }
+
+        // userVO.setPhoneHash(hashedPhone);
 
         // 3. 비밀번호 암호화 및 저장
         String rawPassword = userVO.getPassword();

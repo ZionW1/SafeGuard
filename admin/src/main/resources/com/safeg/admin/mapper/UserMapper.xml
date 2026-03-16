@@ -5,87 +5,109 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <!-- namespace="매퍼 인터페이스 경로" --> 
 <mapper namespace="com.safeg.admin.mapper.UserMapper">
-    <resultMap type="UserVO" id="UserMap">
+    <resultMap type="UserVO" id="userMap">
         <id property="id" column="id" />
-        <result property="createdDate" column="created_date" />
-        <result property="lastModifiedDate" column="last_modified_date" />
-        <result property="username" column="username" />
+        <result property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="userNm" column="user_nm" />
         <result property="password" column="password" />
-        <result property="email" column="email" />
-        <result property="role" column="role" />
-        <result property="status" column="status" />
-        <result property="del_yn" column="del_yn" />
-        <result property="fullName" column="full_name" />
-        <result property="phoneNumber" column="phone_number" />
-        <result property="address" column="address" />
+        <result property="accountNumber" column="account_number"
+                typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
+        <result property="bankNm" column="bank_nm" />
+        <result property="depositor" column="depositor"
+                typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
+        <result property="email" column="email"
+                typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
+        <result property="isDeleted" column="is_deleted" />
+        <result property="isStopped" column="is_stopped" />
+        <result property="nickname" column="nickname" />
+        <result property="phoneNum" column="phone_num"
+                typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
+        <result property="pointId" column="point_id" />
+        <result property="userRating" column="user_rating" />
+        <result property="commonId" column="common_id" />
+        <result property="addressId" column="address_id" />
+        <result property="gradeId" column="grade_id" />
+        <result property="stopDate" column="stop_date" />
+        <result property="memo" column="memo" />
+        <result property="fileId" column="FILE_ID" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <result property="enabled" column="enabled" />
+        <result property="guardType" column="guard_type" />
+        <result property="fullAddress" column="full_Address"
+                typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
+        <collection property="authList" resultMap="authMap"></collection>
+    </resultMap>
+
+    <resultMap type="UserAuth" id="authMap">
+        <result property="no" column="no" />
+        <result property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="auth" column="auth" />
+        <result property="authCd" column="auth_cd" />
     </resultMap>
     <!-- 목록 -->
-    <select id="userList" resultType="UserVO">
+    <!-- <select id="userList" resultType="UserVO"> -->
+    <select id="userList" resultMap="userMap">
+    SELECT 
+        u.*,
+        auth.auth,
+        ua.full_Address,
+        r.user_id AS referrer_id
+    FROM (
+        /* 1. 실제 유저 리스트만 먼저 페이징하여 추출 */
         SELECT 
-            u.id, u.user_id, u.user_Nm, u.email, 
-            r.user_id AS referrer_id,
-            u.phone_num,
-            u.address_id, u.point_Id, ua.full_Address,
-            auth.auth,
+            id, user_id, user_nm, email, phone_num, address_id, point_id,
+            referrer_no, guard_type, role, is_stopped, created_at,
             (CASE
-                WHEN u.guard_type = '00' THEN '스텝'
-                WHEN u.guard_type = '01' THEN '경호원 신청 중'
-                WHEN u.guard_type = '02' THEN '경호원'
-                WHEN u.guard_type = '03' THEN '수행'
-                WHEN u.guard_type = '04' THEN '인솔자'
+                WHEN guard_type = '00' THEN '스텝'
+                WHEN guard_type = '01' THEN '경호원 신청 중'
+                WHEN guard_type = '02' THEN '경호원'
+                WHEN guard_type = '03' THEN '수행'
+                WHEN guard_type = '04' THEN '인솔자'
                 ELSE null
-            END) AS guard_type_nm, 
+            END) AS guard_type_nm
+        FROM user
+        WHERE is_Deleted = 'N'
+          AND role != 'Admin'
+          
+          <if test="option.keyword != null and option.keyword != ''">
+              AND (
+                  <choose>
+                      <when test="option.code == 0">
+                          (user_id LIKE CONCAT('%', #{option.keyword}, '%') OR
+                           user_nm LIKE CONCAT('%', #{option.keyword}, '%') OR
+                           email LIKE CONCAT('%', #{option.keyword}, '%') OR
+                           nickname LIKE CONCAT('%', #{option.keyword}, '%') OR
+                           phone_num LIKE CONCAT('%', #{option.keyword}, '%'))
+                      </when>
+                      <when test="option.code == 1">user_id LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                      <when test="option.code == 2">user_nm LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                      <when test="option.code == 3">email LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                      <when test="option.code == 4">nickname LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                      <when test="option.code == 5">phone_num LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                      <when test="option.code == 6">role LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                      <when test="option.code == 7">is_stopped LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                  </choose>
+              )
+          </if>
 
-            DATE_FORMAT(u.created_at, '%Y.%m.%d') created_at,
-            u.role, u.is_stopped
-        FROM user u
-        LEFT OUTER JOIN user_address ua ON u.address_id = ua.address_id
-        LEFT OUTER JOIN user_auth auth ON u.id = auth.no
-        LEFT OUTER JOIN user r ON u.referrer_no = r.id
-        where
-        <if test="option.code == 0">
-            (u.user_id like CONCAT('%', #{option.keyword}, '%') or
-            u.user_nm like CONCAT('%', #{option.keyword}, '%') or
-            u.email like CONCAT('%', #{option.keyword}, '%') or
-            u.nickname like CONCAT('%', #{option.keyword}, '%') or
-            u.phone_num like CONCAT('%', #{option.keyword}, '%'))
-        </if>
-        <if test="option.code == 1">
-            u.user_id like CONCAT('%', #{option.keyword}, '%')
-        </if>
-        <if test="option.code == 2">
-            u.user_nm like CONCAT('%', #{option.keyword}, '%')
-        </if>
-        <if test="option.code == 3">
-            u.email like CONCAT('%', #{option.keyword}, '%')
-        </if>
-        <if test="option.code == 4">
-            u.nickName like CONCAT('%', #{option.keyword}, '%')
-        </if>
-        <if test="option.code == 5">
-            u.phone_num like CONCAT('%', #{option.keyword}, '%')
-        </if>
-        <if test="option.code == 6">
-            u.role like CONCAT('%', #{option.keyword}, '%')
-        </if>
-        <if test="option.code == 7">
-            u.is_stopped like CONCAT('%', #{option.keyword}, '%')
-        </if>
-        and u.is_Deleted = 'N'
-        and u.role != 'Admin'
-        <if test="option.orderCode == 0">
-            order by u.id desc
-        </if>
-        <if test="option.orderCode == 1">
-            order by u.point_id desc, created_at desc
-        </if>
-        <if test="option.orderCode == 2">
-            ORDER BY (u.referrer_no IS NULL) desc, u.created_at desc
-        </if>
-        <if test="option.orderCode == 3">
-            ORDER BY (u.guard_type IS NULL) desc, u.created_at desc
-        </if>
-    </select>
+          <choose>
+              <when test="option.orderCode == 1">ORDER BY point_id DESC, id DESC</when>
+              <when test="option.orderCode == 2">ORDER BY (referrer_no IS NULL) ASC, created_at DESC</when>
+              <when test="option.orderCode == 3">ORDER BY (guard_type IS NULL) ASC, created_at DESC</when>
+              <otherwise>ORDER BY id DESC</otherwise>
+          </choose>
+
+          /* 2. 페이징 처리 (이 부분이 추가되어야 합니다) */
+        limit #{page.index}, #{page.rows}
+    ) u
+    /* 3. 페이징된 유저에 대해서만 상세 정보 조인 */
+    LEFT OUTER JOIN user_address ua ON u.address_id = ua.address_id
+    LEFT OUTER JOIN user_auth auth ON u.id = auth.no
+    LEFT OUTER JOIN user r ON u.referrer_no = r.id
+</select>
 
     <select id="count" resultType="int">
         select count(*) 
@@ -117,7 +139,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <!-- <select id="userSelect" resultMap="userMap"> -->
-    <select id="userSelect" resultType="userVO">
+    <select id="userSelect" resultMap="userMap">
         SELECT
             u.id,
             u.user_id,

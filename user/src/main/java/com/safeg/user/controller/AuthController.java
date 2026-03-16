@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safeg.user.service.AuthService;
 import com.safeg.user.service.UserService;
+import com.safeg.user.util.EncryptionUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,7 +52,9 @@ public class AuthController {
     @PostMapping("/sendCode")
     public CompletableFuture<ResponseEntity<String>> sendCode(@RequestParam("phoneNumber") String phoneNumber) throws Exception {
         log.info("sendCode " + phoneNumber);
-        boolean phoneDuplicate = userService.phoneDuplicate(phoneNumber, null);
+        String hashedPhone = EncryptionUtil.hash(phoneNumber);
+
+        boolean phoneDuplicate = userService.phoneDuplicate(hashedPhone, null);
         if (phoneDuplicate) {
             Map<String, Object> response = Map.of(
             "success", false, 

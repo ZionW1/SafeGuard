@@ -546,7 +546,7 @@ function execDaumPostcode() {
             .then(data => {
                 console.log("data : " + JSON.stringify(data));
                 if (!data.success) {
-                    alert("이미 가입된 번호입니다. 로그인 페이지로 이동하세요.");
+                    alert("이미 가입된 번호입니다.");
                 return;
                 } else {
                     alert("신청이 완료되었습니다!");

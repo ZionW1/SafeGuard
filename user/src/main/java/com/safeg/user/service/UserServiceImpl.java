@@ -237,10 +237,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean phoneDuplicate(String phoneNumber, String userId) throws Exception{
         log.info("phoneNum : " + phoneNumber + ", userId : " + userId);
-        String hashedPhone = EncryptionUtil.hash(phoneNumber);
-        log.info("hashedPhone : " + hashedPhone);
+        // String hashedPhone = EncryptionUtil.hash(phoneNumber);
+        log.info("hashedPhone : " + phoneNumber);
         // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
-        boolean isDuplicate = userMapper.phoneDuplicate(hashedPhone, userId); 
+        boolean isDuplicate = userMapper.phoneDuplicate(phoneNumber, userId); 
         log.info("isDuplicate : " + isDuplicate);
         return isDuplicate;
     }

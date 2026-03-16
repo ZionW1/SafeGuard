@@ -544,8 +544,9 @@ function execDaumPostcode() {
                     return res.json();
             })
             .then(data => {
-                if (data.duplicate) {
-                alert("이미 가입된 번호입니다. 로그인 페이지로 이동하세요.");
+                console.log("data : " + JSON.stringify(data));
+                if (!data.success) {
+                    alert("이미 가입된 번호입니다. 로그인 페이지로 이동하세요.");
                 return;
                 } else {
                     alert("신청이 완료되었습니다!");

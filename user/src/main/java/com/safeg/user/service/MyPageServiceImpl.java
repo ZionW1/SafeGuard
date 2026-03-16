@@ -62,41 +62,36 @@ public class MyPageServiceImpl implements MyPageService {
         return myPageMapper.getAddress(id);
     }
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int updateInfo(UserVO userVo) throws Exception {
-        // TODO Auto-generated method stub
-        log.info("MypageServiceImpl updaetInfo + " + userVo.toString());
-
+        // 1. 휴대폰 중복 체크 (나를 제외한 타인 중복 확인)
         String hashedPhone = EncryptionUtil.hash(userVo.getPhoneNum());
-        log.info("hashedPhone : " + hashedPhone);
-        
+        log.info("updateInfo hashedPhone : " + hashedPhone);
         if (userMapper.phoneDuplicate(hashedPhone, userVo.getUserId())) {
-            throw new RuntimeException("이미 등록된 번호입니다.");
-            // return 0;
+            throw new RuntimeException("DUPLICATE_PHONE");
         }
         userVo.setPhoneHash(hashedPhone);
-
+    
+        // 2. 회원 기본 정보 업데이트 (전화번호, 이름 등)
         int result = myPageMapper.updateInfo(userVo);
-        log.info("result : " + result);
-        log.info("userVo.getFullAddress : " + userVo.getFullAddress());
-        log.info("userVo.getFullAddress : " + userVo);
-        log.info("userVo.getFullAddress : " + userVo.getId());
-
-        UserAddressVO getAddress = myPageMapper.getAddress(userVo.getId());
-        if (getAddress == null) {
-                myPageMapper.insertAddress(userVo); // 새로운 주소 삽입
-        } else {
-            if(userVo.getFullAddress() != null && !userVo.getFullAddress().isEmpty()) {
-                log.info("주소 정보가 있습니다.");
-                myPageMapper.updateAddress(userVo); // 주소 삭제
-                myPageMapper.insertAddress(userVo); //새로운 주소 삽입
-            } else {
-                log.info("주소 정보가 없습니다.");
+        if (result < 1) throw new RuntimeException("USER_UPDATE_FAILED");
+    
+        // 3. 주소 처리 (기존 주소 삭제 처리 후 신규 삽입)
+        if (userVo.getFullAddress() != null && !userVo.getFullAddress().isEmpty()) {
+            // 기존에 등록된 주소가 있는지 확인 (삭제 안 된 것 위주)
+            UserAddressVO existingAddress = myPageMapper.getAddress(userVo.getId());
+    
+            if (existingAddress != null) {
+                // [중요] 기존 주소를 'Y'로 마킹 (작성하신 updateAddress 호출)
+                myPageMapper.updateAddress(userVo);
+                log.info("기존 주소 삭제(Soft Delete) 완료");
             }
+            
+            // 항상 새로운 주소를 Insert (이력을 남기기 위해)
+            myPageMapper.insertAddress(userVo);
+            log.info("새로운 주소 데이터 삽입 완료");
         }
-        if (result < 1) { // 사용자 업데이트에 실패했다면
-            throw new RuntimeException("사용자 정보 업데이트에 실패했습니다.");
-        }
+    
         return result;
     }
 

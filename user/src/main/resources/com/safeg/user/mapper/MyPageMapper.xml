@@ -54,6 +54,7 @@
             user_id = #{id}
         AND
             is_deleted = 'N'
+        LIMIT 1
     </select>
 
     <update id="updateAddress">
@@ -96,6 +97,7 @@
             nickname = #{nickname},
             email = #{email, typeHandler=com.safeg.user.util.CryptoTypeHandler},
             phone_num = #{phoneNum, typeHandler=com.safeg.user.util.CryptoTypeHandler},
+            phone_hash = #{phoneHash},
             bank_nm = #{bankNm},
             account_Number = #{accountNumber, typeHandler=com.safeg.user.util.CryptoTypeHandler},
             depositor = #{depositor, typeHandler=com.safeg.user.util.CryptoTypeHandler},

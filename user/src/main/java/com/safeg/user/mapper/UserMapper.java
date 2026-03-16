@@ -40,7 +40,7 @@ public interface UserMapper {
 
     public Long getReferrerNoById(Long userNo) throws Exception;
 
-    public boolean phoneDuplicate(@Param("phoneHash") String phoneNumberm, @Param("userId") String userId) throws Exception;
+    public boolean phoneDuplicate(@Param("phoneHash") String phoneNumber, @Param("userId") String userId) throws Exception;
 
     public String findUserId(@Param("userNm") String userNm, @Param("phoneNum") String phoneNum) throws Exception;
 

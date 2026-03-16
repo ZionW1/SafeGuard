@@ -448,7 +448,8 @@ public class MyPageController {
 
         log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + authUser.getUserVo().getUserId());
         log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + userVO);
-        log.info(":::::::::: userVO.getFullAddress() :::::::::: + " + userVO.getFullAddress());        Map<String, Object> response = new HashMap<>();
+        log.info(":::::::::: userVO.getFullAddress() :::::::::: + " + userVO.getFullAddress());        
+        Map<String, Object> response = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int result = 0;
 
@@ -462,16 +463,16 @@ public class MyPageController {
             log.info("username : " + username);
             // result = myPageService.applyBodyguard(userVo);
 
-            boolean phoneDuplicate = userService.phoneDuplicate(userVO.getPhoneNum(), customUser.getUsername());
-            if (phoneDuplicate) {
-                log.info("휴대폰 같단다.");
-                Map<String, Object> response1 = Map.of(
-                    "success", phoneDuplicate,
-                    "message", "이미 가입된 휴대폰 번호입니다."
-                );
+            // boolean phoneDuplicate = userService.phoneDuplicate(userVO.getPhoneNum(), customUser.getUsername());
+            // if (phoneDuplicate) {
+            //     log.info("휴대폰 같단다.");
+            //     Map<String, Object> response1 = Map.of(
+            //         "success", false,
+            //         "message", "이미 가입된 휴대폰 번호입니다."
+            //     );
                 
-                return response1;
-            }
+            //     return response1;
+            // }
 
             userVO.setId(userIdFromDb); 
         

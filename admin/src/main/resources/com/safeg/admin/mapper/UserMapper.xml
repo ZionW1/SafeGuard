@@ -101,7 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           </choose>
 
           /* 2. 페이징 처리 (이 부분이 추가되어야 합니다) */
-        limit #{page.index}, #{page.rows}
+        <!-- limit #{page.index}, #{page.rows} -->
     ) u
     /* 3. 페이징된 유저에 대해서만 상세 정보 조인 */
     LEFT OUTER JOIN user_address ua ON u.address_id = ua.address_id

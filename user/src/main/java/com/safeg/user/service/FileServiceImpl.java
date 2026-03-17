@@ -178,17 +178,18 @@ public class FileServiceImpl implements FileService{
 
     @Override
     // ⭐⭐ 새로 추가되는 ZIP 파일 생성 메서드 ⭐⭐
-    public Resource createZipFile(Long userNo) throws Exception {
+    public Resource createZipFile(Long campaginId, String code) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        log.info("넘어온 값 : " + code + ", " + campaginId);
         try (ZipOutputStream zos = new ZipOutputStream(baos)) {
 
             Set<Long> processedFileIds = new HashSet<>(); // 이미 추가된 fileId를 추적하여 중복 방지
 
             // 해당 userNo에 연결된 모든 fileId 목록을 조회
             // 캠페인 번호로 유저 번호 조회
-            List<Long> fileIdsForUser = fileMapper.userList(userNo); // 예시: 'PROFILE'
+            List<Long> fileIdsForUser = fileMapper.userList(campaginId); // 예시: 'PROFILE'
 
-            log.info("UserNo: {} 에 대해 조회된 fileIds: {}", userNo, fileIdsForUser);
+            log.info("UserNo: {} 에 대해 조회된 fileIds: {}", campaginId, fileIdsForUser);
 
             for (Long fileId : fileIdsForUser) {
                 // ⭐ 중복 파일 ID가 여러 번 조회되어도 ZIP에 한 번만 추가하도록 방지 ⭐
@@ -196,8 +197,13 @@ public class FileServiceImpl implements FileService{
                     log.warn("File ID {} 는 이미 ZIP에 추가되었거나 중복 조회되었습니다. 건너뜝니다.", fileId);
                     continue; // 이미 처리했으면 건너뜀
                 }
-
-                FilesVO fileInfo = getMypageImage(String.valueOf(fileId), "certificate"); // 단일 파일 정보 조회
+                FilesVO fileInfo ;
+                if("1".equals(code)){
+                    fileInfo = getMypageImage(String.valueOf(fileId), "identification"); // 단일 파일 정보 조회
+                } else {
+                    fileInfo = getMypageImage(String.valueOf(fileId), "certificate"); // 단일 파일 정보 조회
+                }
+                
                 if (fileInfo == null) {
                     log.warn("File ID {} 에 대한 파일 정보를 찾을 수 없습니다. ZIP에서 제외합니다.", fileId);
                     continue;

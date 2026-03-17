@@ -33,7 +33,7 @@ public interface FileService {
     public FilesVO bannerFile(String id) throws Exception;
 
     // 프로필 사진 다운 (zip)
-    public Resource createZipFile(Long userNos) throws Exception;
+    public Resource createZipFile(Long campaignId, String code) throws Exception;
 
     public byte[] ApplicationExcel(List<UserCampaignVO> applications, String finalCampaignName) throws Exception;
 

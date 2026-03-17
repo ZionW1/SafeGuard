@@ -224,7 +224,7 @@ public class FileController {
     @PostMapping("/file/imgDownload") // 클라이언트에서 이 URL로 요청할 거야.
     @ResponseBody
     public ResponseEntity<Resource> downloadCampaignFilesAsZip(@RequestBody CampaignVO requestData) { // ⭐ 단일 Long campaignId를 받음 ⭐
-        log.info("downloadCampaignFilesAsZip " + requestData.getCampaignId());
+        log.info("downloadCampaignFilesAsZip " + requestData.getCode());
         if (requestData.getCampaignId() == null || requestData.getCampaignId() <= 0) {
             log.warn("다운로드할 유효한 campaignId가 전달되지 않았습니다.");
             return ResponseEntity.badRequest().body(null);
@@ -232,7 +232,7 @@ public class FileController {
 
         try {
             // fileService를 통해 해당 campaignId에 연결된 모든 파일을 ZIP으로 압축한 Resource를 반환받음
-            Resource zipFileResource = fileService.createZipFile(requestData.getCampaignId());
+            Resource zipFileResource = fileService.createZipFile(requestData.getCampaignId(), requestData.getCode());
 
             String zipFileName = URLEncoder.encode(requestData.getCampaignTitle() + "_" + requestData.getCampaignId() + "_파일묶음.zip", StandardCharsets.UTF_8.toString()).replace("+", "%20");
 

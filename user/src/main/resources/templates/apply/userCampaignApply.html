@@ -23,7 +23,7 @@
                 <h2 th:if="${userCampaignApply != null}" th:text="${userCampaignApply[0].campaignTitle}"></h2>
                 <strong>당첨자</strong> <strong th:text="${userCampaignApply[0].applicantsNum}"></strong> / <strong th:text="${userCampaignApply[0].recruitmentNum}"></strong><br />
                     <strong>담당자이름 : </strong><strong th:text="${userCampaignApply[0].companyNm}"></strong><br><strong> 담당자번호 : </strong><strong th:text="${userCampaignApply[0].companyPh}"></strong></p>
-                <p><strong>행사기간</strong><br />
+                <p><strong>기간</strong><br />
                     <strong th:text="${userCampaignApply[0].eventPeriodStr}"></strong> ~ <strong th:text="${userCampaignApply[0].eventPeriodEnd}"></strong></p>
                 <!-- <button class="btn-purple">모집글 확인</button> -->
                 <span th:text="${userCampaignApply[0].applyDate}"></span>
@@ -89,8 +89,8 @@
         <p id="noFilesMessage" style="color: #999; display: none;">다운로드할 파일이 없습니다.</p>
     </div>
     <div class="btn-area">
-        <button class="btn-info" onclick="requestAllCampaignFilesDownload()">인수증 사진 다운로드</button>
-        <button class="btn-info" onclick="requestAllCampaignFilesDownload()">신분증 사진 다운로드</button>
+        <button class="btn-info" onclick="requestAllCampaignFilesDownload('1')">신분증 사진 다운로드</button>
+        <button class="btn-info" onclick="requestAllCampaignFilesDownload('2')">이수증 사진 다운로드</button>
         <th:block th:if="${userCampaignApply != null and not #lists.isEmpty(userCampaignApply) and userCampaignApply[0].campaignId != null}">
             <button class="btn-info" type="button" 
                     th:onclick="downloadExcel([[${userCampaignApply[0].campaignId}]], [[${userCampaignApply[0].applyDate}]])">
@@ -145,7 +145,7 @@
             
 
         });
-        async function requestAllCampaignFilesDownload() {
+        async function requestAllCampaignFilesDownload(code) {
             // ⭐ 1. 화면에서 단일 캠페인 ID를 가져옴 ⭐
             const campaignFileDownloadArea = document.getElementById('campaignFileDownloadArea');
             const campaignIdDown = document.getElementById('campaignIdDown');
@@ -170,7 +170,8 @@
                 // ⭐ 2. 단일 캠페인 ID를 POST 요청으로 전송 ⭐
                 const requestData = {
                     campaignId: campaignId,
-                    campaignTitle: campaignTitle
+                    campaignTitle: campaignTitle,
+                    code: code
                 };
                 const response = await fetch('/file/imgDownload', { // 새로운 엔드포인트 이름!
                     method: 'POST',

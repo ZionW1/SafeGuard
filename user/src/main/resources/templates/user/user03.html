@@ -258,7 +258,7 @@ function execDaumPostcode() {
                             <img id="imgIdttFile" th:src="|/selectProfile?id=${user.id}&args=2|" alt="신분증" width="720" height="380" style="max-width: 100%;" />
                             <div>
                                 <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
-                                th:onclick="fileRemove([[${userId}]], '1')">기존 이미지 삭제</button>
+                                th:onclick="fileRemove([[${userId}]], '1')">신분증 이미지 삭제</button>
                             </div>
                         </div>
                         <div class="profile" th:if="${getIdentity == null}">
@@ -276,7 +276,7 @@ function execDaumPostcode() {
                             <img id="imgCertFile" th:src="|/selectProfile?id=${user.id}&args=3|" alt="이수증" width="720" height="380" style="max-width: 100%;" />
                             <div>
                                 <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
-                                th:onclick="fileRemove([[${userId}]], '2')">기존 이미지 삭제</button>                                </div>
+                                th:onclick="fileRemove([[${userId}]], '2')">이수증 이미지 삭제</button>                                </div>
                         </div>
                         <div class="profile" th:if="${getCertificate == null}">
                             <div id="cert_drop" class="drop-zone" style="width: 75%; border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px">

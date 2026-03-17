@@ -6,7 +6,7 @@
                     <a href="/"><img src="/images/행집.jpeg" alt="행집_로고" class="logo_image" /></a>
                 </div>
                 <div>
-                    <form class="search_from" action="/search" id="searchForm">
+                    <form class="search_from" action="/search" id="searchForm" name="searchForm">
                         <input type="text" class="search" id="schCamp" name="schCamp" placeholder="검색어를 입력하세요" />
                         <input class="optionSubmit" type="submit" id="search_btn" value="">
                     </form>
@@ -57,9 +57,9 @@
                     <img src="/images/행집.jpeg" alt="행집_로고" class="logo_image" style="width: 80px; height: 40px;"/>
                 </a>
             </div>
-            <form class="search_from" id="searchForm">
+            <form class="search_from" action="/search" id="searchForm" name="searchForm">
                 <input type="text" class="search" id="schCamp" name="schCamp" placeholder="검색어를 입력하세요" />
-                <input class="optionSubmit" type="submit" id="search_btn" th:value="${keyword}">
+                <input class="optionSubmit" type="submit" id="search_btn" value="">
             </form>
             <th:block sec:authorize="!isAuthenticated()">
                 <a href="/user01" class="login_link">로그인</a>
@@ -239,25 +239,41 @@
             alert("준비 중 입니다.")
         }
 
-        // document.getElementById('searchForm').addEventListener('submit', function(e) {
-        //     const resultArea = document.getElementById('resultArea');
-        //     const keyword = document.getElementById('schCamp').value;
+        document.querySelectorAll('.search_from').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const resultArea = document.getElementById('resultArea');
 
-        //     // 1. 현재 페이지에 결과창이 있는 경우 (비동기 fetch 검색)
-           
-        //         fetch(`/search?schCamp=${encodeURIComponent(keyword)}`)
-        //             .then(response => {
-        //                 if (!response.ok) throw new Error("검색 실패");
-        //                 return response.text();
-        //             })
-        //             .then(html => {
-        //                 resultArea.innerHTML = html; // 결과 조각 교체
-        //             })
-        //             .catch(error => console.error('Error:', error));
+                const keyword = "";
+                // for(i=0; i< document.querySelectorAll('.search').length; i++){
+                //     if(document.querySelectorAll('.search')[i].value != null){
+                //         keyword = document.querySelectorAll('.search')[i].value;
+                //     }
+                // }
+                document.querySelectorAll('.search').forEach(input => {
+                    console.log(input.value);
+                    keyword = input.value;
+                    alert("a : " + keyword);
+
+                });
+                
+
+
+                // 1. 현재 페이지에 결과창이 있는 경우 (비동기 fetch 검색)
             
-        //     // 2. 다른 페이지(메인 등)에 있는 경우 (일반 submit 이동)
-           
-        // });
+                    // fetch(`/search?schCamp=${encodeURIComponent(keyword)}`)
+                    //     .then(response => {
+                    //         if (!response.ok) throw new Error("검색 실패");
+                    //         return response.text();
+                    //     })
+                    //     .then(html => {
+                    //         resultArea.innerHTML = html; // 결과 조각 교체
+                    //     })
+                    //     .catch(error => console.error('Error:', error));
+                
+                // 2. 다른 페이지(메인 등)에 있는 경우 (일반 submit 이동)
+            
+            });
+        });
 
 
         // document.getElementById('searchForm').addEventListener('submit', function(e) {

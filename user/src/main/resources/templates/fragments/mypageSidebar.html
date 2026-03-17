@@ -13,7 +13,7 @@
                     <form>
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
-                            th:onclick="markFileDeleted([[${userId}]])">기존 이미지 삭제</button>
+                            th:onclick="markFileDeleted([[${userId}]])">프로필 이미지 삭제</button>
                     </form>
                 </div>
                 <div th:unless="${file != null} ? 'hidden'">

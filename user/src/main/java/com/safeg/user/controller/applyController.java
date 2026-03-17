@@ -40,13 +40,35 @@ public class applyController {
     @Autowired
     ApplyService applyService;
 
-    @GetMapping("/userCampaignApply/{date}")
-    public String userCampaignApply(@AuthenticationPrincipal CustomUser authUser, Model model, @RequestParam("id") String id, 
-        @PathVariable("date") @DateTimeFormat(pattern = "yy-MM-dd") LocalDate applyDate // String 대신 LocalDate로 받고 패턴 지정
+    @GetMapping("/userCampaignApply/{campaignId}")
+    // @GetMapping("/userCampaignApply/{date}")
+    public String userCampaignApply(@AuthenticationPrincipal CustomUser authUser, Model model, @PathVariable("campaignId") String campaignId, 
+        @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date // 날짜가 없을 수도 있음
+        // @PathVariable("date") @DateTimeFormat(pattern = "yy-MM-dd") LocalDate applyDate // String 대신 LocalDate로 받고 패턴 지정
         ) throws Exception{
-        log.info(":::::::::: userCampaignApply 화면 :::::::::: " + id + ", date : " + applyDate);
-        log.info("id: " + id + ", date: " + applyDate);
+        log.info(":::::::::: userCampaignApply 화면 :::::::::: " + campaignId);
+        
+        List<UserCampaignVO> dateList = applyService.getApplyDate(campaignId);
+        model.addAttribute("applyDate", dateList); // 현재 보고 있는 날짜를 다시 전달
+        log.info("apply Date = " + dateList);
 
+        // 2. 현재 조회할 '기준 날짜'를 결정합니다.
+        LocalDate finalDate;
+        if (date != null) { 
+            finalDate = date; 
+            log.info("1번 if 통과: 사용자가 선택한 날짜 사용 -> " + finalDate);
+        } else if (dateList != null && !dateList.isEmpty()) {
+            finalDate = dateList.get(0).getApplyDate(); 
+            log.info("2번 else if 통과: 첫 번째 데이터 날짜 사용 -> " + finalDate);
+        } else {
+            finalDate = LocalDate.now();
+            log.info("3번 else 통과: 오늘 날짜 사용 -> " + finalDate);
+        }
+        model.addAttribute("currentDate", finalDate); // 현재 선택된 날짜 강조용
+        model.addAttribute("campaignId", campaignId); // JS용
+        // model.addAttribute("applicants", list);
+
+        log.info("id: " + campaignId + ", date: " + finalDate);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     
         // ⭐⭐ 이 조건문이 굉장히 중요해! ⭐⭐
@@ -70,8 +92,21 @@ public class applyController {
             model.addAttribute("user", user);
             // model.addAttribute("campaignApply", campaignApply);
         }
-        List<UserCampaignVO> userCampaignApply = applyService.userCampaignApply(id , applyDate);
+        // ※ 주의: 두 번째 인자로 리스트가 아닌 '문자열 날짜'를 넘겨야 함
+        List<UserCampaignVO> userCampaignApply = applyService.userCampaignApply(campaignId , finalDate);
+        log.info("userCampaignApply = " + userCampaignApply);
 
+        // // 5. 인솔자 찾기 로직 (개선: 스트림이나 향상된 for문 사용 권장)
+        // UserCampaignVO leaderCampaign = userCampaignApply.stream()
+        //     .filter(c -> "8".equals(c.getStatus()))
+        //     .findFirst()
+        //     .orElse(null);
+
+        // if (leaderCampaign != null) {
+        //     model.addAttribute("leaderUserNo", leaderCampaign.getUserNo());
+        //     model.addAttribute("leaderStatus", leaderCampaign.getStatus());
+        //     // ... 필요한 정보 추가
+        // }
         model.addAttribute("userCampaignApply", userCampaignApply);
         UserCampaignVO leaderCampaign = null; // 인솔자를 찾아서 저장할 변수
 

@@ -21,4 +21,6 @@ public interface ApplyService {
 
     public void pointFull(Long userNo, Long campaignId, LocalDate applyDate) throws Exception;
 
+    public List<UserCampaignVO> getApplyDate(String campaignId) throws Exception;
+
 }

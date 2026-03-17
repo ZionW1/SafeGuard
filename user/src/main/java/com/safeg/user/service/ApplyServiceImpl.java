@@ -125,4 +125,10 @@ public class ApplyServiceImpl implements ApplyService {
         // TODO Auto-generated method stub
         applyMapper.pointFull(userNo);
     }
+
+    public List<UserCampaignVO> getApplyDate(String campaignId) throws Exception {
+        List<UserCampaignVO> getApplyDate = applyMapper.getApplyDate(campaignId);
+
+        return getApplyDate;
+    }
 }

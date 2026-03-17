@@ -32,4 +32,6 @@ public interface ApplyMapper {
 
     public void pointFull(Long userNo) throws Exception;
 
+    public List<UserCampaignVO> getApplyDate(String campaignId) throws Exception;
+
 }

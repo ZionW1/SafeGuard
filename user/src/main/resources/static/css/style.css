@@ -1826,6 +1826,10 @@ table.bestPayList {
     padding: 0 auto;
 }
 
+.date_Select{
+    padding: 20px;
+}
+
   /* 모바일 화면 (예: 768px 이하) */
   @media (max-width: 768px) {
     .desktop-header {

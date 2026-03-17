@@ -4,7 +4,32 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.safeg.user.mapper.ApplyMapper">
-    <select id="userCampaignApply" resultType="UserCampaignVO">
+    <resultMap type="com.safeg.user.vo.UserCampaignVO" id="userCampaignMap">
+        <id property="id" column="id" />
+        <result property="campaignId" column="campaign_id" />
+        <result property="userId" column="user_id" />
+        <result property="userNm" column="user_nm" />
+        <result property="userNo" column="user_No" />
+        <result property="phoneNum" column="phone_num"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+        <result property="campaignTitle" column="campaign_title" />
+        <result property="companyNm" column="company_nm" />
+        <result property="companyPh" column="company_ph" />
+        <result property="applicantsNum" column="applicants_Num" />
+        <result property="recruitmentNum" column="recruitment_Num" />
+        <result property="status" column="status" />
+        <result property="typeNm" column="type_nm" />
+        <result property="statusNm" column="status_nm" />
+        <result property="appPeriodStr" column="app_period_str" />
+        <result property="appPeriodEnd" column="app_period_end" />
+        <result property="eventPeriodStr" column="event_Period_Str" />
+        <result property="eventPeriodEnd" column="event_Period_End" />
+        <result property="resultDate" column="result_date" />
+        <result property="applyDate" column="apply_date" />
+        <result property="placeAddr" column="place_addr" />
+    </resultMap>
+
+    <select id="userCampaignApply" resultMap="userCampaignMap">
         select 
             uc.campaign_id,
             uc.user_id,
@@ -46,8 +71,17 @@
         left outer join campaign c 
         on uc.campaign_id = c.campaign_id
         where uc.campaign_id=#{id}
-        AND uc.apply_date = #{applyDate}
+        <!-- AND uc.apply_date = #{applyDate} -->
+        AND DATE(apply_date) = #{applyDate}
         AND uc.is_deleted = 'N'
+    </select>
+
+    <select id="getApplyDate" resultType="UserCampaignVO">
+        SELECT 
+            DISTINCT CONCAT(DATE_FORMAT(apply_date, '%Y-%m-%d'), ' 00:00:00') as apply_date
+        FROM user_campaign
+        WHERE campaign_id = #{campaignId}
+        AND is_deleted = 'N'
     </select>
 
     <update id="updateStatus">

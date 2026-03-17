@@ -9,27 +9,42 @@
     <link rel="stylesheet" href="/mobile/css/style.css" />
 </head>
 <body>
-    <div class="notice-box">
-        확인 한번 해주세요!<br />
-        예비자 목록 우측 버튼이 <span style="color:#3a00b4; font-weight:bold;">[선정]</span> 상태이면 선정된 
-        상태이며, 누르게 되면 <span style="color:#3a00b4; font-weight:bold;">[미선정]</span>으로 변경되고, 미선정 상태가 됩니다.<br />
-        * 반대의 경우도 동일
-    </div>
-    <div id="campaignFileDownloadArea" th:data-campaign-id="${userCampaignApply[0].campaignId}">
-    <div id="campaignIdDown" th:data-campaign-id="${userCampaignApply[0].campaignId}">
-    <div id="campaignTitleDown" th:data-campaign-title="${userCampaignApply[0].campaignTitle}">
-    <div class="section">
-            <h2 th:if="${userCampaignApply != null}" th:text="${userCampaignApply[0].campaignTitle}"></h2>
-            <strong>당첨자</strong> <strong th:text="${userCampaignApply[0].applicantsNum}"></strong> / <strong th:text="${userCampaignApply[0].recruitmentNum}"></strong><br />
-                <strong>담당자이름 : </strong><strong th:text="${userCampaignApply[0].companyNm}"></strong><br><strong> 담당자번호 : </strong><strong th:text="${userCampaignApply[0].companyPh}"></strong></p>
-            <p><strong>행사기간</strong><br />
-                <strong th:text="${userCampaignApply[0].eventPeriodStr}"></strong> ~ <strong th:text="${userCampaignApply[0].eventPeriodEnd}"></strong></p>
-            <!-- <button class="btn-purple">모집글 확인</button> -->
-            <span th:text="${userCampaignApply[0].applyDate}"></span>
+    <div th:if="${not #lists.isEmpty(userCampaignApply)}">
+        <div class="notice-box">
+            확인 한번 해주세요!<br />
+            예비자 목록 우측 버튼이 <span style="color:#3a00b4; font-weight:bold;">[선정]</span> 상태이면 선정된 
+            상태이며, 누르게 되면 <span style="color:#3a00b4; font-weight:bold;">[미선정]</span>으로 변경되고, 미선정 상태가 됩니다.<br />
+            * 반대의 경우도 동일
+        </div>
+        <div id="campaignFileDownloadArea" th:data-campaign-id="${userCampaignApply[0].campaignId}">
+        <div id="campaignIdDown" th:data-campaign-id="${userCampaignApply[0].campaignId}">
+        <div id="campaignTitleDown" th:data-campaign-title="${userCampaignApply[0].campaignTitle}">
+            <div class="section">
+                <h2 th:if="${userCampaignApply != null}" th:text="${userCampaignApply[0].campaignTitle}"></h2>
+                <strong>당첨자</strong> <strong th:text="${userCampaignApply[0].applicantsNum}"></strong> / <strong th:text="${userCampaignApply[0].recruitmentNum}"></strong><br />
+                    <strong>담당자이름 : </strong><strong th:text="${userCampaignApply[0].companyNm}"></strong><br><strong> 담당자번호 : </strong><strong th:text="${userCampaignApply[0].companyPh}"></strong></p>
+                <p><strong>행사기간</strong><br />
+                    <strong th:text="${userCampaignApply[0].eventPeriodStr}"></strong> ~ <strong th:text="${userCampaignApply[0].eventPeriodEnd}"></strong></p>
+                <!-- <button class="btn-purple">모집글 확인</button> -->
+                <span th:text="${userCampaignApply[0].applyDate}"></span>
+            </div>
         </div>
     </div>
+    <!-- <div th:if="${#lists.isEmpty(userCampaignApply)}" class="section">
+        <p>해당 날짜에는 신청자가 없습니다.</p>
+    </div> -->
+    <div class="filter-area">
+        <label for="dateSelector">신청 일자 선택:</label>
+        <select class="date_Select" id="dateSelector" th:onchange="location.href='/apply/userCampaignApply/' + [[${campaignId}]] + '?date=' + this.value">
+            <option value="">날짜를 선택하세요</option>
+            <option th:each="item : ${applyDate}" 
+                    th:value="${item.applyDate}" 
+                    th:text="${item.applyDate}"
+                    th:selected="${item.applyDate == currentDate}"> </option>
+        </select>
+    </div>
 
-    <div class="section">
+    <div class="section applicant-list-area">
         <div class="list-header">
             <span>예비자 목록</span>
             <span>1명</span>
@@ -90,7 +105,7 @@
     <div class="btn-area">
         <button class="btn_leader" th:if="${leaderUserNo}" th:data-user-no="${leaderUserNo}" th:data-status="${leaderStatus}" th:data-campaign-id="${leaderCampaignId}" th:data-apply-date="${leaderApplyDate}" th:onclick="leaveWork(this)">인솔자 퇴근</button>
     </div>
-    
+
     <script th:inline="javascript">
         const csrfToken = /*[[${_csrf.token}]]*/ '';
         const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
@@ -474,6 +489,32 @@
                 console.error('상태 변경 중 오류 발생:', error);
                 alert('상태 변경에 실패했습니다: ' + error.message);
             });
+        }
+        
+        
+
+
+
+
+
+
+
+
+        function changeDate(selectedDate) {
+            if(!selectedDate) return;
+
+            const campaignId = "${campaignId}"; // 서버에서 받아온 ID
+            
+            // Ajax 또는 페이지 이동
+            location.href = `/apply/userCampaignApply/${campaignId}?date=${selectedDate}`;
+            /* 만약 Ajax를 쓰신다면 */
+            /*
+            fetch(`/api/applicants?campaignId=${campaignId}&date=${selectedDate}`)
+                .then(res => res.json())
+                .then(data => {
+                    // 명단 업데이트 로직
+                });
+            */
         }
     </script>
 </body>

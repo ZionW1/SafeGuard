@@ -2,6 +2,10 @@ package com.safeg.user.vo;
 
 import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,6 +46,9 @@ public class UserCampaignVO {
     private String placeAddr;
     private String statusNm;
     private LocalDate applyDate;
+    // @DateTimeFormat(pattern = "yyyy-MM-dd")
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    // private LocalDate applyDate;
     private String leaderCode;
     private int campaignPay;
     private int leaderPoint;

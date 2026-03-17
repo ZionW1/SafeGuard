@@ -88,7 +88,7 @@
                     <img th:if="${file == null}" id="defaultImage_mobile" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
                 </div>
                 <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
-                        th:onclick="markFileDeleted([[${userId}]])">기존 이미지 삭제</button>
+                        th:onclick="markFileDeleted([[${userId}]])">프로필 이미지 삭제</button>
             </div>
             <div th:unless="${file != null} ? 'hidden'">
                 <form class="profile-preview" id="updateFormMobile" action="/updateProfile" method="post" enctype="multipart/form-data">

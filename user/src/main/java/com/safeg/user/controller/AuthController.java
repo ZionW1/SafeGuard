@@ -69,24 +69,28 @@ public class AuthController {
                 ResponseEntity.badRequest().body(jsonResponse)
             );
         }
-        // }
-        // if (userService.phoneDuplicate(phoneNumber)) {
-        //     return ResponseEntity.badRequest().body(Map.of(
-        //         "success", false, 
-        //         "message", "이미 가입된 휴대폰 번호입니다."
-        //     ));
-        // }
+
         String publicIp = new RestTemplate().getForObject("http://checkip.amazonaws.com/", String.class);
         log.info("현재 서버의 실제 외부에 노출되는 IP: " + publicIp.trim());
         return authService.sendAuthCode(phoneNumber)
-            .thenApply(success -> {
-                if (success) {
-                    return ResponseEntity.ok("인증번호 발송 성공");
-                } else {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("문자 발송 실패");
-                }
+    .thenApply(success -> {
+        if (success) {
+            // 1. 성공 시에도 JSON 문자열을 만들어 리턴합니다.
+            Map<String, Object> response = Map.of(
+                "success", true,
+                "message", "인증번호 발송 성공"
+            );
+            try {
+                return ResponseEntity.ok(objectMapper.writeValueAsString(response));
+            } catch (JsonProcessingException e) {
+                return ResponseEntity.status(500).body("JSON 변환 에러");
             }
-        );
+        } else {
+            // 2. 실패 시에도 가급적 JSON 구조를 맞춰주는 것이 좋습니다.
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(  "{\"success\":false, \"message\":\"문자 발송 실패\"}");
+        }
+    });
     }
 
     @PostMapping("/sendCodeFindId")

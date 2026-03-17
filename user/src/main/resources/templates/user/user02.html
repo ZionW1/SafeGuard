@@ -247,11 +247,15 @@ registerForm.addEventListener('submit', function(e) {
                 return;
             }
             // 서버에서 리턴한 문자열에 '성공'이라는 글자가 포함되어 있는지 확인
-            if (data.includes("성공") || data === "Test OK") {
+
+            if (data.success === true) { 
+                // alert(data.message); // "인증번호 발송 성공" 알림
                 resultMessage.style.color = 'blue';
                 resultMessage.textContent = '인증번호가 발송되었습니다.';
                 startTimer(); 
+                // 인증번호 입력창 활성화 등의 로직 실행
             } else {
+                // alert(data.message); // "이미 가입된 번호" 또는 "발송 실패"
                 resultMessage.style.color = 'red';
                 resultMessage.textContent = '발송 실패: ' + data;
             }

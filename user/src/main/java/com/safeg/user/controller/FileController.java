@@ -233,8 +233,12 @@ public class FileController {
         try {
             // fileService를 통해 해당 campaignId에 연결된 모든 파일을 ZIP으로 압축한 Resource를 반환받음
             Resource zipFileResource = fileService.createZipFile(requestData.getCampaignId(), requestData.getCode());
-
-            String zipFileName = URLEncoder.encode(requestData.getCampaignTitle() + "_" + requestData.getCampaignId() + "_파일묶음.zip", StandardCharsets.UTF_8.toString()).replace("+", "%20");
+            String zipFileName = "";
+            if("1".equals(requestData.getCode())){
+                zipFileName = URLEncoder.encode(requestData.getCampaignTitle() + "_" + requestData.getCampaignId() + "_신분증_파일묶음.zip", StandardCharsets.UTF_8.toString()).replace("+", "%20");
+            } else {
+                zipFileName = URLEncoder.encode(requestData.getCampaignTitle() + "_" + requestData.getCampaignId() + "_이수증_파일묶음.zip", StandardCharsets.UTF_8.toString()).replace("+", "%20");
+            }
 
             log.info("캠페인 {} ZIP 파일 다운로드 요청 처리 - 생성된 ZIP 파일: {}", requestData.getCampaignId(), zipFileResource.getFilename());
 

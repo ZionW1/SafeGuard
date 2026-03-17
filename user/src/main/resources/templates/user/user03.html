@@ -177,8 +177,9 @@ function execDaumPostcode() {
             <div class="container_mobile">
                 <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenuMobile}" />
             </div>
-            <span class="mypage_title">마이페이지</span>
-
+            <div class="mypage_title">
+                <span>마이페이지</span>
+            </div>
             <div class="main-content">
                 <form class="mypage_form" id="form" action="/mypage/updateInfo" method="post" enctype="multipart/form-data">
 

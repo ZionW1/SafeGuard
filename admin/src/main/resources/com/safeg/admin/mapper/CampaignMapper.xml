@@ -21,6 +21,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
         <!-- ... 다른 컬럼 매핑 -->
     </resultMap>
+    <resultMap id="userMap" type="com.safeg.admin.vo.UserVO">
+        <id property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="userNm" column="user_nm" />
+        <result property="phoneNum" column="phone_num"
+                        typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
+    </resultMap>
     
     <!-- 목록 -->
     <select id="campaignList" resultType="CampaignVO">
@@ -79,14 +86,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         and is_deleted = 'N'
     </select>
 
-    <select id="leaderList" resultType="UserVO">
-        SELECT 
-            id, 
-            user_id, 
-            user_nm, 
-            phone_num 
-        FROM 
-            user 
+    <select id="leaderList" resultMap="userMap">
+        SELECT
+            id,
+            user_id,
+            user_nm,
+            phone_num
+        FROM
+            user
         WHERE role = 'LEADER';
     </select>
 

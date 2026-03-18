@@ -31,7 +31,7 @@
     <!-- ⭐️ 여기가 중요! th:fragment 속성을 사용해서 이 부분이 '사이드바' 프래그먼트임을 알려주는 거야. ⭐️ -->
     <div th:fragment="sidebarFragment" class="sidebar">
         <div class="sidebar-menu">
-            <h2><a href="@{/campaign01}">챗짱 Admin</a></h2>
+            <h2><a th:href="@{/campaign01}">챗짱 Admin</a></h2>
             <a th:href="@{/campaign01}"><div class="menu-item">캠페인 목록 요약</div></a>
             <a th:href="@{/campaign03}"><div class="menu-item">캠페인 등록</div></a>
             <a th:href="@{/campaign07}"><div class="menu-item">선정인원 없는 캠페인 목록</div></a>

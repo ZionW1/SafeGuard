@@ -44,4 +44,6 @@ public interface UserService {
 
     public String inquiryPhoneNum(String inquiryPhoneNum) throws Exception;
 
+    public boolean checkId(String userId) throws Exception;
+
 }

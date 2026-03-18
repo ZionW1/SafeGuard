@@ -46,6 +46,8 @@ public interface UserMapper {
 
     public int reRegPw(UserVO userVo) throws Exception;
 
-    public String inquiryPhoneNum(String inquiryPhoneNum);
+    public String inquiryPhoneNum(String inquiryPhoneNum) throws Exception;
+
+    public boolean checkId(String userId) throws Exception;
 
 }

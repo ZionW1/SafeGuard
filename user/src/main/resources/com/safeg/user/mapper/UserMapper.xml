@@ -227,4 +227,13 @@ FROM member; -->
         AND
             REPLACE(phone_num, '-', '') = REPLACE(#{phoneNum}, '-', '')
     </update>
+
+    <select id="checkId" parameterType="String" resultType="boolean">
+        <![CDATA[
+            SELECT
+                IF(COUNT(*) > 0, FALSE, TRUE) AS is_Duplicate
+            FROM user
+            WHERE user_id = #{userId}
+        ]]>
+    </select>
 </mapper>

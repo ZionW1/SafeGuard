@@ -288,4 +288,10 @@ public class UserServiceImpl implements UserService {
 
         return result;
     }
+
+    public boolean checkId(String userId) throws Exception {
+        boolean checkId = userMapper.checkId(userId); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!    
+        log.info("checkId = " + checkId);
+        return checkId;
+    }
 }

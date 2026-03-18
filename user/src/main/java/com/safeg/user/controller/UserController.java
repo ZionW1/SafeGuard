@@ -427,4 +427,12 @@ public class UserController {
     //     // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
     //     return userMapper.existsByPhoneNumber(phoneNumber); 
     // }
+
+    @GetMapping("/check-id")
+    @ResponseBody
+    public ResponseEntity<Boolean> checkId(@RequestParam("userId") String userId) throws Exception {
+        // DB에서 해당 ID가 존재하는지 확인 (count 조회)
+        boolean checkId = userService.checkId(userId);
+        return ResponseEntity.ok(checkId);
+    }
 }

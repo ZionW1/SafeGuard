@@ -37,6 +37,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="guardType" column="guard_type" />
         <result property="fullAddress" column="full_Address"
                 typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
+        <result property="guardTypeNm" column="guard_type_nm" />
+        <result property="referrerId" column="referrer_id" />
         <collection property="authList" resultMap="authMap"></collection>
     </resultMap>
 
@@ -71,7 +73,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM user
         WHERE is_Deleted = 'N'
         AND role != 'Admin'
-        
         <if test="option.keyword != null and option.keyword != ''">
             AND (
                 <choose>
@@ -104,7 +105,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <!-- limit #{page.index}, #{page.rows} -->
     ) u
     /* 3. 페이징된 유저에 대해서만 상세 정보 조인 */
-    LEFT OUTER JOIN user_address ua ON u.address_id = ua.address_id
+    LEFT OUTER JOIN user_address ua ON ua.address_id = u.address_id
     LEFT OUTER JOIN user_auth auth ON u.id = auth.no
     LEFT OUTER JOIN user r ON u.referrer_no = r.id
 </select>

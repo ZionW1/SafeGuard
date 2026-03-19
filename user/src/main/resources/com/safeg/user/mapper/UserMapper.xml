@@ -212,7 +212,7 @@ FROM member; -->
             <!-- CONCAT(LEFT(user_id, 3), REPEAT('*', CHAR_LENGTH(user_id) - 3)) AS masked_id -->
             user_id
         FROM user
-        WHERE REPLACE(phone_num, '-', '') = #{phoneNum}
+        WHERE REPLACE(phone_hash, '-', '') = #{phoneNum}
         AND user_nm = #{userNm}
         LIMIT 1
     </select>
@@ -225,7 +225,7 @@ FROM member; -->
         AND
             user_nm =  #{userNm}
         AND
-            REPLACE(phone_num, '-', '') = REPLACE(#{phoneNum}, '-', '')
+            REPLACE(phone_hash, '-', '') = REPLACE(#{phoneHash}, '-', '')
     </update>
 
     <select id="checkId" parameterType="String" resultType="boolean">

@@ -52,7 +52,7 @@
         background-color: #f09a67;
         color: white;
         margin-right: 5px;
-        cursor: pointer;
+        /* cursor: pointer; */
         }
     button:hover {
       background-color: #e28342;
@@ -302,11 +302,16 @@ function execDaumPostcode() {
                         </button>
                     </div>
                 </form>
-                <div class="section" th:if="${user.guardType == '00'}">
+                <div class="section" id="guardSection">
                     <hr style="margin: 20px 0; border: 0.5px solid #eee;">
                     <h1>경호원 신청</h1>
                     <div class="form-row">
-                        <button class="mypage_button_width" type="button" onclick="ApplyBodyguard('01')">경호원 신청하기</button>
+                        <button id="applyBtn" class="mypage_button_width" type="button" 
+                                onclick="ApplyBodyguard(this, '01')" 
+                                th:if="${user.guardType == '00'}">경호원 신청하기</button>
+                        
+                        <button class="mypage_button_width" type="button" disabled 
+                                th:if="${user.guardType == '01'}">경호원 신청 중</button>
                     </div>
                 </div>
             </div>
@@ -560,7 +565,7 @@ function execDaumPostcode() {
         });
 
         // --- [6] 경호원 신청 함수 (전역) ---
-        function ApplyBodyguard(param) {
+        function ApplyBodyguard(btnElement, param) {
             let user = /*[[${user}]]*/ null;
             let getAddress = /*[[${getAddress}]]*/ null;
             const imgCertFile = document.getElementById('imgCertFile');
@@ -590,6 +595,11 @@ function execDaumPostcode() {
             }
         
             if(!confirm("경호원 신청을 하시겠습니까?")) return;
+            // 1. 비활성화 (중복 클릭 방지)
+            btnElement.disabled = true;
+
+            // 2. 텍스트 변경
+            btnElement.innerText = "신청 처리 중...";
         
             const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
             const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
@@ -604,7 +614,12 @@ function execDaumPostcode() {
                 body: formData
             })
             .then(res => res.ok ? res.json() : Promise.reject('저장 실패'))
-            .then(data => alert("신청이 완료되었습니다!"))
+            .then(data => alert("신청이 완료되었습니다!"),
+                btnElement.innerText = "경호원 신청 중",
+                btnElement.disabled = true,
+                btnElement.style.backgroundColor = "#eee", // 시각적으로 비활성화 표시
+                btnElement.style.color = "#999"
+            )
             .catch(err => alert("오류 발생: " + err));
         }
         </script>

@@ -248,7 +248,9 @@ public class UserServiceImpl implements UserService {
     public String findUserId(String userNm, String phoneNum) throws Exception{
         // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
         log.info("phoneNum : " + phoneNum + ", userNm : " + userNm);
-        String findUserId = userMapper.findUserId(userNm, phoneNum);
+        String hashedPhone = EncryptionUtil.hash(phoneNum);
+
+        String findUserId = userMapper.findUserId(userNm, hashedPhone);
         log.info("findUserId : " + findUserId);
         return findUserId;
     }
@@ -268,7 +270,8 @@ public class UserServiceImpl implements UserService {
         // String encodedPassword = passwordEncoder.encode(password);  // 🔒 비밀번호 암호화
         // userVo.setPassword(encodedPassword);
         // getInputReferrerUserId
-        
+        String hashedPhone = EncryptionUtil.hash(phoneNum);
+        userVo.setPhoneHash(hashedPhone);
         // 회원 패스워드 재 등록
         int result = 0;
         try {

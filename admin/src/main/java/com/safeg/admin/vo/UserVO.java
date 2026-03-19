@@ -48,7 +48,7 @@ public class UserVO {
     private String email;
     private String isDeleted;
     private String isStopped;
-    private String nickName;
+    private String nickname;
     private String phoneNum;
     private int pointId;
     private String userRating;

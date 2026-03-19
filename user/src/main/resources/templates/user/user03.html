@@ -54,6 +54,19 @@
         margin-right: 5px;
         /* cursor: pointer; */
         }
+
+        .mypage_gray_button {
+            width: 100%;
+        margin-top: 0px;
+        padding: 10px 20px;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 5px;
+        background-color: #aaa;
+        color: white;
+        margin-right: 5px;
+        /* cursor: pointer; */
+        }
     button:hover {
       background-color: #e28342;
     }
@@ -310,7 +323,7 @@ function execDaumPostcode() {
                                 onclick="ApplyBodyguard(this, '01')" 
                                 th:if="${user.guardType == '00'}">경호원 신청하기</button>
                         
-                        <button class="mypage_button_width" type="button" disabled 
+                        <button class="mypage_gray_button" type="button" disabled 
                                 th:if="${user.guardType == '01'}">경호원 신청 중</button>
                     </div>
                 </div>

@@ -14,7 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="email" column="email" />
         <result property="isDeleted" column="is_deleted" />
         <result property="isStopped" column="is_stopped" />
-        <result property="nickName" column="nickname" />
+        <result property="nickname" column="nickname" />
         <result property="password" column="password" />
         <result property="userId" column="user_id" />
         <result property="userNm" column="user_nm" />
@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
     <!-- 목록 -->
     <select id="userList" resultType="UserVO">
-        select u.id, u.name, u.email, u.nickName, u.phone,
+        select u.id, u.name, u.email, u.nickname, u.phone,
             ua.address, ua.detail, u.point, u.profile_Image,
             auth.auth,
             DATE_FORMAT(u.created_at, '%Y.%m.%d') created_at
@@ -53,7 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.id like CONCAT('%', #{option.keyword}, '%') or
             u.name like CONCAT('%', #{option.keyword}, '%') or
             u.email like CONCAT('%', #{option.keyword}, '%') or
-            u.nickName like CONCAT('%', #{option.keyword}, '%') or
+            u.nickname like CONCAT('%', #{option.keyword}, '%') or
             u.phone like CONCAT('%', #{option.keyword}, '%')
         </if>
         <if test="option.code == 1">
@@ -66,7 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.email like CONCAT('%', #{option.keyword}, '%')
         </if>
         <if test="option.code == 4">
-            u.nickName like CONCAT('%', #{option.keyword}, '%')
+            u.nickname like CONCAT('%', #{option.keyword}, '%')
         </if>
         <if test="option.code == 5">
             u.phone like CONCAT('%', #{option.keyword}, '%')
@@ -102,7 +102,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.email like CONCAT('%', #{option.keyword}, '%')
         </if>
         <if test="option.code == 4">
-            u.nickName like CONCAT('%', #{option.keyword}, '%')
+            u.nickname like CONCAT('%', #{option.keyword}, '%')
         </if>
         <if test="option.code == 5">
             u.phone like CONCAT('%', #{option.keyword}, '%')

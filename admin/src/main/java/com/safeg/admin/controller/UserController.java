@@ -88,7 +88,7 @@ public class UserController {
 
         UserVO userSelect = userService.userSelect(id);
         FilesVO file = fileService.select(id);
-        log.info("DEBUG: nickName value before passing to template: [{}]", userSelect.getNickName());
+        log.info("DEBUG: nickName value before passing to template: [{}]", userSelect.getNickname());
 
         List<FilesVO> profileImage = fileService.userImageFile(id);
         
@@ -210,7 +210,7 @@ public class UserController {
         } else {
             log.info("user04 userRemove fail");
         }
-        return "redirect:/admin/user01";
+        return "redirect:/user01";
         // redirect:/admin/campaign01
     }
 

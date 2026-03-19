@@ -482,6 +482,7 @@
 
             // 전송할 데이터 구성
             const applyData = {
+                userNo: applyBtn.dataset.userNo,
                 userId: applyBtn.dataset.userId,
                 campaignId: applyBtn.dataset.campaignId,
                 eventPeriodStr: applyBtn.dataset.periodStr,
@@ -584,14 +585,13 @@
             <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
         </div> -->
     </div>
-
+    <!-- <span th:text="${user}"></span> -->
     <form id="form" class="" action="/apply" method="post">
         <div sec:authorize="!isAuthenticated()" class="guest-message">
             <button class="btn-apply" type="button" onclick="login()">로그인하고 캠페인 신청하기</button>
         </div>
         <div sec:authorize="isAuthenticated()" class="guest-message">
             <div class="" th:each="campaign : ${campaignApply}">
-                <div th:text="${guardType}"></div>
                 <!-- ⭐ isApplyPossible 값이 true일 때만 신청 버튼을 보여줍니다! ⭐ -->
                 <a th:if="${campaign.eventActive}"
                     th:href="@{/campaign/apply/{id}(id=${campaign.campaignId})}"
@@ -615,6 +615,7 @@
             </div>
             <div th:if="${campaignApply == null}">
                 <button type="button" class="btn-apply" id="btn-submit-apply"
+                        th:data-user-no="${user.id}"
                         th:data-user-id="${user.userId}"
                         th:data-campaign-id="${campaignSelect.campaignId}"
                         th:data-period-str="${campaignSelect.eventPeriodStr}"

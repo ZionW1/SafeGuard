@@ -68,7 +68,7 @@ public class CampaignController {
             // 현재 조회하는 캠페인에 대한 사용자의 신청 내역이 있는지 확인
             log.info(":::::::::: campaignApply 전 :::::::::: " + user);
 
-            List<UserCampaignVO> campaignApply = campaignsService.campaignApplied(user.getUserId(), user.getId());
+            List<UserCampaignVO> campaignApply = campaignsService.campaignApplied(user.getUserId(), campaignSelect.getCampaignId());
             UserVO userSelect = userService.select(user.getUserId());
             log.info(":::::::::: userSelect :::::::::: " + userSelect);
 

@@ -513,7 +513,7 @@
                     applyBtn.disabled = true;
                     applyBtn.classList.add('completed');
                 } else {
-                    alert('신청 중 오류가 발생했습니다.');
+                    alert('신청 중 오류가 발생했습니다.'+ JSON.stringify(response));
                 }
             })
             .catch(error => console.error('Error:', error));

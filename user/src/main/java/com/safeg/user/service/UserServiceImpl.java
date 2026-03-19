@@ -261,9 +261,8 @@ public class UserServiceImpl implements UserService {
         String userId = userVo.getUserId();
         String userNm = userVo.getUserNm();
         String phoneNum = userVo.getPhoneNum();
-        String password = userVo.getPassword();
 
-        log.info("reRegPw Impl : " + "userId : " + userId + ", name : " + userNm + ", password : " + password);
+        log.info("reRegPw Impl : " + "userId : " + userId + ", name : " + userNm);
         log.info("reRegPw Impl : " + "phoneNum : " + phoneNum);
 
         // String password = userVo.getPassword();
@@ -271,6 +270,7 @@ public class UserServiceImpl implements UserService {
         // userVo.setPassword(encodedPassword);
         // getInputReferrerUserId
         String hashedPhone = EncryptionUtil.hash(phoneNum);
+        log.info("hashedPhone : " + hashedPhone);
         userVo.setPhoneHash(hashedPhone);
         // 회원 패스워드 재 등록
         int result = 0;

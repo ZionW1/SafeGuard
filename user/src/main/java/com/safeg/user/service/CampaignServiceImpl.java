@@ -38,6 +38,10 @@ public class CampaignServiceImpl implements CampaignService{
         LocalDate startDate;
         LocalDate endDate;
         int result = 0;
+        log.info("getEventPeriodEnd :" +userCampaignVO.getUserId());
+
+        log.info("getEventPeriodEnd :" +userCampaignVO.getEventPeriodStr());
+        log.info("getEventPeriodEnd :" +userCampaignVO.getEventPeriodEnd());
 
         try {
             startDate = userCampaignVO.getEventPeriodStr(); // 예: "2026-01-19" -> LocalDate

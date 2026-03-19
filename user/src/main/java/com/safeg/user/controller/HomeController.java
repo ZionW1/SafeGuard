@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -254,7 +255,8 @@ public class HomeController {
      * @throws Exception
      */
     @PostMapping("/apply")
-    public String campaignApply(UserCampaignVO userCampaign, HttpServletRequest request) throws Exception {
+    @ResponseBody
+    public String campaignApply(@RequestBody UserCampaignVO userCampaign, HttpServletRequest request) throws Exception {
         log.info(":::::::::: 캠페인 신청 처리 ::::::::::");
         log.info("캠페인 신청 처리 : " + userCampaign);
 

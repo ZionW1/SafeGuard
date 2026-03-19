@@ -592,7 +592,6 @@
         <div sec:authorize="isAuthenticated()" class="guest-message">
             <div class="" th:each="campaign : ${campaignApply}">
                 <div th:text="${guardType}"></div>
-a
                 <!-- ⭐ isApplyPossible 값이 true일 때만 신청 버튼을 보여줍니다! ⭐ -->
                 <a th:if="${campaign.eventActive}"
                     th:href="@{/campaign/apply/{id}(id=${campaign.campaignId})}"
@@ -615,7 +614,6 @@ a
                 <button class="btn-apply disabled" type="button" disabled>신청완료</button>
             </div>
             <div th:if="${campaignApply == null}">
-                b
                 <button type="button" class="btn-apply" id="btn-submit-apply"
                         th:data-user-id="${user.userId}"
                         th:data-campaign-id="${campaignSelect.campaignId}"

@@ -322,9 +322,10 @@ function execDaumPostcode() {
                         <button id="applyBtn" class="mypage_button_width" type="button" 
                                 onclick="ApplyBodyguard(this, '01')" 
                                 th:if="${user.guardType == '00'}">경호원 신청하기</button>
-                        
                         <button class="mypage_gray_button" type="button" disabled 
                                 th:if="${user.guardType == '01'}">경호원 신청 중</button>
+                        <button class="mypage_gray_button" type="button" disabled 
+                                th:if="${user.guardType == '02'}">경호원 신청 완료</button>
                     </div>
                 </div>
             </div>

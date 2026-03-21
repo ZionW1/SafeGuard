@@ -226,16 +226,6 @@ label {
     display: block;
     color: #333;
 }
-input[type="text"],
-input[type="number"],
-textarea {
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    width: 100%;
-    font-size: 14px;
-    box-sizing: border-box;
-}
 .search_keyword {
     padding: 12px;
     border-radius: 8px;
@@ -244,6 +234,18 @@ textarea {
     font-size: 14px;
     box-sizing: border-box;
 }
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
 .form-group {
     display: flex;
     flex-direction: column;

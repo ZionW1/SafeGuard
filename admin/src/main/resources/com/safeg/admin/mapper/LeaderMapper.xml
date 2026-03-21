@@ -5,7 +5,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <!-- namespace="매퍼 인터페이스 경로" --> 
 <mapper namespace="com.safeg.admin.mapper.LeaderMapper">
-    
+    <resultMap type="UserVO" id="leaderMap">
+        <result property="userId" column="user_id" />
+        <result property="email" column="email"
+                typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
+        <result property="phoneNum" column="phone_num"
+                typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
+    </resultMap>
+
     <select id="leaderSelect" resultType="AdminContentVO">
         SELECT 
             Admin_Content_id,
@@ -42,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
 
-    <select id="leaderList" resultType="UserVO">
+    <select id="leaderList" resultMap="leaderMap">
         SELECT 
             *
         FROM 

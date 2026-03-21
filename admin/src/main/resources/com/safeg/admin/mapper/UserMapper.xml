@@ -7,7 +7,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.safeg.admin.mapper.UserMapper">
     <resultMap type="UserVO" id="userMap">
         <id property="id" column="id" />
-        <result property="id" column="id" />
         <result property="userId" column="user_id" />
         <result property="userNm" column="user_nm" />
         <result property="password" column="password" />

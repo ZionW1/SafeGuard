@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.safeg.admin.service.FileService;
 import com.safeg.admin.service.UserService;
+import com.safeg.admin.util.EncryptionUtil;
 import com.safeg.admin.vo.CampaignVO;
 import com.safeg.admin.vo.CustomUser;
 import com.safeg.admin.vo.FilesVO;
@@ -45,37 +46,53 @@ public class UserController {
     public String user01(@AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {
         log.info("user List 호출 option : " + option);
         log.info("user List 호출 page : " + page);
-        
-
         if(authUser != null){
-            log.info("authUser : " + authUser);
             UserVO user = authUser.getUserVo();
-            log.info("user : " + user);
+            // 1. URL은 원본 키워드를 유지 (사용자에게 보여지는 용도)
+            String pageUrl = UriComponentsBuilder.fromPath("/admin/user01")
+            .queryParam("keyword", option.getKeyword()) // 원본 유지
+            .queryParam("code", option.getCode())
+            .queryParam("orderCode", option.getOrderCode())
+            .build()
+            .toUriString();
+            // 2. DB 검색을 위한 파라미터 가공 (내부 로직)
+            if(option.getCode() == 5 && option.getKeyword() != null) {
+                // DB 조회용 객체에만 해시값을 담아서 서비스로 넘김
+                option.setKeyword(EncryptionUtil.hash(option.getKeyword()));
+            }
 
-            model.addAttribute("user", user);
-
-            List<UserVO> userList = userService.userList(option, page);
-            log.info("user List 호출 userList : " + userList);
+            if (option.getCode() == 6 && option.getKeyword() != null) {
+                Map<String, String> typeMap = Map.of(
+                    "스텝", "00",
+                    "경호원 신청 중", "01",
+                    "경호원", "02",
+                    "수행", "03",
+                    "인솔자", "04"
+                );
+                
+                // 일치하는 한글 키워드가 있으면 코드값으로 변경, 없으면 원본 유지
+                String codeValue = typeMap.get(option.getKeyword());
+                if (codeValue != null) {
+                    option.setKeyword(codeValue);
+                }
+            }
+            
+            List<UserVO> userList = userService.userList(option, page); // 해시된 키워드로 DB 조회
             if(userList != null){
                 log.info("userList not null");
-                
                 List<UserVO> userAddressList = userService.userAddressList();
                 model.addAttribute("userAddressList", userAddressList);
-
             }
+
+            // 3. 뷰로 보낼 때는 다시 원본 키워드로 복구 (검색창에 입력한 번호가 남도록)
+            // 만약 위에서 option 객체를 직접 수정했다면, 다시 원본으로 바꿔주거나
+            // 모델에 원본 키워드를 따로 담아서 보냅니다.
+            model.addAttribute("user", user);
+            model.addAttribute("pageUrl", pageUrl);
             model.addAttribute("userList", userList);
             model.addAttribute("option", option);
             model.addAttribute("rows", page.getRows());
             model.addAttribute("page", page);
-            String pageUrl = UriComponentsBuilder.fromPath("/admin/user01")
-                            //.queryParam("page", page.getPage())
-                            .queryParam("keyword", option.getKeyword())
-                            .queryParam("code", option.getCode())
-                            // .queryParam("rows", page.getRows())
-                            .queryParam("orderCode", option.getOrderCode())
-                            .build()
-                            .toUriString();
-            log.info("pageRows : " + page.getRows());
             model.addAttribute("pageUrl", pageUrl);
 
         }

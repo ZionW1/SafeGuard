@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         /* 1. 실제 유저 리스트만 먼저 페이징하여 추출 */
         SELECT 
             id, user_id, user_nm, email, phone_num, address_id, point_id,
-            referrer_no, guard_type, role, is_stopped, created_at,
+            referrer_no, guard_type, role, is_stopped, created_at, phone_hash,
             (CASE
                 WHEN guard_type = '00' THEN '스텝'
                 WHEN guard_type = '01' THEN '경호원 신청 중'
@@ -73,34 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM user
         WHERE is_Deleted = 'N'
         AND role != 'Admin'
-        <if test="option.keyword != null and option.keyword != ''">
-            AND (
-                <choose>
-                    <when test="option.code == 0">
-                        (user_id LIKE CONCAT('%', #{option.keyword}, '%') OR
-                        user_nm LIKE CONCAT('%', #{option.keyword}, '%') OR
-                        email LIKE CONCAT('%', #{option.keyword}, '%') OR
-                        nickname LIKE CONCAT('%', #{option.keyword}, '%') OR
-                        phone_num LIKE CONCAT('%', #{option.keyword}, '%'))
-                    </when>
-                    <when test="option.code == 1">user_id LIKE CONCAT('%', #{option.keyword}, '%')</when>
-                    <when test="option.code == 2">user_nm LIKE CONCAT('%', #{option.keyword}, '%')</when>
-                    <when test="option.code == 3">email LIKE CONCAT('%', #{option.keyword}, '%')</when>
-                    <when test="option.code == 4">nickname LIKE CONCAT('%', #{option.keyword}, '%')</when>
-                    <when test="option.code == 5">phone_num LIKE CONCAT('%', #{option.keyword}, '%')</when>
-                    <when test="option.code == 6">role LIKE CONCAT('%', #{option.keyword}, '%')</when>
-                    <when test="option.code == 7">is_stopped LIKE CONCAT('%', #{option.keyword}, '%')</when>
-                </choose>
-            )
-        </if>
-
-        <choose>
-            <when test="option.orderCode == 1">ORDER BY point_id DESC, id DESC</when>
-            <when test="option.orderCode == 2">ORDER BY (referrer_no IS NULL) ASC, created_at DESC</when>
-            <when test="option.orderCode == 3">ORDER BY (guard_type IS NULL) ASC, created_at DESC</when>
-            <otherwise>ORDER BY id DESC</otherwise>
-        </choose>
-
+        
           /* 2. 페이징 처리 (이 부분이 추가되어야 합니다) */
         <!-- limit #{page.index}, #{page.rows} -->
     ) u
@@ -108,6 +81,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     LEFT OUTER JOIN user_address ua ON ua.address_id = u.address_id
     LEFT OUTER JOIN user_auth auth ON u.id = auth.no
     LEFT OUTER JOIN user r ON u.referrer_no = r.id
+    
+    <if test="option.keyword != null and option.keyword != ''">
+        where
+        <choose>
+            <when test="option.code == 0">
+                (u.user_id LIKE CONCAT('%', #{option.keyword}, '%') OR
+                u.user_nm LIKE CONCAT('%', #{option.keyword}, '%') OR
+                u.email LIKE CONCAT('%', #{option.keyword}, '%') OR
+                )
+            </when>
+            <when test="option.code == 1">u.user_id LIKE CONCAT('%', #{option.keyword}, '%')</when>
+            <when test="option.code == 2">u.user_nm LIKE CONCAT('%', #{option.keyword}, '%')</when>
+            <when test="option.code == 3">u.email LIKE CONCAT('%', #{option.keyword}, '%')</when>
+            <when test="option.code == 4">r.user_id LIKE CONCAT('%', #{option.keyword}, '%')</when>
+            <when test="option.code == 5">u.phone_hash = #{option.keyword}</when>
+            <when test="option.code == 6">u.guard_type = #{option.keyword}</when>
+            <when test="option.code == 7">u.is_stopped LIKE CONCAT('%', #{option.keyword}, '%')</when>
+        </choose>
+    </if>
+    <choose>
+        <when test="option.orderCode == 1">ORDER BY point_id DESC, id DESC</when>
+        <when test="option.orderCode == 2">ORDER BY referrer_no ASC, id DESC</when>
+        <when test="option.orderCode == 3">ORDER BY guard_type ASC, id DESC</when>
+        <otherwise>ORDER BY id DESC</otherwise>
+    </choose>
 </select>
 
     <select id="count" resultType="int">

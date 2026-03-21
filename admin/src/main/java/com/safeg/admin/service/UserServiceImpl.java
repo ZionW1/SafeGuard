@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public List<UserVO> userList(Option option, Page page) throws Exception {
         // TODO Auto-generated method stub
-        log.info("userList impl 호출");
+        log.info("userList impl 호출 : " + option.getKeyword());
         List<UserVO> userList = userMapper.userList(option, page);
 
         return userList;

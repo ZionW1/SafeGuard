@@ -687,6 +687,35 @@ public class MyPageController {
         }else{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
-        
+    }
+    
+    // @GetMapping("guardApply")
+    // public String guardApply(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception {
+    @GetMapping("/guardApply")
+    public String guardApply(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception {
+        log.info("guardApply : guardApply : " + authUser.getUserVo());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();        // Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
+        if (authentication.getPrincipal() instanceof CustomUser){
+            CustomUser customUser = (CustomUser) authentication.getPrincipal();
+            log.info("user.guardType : " + customUser);
+            Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
+            String username = customUser.getUsername(); // 로그인 아이디 (userId)
+
+            UserVO user = authUser.getUserVo();
+
+            FilesVO selectProfile = fileService.getMypageImage(String.valueOf(userIdFromDb), "profile");
+            FilesVO getIdentity = fileService.getMypageImage(String.valueOf(userIdFromDb), "identification");
+            FilesVO getCertificate = fileService.getMypageImage(String.valueOf(userIdFromDb), "certificate");
+
+            model.addAttribute("currentURI", request.getRequestURI());
+            model.addAttribute("userId", userIdFromDb); // 뷰에서 DB ID를 사용할 수 있도록 모델에 추가
+            model.addAttribute("username", username); // 필요한 경우 username도 추가
+            model.addAttribute("file", selectProfile); // 필요한 경우 username도 추가
+            model.addAttribute("getCertificate", getCertificate); // 필요한 경우 username도 추가
+            model.addAttribute("getIdentity", getIdentity); // 필요한 경우 username도 추가
+            model.addAttribute("user", user);
+        }
+
+        return "mypage/guardApply";
     }
 }

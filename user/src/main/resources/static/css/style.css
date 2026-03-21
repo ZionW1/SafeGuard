@@ -671,7 +671,7 @@ a {
     border-right: 1px solid #ddd;
     box-sizing: border-box;
     float: left;
-    height: 50vh; /* 필요에 따라 조절 */
+    height: 55vh; /* 필요에 따라 조절 */
 }
 
 .sidebar h3, .sidebar h4 {

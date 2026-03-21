@@ -228,12 +228,19 @@ label {
 }
 input[type="text"],
 input[type="number"],
-select,
 textarea {
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #ccc;
     width: 100%;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+.search_keyword {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 150px;
     font-size: 14px;
     box-sizing: border-box;
 }

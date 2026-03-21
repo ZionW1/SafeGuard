@@ -25,11 +25,8 @@
                                 <div>
                                     <input type="file" name="image" id="image" accept="image/*" style="display: none" />
                                     <img th:if="${file == null}" id="defaultImage" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
-
-                                    <!-- ⭐️ 여기 hidden 클래스 추가 ⭐️ -->
                                     <img id="preview" src="" alt="미리보기" class="hidden" style="max-width: 100%; margin-top: 10px;" />
-                                    <div id="placeholder_message" class="message"
-                                        style="color: #888; font-size: 0.9em; margin-top: 10px; display: block;">
+                                    <div id="placeholder_message" class="message" style="color: #888; font-size: 0.9em; margin-top: 10px; display: block;">
                                         프로필 이미지를 선택해주세요.
                                     </div>
                                 </div>
@@ -57,9 +54,9 @@
                     <li class="menu-item" th:classappend="${currentURI.startsWith('/mypage/changePasswordPage')} ? 'active' : ''">
                         <a href="/mypage/changePasswordPage">비밀번호 변경</a>
                     </li>
-                    <!-- <li class="menu-item" th:classappend="${currentURI.startsWith('/useGuide01')} ? 'active' : ''">
-                        <a href="/useGuide01">이용가이드</a>
-                    </li> -->
+                    <li class="menu-item" th:classappend="${currentURI.startsWith('/useGuide01')} ? 'active' : ''">
+                        <a href="/mypage/guardApply">경호원 신청</a>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -69,10 +66,11 @@
 <div th:fragment="mypageSidebarMenuMobile" class="mobile_sidebar_menu">
     <div class="mobile-sticky-nav">
         <nav class="m-scroll-menu">
-            <a href="/mypage/calendarPage">경호 캘린더</a>
-            <a href="/mypage/infoUpdate">내 정보</a>
-            <a href="/mypage/point">포인트 내역</a>
-            <a href="/mypage/changePasswordPage">비밀번호 변경</a>
+            <a href="/mypage/calendarPage">경호 캘린더</a>|
+            <a href="/mypage/infoUpdate">내 정보</a>|
+            <a href="/mypage/point">포인트 내역</a>|
+            <a href="/mypage/changePasswordPage">비밀번호 변경</a>|
+            <a href="/mypage/guardApply">경호원 신청</a>
         </nav>
     </div>
 </div>

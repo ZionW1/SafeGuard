@@ -155,49 +155,50 @@
     // });
 
     document.addEventListener('input', function(e) {
-    if (e.target.classList.contains('max-check')) {
-        const el = e.target;
-        const maxlength = parseInt(el.getAttribute('maxlength'));
-        
-        // 1. 숫자가 아닌 문자가 들어왔는지 체크
-        if (/[^0-9]/.test(el.value)) {
-            alert("숫자만 입력 가능합니다.");
-            el.value = el.value.replace(/[^0-9]/g, '');
-            return; // 여기서 종료
-        }
+        if (e.target.classList.contains('max-check')) {
+            const el = e.target;
+            const maxlength = parseInt(el.getAttribute('maxlength'));
+            
+            // 1. 숫자가 아닌 문자가 들어왔는지 체크
+            if (/[^0-9]/.test(el.value)) {
+                alert("숫자만 입력 가능합니다.");
+                el.value = el.value.replace(/[^0-9]/g, '');
+                return; // 여기서 종료
+            }
 
-        // 2. 글자 수 초과 체크
-        // maxlength가 작동 중이면 이 조건문은 보통 '붙여넣기' 시에만 작동합니다.
-        if(document.getElementById("phoneNum")){
-            const maxlength11 = 11
-            if (el.value.length > maxlength11) {
-                alert(maxlength11 + "자를 초과할 수 없습니다.");
-                el.value = el.value.slice(0, maxlength11);
+            // 2. 글자 수 초과 체크
+            // maxlength가 작동 중이면 이 조건문은 보통 '붙여넣기' 시에만 작동합니다.
+            if(document.getElementById("phoneNum")){
+                const maxlength11 = 11
+                if (el.value.length > maxlength11) {
+                    alert(maxlength11 + "자를 초과할 수 없습니다.");
+                    el.value = el.value.slice(0, maxlength11);
+                }
             }
         }
-    }
-    if (e.target.classList.contains('max-check-auth')) {
-        const el = e.target;
-        const maxlength = parseInt(el.getAttribute('maxlength'));
         
-        // 1. 숫자가 아닌 문자가 들어왔는지 체크
-        if (/[^0-9]/.test(el.value)) {
-            alert("숫자만 입력 가능합니다.");
-            el.value = el.value.replace(/[^0-9]/g, '');
-            return; // 여기서 종료
-        }
+        if (e.target.classList.contains('max-check-auth')) {
+            const el = e.target;
+            const maxlength = parseInt(el.getAttribute('maxlength'));
+            
+            // 1. 숫자가 아닌 문자가 들어왔는지 체크
+            if (/[^0-9]/.test(el.value)) {
+                alert("숫자만 입력 가능합니다.");
+                el.value = el.value.replace(/[^0-9]/g, '');
+                return; // 여기서 종료
+            }
 
-        // 2. 글자 수 초과 체크
-        // maxlength가 작동 중이면 이 조건문은 보통 '붙여넣기' 시에만 작동합니다.
-        if(document.getElementById("phoneNum")){
-            const maxlength11 = 6
-            if (el.value.length > maxlength11) {
-                alert(maxlength11 + "자를 초과할 수 없습니다.");
-                el.value = el.value.slice(0, maxlength11);
+            // 2. 글자 수 초과 체크
+            // maxlength가 작동 중이면 이 조건문은 보통 '붙여넣기' 시에만 작동합니다.
+            if(document.getElementById("phoneNum")){
+                const maxlength11 = 6
+                if (el.value.length > maxlength11) {
+                    alert(maxlength11 + "자를 초과할 수 없습니다.");
+                    el.value = el.value.slice(0, maxlength11);
+                }
             }
         }
-    }
-});
+    });
 
     // 기존 joinButton click 리스너를 submit 리스너로 변경하는 것이 좋습니다.
 const registerForm = document.getElementById('registerForm');

@@ -385,7 +385,6 @@ button[type="submit"] {
     /* 라벨 높이만큼 아래로 내려가야 하므로 하단에서 고정 */
     bottom: 20px; 
     cursor: pointer;
-    font-size: 16px;
     color: #888;
     user-select: none;
     line-height: 1; /* 아이콘 높이 정렬 */

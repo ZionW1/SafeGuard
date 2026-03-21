@@ -58,7 +58,8 @@
                         </tr>
                     </th:block>
                     <th:block th:each="user, stat: ${userList}">
-                        <tr th:onclick="|location.href='@{/user02(id=${user.id})}'|">
+                        <tr >
+                            <!-- th:onclick="|location.href='@{/user02(id=${user.id})}'|" -->
                             <td><span th:text="${stat.size - stat.index}"></span></td>
                             <td><span th:text="${user.userId}"></span></td>
                             <td><span th:text="${user.userNm}"></span></td>

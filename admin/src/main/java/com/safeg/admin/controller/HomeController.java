@@ -19,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.safeg.admin.config.CryptoUtils;
 import com.safeg.admin.service.CampaignService;
 import com.safeg.admin.service.UserService;
+import com.safeg.admin.util.EncryptionUtil;
 import com.safeg.admin.vo.CampaignVO;
 import com.safeg.admin.vo.CommonData;
 import com.safeg.admin.vo.CustomUser;
@@ -155,32 +156,37 @@ public class HomeController {
     }
     
     public static void main(String[] args) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        // BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    // ⭐️ 1. DB에서 복사해온 BCrypt 비밀번호 해시 ⭐️
-    String dbEncodedPassword = "$2a$10$edid1psfTBLaBtDvuWV0O.nJmkpbbqNOppCSM0/DGL19n0MV3BPyS"; // ⭐️여기에 DB에서 복사한 값을 넣어줘!⭐️
+        // // ⭐️ 1. DB에서 복사해온 BCrypt 비밀번호 해시 ⭐️
+        // String dbEncodedPassword = "$2a$10$edid1psfTBLaBtDvuWV0O.nJmkpbbqNOppCSM0/DGL19n0MV3BPyS"; // ⭐️여기에 DB에서 복사한 값을 넣어줘!⭐️
 
-    // ⭐️ 2. 네가 로그인 시도할 때 입력하는 평문 비밀번호 ⭐️
-    String enteredPlainPassword = "aosqkf12!!"; // ⭐️여기에 네가 웹 폼에 입력하는 비밀번호를 넣어줘!⭐️
-    //1234qwer!!       zxcvasdf1           1234qwer!!
-    // ⭐️ 비교 수행 ⭐️
-    boolean isMatch = encoder.matches(enteredPlainPassword, dbEncodedPassword);
+        // // ⭐️ 2. 네가 로그인 시도할 때 입력하는 평문 비밀번호 ⭐️
+        // String enteredPlainPassword = "aosqkf12!!"; // ⭐️여기에 네가 웹 폼에 입력하는 비밀번호를 넣어줘!⭐️
+        // //1234qwer!!       zxcvasdf1           1234qwer!!
+        // // ⭐️ 비교 수행 ⭐️
+        // boolean isMatch = encoder.matches(enteredPlainPassword, dbEncodedPassword);
 
-    System.out.println("입력된 평문 비밀번호: " + enteredPlainPassword);
-    System.out.println("DB에 저장된 해시: " + dbEncodedPassword);
-    System.out.println("비밀번호 일치 여부: " + isMatch);
-    Random random = new Random();
-    
-    int code = 100000 + random.nextInt(900000);
-    log.info("code + " + code);
-    
-    // return String.valueOf(code);
-    // 만약 회원가입 시 평문 'MJordan23!'을 암호화한 해시와 로그인 시 'MJordan23!'을 비교해서 일치하는지 확인
-    // String newHash = encoder.encode(enteredPlainPassword);
-    // System.out.println("새로 생성된 해시: " + newHash);
-    // boolean testMatch = encoder.matches(enteredPlainPassword, newHash);
-    // System.out.println("새로 생성된 해시와 일치 여부: " + testMatch); // 이건 항상 true여야 해.
+        // System.out.println("입력된 평문 비밀번호: " + enteredPlainPassword);
+        // System.out.println("DB에 저장된 해시: " + dbEncodedPassword);
+        // System.out.println("비밀번호 일치 여부: " + isMatch);
+        // Random random = new Random();
+        
+        // int code = 100000 + random.nextInt(900000);
+        // log.info("code + " + code);
+        
+        // return String.valueOf(code);
+        // 만약 회원가입 시 평문 'MJordan23!'을 암호화한 해시와 로그인 시 'MJordan23!'을 비교해서 일치하는지 확인
+        // String newHash = encoder.encode(enteredPlainPassword);
+        // System.out.println("새로 생성된 해시: " + newHash);
+        // boolean testMatch = encoder.matches(enteredPlainPassword, newHash);
+        // System.out.println("새로 생성된 해시와 일치 여부: " + testMatch); // 이건 항상 true여야 해.
 
+        // 2. 해시화 수행
+        String hashedPhone = EncryptionUtil.hash("01088767048");
+        
+        // 3. 변환된 값 확인 (DB에 들어갈 그 값!)
+        System.out.println("해시 변환 결과: " + hashedPhone);
     }
     
 

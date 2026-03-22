@@ -33,6 +33,7 @@ public class AligoSmsService {
     private String sender;
 
     private final String ALIGO_URL = "https://apis.aligo.in/send/";
+    private final String KAKAO_URL = "https://kakaoapi.aligo.in/akv10/alimtalk/send/";
 
     // public boolean sendAuthSms(String phoneNumber, String authCode) throws JsonMappingException, JsonProcessingException {
     //     log.info("AligoSmsService sendAuthSms + " + phoneNumber + ", " + authCode);
@@ -172,4 +173,38 @@ public class AligoSmsService {
         
         return false;
     }
+
+    public void sendEventNotice(String receiver, String eventName, String count, String period, String link) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("apikey", apiKey);
+        params.add("userid", userId);
+        params.add("senderkey", sender);
+        params.add("tpl_code", "UG_4123"); // 예: TF_0001
+        params.add("sender", "01038966824"); // 등록된 발신번호
+        params.add("receiver_1", receiver); // 수신번호
+        params.add("subject_1", "행사 명단 발표 안내");
+        
+        // 템플릿의 #{변수}와 매칭되는 메시지 내용 구성
+        String message = String.format("[{경호, 진행}] %s 명단이 발표되었습니다!\n\n" +
+                "[확정인원] : %s명\n" +
+                "[행사기간] : %s\n\n" +
+                "[당첨자 명단] :\n%s\n\n" +
+                "※ 꼭! 알고계세요!\n" +
+                "- 모집인원 출석 시 모바일 명단을 꼭! 확인하세요!\n" +
+                "- 명단의 '출석체크' 버튼을 상황에 맞게 반드시 눌러주세요\n\n" +
+                "[담당자 연결] : 000-0000-0000", eventName, count, period, link);
+        
+        params.add("message_1", message);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(KAKAO_URL, request, String.class);
+
+        System.out.println("알림톡 전송 결과: " + response.getBody());
+    }
+
 }

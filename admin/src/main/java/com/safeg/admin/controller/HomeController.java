@@ -56,10 +56,7 @@ public class HomeController {
     public String home(@AuthenticationPrincipal CustomUser authUser, Model model,
                 Option option, 
                 Page page) throws Exception{
-        log.info(":::::::::: 메인 화면 :::::::::: " + authUser);
         List<CampaignVO> campaignsList = campaignsService.campaignList(option, page);
-
-        log.info(":::::::::: list :::::::::: " + campaignsList);
         model.addAttribute("campaignsList", campaignsList);
         model.addAttribute("option", option);
         model.addAttribute("row", page.getRows());
@@ -183,7 +180,7 @@ public class HomeController {
         // System.out.println("새로 생성된 해시와 일치 여부: " + testMatch); // 이건 항상 true여야 해.
 
         // 2. 해시화 수행
-        String hashedPhone = EncryptionUtil.hash("01088767048");
+        String hashedPhone = EncryptionUtil.hash("01045558079");
         
         // 3. 변환된 값 확인 (DB에 들어갈 그 값!)
         System.out.println("해시 변환 결과: " + hashedPhone);

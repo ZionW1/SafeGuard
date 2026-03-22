@@ -2497,12 +2497,12 @@ table.bestPayList {
   /* 더 작은 모바일 화면 (예: 480px 이하) */
 @media (max-width: 480px) {
     .login_link {
-        font-size: 14px;
+        /* font-size: 1em; */
         font-weight: 500;
         color: #333;
         text-decoration: none;
         margin-top: 5px;
-        margin-left: 45px;
+        margin-left: 35px;
         width: 65px;
     }
     
@@ -2517,7 +2517,7 @@ table.bestPayList {
     }
 
     .search {
-        width: 80px;
+        width: 70px;
         padding: 5px;
         font-size: 1em;
         border: none;
@@ -2545,7 +2545,7 @@ table.bestPayList {
     
         position: relative;
         top: -13px;
-        left: 110px;
+        left: 100px;
     }
     .search_from {
         height: 60px;

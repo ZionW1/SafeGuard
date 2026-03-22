@@ -51,7 +51,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("securityFilterChain : : : : : : : : :");
         // ✅ 인가 설정
         http.authorizeHttpRequests(auth -> auth
                                 // .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
@@ -59,7 +58,6 @@ public class SecurityConfig {
                                 // .requestMatchers("/apply", "/apply/**").hasAnyRole( "LEADER", "ADMIN")
                                 .requestMatchers("/**").permitAll()
                                 .anyRequest().permitAll());
-        log.info("::::: SecurityFilterChain - 인가 설정 완료 :::::");
         // 폼 로그인 설정
         http.formLogin(login -> login.loginPage("/user01") // 로그인 페이지 경로
             .loginProcessingUrl("/login")  // 로그인 요청 경로
@@ -182,7 +180,7 @@ public class SecurityConfig {
             repositoryImpl.getJdbcTemplate().execute(JdbcTokenRepositoryImpl.CREATE_TABLE_SQL);
         } 
         catch (BadSqlGrammarException e) {
-            log.error("persistent_logins 테이블이 이미 존재합니다.");   
+            log.error("persistent_logins 테이블이 이미 존재합니다.");
         }
         catch (Exception e) {
             log.error("자동 로그인 테이블 생성 중 , 예외 발생");

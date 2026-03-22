@@ -22,6 +22,5 @@ public class MyBatisConfig {
         TypeHandlerRegistry registry = sqlSessionFactory.getConfiguration().getTypeHandlerRegistry();
         // ⭐⭐⭐ 이 라인을 추가/확인해 주세요! ⭐⭐⭐
         registry.register(LocalDate.class, StringToLocalDateTypeHandler.class);
-        System.out.println(">>> Custom StringToLocalDateTypeHandler registered for LocalDate."); // 디버깅용 로그
     }
 }

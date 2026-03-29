@@ -1,9 +1,13 @@
 package com.safeg.admin.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,10 +17,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.safeg.admin.config.CryptoUtils;
+import com.safeg.admin.service.AligoSmsService;
 import com.safeg.admin.service.CampaignService;
 import com.safeg.admin.service.UserService;
 import com.safeg.admin.util.EncryptionUtil;
@@ -40,14 +47,14 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
-    // private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
+    private final AligoSmsService aligoSmsService;
 
     private final PasswordEncoder passwordEncoder; // ⭐️ BCryptPasswordEncoder가 주입될 곳 ⭐️
 
     // ⭐️ 생성자 주입 ⭐️
-    public HomeController(UserService userService, PasswordEncoder passwordEncoder) {
+    public HomeController(UserService userService, PasswordEncoder passwordEncoder, AligoSmsService aligoSmsService) {
         this.userService = userService;
+        this.aligoSmsService = aligoSmsService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -198,5 +205,21 @@ public class HomeController {
     public String test() throws Exception {
         log.info("test page");
         return "test";
+    }
+
+    @PostMapping("/api/sms/send-notice")
+    @ResponseBody
+    public ResponseEntity<String> sendNotice(@RequestBody Map<String, String> data) {
+        // 비동기 메서드 호출 (결과를 기다리지 않고 바로 다음 줄 실행)
+        aligoSmsService.sendEventNoticeAsync(
+            data.get("receiver"), 
+            data.get("eventName"), 
+            data.get("count"), 
+            data.get("period"), 
+            data.get("link")
+        );
+
+        // 알림톡 발송 시작 여부만 즉시 응답 (사용자 대기 시간 없음)
+        return ResponseEntity.ok("발송 요청이 완료되었습니다.");
     }
 }

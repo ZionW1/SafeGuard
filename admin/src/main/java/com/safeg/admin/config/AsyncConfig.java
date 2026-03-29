@@ -22,4 +22,16 @@ public class AsyncConfig {
         executor.initialize();
         return executor;
     }
+
+    // 기본 쓰레드 풀 설정
+    @Bean(name = "taskExecutor")
+    public Executor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);   // 기본 쓰레드 개수
+        executor.setMaxPoolSize(10);   // 최대 쓰레드 개수
+        executor.setQueueCapacity(500); // 대기 큐 사이즈
+        executor.setThreadNamePrefix("Async-");
+        executor.initialize();
+        return executor;
+    }
 }

@@ -15,9 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -170,41 +173,67 @@ public class AligoSmsService {
         } catch (Exception e) {
             log.error("알리고 통신 중 에러 발생: ", e);
         }
-        
         return false;
     }
 
-    public void sendEventNotice(String receiver, String eventName, String count, String period, String link) {
+    public boolean sendEventNotice(String receiver, String eventName, String count, String period, String link) {
         RestTemplate restTemplate = new RestTemplate();
-
+    
+        // 1. 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
+    
+        // 2. 파라미터 설정 (알림톡 전용 키값 사용)
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("apikey", apiKey);
-        params.add("userid", userId);
-        params.add("senderkey", sender);
-        params.add("tpl_code", "UG_4123"); // 예: TF_0001
-        params.add("sender", "01038966824"); // 등록된 발신번호
-        params.add("receiver_1", receiver); // 수신번호
+        params.add("apikey", apiKey);      // SMS는 'key'였으나 알림톡은 'apikey'
+        params.add("userid", userId);      // SMS는 'user_id'였으나 알림톡은 'userid'
+        params.add("senderkey", "알리고에서_발급받은_발신키"); // 발신번호가 아니라 '발신키'입니다!
+        params.add("tpl_code", "UG_4123"); 
+        params.add("sender", sender);      // 등록된 발신번호
+        params.add("receiver_1", receiver);
         params.add("subject_1", "행사 명단 발표 안내");
         
-        // 템플릿의 #{변수}와 매칭되는 메시지 내용 구성
-        String message = String.format("[{경호, 진행}] %s 명단이 발표되었습니다!\n\n" +
+        // 템플릿과 100% 일치해야 함 (공백, 줄바꿈 주의)
+        String message = String.format("[SafeGuard] %s 명단이 발표되었습니다!\n\n" +
                 "[확정인원] : %s명\n" +
                 "[행사기간] : %s\n\n" +
                 "[당첨자 명단] :\n%s\n\n" +
                 "※ 꼭! 알고계세요!\n" +
                 "- 모집인원 출석 시 모바일 명단을 꼭! 확인하세요!\n" +
                 "- 명단의 '출석체크' 버튼을 상황에 맞게 반드시 눌러주세요\n\n" +
-                "[담당자 연결] : 000-0000-0000", eventName, count, period, link);
+                "[담당자 연결] : 010-XXXX-XXXX", eventName, count, period, link);
         
         params.add("message_1", message);
-
+        
+        // 버튼이 있다면 추가 (템플릿 신청 시 버튼을 넣었다면 필수)
+        // params.add("button_1", "{\"button\":[{\"name\":\"명단 확인하기\",\"linkType\":\"WL\",\"linkMo\":\"" + link + "\",\"linkPc\":\"" + link + "\"}]}");
+    
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(KAKAO_URL, request, String.class);
-
-        System.out.println("알림톡 전송 결과: " + response.getBody());
+    
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(KAKAO_URL, request, String.class);
+            log.info("알림톡 전송 응답: {}", response.getBody());
+    
+            if (response.getStatusCode() == HttpStatus.OK) {
+                JsonNode root = new ObjectMapper().readTree(response.getBody());
+                // 알림톡도 성공 시 result_code는 "1"
+                return "1".equals(root.path("result_code").asText());
+            }
+        } catch (Exception e) {
+            log.error("알림톡 전송 중 오류 발생", e);
+        }
+        return false;
     }
-
+    
+    @Async("taskExecutor") // 비동기 처리는 여기서!
+    public CompletableFuture<Boolean> sendEventNoticeAsync(String receiver, String eventName, String count, String period, String link) {
+        try {
+            // 실제 발송 로직 호출
+            boolean result = sendEventNotice(receiver, eventName, count, period, link);
+            return CompletableFuture.completedFuture(result);
+        } catch (Exception e) {
+            log.error("비동기 전송 중 에러: ", e);
+            return CompletableFuture.completedFuture(false);
+        }
+    }
 }

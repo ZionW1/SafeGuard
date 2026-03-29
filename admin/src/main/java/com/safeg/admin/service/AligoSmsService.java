@@ -170,4 +170,14 @@ public class AligoSmsService {
         
         return false;
     }
+
+    public void sendEventNotice(String receiver, String eventName, String count, String period, String link) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'sendEventNotice'");
+    }
+
+    public void sendEventNoticeAsync(String string, String string2, String string3, String string4, String string5) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'sendEventNoticeAsync'");
+    }
 }

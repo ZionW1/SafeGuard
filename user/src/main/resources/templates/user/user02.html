@@ -207,24 +207,24 @@ registerForm.addEventListener('submit', function(e) {
     e.preventDefault(); // 폼 전송 막기
     const userId = document.getElementById('userId').value;
     // 1. 인증 여부 확인
-    if(!agree.checked){
-        alert("개인정보수집 동의 체크 해주세요.")
-    } else if (typeof verifyBtnCode === 'undefined' || verifyBtnCode === false) {
-        alert("인증번호 입력 후 가입해주세요.");
-        return;
-    }
+    // if(!agree.checked){
+    //     alert("개인정보수집 동의 체크 해주세요.")
+    // } else if (typeof verifyBtnCode === 'undefined' || verifyBtnCode === false) {
+    //     alert("인증번호 입력 후 가입해주세요.");
+    //     return;
+    // }
     
-    if (!idRegExp.test(userId)) {
-        e.preventDefault();
-        alert("아이디는 6~12자의 영문 대/소문자, 숫자만 가능합니다.");
-        return;
-    }
+    // if (!idRegExp.test(userId)) {
+    //     e.preventDefault();
+    //     alert("아이디는 6~12자의 영문 대/소문자, 숫자만 가능합니다.");
+    //     return;
+    // }
 
-    // 2. 중복 확인 통과 여부 체크 (기존에 만든 isIdValid 변수 활용)
-    if (!isIdValid) {
-        e.preventDefault();
-        alert("아이디 중복 확인을 완료해주세요.");
-    }
+    // // 2. 중복 확인 통과 여부 체크 (기존에 만든 isIdValid 변수 활용)
+    // if (!isIdValid) {
+    //     e.preventDefault();
+    //     alert("아이디 중복 확인을 완료해주세요.");
+    // }
 
     // 2. FormData 생성
     const formData = new URLSearchParams(new FormData(registerForm));

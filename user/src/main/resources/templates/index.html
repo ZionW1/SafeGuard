@@ -39,9 +39,34 @@
                     badge.textContent = '마감됨';
                 }
             });
+            
+            async function sendAlimtalk() {
+                const requestData = {
+                    receiver: "01012345678",
+                    eventName: "가드 보안 요원 모집",
+                    count: "15",
+                    period: "2026-04-01 ~ 2026-04-03",
+                    link: "http://safeg.com/notice/1"
+                };
 
-            // 예: option 값이 'recent', 'popular' 등
-        
+                try {
+                    const response = await fetch('/api/sms/send-notice', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    if (response.ok) {
+                        alert("알림톡 발송 요청을 보냈습니다!");
+                    } else {
+                        alert("서버 통신 실패");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            }
         });
     </script>
 </head>

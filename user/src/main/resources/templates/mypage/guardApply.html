@@ -218,7 +218,8 @@
             const idPlaceholderMessage = document.getElementById("id_placeholder_message");
             const certPlaceholderMessage = document.getElementById("cert_placeholder_message");
             const certUploadForm = document.getElementById("certForm");
-        
+            
+
             // --- [1] 미리보기 및 표시 업데이트 함수 ---
             function showPreview(file, type) {
                 const reader = new FileReader();
@@ -307,7 +308,8 @@
                 });
             }
 
-            
+            let user1 = /*[[${user}]]*/ null;
+            console.log("JavaScript: 사용자 정보", user1);
         });
 
         function imageUpload (imageUpload, type) {
@@ -389,7 +391,7 @@
             const bankNm = user?.bankNm;
             const accountNumber = user?.accountNumber;
             const depositor = user?.depositor;
-            const getFullAddress = getAddress?.fullAddress;
+            const getFullAddress = user?.fullAddress;
 
             if (!imgFile?.src || imgFile.src.includes('not-image')) {
                 alert('프로필 이미지가 없습니다.'); return;
@@ -419,7 +421,7 @@
             const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
             const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
         
-            const form = document.getElementById('form');
+            const form = document.getElementById('certForm');
             const formData = new FormData(form);
             formData.append('guardType', param);
         

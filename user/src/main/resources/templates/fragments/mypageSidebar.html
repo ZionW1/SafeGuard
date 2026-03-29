@@ -112,10 +112,6 @@
         </div>
 
 <script th:inline="javascript">
-    window.addEventListener('DOMContentLoaded', () => {
-        const dropArea = document.getElementById("dropArea");
-        dropArea.addEventListener("click", () => imageInput.click());
-    });
     const dropArea = document.getElementById("drop-area");
     const imageInput = document.getElementById("image"); // ⭐ id="image"로 변경됨 ⭐
     const preview = document.getElementById("preview");

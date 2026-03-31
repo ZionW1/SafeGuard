@@ -2,7 +2,7 @@
 <html lang="ko">
     <head>
         <meta charset="UTF-8" />
-        <title>캠페인 목록 요약</title>
+        <title>선정 인원 없는 캠페인</title>
         <link rel="stylesheet" th:href="@{/css/style.css}" />
         <!-- <link href="https://cdn.jsdelivr.net/npm/pretendard@1.3.6/dist/web/variable/pretendardvariable.css" rel="stylesheet" /> -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,7 +17,7 @@
             <!-- 본문 영역 -->
             <div class="main-content">
                 
-                <h1><a th:href="@{/campaign/list}">캠페인 목록 요약</a></h1>
+                <h1><a th:href="@{/campaign/list}">선정 인원 없는 캠페인</a></h1>
                 <form class="optionForm" th:action="@{/campaign/list}" method="get" id="form">
                     <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
                     <select name="code">
@@ -35,7 +35,17 @@
                     <input class="optionSubmit" type="submit" value="검색">
                     
                 </form>
-                <table border="1">
+                <table class="campaign_Table" border="1">
+                    <colgroup>
+                        <col class="wdt15px"></col>
+                        <col class="wdt150px"></col>
+                        <col class="wdt250px"></col>
+                        <col class="wdt80px"></col>
+                        <col class="wdt40px"></col>
+                        <col class="wdt90px"></col>
+                        <col class="wdt90px"></col>
+                        <col class="wdt90px"></col>
+                    </colgroup>
                     <thead>
                         <th>ID</th>
                         <th>지역</th>

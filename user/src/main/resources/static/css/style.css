@@ -667,7 +667,7 @@ a {
   /* 사이드바 스타일 */
 .sidebar {
     /* width: 16%; */
-    width: 16%;
+    width: 100%;
     border-right: 1px solid #ddd;
     box-sizing: border-box;
     float: left;
@@ -1840,7 +1840,7 @@ table.bestPayList {
 }
 
   /* 모바일 화면 (예: 768px 이하) */
-  @media (max-width: 768px) {
+    @media (max-width: 768px) {
     .desktop-header {
         display: none;
     }
@@ -2010,17 +2010,6 @@ table.bestPayList {
     .banner_section img {
         object-fit: cover;
         height:-webkit-fill-available;
-    }
-    
-    .banner_section_mobile {
-        max-width: 90%;
-        height: 50px;
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 0;
-        margin: 60px auto 0px auto;
-        gap: 10px;
-        text-align: center;
     }
 
     .campaign-info-box {
@@ -2492,6 +2481,54 @@ table.bestPayList {
         top: 0px;
         left: -7%;
     }
+
+    .banner_section_mobile {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        /* justify-content: space-between; */
+        padding: 10px 0;
+        margin: 60px auto 0px auto;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .banner-carousel-container {
+        width: 100%;
+        overflow-x: auto; /* 가로 스크롤 활성화 */
+        white-space: nowrap; /* 자식 요소들이 줄바꿈되지 않게 함 */
+        -webkit-overflow-scrolling: touch;
+        padding: 10px 0;
+        scroll-snap-type: x mandatory;
+    }
+
+    .banner-carousel-container::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+    
+    .banner-wrapper {
+        display: flex;
+        padding: 10px 7.5%; /* 85% 배너가 중앙에 오려면 좌우 (100-85)/2 = 7.5% */
+        gap: 15px;
+    }
+    
+    .banner-slide {
+        flex: 0 0 auto; /* 크기 고정 (매우 중요!) */
+        width: 85vw; /* 화면 너비의 85% */
+        margin-right: 15px; /* 배너 사이 간격 */
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: #f0f0f0; /* 이미지 로딩 전 배경색 */
+        /* 🚨 추가: 스크롤이 멈출 때 배너의 시작(center 또는 start) 부분을 기준으로 맞춤 */
+    scroll-snap-align: center;
+    }
+    
+    .banner-slide img {
+        width: 100%;
+        height: 150px; /* 원하는 고정 높이값 또는 aspect-ratio 사용 */
+        object-fit: cover; /* 이미지가 비율에 맞게 꽉 참 */
+        display: block;
+    }
 }
 
   /* 더 작은 모바일 화면 (예: 480px 이하) */
@@ -2599,17 +2636,6 @@ table.bestPayList {
     .banner_section img {
         object-fit: cover;
         height:-webkit-fill-available;
-    }
-    
-    .banner_section_mobile {
-        max-width: 90%;
-        height: 50px;
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 0;
-        margin: 60px auto 0px auto;
-        gap: 10px;
-        text-align: center;
     }
 
     .certification-logos {

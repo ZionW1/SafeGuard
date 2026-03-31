@@ -82,11 +82,22 @@
     </section>
 
     <section class="banner_section_mobile">
-        <th:block th:each="banner : ${bannerList}">
-            <div class="banner-card">
+            <!-- <div class="banner-card">
                 <a th:href="|${banner.url}|"><img id="imgFile1" th:src="|/bannerFile?id=${banner.bannerId}|" alt="파일이미지" style="max-width: 100%; height: -webkit-fill-available;" class="campaign-image"/></a>
+            </div> -->
+
+            <div class="banner-carousel-container">
+                <div class="banner-wrapper">
+                    <th:block th:each="banner : ${bannerList}">
+
+                    <div class="banner-slide">
+                        
+                        <a th:href="|${banner.url}|"><img id="imgFile1" th:src="|/bannerFile?id=${banner.bannerId}|" alt="파일이미지" style="max-width: 100%; height: -webkit-fill-available;" class="campaign-image"/></a>
+                    </div>
+</th:block>                    
+                </div>
             </div>
-        </th:block>
+
     </section>
 
     <!-- 🔹 캠페인 영역 -->

@@ -2484,7 +2484,7 @@ table.bestPayList {
 
     .banner_section_mobile {
         max-width: 100%;
-        height: 100px;
+        height: 200px;
         display: block;
         /* justify-content: space-between; */
         padding: 10px 0;
@@ -2515,7 +2515,6 @@ table.bestPayList {
     .banner-slide {
         flex: 0 0 auto; /* 크기 고정 (매우 중요!) */
         width: 85vw; /* 화면 너비의 85% */
-        margin-right: 15px; /* 배너 사이 간격 */
         border-radius: 12px;
         overflow: hidden;
         background-color: #f0f0f0; /* 이미지 로딩 전 배경색 */

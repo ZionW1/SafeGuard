@@ -1901,7 +1901,6 @@ table.bestPayList {
     color: #ff6c26;
 }
 
-
 .info-text {
     flex: 1;
     font-size: 1em;
@@ -2320,7 +2319,7 @@ table.bestPayList {
         display: block;
         position: -webkit-sticky;
         position: sticky;
-        bottom: 45px; /* 푸터(홈, 인솔자 메뉴) 바로 위에 딱 붙도록 설정 */
+        bottom: 60px; /* 푸터(홈, 인솔자 메뉴) 바로 위에 딱 붙도록 설정 */
         z-index: 1000;
         padding: 10px 0;
         margin-top: 10px;

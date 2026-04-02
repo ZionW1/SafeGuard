@@ -8,7 +8,7 @@
     <title>모바일 최적화 예시</title>
     <link rel="stylesheet" href="/mobile/css/style.css" />
 </head>
-<body class="bodyApply">
+<body class="bodyApplyConfirm">
     <div th:if="${not #lists.isEmpty(userCampaignApply)}">
         <!-- <div class="notice-box">
             확인 한번 해주세요!<br />
@@ -70,12 +70,12 @@
                                 <span class="userInfofont" th:text="${userCampaign.userNm}"></span>/<span class="userInfofont" th:text="${userCampaign.phoneNum}"></span><button th:onclick="initStatus([[${index}]], [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]])" class="btn-state mrg5">초기화</button>
                                 <!-- <button class="btn-state"><span th:text="${userCampaign.statusNm}"></span></button> -->
                             </div>
-                            <div class="btn-area">
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="1" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">출근</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="2" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">퇴근</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="4" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">결근</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a>
+                            <div class="btn-area-confirm">
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="1" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">출근</a>
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="2" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">퇴근</a>
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="4" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">결근</a>
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a>
                             </div>
                         </div>
                     </div>

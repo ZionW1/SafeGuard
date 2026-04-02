@@ -718,4 +718,24 @@ public class MyPageController {
 
         return "mypage/guardApply";
     }
+
+    @GetMapping("/mypageMenu")
+    public String mypageMenu(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception {
+        log.info("withdrawal : withdrawal : " + authUser.getUserVo());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();        // Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
+        if (authentication.getPrincipal() instanceof CustomUser){
+            CustomUser customUser = (CustomUser) authentication.getPrincipal();
+            log.info("user.guardType : " + customUser);
+            Long userIdFromDb = customUser.getId();
+            String username = customUser.getUsername(); // 로그인 아이디 (userId)
+            UserVO user = authUser.getUserVo();
+            FilesVO selectProfile = fileService.getMypageImage(String.valueOf(userIdFromDb), "profile");
+            model.addAttribute("currentURI", request.getRequestURI());
+            model.addAttribute("userId", userIdFromDb);
+            model.addAttribute("username", username);
+            model.addAttribute("file", selectProfile);
+            model.addAttribute("user", user);
+        }
+        return "mypage/mypageMenu";
+    }
 }

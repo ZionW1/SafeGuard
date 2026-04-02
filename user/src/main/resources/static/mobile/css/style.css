@@ -10,8 +10,17 @@ body {
     font-size: 16px;
 }
 /* 필요한 다른 모바일 전용 스타일 */
-body {
-    width: 354px;
+.bodyApply {
+    width: 90%;
+    margin: 0 auto;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #fff0fb;
+    color: #333;
+    padding: 10px;
+}
+
+.bodyApplyConfirm {
+    width: 400px;
     margin: 0 auto;
     font-family: 'Noto Sans KR', sans-serif;
     background-color: #fff0fb;
@@ -30,7 +39,6 @@ body {
     background: white;
     padding: 15px;
     border-radius: 8px;
-    margin-bottom: 20px;
 }
 .section h2 {
     margin: 0 0 10px;
@@ -61,7 +69,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 5px;
     font-size: 14px;
 }
 .applicant-info {
@@ -122,14 +130,20 @@ body {
     cursor: pointer;
 }
 
-.section h2 {
-    font-size: 16px;
-}
 .btn-area {
+    display: flex;
+    gap: 1.8%;
     align-items: center;
     width: 100%;
-    margin: 15px auto;
+    margin: 10px auto 15px;
 }
+
+.btn-area-confirm {
+    align-items: center;
+    width: 100%;
+    margin: 20px auto 15px;
+}
+
 .btn-purple {
     width: 19.1%;
     padding: 12px;
@@ -178,7 +192,7 @@ body {
 }
 
 .mrg5 {
-    margin: 0 5px 0 5px;
+    margin: 5px;
 }
 
 .mrg-b5 {
@@ -192,9 +206,15 @@ body {
     ;
 }
 
+.applyInfo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 @media (max-width: 768px) {
     body {
-        font-size: 14px;
+        font-size: 12px;
     }
     .container {
         padding: 10px;
@@ -222,9 +242,10 @@ body {
     }
     .section {
         background: white;
-        padding: 15px;
+        padding: 15px 15px 0;
         border-radius: 8px;
-        margin-bottom: 20px;
+        margin: 20px auto;
+
     }
     .section h2 {
         margin: 0 0 10px;
@@ -255,7 +276,7 @@ body {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 12px;
+        margin-bottom: 5px;
         font-size: 14px;
     }
     .applicant-info {
@@ -282,7 +303,7 @@ body {
     /* download-button 클래스에 버튼 스타일 적용 */
     .statusInfoChange {
         display: inline-block; /* ✨ 핵심! 블록 요소처럼 너비/높이/패딩/마진 적용 가능하게 */
-        padding: 10px 17px; /* 상하좌우 여백 */
+        padding: 10px 12px; /* 상하좌우 여백 */
         background-color: #6b27e0; /* 버튼 배경색 (예: 녹색) */
         color: white; /* 글자색 */
         text-align: center; /* 텍스트 가운데 정렬 */
@@ -292,6 +313,10 @@ body {
         cursor: pointer; /* 마우스 오버 시 손가락 모양으로 변경 */
         font-size: 16px; /* 글자 크기 */
         transition: background-color 0.3s ease; /* 호버 시 색상 전환 효과 */
+    }
+
+    .statusInfoChangeConfirm {
+        padding: 14px 18px; /* 상하좌우 여백 */
     }
 
     /* 마우스 오버 시 스타일 (선택 사항) */
@@ -314,6 +339,7 @@ body {
         font-size: 14px;
         outline: none;
         cursor: pointer;
+        margin: 0 0 15px;
     }
 }
 /* 모바일 대응 */

@@ -1251,6 +1251,19 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     margin: 0 auto;
 }
 
+.leader-container {
+    width: 90%;
+    justify-content: left;  /* 수직 가운데 정렬 */
+    align-items: center;      /* 수평 가운데 정렬 */
+    display: flex;
+    flex-wrap: wrap;      /* 아이템들이 줄을 넘으면 자동으로 다음 줄로 넘기기 */
+
+    grid-template-columns: repeat(5, 1fr); /* 1줄에 2개 */
+    gap: 10px; /* 카드 사이 간격 */
+    padding: 0px;
+    margin: 0 auto;
+}
+
 .campaign-item {
   box-sizing: border-box;
   /* background: #f0f0f0; */

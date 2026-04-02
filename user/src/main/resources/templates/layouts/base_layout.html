@@ -32,6 +32,38 @@
 
     <div th:replace="~{fragments/footer :: common_footer}"></div>
     <!-- ⭐ 여기에는 layout-dialect의 페이지별 JS 삽그먼트도 넣어두면 좋아! ⭐ -->
+
+    <nav class="bottom-nav">
+        <a href="/" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>홈</span>
+        </a>
+        <a href="/leader01" class="nav-item">
+            <i class="fas fa-th-large"></i>
+            <span>인솔자</span>
+        </a>
+        <a href="/notice01" class="nav-item">
+            <i class="far fa-envelope"></i>
+            <span>공지사항</span>
+        </a>
+        <a href="https://pf.kakao.com/_cqFzX" class="nav-item">
+            <i class="fas fa-ad"></i>
+            <span>행사문의</span>
+        </a>
+        <th:block sec:authorize="isAnonymous()">
+        <a href="/user01" class="nav-item">
+            <i class="fas fa-lock"></i>
+            <span>로그인</span>
+        </a>
+        </th:block>
+        <th:block sec:authorize="!isAnonymous()">
+        <!-- <a th:href="@{/mypage/calendarPage(userId=${#authentication.principal.username})}" class="mypage_link">마이페이지</a> -->
+        <a th:href="@{/mypage/mypageMenu}" class="nav-item">
+            <i class="fas fa-user-plus"></i>
+            <span>내 정보</span>
+        </a>
+        </th:block>
+    </nav>
     <th:block layout:fragment="script"></th:block>
 </body>
 </html>

@@ -415,7 +415,9 @@
         today.setHours(0, 0, 0, 0);
         console.log(today)
         const badge = document.querySelector('.d-Day'); // 요소가 하나일 때
-        console.log("badge + " + badge);
+        document.querySelectorAll('.d-Day').forEach(function(badge) {
+
+            console.log("badge + " + badge);
         if (badge) {
             const dateStr = badge.dataset.eventEndDateStr;
             console.log("dataStr : " + dateStr)
@@ -440,6 +442,8 @@
                 }
             }
         }
+        });
+
     });
     function login(){
         var link = '/user01';
@@ -521,22 +525,60 @@
         });
     });
 
-    
 </script>
 </head>
 <body>
     <main layout:fragment="content">
     <div class="container_campaign">
+    <section aria-labelledby="campaign-title" class="campaign-title">
+        <div class="mrg75-top mrg25-bottom">
+            <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
+            <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span>
+        </div>
+        <div class="info-section">
+            <div class="info-text">
+                <div><b>신청 기간</b></div>
+                <div><b>행사 기간</b></div>
+                <div><b>모집인원</b></div>
+            </div>
+            <div class="info-dates">
+                <div><span th:text="${#strings.substring(campaignSelect.appPeriodStr,5)}"></span> ~ <span th:text="${#strings.substring(campaignSelect.appPeriodEnd,5)}"></span></div>
+                <div><span th:text="${#strings.substring(campaignSelect.eventPeriodStr,5)}"></span> ~ <span th:text="${#strings.substring(campaignSelect.eventPeriodEnd,5)}"></span></div>
+                <div class="">
+                    <span class="highlight-pink">총 <span th:text="${campaignSelect.applicantsNum}"></span> / <span th:text="${campaignSelect.recruitmentNum}"></span>명</span>
+                </div>
+            </div>
+            <div class="mrg15-bottom ">
+                <span class="d-Day d-Day-info"th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
+                        th:data-campaign-id="${campaignSelect.campaignId}"></span>
+            </div>
+            
+            <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile-img"/><br>
+        </div>
+        
+    </section>
     <section class="left-view">
         <div class="campaignTitle">
             <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
             <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span>
-        </div>        
+        </div>
         <div class="image-row">
-            <img id="imgFile" style="margin: 0 auto" th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" width="480" height="320" class=""/><br>
+            <img id="imgFile" style="margin: 15px auto" th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" class=""/><br>
             <!-- 이미지 경로는 마이클 환경에 맞게 수정해주세요 -->
             <!-- <img src="image2.jpg" alt="음식 이미지 2" /> -->
         </div>
+        <div class="mrg15-bottom">
+            <div class="campaign-point-text">포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span></div>
+            <div class="campaign-point-text"> [만근포인트 : 10,000]</div>
+        </div>
+        <nav class="tabs" role="tablist" aria-label="탭 메뉴">
+            <div class="tab active" role="tab" tabindex="0" aria-selected="true" aria-controls="campaign" id="tab-campaign">
+                캠페인 정보
+            </div>
+            <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="calendar" id="tab-calendar">
+                행사 기간
+            </div>
+        </nav>
 
         <div class="section-title">
             모집인원 <span class="highlight-pink">총 <span th:text="${campaignSelect.applicantsNum}"></span> / <span th:text="${campaignSelect.recruitmentNum}"></span>명</span>
@@ -547,24 +589,72 @@
             <div class="campaign-point-text"> [만근포인트 : 10,000]</div>
             
         </div>
-        <div class="campaign_mission">안내 사항</div>
-        <div class="visit-info">
-            <div>
-                <div th:text="${mission}" class="mission-box"></div>
+        <div id="campaign-tab" class="tab-content active">
+            <div class="campaign_mission">안내 사항</div>
+            <div class="visit-info">
+                <div>
+                    <div th:text="${mission}" class="mission-box"></div>
+                </div>
+            </div>
+
+            <div class="campaign_mission address">
+                주소 : <span th:text="${campaignSelect.placeAddr}"></span>
+            </div>
+            <div class="content-text">
+                
+            </div>
+            <div class="map">
+                <div class="col-6">
+                    <div class="map_area  mb20" id="map"></div>
+                </div>
             </div>
         </div>
 
-        <div class="campaign_mission address">
-            주소 : <span th:text="${campaignSelect.placeAddr}"></span>
-        </div>
-        <div class="content-text">
-            
-        </div>
-        <div class="map">
-            <div class="col-6">
-                <div class="map_area  mb20" id="map" style="width:100%; height:500px;"></div>
+        <div id="calendar-tab" class="tab-content">
+            <div id="calendarMobile" class="calendarMobile">
             </div>
         </div>
+
+        <form id="form" class="apply_Area" action="/apply" method="post">
+            <div sec:authorize="!isAuthenticated()" class="guest-message">
+                <button class="btn-apply" type="button" onclick="login()">로그인하고 캠페인 신청하기</button>
+            </div>
+            <div sec:authorize="isAuthenticated()" class="guest-message">
+                <div class="" th:each="campaign : ${campaignApply}">
+                    <!-- ⭐ isApplyPossible 값이 true일 때만 신청 버튼을 보여줍니다! ⭐ -->
+                    <a th:if="${campaign.eventActive}"
+                        th:href="@{/campaign/apply/{id}(id=${campaign.campaignId})}"
+                        class="btn-apply">
+                        신청하기
+                    </a>
+                
+                    <!-- 신청 불가능할 때 (기간이 겹치거나 날짜 정보가 없거나) -->
+                    <!-- <div th:unless="${campaign.eventActive}" class="campaign-status-unavailable">
+                        신청 불가 (기간 중복)
+                    </div> -->
+                
+                    <!-- "상세보기" 버튼은 보통 기간이 겹쳐도 보이게 하는 경우가 많지만, 숨기고 싶다면 위와 같은 로직으로 제어 -->
+                    <!-- <a th:href="@{/campaign/detail/{id}(id=${campaign.campaignId})}" class="btn-detail">
+                        &gt;
+                    </a> -->
+                </div>
+    
+                <div th:if="${campaignApply != null}">
+                    <button class="btn-apply disabled" type="button" disabled>신청완료</button>
+                </div>
+                <div th:if="${campaignApply == null}">
+                    <button type="button" class="btn-apply" id="btn-submit-apply"
+                            th:data-user-no="${user.id}"
+                            th:data-user-id="${user.userId}"
+                            th:data-campaign-id="${campaignSelect.campaignId}"
+                            th:data-period-str="${campaignSelect.eventPeriodStr}"
+                            th:data-period-end="${campaignSelect.eventPeriodEnd}"
+                            th:data-guard-type="${guardType}">
+                        신청하기
+                    </button>
+                </div>
+            </div>
+        </form>
     </section>
 
     <section class="right-view">
@@ -575,10 +665,9 @@
         <div class="period-info">
             <div>신청기간 : <span th:text="${campaignSelect.appPeriodStr}"></span> ~<span th:text="${campaignSelect.appPeriodEnd}"></span></div>
             <!-- <div>결과발표 : <span th:text="${campaignSelect.resultDate}">11.03</span></div> -->
-            <div>이벤트 날짜 : <span th:text="${campaignSelect.eventPeriodStr}"></span> ~<span th:text="${campaignSelect.eventPeriodEnd}"></span></div>
+            <div>행사 날짜 : <span th:text="${campaignSelect.eventPeriodStr}"></span> ~<span th:text="${campaignSelect.eventPeriodEnd}"></span></div>
         <br>
         <div id="calendar">
-            <!-- 달력 날짜는 자바스크립트로 동적으로 생성 가정 -->
         </div>
         
         <!-- <div class="image-row">
@@ -660,6 +749,101 @@
     </form> -->
     </section>
     </div>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            let campaign = /*[[${campaignSelect}]]*/ null;
+
+            // 로그인 페이지로 이동하는 함수
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    console.log("탭 클릭됨: " + tab.id);
+                    // 모든 탭 비활성화
+                    tabs.forEach(t => {
+                        t.classList.remove('active');
+                        t.setAttribute('aria-selected', 'false');
+                        t.setAttribute('tabindex', '-1');
+                    });
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+
+                    // 클릭한 탭 활성화
+                    tab.classList.add('active');
+                    tab.setAttribute('aria-selected', 'true');
+                    tab.setAttribute('tabindex', '0');
+
+                    const target = tab.getAttribute('aria-controls');
+                    // const tabContent = document.getElementById('tab-'+target);
+                    // console.log('타겟 id:', target, '선택된 요소:', tabContent);
+                    // if (tabContent) {
+                    //     tabContent.classList.add('active');
+                    // } else {
+                    //     console.warn('해당 id를 가진 요소가 없습니다:', target);
+                    // }
+                    
+                    document.getElementById(target+'-tab').classList.add('active');
+                    var calendarEl = document.getElementById('calendarMobile');
+                    var calendar_month = campaign.eventPeriodStr;
+
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                    // initialDate: '2026-04-01', // 초기 날짜 설정 (예: 2026년 4월 1일)
+                    initialView: 'dayGridMonth',
+                    initialDate: calendar_month,   // ← 원하는 날짜
+                    locale: 'ko',
+                    height: 400,
+                    headerToolbar: {
+                        right: 'prev,next today'
+                    },
+                    events: function(fetchInfo, successCallback, failureCallback) {
+                        fetch("/campaign07?id=" + campaign.campaignId)
+                        .then(res => res.json())
+                        .then(data => {
+                            let events = [];
+                            if (data.appPeriodStr && data.appPeriodEnd) {
+                            let endDate = new Date(data.appPeriodEnd);
+                            endDate.setDate(endDate.getDate() + 1);
+                            let formattedEnd = endDate.toISOString().slice(0, 10);
+                            events.push({
+                                title: '신청 기간',
+                                start: data.appPeriodStr,
+                                end: formattedEnd,
+                                color: '#4285F4',
+                            });
+                            }
+                            if (data.eventPeriodStr && data.eventPeriodEnd) {
+                            let endDate2 = new Date(data.eventPeriodEnd);
+                            endDate2.setDate(endDate2.getDate() + 1);
+                            let formattedEnd2 = endDate2.toISOString().slice(0, 10);
+                            events.push({
+                                title: '이벤트 진행',
+                                start: data.eventPeriodStr,
+                                end: formattedEnd2,
+                                color: '#DB4437',
+                            });
+                            }
+                            successCallback(events);
+                        })
+                        .catch(error => failureCallback(error));
+                    }
+                    });
+                    calendar.render();
+                });
+            });
+
+            // 키보드 접근성 처리 (좌우 화살표로 탭 이동)
+            document.querySelector('.tabs').addEventListener('keydown', (e) => {
+                const activeIndex = Array.from(tabs).findIndex(t => t.classList.contains('active'));
+                if (e.key === 'ArrowRight') {
+                    const nextIndex = (activeIndex + 1) % tabs.length;
+                    tabs[nextIndex].focus();
+                } else if (e.key === 'ArrowLeft') {
+                    const prevIndex = (activeIndex - 1 + tabs.length) % tabs.length;
+                    tabs[prevIndex].focus();
+                }
+            });
+        });
+    </script>
     </main>
 </body>
 </html>

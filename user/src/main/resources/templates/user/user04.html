@@ -172,18 +172,14 @@
         <div class="container">
             <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenuDesktop}" />
         </div>
-        <div class="container_mobile">
-            <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenuMobile}" />
-        </div>
         <div class="mypage_title">
             <span>나의 캠페인</span>
         </div>
         <div id="calendar" class="calendar"></div>
-        <hr class="mypage_hr">
-        <div class="container">
-            <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarProfileMobile}" />
-        </div>
     </div>
 </main>
+<th:block layout:fragment="script">
+    <script src="/js/profile-upload.js"></script>
+</th:block>
 </body>
 </html>

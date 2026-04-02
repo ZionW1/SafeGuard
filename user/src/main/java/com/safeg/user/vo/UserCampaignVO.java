@@ -75,4 +75,5 @@ public class UserCampaignVO {
     private int campaignPayTotal;
 
     private int pointFull;
+    private String filePath;
 }

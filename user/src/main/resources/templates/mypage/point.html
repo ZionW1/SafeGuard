@@ -28,9 +28,6 @@
             <div class="container">
                 <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenuDesktop}" />
             </div>
-            <div class="container_mobile">
-                <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarMenuMobile}" />
-            </div>
             <div class="mypage_title">
                 <span>포인트 내역</span>
             </div>
@@ -151,10 +148,9 @@
                     </th:block>
                 </th:block>
             </div>
-            <hr class="mypage_hr">
-            <div class="container">
-                <th:block th:replace="~{fragments/mypageSidebar :: mypageSidebarProfileMobile}" />
-            </div>
         </div>
     </main>
+    <th:block layout:fragment="script">
+        <script src="/js/profile-upload.js"></script>
+    </th:block>
 </html>

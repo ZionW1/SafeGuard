@@ -91,6 +91,7 @@ public class applyController {
         //     // ... 필요한 정보 추가
         // }
         model.addAttribute("userCampaignApply", userCampaignApply);
+        model.addAttribute("applicantsNum", userCampaignApply.size()-1); // 신청 수 추가
         UserCampaignVO leaderCampaign = null; // 인솔자를 찾아서 저장할 변수
 
         for (int i = 0; i < userCampaignApply.size(); i++) {
@@ -108,6 +109,78 @@ public class applyController {
             model.addAttribute("leaderCampaignId", leaderCampaign.getCampaignId()); // 인솔자의 캠페인 번호
         }
         return "apply/userCampaignApply";
+    }
+
+    @GetMapping("/applyConfirm/{campaignId}")
+    public String applyConfirm(@AuthenticationPrincipal CustomUser authUser, Model model, @PathVariable("campaignId") String campaignId, 
+        @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date // 날짜가 없을 수도 있음
+        // @PathVariable("date") @DateTimeFormat(pattern = "yy-MM-dd") LocalDate applyDate // String 대신 LocalDate로 받고 패턴 지정
+        ) throws Exception{
+        
+        List<UserCampaignVO> dateList = applyService.getApplyDate(campaignId);
+        model.addAttribute("applyDate", dateList); // 현재 보고 있는 날짜를 다시 전달
+
+        // 2. 현재 조회할 '기준 날짜'를 결정합니다.
+        LocalDate finalDate;
+        if (date != null) { 
+            finalDate = date; 
+        } else if (dateList != null && !dateList.isEmpty()) {
+            finalDate = dateList.get(0).getApplyDate(); 
+        } else {
+            finalDate = LocalDate.now();
+        }
+
+        model.addAttribute("currentDate", finalDate); // 현재 선택된 날짜 강조용
+        model.addAttribute("campaignId", campaignId); // JS용
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    
+        if (authentication.getPrincipal() instanceof CustomUser) {
+            CustomUser customUser = (CustomUser) authentication.getPrincipal();
+            Long userIdFromDb = customUser.getId();
+            model.addAttribute("userId", userIdFromDb);
+        } else {
+            model.addAttribute("userId", null);
+            model.addAttribute("username", authentication.getName());
+        }
+
+        if(authUser != null){
+            UserVO user = authUser.getUserVo();
+            model.addAttribute("user", user);
+        }
+        // ※ 주의: 두 번째 인자로 리스트가 아닌 '문자열 날짜'를 넘겨야 함
+        List<UserCampaignVO> userCampaignApply = applyService.userCampaignApply(campaignId , finalDate);
+
+        // // 5. 인솔자 찾기 로직 (개선: 스트림이나 향상된 for문 사용 권장)
+        // UserCampaignVO leaderCampaign = userCampaignApply.stream()
+        //     .filter(c -> "8".equals(c.getStatus()))
+        //     .findFirst()
+        //     .orElse(null);
+
+        // if (leaderCampaign != null) {
+        //     model.addAttribute("leaderUserNo", leaderCampaign.getUserNo());
+        //     model.addAttribute("leaderStatus", leaderCampaign.getStatus());
+        //     // ... 필요한 정보 추가
+        // }
+        model.addAttribute("userCampaignApply", userCampaignApply);
+        model.addAttribute("applicantsNum", userCampaignApply.size()-1); // 신청 수 추가
+
+        UserCampaignVO leaderCampaign = null; // 인솔자를 찾아서 저장할 변수
+
+        for (int i = 0; i < userCampaignApply.size(); i++) {
+            UserCampaignVO currentCampaign = userCampaignApply.get(i);
+            if ("8".equals(currentCampaign.getStatus())) {
+                leaderCampaign = currentCampaign; // 첫 번째 인솔자 또는 유일한 인솔자를 여기에 저장 (논리에 따라)
+                break; // 만약 첫 인솔자만 중요하면 여기서 루프를 멈춤
+            }
+        }
+
+        if (leaderCampaign != null) {
+            model.addAttribute("leaderUserNo", leaderCampaign.getUserNo()); // 인솔자의 고유 번호
+            model.addAttribute("leaderStatus", leaderCampaign.getStatus()); // 인솔자의 상태 (이 경우는 "9"일 것임)
+            model.addAttribute("leaderApplyDate", leaderCampaign.getApplyDate()); // 인솔자 날짜
+            model.addAttribute("leaderCampaignId", leaderCampaign.getCampaignId()); // 인솔자의 캠페인 번호
+        }
+        return "apply/applyConfirm";
     }
 
 // @PatchMapping("/attendance/updateStatus")

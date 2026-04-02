@@ -8,67 +8,8 @@
     <meta name="naver-site-verification" content="fa5c8913f17dbe1d86afdef8b27353de8e71fc53" />
     <meta name="naver-site-verification" content="67314fa8548a5bdf42798f73804e02494fa64918" />
     <link rel="stylesheet" href="/css/style.css" />
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            document.querySelectorAll('.card-badge').forEach(function(badge) {
-                console.log(badge.dataset)
-                const dateStr = badge.dataset.appEndDateStr; // ${item.eventPeriodEnd != null ? #temporals.format(item.eventPeriodEnd, 'yyyy/MM/dd') : ''}
-                console.log("dataStr : " + dateStr)
-                if (!dateStr) {
-                    badge.textContent = '기간 미정';
-                    return;
-                }
-                const eventDate = new Date(dateStr.replace(/\./g, '/'));
-                eventDate.setHours(0, 0, 0, 0);
-            
-                if (isNaN(eventDate.getTime())) {
-                    badge.textContent = '날짜 오류';
-                    return;
-                }
-            
-                const diffDays = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
-                if (diffDays === 0) {
-                    badge.textContent = '오늘마감';
-                    badge.classList.add('today');
-                } else if (diffDays > 0) {
-                    badge.textContent = `D-${diffDays}`;
-                } else {
-                    badge.textContent = '마감됨';
-                }
-            });
-            
-            async function sendAlimtalk() {
-                const requestData = {
-                    receiver: "01012345678",
-                    eventName: "가드 보안 요원 모집",
-                    count: "15",
-                    period: "2026-04-01 ~ 2026-04-03",
-                    link: "http://safeg.com/notice/1"
-                };
-
-                try {
-                    const response = await fetch('/api/sms/send-notice', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(requestData)
-                    });
-
-                    if (response.ok) {
-                        alert("알림톡 발송 요청을 보냈습니다!");
-                    } else {
-                        alert("서버 통신 실패");
-                    }
-                } catch (error) {
-                    console.error("Error:", error);
-                }
-            }
-        });
-    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </head>
 <body>
     <main layout:fragment="content">
@@ -76,28 +17,37 @@
     <section class="banner_section">
         <th:block th:each="banner : ${bannerList}">
             <div class="banner-card">
-                <a th:href="|${banner.url}|"><img id="imgFile1" th:src="|/bannerFile?id=${banner.bannerId}|" alt="파일이미지" style="max-width: 100%; height: -webkit-fill-available;" class="campaign-image"/></a>
+                <a th:href="|${banner.url}|"><img th:src="|/bannerFile?id=${banner.bannerId}|" alt="파일이미지" style="max-width: 100%; height: -webkit-fill-available;" class="campaign-image"/></a>
             </div>
         </th:block>
     </section>
 
-    <section class="banner_section_mobile">
-            <!-- <div class="banner-card">
-                <a th:href="|${banner.url}|"><img id="imgFile1" th:src="|/bannerFile?id=${banner.bannerId}|" alt="파일이미지" style="max-width: 100%; height: -webkit-fill-available;" class="campaign-image"/></a>
-            </div> -->
-
+    <!-- <section class="banner_section_mobile">
             <div class="banner-carousel-container">
                 <div class="banner-wrapper">
                     <th:block th:each="banner : ${bannerList}">
-
-                    <div class="banner-slide">
-                        
-                        <a th:href="|${banner.url}|"><img id="imgFile1" th:src="|/bannerFile?id=${banner.bannerId}|" alt="파일이미지" style="max-width: 100%; height: -webkit-fill-available;" class="campaign-image"/></a>
-                    </div>
-</th:block>                    
+                        <div class="banner-slide">
+                            <a th:href="|${banner.url}|"><img th:src="|/bannerFile?id=${banner.bannerId}|" alt="파일이미지" style="max-width: 100%; height: -webkit-fill-available;" class="campaign-image"/></a>
+                        </div>
+                    </th:block>
                 </div>
             </div>
+        <div class="swiper-pagination"></div>
+    </section> -->
 
+    <section class="banner_section_mobile">
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                <th:block th:each="banner : ${bannerList}">
+                    <div class="swiper-slide" style="margin-right: 0px;">
+                        <a th:href="|${banner.url}|">
+                            <img th:src="|/bannerFile?id=${banner.bannerId}|" alt="배너" />
+                        </a>
+                    </div>
+                </th:block>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
     </section>
 
     <!-- 🔹 캠페인 영역 -->
@@ -343,6 +293,96 @@
             </div>
         </section>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            document.querySelectorAll('.card-badge').forEach(function(badge) {
+                console.log(badge.dataset)
+                const dateStr = badge.dataset.appEndDateStr; // ${item.eventPeriodEnd != null ? #temporals.format(item.eventPeriodEnd, 'yyyy/MM/dd') : ''}
+                console.log("dataStr : " + dateStr)
+                if (!dateStr) {
+                    badge.textContent = '기간 미정';
+                    return;
+                }
+                const eventDate = new Date(dateStr.replace(/\./g, '/'));
+                eventDate.setHours(0, 0, 0, 0);
+            
+                if (isNaN(eventDate.getTime())) {
+                    badge.textContent = '날짜 오류';
+                    return;
+                }
+            
+                const diffDays = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
+                if (diffDays === 0) {
+                    badge.textContent = '오늘마감';
+                    badge.classList.add('today');
+                } else if (diffDays > 0) {
+                    badge.textContent = `D-${diffDays}`;
+                } else {
+                    badge.textContent = '마감됨';
+                }
+            });
+            
+            async function sendAlimtalk() {
+                const requestData = {
+                    receiver: "01012345678",
+                    eventName: "가드 보안 요원 모집",
+                    count: "15",
+                    period: "2026-04-01 ~ 2026-04-03",
+                    link: "http://safeg.com/notice/1"
+                };
+
+                try {
+                    const response = await fetch('/api/sms/send-notice', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    if (response.ok) {
+                        alert("알림톡 발송 요청을 보냈습니다!");
+                    } else {
+                        alert("서버 통신 실패");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                }
+            }
+            const mainBannerSwiper = new Swiper(".mySwiper", {
+                slidesPerView: "auto",      // CSS의 width(85%)를 인식
+                centeredSlides: false,       // 현재 슬라이드를 중앙 배치
+                spaceBetween: 15,           // 슬라이드 간 간격
+                loop: true,                 // 🚨 무한 반복 (참조 사이트 핵심)
+                
+
+                slidesPerView: "auto",      // 슬라이드 너비를 CSS(.swiper-slide)의 width: 85% 등으로 인식
+                /* 만약 centeredSlides를 썼는데도 왼쪽이 붙는다면 아래 속성을 추가해보세요 */
+                slidesOffsetBefore: 15,      // 시작 부분 여백 (px 단위)
+                slidesOffsetAfter: 0,       // 끝 부분 여백 (px 단위)
+    
+                // 중요: 화면에 배너가 늦게 그려져도 다시 인식하게 함
+                observer: true,
+                observeParents: true,
+                
+                // autoplay: {
+                //     delay: 3000,            // 3초마다 자동 이동
+                //     disableOnInteraction: false,
+                // },
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true,
+                },
+            });
+    
+            // 확인용: 콘솔에 이게 찍히면 호출 성공입니다.
+            console.log("Swiper가 성공적으로 초기화되었습니다:", mainBannerSwiper);
+        });
+    </script>
     </main>
+    
 </body>
 </html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{layouts/base_layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>Document</title>
+</head>
+<body>
+    <main layout:fragment="content">
+        <div class="main-side-content" role="main" aria-label="마이페이지">        
+            <section class="profile" aria-label="프로필 정보">
+                <img th:if="${file == null}" class="profile_image" src="/images/not-image.png"  alt="사용자 프로필 이미지" />
+                <img th:unless="${file == null}" class="profile_image" id="imgFile_mobile" th:src="|/selectProfile?id=${userId}&args=1|" alt="파일이미지" width="80%" height="200" style="max-width: 100%; margin: 0px auto;" />
+                <!-- <img class="settings" id="defaultImage_mobile" src="/images/settings.jpg" alt="세팅 이미지"/> -->
+                <div class="username" th:text="${username}"></div>
+                
+            </section>
+            <ul class="menu-list" role="list">
+                <li class="border_bottom"><a href="/mypage/calendarPage" role="link">나의 캠페인<span class="arrow">›</span></a></li>
+                <li class="border_bottom"><a href="/mypage/infoUpdate" role="link">내 정보 수정<span class="arrow">›</span></a></li>
+                <li class="border_bottom"><a href="/mypage/point" role="link">포인트 내역<span class="point">0</span> <span class="arrow">›</span></a></li>
+                <li class="border_bottom"><a href="/mypage/changePasswordPage" role="link">비밀번호 변경<span class="arrow">›</span></a></li>
+                <li class="border-bottom"><a href="/mypage/guardApply" role="link">경호원 신청<span class="arrow">›</span></a></li>
+                <li class="border_bottom"><a href="javascript:logout()" role="link">로그아웃<span class="arrow">›</span></a></li>
+                <!-- <li><a href="/" role="link">1:1 문의 <span class="arrow">›</span></a></li>
+                <li><a href="/" role="link">공지사항 <span class="arrow">›</span></a></li>
+                <li><a href="/" role="link">FAQ <span class="arrow">›</span></a></li> -->
+            </ul>
+        </div>
+    </main>
+</body>
+</html>

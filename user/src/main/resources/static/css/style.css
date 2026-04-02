@@ -268,7 +268,7 @@ a {
 /* 배너 */
 .banner_section {
     max-width: 90%;
-    height: 230px;
+    /* height: 230px; */
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
@@ -439,6 +439,7 @@ a {
   }
   
     .left-view, .right-view {
+        display: block;
         background: #fff;
         box-shadow: 0 0 12px rgb(0 0 0 / 0.05);
         border-radius: 20px;
@@ -495,6 +496,9 @@ a {
     color: #b151ff; /* 글자색을 살짝 연하게 할 수도 있어 */
   }
 
+    .campaign-title {
+        display: none;
+    }
   .campaign-title-text {
     /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
     /* display: -webkit-box; */
@@ -588,7 +592,7 @@ a {
     }
 
     .campaign_tile {
-        font-size: 2em;
+        font-size: 1.5em;
         margin-block-start: 0.67em;
         margin-block-end: 0.67em;
         margin-inline-start: 0px;
@@ -666,8 +670,8 @@ a {
 
   /* 사이드바 스타일 */
 .sidebar {
-    /* width: 16%; */
-    width: 100%;
+    width: 16%;
+    /* width: 100%; */
     border-right: 1px solid #ddd;
     box-sizing: border-box;
     float: left;
@@ -725,7 +729,7 @@ a {
 /* 메인 콘텐츠 스타일 */
 .main-side-content {
     width: 90%;
-    margin: 15px auto;
+    margin: 15px auto 0;
     box-sizing: border-box;
     /* min-height: 100vh; */
     flex-grow: 1;  /* 남은 공간 모두 점유 */
@@ -842,7 +846,8 @@ a {
     max-width: 90%;
     margin: 0 auto;
 }
-.footer-top {text-align: left; /* 내용 가운데 정렬 */
+.footer-top {
+    text-align: left; /* 내용 가운데 정렬 */
     /* max-width: 80%; 전체 너비 */
     margin: 0 auto;
     /* border-top: 1px solid #ddd; */
@@ -851,7 +856,6 @@ a {
     align-items: flex-start;
     gap: 10px;
     max-width: 90%;
-    margin: 25px auto;
 }
 
 .mobile-sticky-nav {display: none;}
@@ -919,6 +923,16 @@ a {
     margin-top: 10px;
 }
 
+.mrg75-top {
+    margin-top: 75px;
+}
+.mrg25-bottom {
+    margin-bottom: 25px;
+}
+.mrg15-bottom {
+    margin-bottom: 15px;
+}
+
 .mrg10-left{
     margin-left: 10px;
 }
@@ -941,6 +955,9 @@ a {
     margin-right: 50px;
 }
 
+.mrgR40{
+    margin-right: 40px;
+}
 
 .highlight {
     color: #ff5733;
@@ -1314,6 +1331,19 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
 }
 
 .campaign-container {
+    width: 90%;
+    justify-content: left;  /* 수직 가운데 정렬 */
+    align-items: center;      /* 수평 가운데 정렬 */
+    display: flex;
+    flex-wrap: wrap;      /* 아이템들이 줄을 넘으면 자동으로 다음 줄로 넘기기 */
+
+    grid-template-columns: repeat(5, 1fr); /* 1줄에 2개 */
+    gap: 10px; /* 카드 사이 간격 */
+    padding: 0px;
+    margin: 0 auto;
+}
+
+.leader-container {
     width: 90%;
     justify-content: left;  /* 수직 가운데 정렬 */
     align-items: center;      /* 수평 가운데 정렬 */
@@ -1804,6 +1834,10 @@ table.bestPayList {
     margin: 20px auto;
 }
 
+.mypage_info_form {
+    margin-left: 23%;
+}
+
 .mypage_hr {
     display: none;
     border: none;
@@ -1831,7 +1865,7 @@ table.bestPayList {
 .calendar {
     max-width: 900px;
     height: auto;
-    margin: 20px auto;
+    margin: 20px 23%;
     padding: 0 auto;
 }
 
@@ -1839,59 +1873,218 @@ table.bestPayList {
     padding: 20px;
 }
 
+.mobile-top-bar, .mobile-side-drawer, .drawer-overlay { display: none; }
+
+.bottom-nav {display: none;}
+
+
+.content-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: #222;
+}
+
+.info-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.d-Day-info {
+    width: 200px;
+    position: absolute;
+    top: 120px;
+    left: 0;
+    height: 20px;
+    font-weight: 700;
+    color: #ff6c26;
+}
+
+
+.info-text {
+    flex: 1;
+    font-size: 1em;
+    color: #444;
+    line-height: 1.3;
+}
+.info-text b {
+    display: inline-block;
+    width: 102px;
+    font-weight: 600;
+    color: #222;
+    vertical-align: top;
+}
+
+
+.info-dates {
+    flex: 0 0 90px;
+    font-size: 1em;
+    color: #222;
+    text-align: right;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+.profile-img {
+    margin: -20px 0 0px 16px;
+    flex-shrink: 0;
+    width: 88px;
+    height: 88px;
+    border-radius: 8px;
+    object-fit: cover;
+    background-color: #eee;
+}
+.map_area {
+    width: 100%;
+    height: 500px;
+    margin-top: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.mrgb15 {
+    margin-bottom: 15px;
+}
+
+.apply_Area {
+    display: none;
+}
+
+.guard_apply_img {
+    width: 69%;
+    text-align: center;
+    padding: 0px 0 15px;
+}
+
+.drop-zone{
+    width: 600px;
+    height: 300px;
+    border: 2px dashed #b594ff;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+}
+.cert {
+    height: 700px;
+}
+
+.id_preview {
+    width: 500px;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: none;
+}
+
+.cert_preview {
+    width: 500px;
+    height: 680px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: none;
+}
+
+.tabs {
+    display: none;
+}
+
+.calendarMobile {
+    display: none;
+}
+
   /* 모바일 화면 (예: 768px 이하) */
     @media (max-width: 768px) {
     .desktop-header {
         display: none;
     }
-/* 모바일 헤더 스타일 */
-.mobile-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px;
-    background: #fff;
-    border-bottom: 1px solid #ddd;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-.campaign-container {
-    margin-top: 10px;
-    width: 100%;
-    justify-content: center;  /* 수직 가운데 정렬 */
-    align-items: center;      /* 수평 가운데 정렬 */
-    display: flex;
-    flex-wrap: wrap;      /* 아이템들이 줄을 넘으면 자동으로 다음 줄로 넘기기 */
+    /* 모바일 헤더 스타일 */
+    .mobile-header {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    .campaign-container {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;  /* 수직 가운데 정렬 */
+        align-items: center;      /* 수평 가운데 정렬 */
+        display: flex;
+        flex-wrap: wrap;      /* 아이템들이 줄을 넘으면 자동으로 다음 줄로 넘기기 */
+        grid-template-columns: repeat(2, 1fr); /* 1줄에 2개 */
+        gap: 10px; /* 카드 사이 간격 */
+        padding: 0px;
+    }
 
-    grid-template-columns: repeat(2, 1fr); /* 1줄에 2개 */
-    gap: 10px; /* 카드 사이 간격 */
-    padding: 0px;
-}
-.campaign-item {
-    justify-content: center;  /* 수직 가운데 정렬 */
-    align-items: center;      /* 수평 가운데 정렬 */
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 0px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    justify-self: end; /* start, center, stretch 등 선택 가능 */
-}
-.campaign-image {
-    width: 165px;
-    height: 165px;
-    object-fit: cover;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    display: flex;
-  }
-  .left-view, .right-view {
+    .leader-container {
+        width: 95%;
+        justify-content: center;  /* 수직 가운데 정렬 */
+        align-items: center;      /* 수평 가운데 정렬 */
+        display: flex;
+        flex-wrap: wrap;      /* 아이템들이 줄을 넘으면 자동으로 다음 줄로 넘기기 */
+        grid-template-columns: repeat(5, 1fr); /* 1줄에 2개 */
+        gap: 10px; /* 카드 사이 간격 */
+        padding: 0px;
+        margin: 10px auto;
+    }
+    .campaignTitle{
+        display: none;
+    }
+    .campaign-title {
+        display: block;
+    }
+
+    .calendarMobile {
+        display: flex;
+    }
+
+    .campaign-item {
+        justify-content: center;  /* 수직 가운데 정렬 */
+        align-items: center;      /* 수평 가운데 정렬 */
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 0px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        justify-self: end; /* start, center, stretch 등 선택 가능 */
+    }
+    .campaign-image {
+        width: 165px;
+        height: 165px;
+        object-fit: cover;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        display: flex;
+    }
+    .left-view, .right-view {
         background: #fff;
         box-shadow: 0 0 12px rgb(0 0 0 / 0.05);
         border-radius: 20px;
         padding: 0px 10px;
+    }
+    .right-view {
+        display: none;
+    }
+    
+    .map {
+        margin-bottom: 15px;
+    }
+
+    .map_area {
+        width: 100%;
+        height: 200px;
+        margin-top: 20px;
+        border-radius: 12px;
+        overflow: hidden;
     }
 
 .header-inner {
@@ -1956,6 +2149,13 @@ table.bestPayList {
     padding: 15px 0;
     border-bottom: 1px solid #eee;
 }
+
+.footer_mobile{
+        display: block;
+        text-align: center;
+        margin-top: -7px;
+        padding-bottom: 55px;
+    }
 
 .logo_image{
     margin-top: 10px;
@@ -2055,8 +2255,20 @@ table.bestPayList {
     }
     .footer-bottom {
         flex-direction: column;
-        gap: 10px;
+        font-size: 0.8em;
+        margin-bottom: 20px;
+        padding : 0px;
+        gap: 0px;
     }
+
+    .company-info p {
+        text-align: left;
+        font-size: 0.7em;
+        color :#888;
+        line-height: 1.6;
+        margin: 0;
+    }
+
     .certification-logos {
         display: flex;
         /* gap: 20px; */
@@ -2082,7 +2294,39 @@ table.bestPayList {
         gap: 40px;
         max-width: 90%;
         margin: 60px auto auto;
+        z-index: 100; /* 다른 요소보다 위에 보이게 */
+        box-sizing: border-box;
+        position: relative;
     }
+    /* .apply_Area {
+        position: -webkit-sticky;
+    position: sticky;
+        display: block;
+        position: fixed;
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 32px);
+        max-width: 100%;
+        background-color: black;
+        color: white;
+        font-weight: 700;
+        text-align: center;
+        border-radius: 16px;
+        cursor: pointer;
+        z-index: 1000;
+    } */
+    .apply_Area {
+        display: block;
+        position: -webkit-sticky;
+        position: sticky;
+        bottom: 45px; /* 푸터(홈, 인솔자 메뉴) 바로 위에 딱 붙도록 설정 */
+        z-index: 1000;
+        padding: 10px 0;
+        margin-top: 10px;
+        box-shadow: 0 -5px 10px rgba(0,0,0,0.05); /* 경계선이 살짝 보이게 (선택사항) */
+    }
+
     .image-area {
         max-width: 280px;
         margin: 0 auto;
@@ -2305,6 +2549,7 @@ table.bestPayList {
     }
 
     .section-title {
+        display: none;
         width: 100%;
         margin-top: 10px;
         margin-bottom: 10px;
@@ -2333,6 +2578,7 @@ table.bestPayList {
         justify-content: space-between; /* 테이블 사이 공간 균등 배분 */
         align-items: flex-start; /* 상단 정렬 */
         gap: 20px;               /* 테이블 사이 간격 */
+        margin-bottom: 15px;
     }
 
     .point_List {
@@ -2381,6 +2627,9 @@ table.bestPayList {
         margin: 20px auto;
         width: 100%;
         margin: 20px 0; border: 0.5px solid #eee;
+    }
+    .mypage_info_form {
+        margin-left: 0%;
     }
     .campaign-title-text {
         /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
@@ -2451,16 +2700,29 @@ table.bestPayList {
     }
 
     .search {
-        width: 210px;
+        width: 75%;
+        height: 38px;
         padding: 10px;
         font-size: 1em;
         border: none;
-        border-bottom: 2px solid #ccc;
+        border-bottom: 0px solid #ccc;
         padding-right: 90px;
         outline: none;
         position: relative;
         top: 0px;
         left: 3%;
+    }
+
+    .close_search {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        font-size: 1.2em;
+        color: #888;
+        cursor: pointer;
     }
     
     .optionSubmit {
@@ -2479,55 +2741,310 @@ table.bestPayList {
     
         position: relative;
         top: 0px;
-        left: -7%;
+        left: 0%;
     }
 
+    .search_btn {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        right: 45px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat center;
+        background-size: contain; /* 아이콘이 버튼 크기에 딱 맞게 조절됩니다 */
+        background-color: transparent; /* 배경색 투명하게 */
+        border: none;
+        font-size: 1.2em;
+        color: #888;
+        cursor: pointer;
+    }
+
+
+
+    /* 1. 배너를 감싸는 전체 섹션 (모바일 기준) */
     .banner_section_mobile {
         max-width: 100%;
-        height: 200px;
-        display: block;
-        /* justify-content: space-between; */
+        margin: 60px auto 0 auto; /* ❌ `margin-left: 10px` 이런 거 주지 마세요 */
         padding: 10px 0;
-        margin: 60px auto 0px auto;
-        gap: 10px;
         text-align: center;
+        display: block; /* ❌ `display: flex` 주지 마세요. Swiper 내부에서 flex가 작동합니다. */
+        overflow: hidden; /* ❌ `overflow-x: auto` 절대 금지. Swiper가 제어합니다. */
     }
 
-    .banner-carousel-container {
+    /* 2. Swiper 컨테이너 (.mySwiper로 되어 있는지 HTML 확인) */
+    .mySwiper {
         width: 100%;
-        overflow-x: auto; /* 가로 스크롤 활성화 */
-        white-space: nowrap; /* 자식 요소들이 줄바꿈되지 않게 함 */
-        -webkit-overflow-scrolling: touch;
-        padding: 10px 0;
-        scroll-snap-type: x mandatory;
+        padding: 10px 0 30px 0; /* 하단 점 표시 공간 */
+        position: relative;
+        /* ❌ 여기에도 overflow-x: auto나 scroll-snap 속성이 있다면 삭제하세요 */
     }
 
-    .banner-carousel-container::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
+    /* 3. 개별 슬라이드 (이미지 크기 조절) */
+    .swiper-slide {
+        width: 85% !important; /* 이미지 크기를 줄여서 양옆에 공간을 만듦 (추천: 75%~85%) */
+        border-radius: 12px !important; /* 둥근 모서리 */
+        display: flex; /* 이미지를 중앙에 두기 위함 */
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.3s;
+        /* ❌ `margin-left` 절대 주지 마세요 */
     }
-    
-    .banner-wrapper {
+
+    /* 4. 실제 이미지 */
+    .swiper-slide img {
+        width: 100%;
+        height: 140px; /* 원하시는 높이값 */
+        object-fit: cover;
+        border-radius: 15px !important; /* 둥근 모서리 */
+    }
+
+
+    .desktop-header, .desktop-nav { display: none !important; } /* 데스크톱 요소 숨김 */
+
+    .mobile-top-bar { 
+        /* display: flex; 
+        justify-content: space-between;
+        align-items: center; 
+        padding: 0px 20px; 
+        background: #fff; 
+        border-bottom: 1px solid #eee; 
+        position: sticky; 
+        top: 0; 
+        z-index: 999; */
+
         display: flex;
-        padding: 10px 7.5%; /* 85% 배너가 중앙에 오려면 좌우 (100-85)/2 = 7.5% */
-        gap: 15px;
-    }
-    
-    .banner-slide {
-        flex: 0 0 auto; /* 크기 고정 (매우 중요!) */
-        width: 85vw; /* 화면 너비의 85% */
-        border-radius: 12px;
-        overflow: hidden;
-        background-color: #f0f0f0; /* 이미지 로딩 전 배경색 */
-        /* 🚨 추가: 스크롤이 멈출 때 배너의 시작(center 또는 start) 부분을 기준으로 맞춤 */
-    scroll-snap-align: center;
-    }
-    
-    .banner-slide img {
+        justify-content: space-between;
+        align-items: center;
+        padding: 0px 20px;
+        background: #ffffff;
+        border-bottom: 1px solid #eeeeee;
+        position: fixed; /* sticky 대신 fixed 사용 */
+        top: 0;
+        left: 0;
         width: 100%;
-        height: 150px; /* 원하는 고정 높이값 또는 aspect-ratio 사용 */
-        object-fit: cover; /* 이미지가 비율에 맞게 꽉 참 */
+        height: 60px;
+        z-index: 1000;
+        box-sizing: border-box;
+    }
+    .mobile-logo { margin: 0 auto; font-size: 20px; font-weight: bold; color: #ff5a5f; text-decoration: none; }
+    .hamburger-btn { 
+        position: absolute;
+        left: 2%;
+        font-size: 28px;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .tabs {
+        display: flex;
+        border-bottom: 2px solid #eee;
+        margin-bottom: 16px;
+        user-select: none;
+    }
+    .tab {
+        flex: 1;
+        text-align: center;
+        padding: 12px 0;
+        font-weight: 700;
+        cursor: pointer;
+        position: relative;
+        color: #444;
+        font-size: 0.875rem;
+    }
+    .tab.active {
+        color: #ff6600;
+        border-bottom: 2px solid #ff6600;
+    }
+    .tab .count {
+        font-weight: 400;
+        color: #999;
+        margin-left: 6px;
+        font-size: 0.75rem;
+    }
+    /* 탭 컨텐츠 */
+    .tab-content {
+        display: none;
+        font-size: 0.85rem;
+        color: #444;
+    }
+    .tab-content.active {
         display: block;
     }
+
+    /* 사이드 메뉴 스타일 */
+    .mobile-side-drawer {
+        display: block; position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+        background: #fff; 
+        z-index: 1001; 
+        transition: 0.3s ease; box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    }
+    .mobile-side-drawer.open { left: 0; }
+    .drawer-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #f9f9f9; }
+    .drawer-list { list-style: none; padding: 10px 20px; }
+    .drawer-list li { padding: 15px 0; border-bottom: 1px solid #f1f1f1; }
+    .drawer-list li a { text-decoration: none; color: #333; font-size: 16px; display: block; }
+    
+    .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); 
+        z-index: 1000; 
+    }
+    .drawer-overlay.active { display: block; }
+
+    .search-modal {
+        width: 100%;
+        height: 60px;
+        display: none; 
+        position: absolute; 
+        top: 0; left: 0; width: 100%; height: 100%; 
+        /* background: rgba(0,0,0,0.5);  */
+        z-index: 1002; 
+        justify-content: center; 
+        align-items: center;
+    }
+
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px; /* 적절한 높이 설정 */
+        background-color: #ffffff;
+        display: flex;
+        justify-content: space-around; /* 아이콘들을 균등하게 배치 */
+        align-items: center;
+        border-top: 1px solid #e0e0e0;
+        z-index: 1000; /* 다른 요소보다 위에 표시 */
+        padding-bottom: env(safe-area-inset-bottom); /* 아이폰 하단 바 간섭 방지 */
+    }
+    
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #888;
+        font-size: 11px;
+    }
+    
+    .nav-item.active {
+        color: #ff6b35; /* 강조하고 싶은 포인트 컬러 (예: 주황색) */
+    }
+    
+    .nav-item i {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
+
+
+    .profile {
+        text-align: center;
+        padding: 70px 0 24px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .guard_apply_img {
+        width: 100%;
+        text-align: center;
+        padding: 0px 0 15px;
+    }
+
+    .drop-zone{
+        width: 100%;
+        height: 200px;
+        border: 2px dashed #b594ff;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #999;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .cert {
+        height: 450px;
+    }
+
+    .id_preview {
+        width: 90%;
+        height: 180px;
+        object-fit: contain;
+        border-radius: 8px;
+        display: none;
+    }
+    
+    .cert_preview {
+        width: 90%;
+        height: 430px;
+        object-fit: contain;
+        border-radius: 8px;
+        display: none;
+    }
+
+    .profile_image {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background-color: #ccc; /* 이미지 없을 때 회색 원 */
+        display: inline-block;
+    }
+    .profile .username {
+        margin-top: 8px;
+        font-weight: 700;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .menu-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .menu-list .border_bottom {
+        border-bottom: 1px solid #eee;
+    }
+    .menu-list li a {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-decoration: none;
+        color: #333;
+        padding: 14px 16px;
+        font-size: 0.95rem;
+    }
+    .menu-list li a .point {
+        color: #999;
+        font-weight: 700;
+        margin-left: 8px;
+    }
+    .menu-list li a .arrow {
+        font-size: 1rem;
+        color: #bbb;
+    }
+
+    /* 톱니바퀴 아이콘 */
+    .settings {
+        position: absolute;
+        right: 15px;
+        top: 130px;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        fill: #666;
+    }
+    .border-bottom {
+        border-bottom: 1px solid gray;
+    }
+    /* position: absolute;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    top: 95px; */
+    .welcome_id {
+        display: none;
+    }
+
 }
 
   /* 더 작은 모바일 화면 (예: 480px 이하) */
@@ -2552,36 +3069,6 @@ table.bestPayList {
         width: 65px;
     }
 
-    .search {
-        width: 80px;
-        padding: 5px;
-        font-size: 1em;
-        border: none;
-        border-bottom: 2px solid #ccc;
-        outline: none;
-        position: relative;
-        top: 20px;
-        left: 8%;
-    }
-    
-    .optionSubmit {
-        display: block;
-        width: 25px;  /* 아이콘이 잘 안 보이면 크기를 조금 키워보세요 */
-        height: 25px;
-        margin-top: 2px;
-        border: 0 none;
-        cursor: pointer; /* 마우스 올렸을 때 손가락 모양 추가 */
-        text-indent: -9999em;
-        
-        /* 배경 설정 수정 */
-        background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat center;
-        background-size: contain; /* 아이콘이 버튼 크기에 딱 맞게 조절됩니다 */
-        background-color: transparent; /* 배경색 투명하게 */
-    
-        position: relative;
-        top: -13px;
-        left: 100px;
-    }
     .search_from {
         height: 60px;
     }
@@ -2685,12 +3172,7 @@ table.bestPayList {
         background: #f8e1ff;
         color: #b151ff;
     }
-
-    /* .footer_mobile{
-        display: block;
-        text-align: center;
-        padding: 90px 0;
-    } */
+    
     .card-badge {
         background-color: #e0f2f7; /* 기본 뱃지 색상 */
         color: #01579b;
@@ -2815,11 +3297,6 @@ table.bestPayList {
         color: #111;
     }
 
-    .footer-separator {
-        border: none;
-        /* border-top: 1px solid #ddd; */
-        margin: 25px auto;
-    }
     .stats-info {
         text-align: left;
         padding: 15px 0;
@@ -2845,7 +3322,7 @@ table.bestPayList {
         font-weight: 900;
         line-height: 1.3;
         margin-left: 0px;
-        margin-top: 10px;
+        margin-top: 70px;
     }
 
 }

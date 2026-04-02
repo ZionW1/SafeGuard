@@ -30,7 +30,7 @@
     </resultMap>
 
     <select id="userCampaignApply" resultMap="userCampaignMap">
-        select 
+        SELECT 
             uc.campaign_id,
             uc.user_id,
             uc.user_No,
@@ -64,13 +64,18 @@
             c.event_Period_End,
             result_date,
             apply_date,
-            place_addr
-        from user_campaign uc 
-        left outer join user u 
-        on uc.user_id = u.user_id
-        left outer join campaign c 
-        on uc.campaign_id = c.campaign_id
-        where uc.campaign_id=#{id}
+            place_addr,
+            file_path
+        FROM user_campaign uc 
+        LEFT OUTER JOIN user u 
+        ON uc.user_id = u.user_id
+        LEFT OUTER JOIN campaign c 
+        ON uc.campaign_id = c.campaign_id
+        LEFT OUTER JOIN files f
+        ON uc.user_no = f.target_id
+        AND f.target_type='profile'
+        AND f.is_deleted = 'N'
+        WHERE uc.campaign_id=#{id}
         <!-- AND uc.apply_date = #{applyDate} -->
         AND DATE(apply_date) = #{applyDate}
         AND uc.is_deleted = 'N'

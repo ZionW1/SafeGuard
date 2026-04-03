@@ -292,8 +292,8 @@
             <div class="guest-message">
                 <a th:href="|/leader02?id=${leader.id}|">
                     <div class="campaign-card">
-                        <div class="campaign-image">
-                            <img th:if="${leader.filePath != null}" id="imgFile" th:src="|/selectProfile?id=${leader.id}&args=1|" alt="파일이미지" class="campaign-image"/>
+                        <div class="leader-image">
+                            <img th:if="${leader.filePath != null}" id="imgFile" th:src="|/selectProfile?id=${leader.id}&args=1|" alt="파일이미지" class="leader-image"/>
                         </div>
                         <div class="campaign-info-box">
                             <div class="campaign-tags leader_name">

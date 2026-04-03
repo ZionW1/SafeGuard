@@ -67,6 +67,7 @@ public class ApplyServiceImpl implements ApplyService {
                         // pointHistoryMapper는 point_history 테이블에 데이터를 삽입하는 매퍼야.
                         applyMapper.insertPointHistory(pointHistory);
                     }
+                    
                     if("1".equals(statusInfo)){
                         resultPay = applyMapper.updatePay(userNo, campaignId);
                         log.info("resultPay = " + resultPay);

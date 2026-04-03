@@ -24,7 +24,7 @@ form.optionForm {
     border-radius: 12px;
     /* box-shadow: 0 0 6px rgba(0, 0, 0, 0.05); */
     /* max-width: 90%; */
-    margin: 90px 5% 0 5%;
+    margin: 20px 5% 0 5%;
     display: flex;
     flex-direction: row;
     gap: 24px;
@@ -446,16 +446,16 @@ a {
         padding: 24px 32px;
     }
 
-  .campaign-image {
-    width: 300px;
-    height: 300px;
-    object-fit: cover;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    display: flex;
-  }
+    .campaign-image {
+        width: 300px;
+        height: 300px;
+        object-fit: cover;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        display: flex;
+    }
   
   .leader_name {
     text-align: center;
@@ -466,7 +466,7 @@ a {
   }
   
   .campaign-tags {
-    /* display: flex; */
+    display: flex;
     font-weight: bold;
     margin: 10px 0;
     /* justify-content: center;
@@ -1332,7 +1332,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
 
 .campaign-container {
     width: 90%;
-    justify-content: left;  /* 수직 가운데 정렬 */
+    justify-content: center;  /* 수직 가운데 정렬 */
     align-items: center;      /* 수평 가운데 정렬 */
     display: flex;
     flex-wrap: wrap;      /* 아이템들이 줄을 넘으면 자동으로 다음 줄로 넘기기 */
@@ -1340,7 +1340,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     grid-template-columns: repeat(5, 1fr); /* 1줄에 2개 */
     gap: 10px; /* 카드 사이 간격 */
     padding: 0px;
-    margin: 0 auto;
+    margin: 20px auto;
 }
 
 .leader-container {
@@ -2012,7 +2012,7 @@ table.bestPayList {
     }
     .campaign-container {
         margin-top: 10px;
-        width: 100%;
+        width: 99%;
         justify-content: center;  /* 수직 가운데 정렬 */
         align-items: center;      /* 수평 가운데 정렬 */
         display: flex;
@@ -2057,6 +2057,17 @@ table.bestPayList {
     .campaign-image {
         width: 165px;
         height: 165px;
+        object-fit: cover;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        display: flex;
+    }
+
+    .leader-image {
+        width: 150px;
+        height: 150px;
         object-fit: cover;
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
@@ -2212,7 +2223,7 @@ table.bestPayList {
     }
 
     .campaign-info-box {
-        width: 165px;
+        width: 150px;
         font-size: 14px;
     }
 

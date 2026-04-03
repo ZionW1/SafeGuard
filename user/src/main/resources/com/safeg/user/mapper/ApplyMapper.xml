@@ -186,5 +186,21 @@
             id = #{userNo}
         AND
             is_deleted = 'N'
+
+
+        INSERT INTO Point_History (
+            user_Id, 
+            amount, 
+            point_Type, 
+            source_id, 
+            mission_date 
+        )
+        VALUES ( 
+            #{userId}, 
+            #{amount}, 
+            #{pointType}, 
+            #{sourceId}, 
+            #{missionDate}
+        )
     </update>
 </mapper>

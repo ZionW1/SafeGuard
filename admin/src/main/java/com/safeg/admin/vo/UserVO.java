@@ -101,4 +101,7 @@ public class UserVO {
 
     private Long referrerNo;
     private String referrerId;
+
+    private int pendingPoint;
+    
 }

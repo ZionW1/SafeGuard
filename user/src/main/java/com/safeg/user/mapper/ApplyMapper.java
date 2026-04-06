@@ -34,4 +34,12 @@ public interface ApplyMapper {
 
     public List<UserCampaignVO> getApplyDate(String campaignId) throws Exception;
 
+    public int fullAttendCount( @Param("userNo") Long userNo,  @Param("fullAttendDate") String fullAttendDate) throws Exception;
+
+    public int pointAmount(Long campaignId) throws Exception;
+
+    public int leaderAmount(Long campaignId) throws Exception;
+
+    public void updateAttendPoint(PointHistoryVO myPoint) throws Exception;
+
 }

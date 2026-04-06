@@ -1,6 +1,7 @@
 package com.safeg.user.controller;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -215,6 +216,8 @@ public class applyController {
     //         @PathVariable("userNo") Long userNo, @RequestBody UserCampaignVO request) throws Exception {
     // 상태 업데이트
     public ResponseEntity<?> updateAttendanceStatus(@RequestBody UserCampaignVO request) throws Exception {
+        log.info("근태 상태 업데이트 요청: UserNo={}, CampaignId={}, ApplyDate={}, NewStatus={}",
+                request.getUserNo(), request.getCampaignId(), request.getApplyDate(), request.getStatus());
         Long userNo = request.getUserNo();
         Long campaignId = request.getCampaignId();
         LocalDate applyDate = request.getApplyDate();
@@ -236,6 +239,7 @@ public class applyController {
                 }
             }else if(statusInfo.equals("1")){
                 if(updateStatus.equals("2")){
+                    log.info("퇴근 터치 하셨으므로, 변경 불가 합니다.");
                     applyService.pointFull(userNo, campaignId, applyDate);
                     return ResponseEntity.ok().body("{\"message\": \"퇴근으로 성공적으로 업데이트되었습니다.\"}");
                 } else if(updateStatus.equals("4") || updateStatus.equals("5")) {
@@ -281,11 +285,16 @@ public class applyController {
                     return ResponseEntity.ok().body("{\"message\": \"결근 상태 입니다.\"}");
                 }
             }else if(statusInfo.equals("5")){
+                // 1. 응답할 데이터를 Map에 담습니다.
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "무단 결근 상태 입니다.");
+
                 if(updateStatus.equals("1") || updateStatus.equals("2") || updateStatus.equals("3") || updateStatus.equals("4")){
-                    String status0 = applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
-                    return ResponseEntity.ok().body("{\"message\": \"무단 결근 상태 입니다.\"}");
-                }else{
-                    return ResponseEntity.ok().body("{\"message\": \"무단 결근 상태 입니다.\"}");
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    // 2. 객체 자체를 리턴하면 자동으로 JSON {"message": "..."} 이 됩니다.
+                    return ResponseEntity.ok().body(response);
+                } else {
+                    return ResponseEntity.ok().body(response);
                 }
             }else{
                 return ResponseEntity.ok().body("{\"message\": \"출결 상태가 성공적으로 업데이트되었습니다.\"}");

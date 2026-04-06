@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.safeg.user.vo.CampaignVO;
 import com.safeg.user.vo.CustomUser;
@@ -209,19 +210,28 @@ public class UserController {
     // }
 
     @PostMapping("/updateProfile")
-    public String updateProfile(@AuthenticationPrincipal CustomUser authUser, UserVO userVo, Model model) throws Exception{
+    @ResponseBody // 비동기 응답을 위해 추가
+    public ResponseEntity<String> updateProfile(@AuthenticationPrincipal CustomUser authUser, UserVO userVo, Model model) throws Exception{
         log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + authUser.getUserVo().getUserId());
         log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + userVo);
 
         boolean result = false;
-        if(authUser != null){
-            result = userService.updateProfile(userVo);
-        }
-        log.info(":::::::::: 회원 프로필 업데이트 완료 :::::::::: + " + result);
+        // if(authUser != null){
+        //     result = userService.updateProfile(userVo);
+        // }
+        // log.info(":::::::::: 회원 프로필 업데이트 완료 :::::::::: + " + result);
 
+
+        try {
+            // 이미지 저장 로직 실행 (Service 호출)
+            result = userService.updateProfile(userVo);
+            return ResponseEntity.ok("success");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
+        }
         // Users mypageSelect = userService.mypageSelect(authUser.getUser().getId());
 
-        return "redirect:/mypage/calendarPage";
+        // return "redirect:/mypage/calendarPage";
     }
 
     @GetMapping("/addressCode")

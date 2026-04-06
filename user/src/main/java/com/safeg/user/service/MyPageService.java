@@ -35,4 +35,22 @@ public interface MyPageService {
     public List<UserCampaignVO> campaignId(Long id) throws Exception;
 
     public int pointFull(Long id) throws Exception;
+
+    public List<PointHistoryVO> referrerList(Long userNo, String targetMonth) throws Exception;
+
+    public List<PointHistoryVO> attendList(Long userNo, String targetMonth) throws Exception;
+
+    public List<PointHistoryVO> leaderList(Long userNo, String targetMonth) throws Exception;
+
+    public List<PointHistoryVO> workList(Long userNo, String targetMonth) throws Exception;
+
+    public String referrerAmount(Long userNo, String targetMonth) throws Exception;
+
+    public String attendAmount(Long userNo, String targetMonth) throws Exception;
+
+    public String leaderAmount(Long userNo, String targetMonth) throws Exception;
+
+    public String workAmount(Long userNo, String targetMonth) throws Exception;
+
+    public String getUserAuth(Long userNo) throws Exception;
 }

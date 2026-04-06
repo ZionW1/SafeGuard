@@ -36,6 +36,8 @@
     <div class="section">
         <label for="dateSelector">신청 일자 선택 :</label>
         <select class="date_Select" id="dateSelector" th:onchange="location.href='/apply/userCampaignApply/' + [[${campaignId}]] + '?date=' + this.value">
+        <!-- <select class="date_Select" id="dateSelector" th:onchange="|location.href='/apply/userCampaignApply/[[${campaignId}]]?date=' + this.value + '&userNo=[[${uesrNo}]]'|"> -->
+
             <option value="">날짜를 선택하세요</option>
             <option th:each="item : ${applyDate}" 
                     th:value="${item.applyDate}" 
@@ -71,11 +73,11 @@
                                 <!-- <button class="btn-state"><span th:text="${userCampaign.statusNm}"></span></button> -->
                             </div>
                             <div class="btn-area">
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="1" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">출근</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="2" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">퇴근</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="4" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">결근</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a>
+                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="1" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">출근</a>
+                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="2" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">퇴근</a>
+                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
+                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="4" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">결근</a>
+                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a>
                             </div>
                         </div>
                     </div>
@@ -235,6 +237,7 @@
         }
         
         function updateAttendanceStatus(status, userNo, campaignId, applyDate, index) {
+            console.log("updateAttendanceStatus called with - status: " + status + ", userNo: " + userNo + ", campaignId: " + campaignId + ", applyDate: " + applyDate + ", index: " + index);
             const clickedButton = event.target; // ⭐ 1. 클릭된 버튼을 먼저 변수에 저장! ⭐
             const applicantItems = document.querySelectorAll('.applicant-item');
             const requestBody = {
@@ -429,7 +432,6 @@
         function initStatus(index, userNo, campaignId, applyDate){
             const clickedButton = event.target; // ⭐ 1. 클릭된 버튼을 먼저 변수에 저장! ⭐
             const url = `/apply/initStatus/${userNo}/${campaignId}/${applyDate}`;
-            alert("초기화 버튼 클릭됨 for userNo: " + userNo + ", campaignId: " + campaignId + ", applyDate: " + applyDate + ", index: " + index);
             fetch(url, {
                 method: 'PATCH', // 상태 업데이트는 PATCH가 시맨틱적으로 더 적합하지만, PUT이나 POST를 써도 무방해.
                 headers: {

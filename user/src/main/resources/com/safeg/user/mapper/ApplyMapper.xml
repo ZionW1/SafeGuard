@@ -108,7 +108,7 @@
         SELECT 
             status
         FROM 
-            user_campaign 
+            user_campaign
         WHERE 
             campaign_id = #{campaignId}
         AND 
@@ -119,15 +119,76 @@
             is_deleted = 'N'
     </select>
 
-    <update id="updatePay">
-        UPDATE 
-            user 
-        SET 
-            pay = COALESCE(pay, 0) + (select campaign_pay from campaign where campaign_id = #{campaignId})
+    <select id="fullAttendCount" resultType="int">
+        SELECT 
+            COUNT(*) 
+        FROM 
+            user_campaign
         WHERE 
-            id = #{userNo}
+            user_no = #{userNo}
+        <if test="fullAttendDate != null and fullAttendDate != ''">
+            AND apply_date LIKE CONCAT(#{fullAttendDate}, '%')
+        </if>
+        AND
+            status = '5'
         AND
             is_deleted = 'N'
+    </select>
+
+    <update id="updateAttendPoint">
+        UPDATE 
+            point_history 
+        SET 
+            amount = 0,
+            is_deleted = 'Y'
+        WHERE
+            user_id = #{userId}
+        AND
+            category = 'FULL_ATTEND'
+        AND
+            point_type = 'EARN'
+        AND 
+            amount != 0
+        AND
+            is_deleted = 'N'
+    </update>
+
+    <select id="pointAmount" resultType="int">
+        SELECT 
+            campaign_pay
+        FROM 
+            campaign
+        WHERE 
+            campaign_id = #{campaignId}
+        AND
+            is_deleted = 'N'
+    </select>
+
+    <select id="leaderAmount" resultType="int">
+        SELECT 
+            leader_pay
+        FROM 
+            campaign
+        WHERE 
+            campaign_id = #{campaignId}
+        AND
+            is_deleted = 'N'
+    </select>
+
+    <update id="updatePay">
+        INSERT INTO Pay_History (
+            user_Id, 
+            amount, 
+            pay_Type, 
+            source_id, 
+            mission_date 
+        ) values ( 
+            #{userId}, 
+            #{amount}, 
+            #{payType}, 
+            #{sourceId}, 
+            #{missionDate}
+        )
     </update>
 
     <update id="updateLatenessPay">
@@ -157,9 +218,28 @@
             is_deleted = 'N'
     </update>
 
-    <insert id="insertPointHistory">
-        INSERT INTO Point_History( user_Id, amount, point_Type, source_id, mission_date )
-        VALUES ( #{userId}, #{amount}, #{pointType}, #{sourceId}, #{missionDate})
+    <insert id="insertPointHistory" parameterType="com.safeg.user.vo.PointHistoryVO">
+        INSERT INTO Point_History (
+            user_id,
+            campaign_id,
+            amount,
+            point_type,
+            category,
+            source_id,
+            mission_date,
+            settlement_status,
+            after_balance
+        ) VALUES (
+            #{userId},
+            #{campaignId},
+            #{amount},
+            'EARN',
+            #{category},
+            #{sourceId},
+            #{missionDate},
+            'READY',
+            (SELECT COALESCE(point_full, 0) FROM user WHERE id = #{userId})
+        )
     </insert>
 
     <update id="lateYn">
@@ -187,7 +267,7 @@
         AND
             is_deleted = 'N'
 
-
+<!-- 
         INSERT INTO Point_History (
             user_Id, 
             amount, 
@@ -201,6 +281,6 @@
             #{pointType}, 
             #{sourceId}, 
             #{missionDate}
-        )
+        ) -->
     </update>
 </mapper>

@@ -38,6 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
         <result property="guardTypeNm" column="guard_type_nm" />
         <result property="referrerId" column="referrer_id" />
+        <result property="pendingPoint" column="pending_point" />
         <collection property="authList" resultMap="authMap"></collection>
     </resultMap>
 
@@ -51,61 +52,73 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <!-- 목록 -->
     <!-- <select id="userList" resultType="UserVO"> -->
     <select id="userList" resultMap="userMap">
-    SELECT 
-        u.*,
-        auth.auth,
-        ua.full_Address,
-        r.user_id AS referrer_id
-    FROM (
-        /* 1. 실제 유저 리스트만 먼저 페이징하여 추출 */
         SELECT 
-            id, user_id, user_nm, email, phone_num, address_id, point_id,
-            referrer_no, guard_type, role, is_stopped, created_at, phone_hash,
-            (CASE
-                WHEN guard_type = '00' THEN '스텝'
-                WHEN guard_type = '01' THEN '경호원 신청 중'
-                WHEN guard_type = '02' THEN '경호원'
-                WHEN guard_type = '03' THEN '수행'
-                WHEN guard_type = '04' THEN '인솔자'
-                ELSE null
-            END) AS guard_type_nm
-        FROM user
-        WHERE is_Deleted = 'N'
-        AND role != 'Admin'
+            u.*,
+            auth.auth,
+            ua.full_Address,
+            r.user_id AS referrer_id
+        FROM (
+            /* 1. 검색과 페이징이 적용된 핵심 유저 추출 */
+            SELECT 
+                usr.id, usr.user_id, usr.user_nm, usr.email, usr.phone_num, usr.address_id, usr.point_id,
+                usr.referrer_no, usr.guard_type, usr.role, usr.is_stopped, usr.created_at, usr.phone_hash,
+                /* 포인트 합계 (스칼라 서브쿼리가 조인보다 안전하고 빠릅니다) */
+                (SELECT COALESCE(SUM(amount), 0) 
+                FROM point_history 
+                WHERE user_id = usr.id 
+                AND settlement_status = 'READY' 
+                AND is_deleted = 'N') AS pending_point,
+                (CASE
+                    WHEN usr.guard_type = '00' THEN '스텝'
+                    WHEN usr.guard_type = '01' THEN '경호원 신청 중'
+                    WHEN usr.guard_type = '02' THEN '경호원'
+                    WHEN usr.guard_type = '03' THEN '수행'
+                    WHEN usr.guard_type = '04' THEN '인솔자'
+                    ELSE '미지정'
+                END) AS guard_type_nm
+            FROM user usr
+            WHERE usr.is_deleted = 'N'
+            AND usr.role != 'Admin'
+            
+            /* 검색 조건은 안쪽에서 처리해야 페이징이 정확합니다 */
+            <if test="option.keyword != null and option.keyword != ''">
+                AND 
+                <choose>
+                    <when test="option.code == 0">
+                        (usr.user_id LIKE CONCAT('%', #{option.keyword}, '%') OR
+                        usr.user_nm LIKE CONCAT('%', #{option.keyword}, '%') OR
+                        usr.email LIKE CONCAT('%', #{option.keyword}, '%'))
+                    </when>
+                    <when test="option.code == 1">usr.user_id LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                    <when test="option.code == 2">usr.user_nm LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                    <when test="option.code == 3">usr.email LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                    <when test="option.code == 5">usr.phone_hash = #{option.keyword}</when>
+                    <when test="option.code == 6">usr.guard_type = #{option.keyword}</when>
+                    <when test="option.code == 7">usr.is_stopped = #{option.keyword}</when>
+                </choose>
+            </if>
+
+            /* 정렬 기준 */
+            <choose>
+                <when test="option.orderCode == 1">ORDER BY usr.point_id DESC, usr.id DESC</when>
+                <when test="option.orderCode == 2">ORDER BY usr.referrer_no ASC, usr.id DESC</when>
+                <when test="option.orderCode == 3">ORDER BY usr.guard_type ASC, usr.id DESC</when>
+                <otherwise>ORDER BY usr.id DESC</otherwise>
+            </choose>
+            
+            /* 페이징 처리 */
+            <!-- LIMIT #{page.index}, #{page.rows} -->
+        ) u
+        /* 2. 페이징된 결과에 대해서만 부가 정보 조인 */
+        LEFT OUTER JOIN user_address ua ON ua.address_id = u.address_id
+        LEFT OUTER JOIN user_auth auth ON u.id = auth.no
+        LEFT OUTER JOIN user r ON u.referrer_no = r.id
         
-          /* 2. 페이징 처리 (이 부분이 추가되어야 합니다) */
-        <!-- limit #{page.index}, #{page.rows} -->
-    ) u
-    /* 3. 페이징된 유저에 대해서만 상세 정보 조인 */
-    LEFT OUTER JOIN user_address ua ON ua.address_id = u.address_id
-    LEFT OUTER JOIN user_auth auth ON u.id = auth.no
-    LEFT OUTER JOIN user r ON u.referrer_no = r.id
-    
-    <if test="option.keyword != null and option.keyword != ''">
-        where
-        <choose>
-            <when test="option.code == 0">
-                (u.user_id LIKE CONCAT('%', #{option.keyword}, '%') OR
-                u.user_nm LIKE CONCAT('%', #{option.keyword}, '%') OR
-                u.email LIKE CONCAT('%', #{option.keyword}, '%') OR
-                )
-            </when>
-            <when test="option.code == 1">u.user_id LIKE CONCAT('%', #{option.keyword}, '%')</when>
-            <when test="option.code == 2">u.user_nm LIKE CONCAT('%', #{option.keyword}, '%')</when>
-            <when test="option.code == 3">u.email LIKE CONCAT('%', #{option.keyword}, '%')</when>
-            <when test="option.code == 4">r.user_id LIKE CONCAT('%', #{option.keyword}, '%')</when>
-            <when test="option.code == 5">u.phone_hash = #{option.keyword}</when>
-            <when test="option.code == 6">u.guard_type = #{option.keyword}</when>
-            <when test="option.code == 7">u.is_stopped LIKE CONCAT('%', #{option.keyword}, '%')</when>
-        </choose>
-    </if>
-    <choose>
-        <when test="option.orderCode == 1">ORDER BY point_id DESC, id DESC</when>
-        <when test="option.orderCode == 2">ORDER BY referrer_no ASC, id DESC</when>
-        <when test="option.orderCode == 3">ORDER BY guard_type ASC, id DESC</when>
-        <otherwise>ORDER BY id DESC</otherwise>
-    </choose>
-</select>
+        /* 추천인 검색(code 4)은 조인된 결과에서 필터링이 필요할 수 있으나 성능상 위 구조를 유지하는 것이 좋습니다 */
+        <if test="option.code == 4 and option.keyword != null and option.keyword != ''">
+            WHERE r.user_id LIKE CONCAT('%', #{option.keyword}, '%')
+        </if>
+    </select>
 
     <select id="count" resultType="int">
         select count(*) 

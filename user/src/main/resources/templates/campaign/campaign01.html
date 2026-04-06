@@ -475,54 +475,105 @@
             //     badge.textContent = '마감됨';
             //     }
             // });
-    document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function() {
         const applyBtn = document.getElementById('btn-submit-apply');
-        if (!applyBtn) return;
+        const applyButtons = document.querySelectorAll('.btn-apply');
+        if (!applyButtons) return;
 
-        applyBtn.addEventListener('click', function() {
-            // CSRF 토큰 정보 (Spring Security 사용 시 필수)
-            const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
-            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
-
-            // 전송할 데이터 구성
-            const applyData = {
-                userNo: applyBtn.dataset.userNo,
-                userId: applyBtn.dataset.userId,
-                campaignId: applyBtn.dataset.campaignId,
-                eventPeriodStr: applyBtn.dataset.periodStr,
-                eventPeriodEnd: applyBtn.dataset.periodEnd,
-                guardType: applyBtn.dataset.guardType
-            };
-            console.log("전체 dataset:", applyBtn.dataset);
+        applyButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const currentBtn = this; // 클릭된 바로 그 버튼
+                console.log("dataset : " + JSON.stringify(currentBtn.dataset));
+                const csrfTokenTag = document.querySelector('meta[name="_csrf"]');
+            const csrfHeaderTag = document.querySelector('meta[name="_csrf_header"]');
             
-            console.log("th:data-guard-type : " + applyBtn.dataset.guardType);
-            if(applyBtn.dataset.guardType == "00" || applyBtn.dataset.guardType == "01"){
-                alert("신청시 권한이 없습니다. 경호원 신청 후 캠페인 신청 해주세요.");
+            if (!csrfTokenTag || !csrfHeaderTag) {
+                alert("보안 토큰을 찾을 수 없습니다.");
                 return;
             }
+            const csrfToken = csrfTokenTag.getAttribute('content');
+            const csrfHeader = csrfHeaderTag.getAttribute('content'); // 에러 해결 지점
+                const applyData = {
+                    userNo: currentBtn.dataset.userNo,
+                    userId: currentBtn.dataset.userId,
+                    campaignId: currentBtn.dataset.campaignId,
+                    eventPeriodStr: currentBtn.dataset.periodStr,
+                    eventPeriodEnd: currentBtn.dataset.periodEnd,
+                    guardType: currentBtn.dataset.guardType,
+                    applicantsNum: currentBtn.dataset.applicantsNum
+                };
 
-            // 비동기 요청 시작
-            fetch('/apply', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken  // CSRF 헤더 추가
-                },
-                body: JSON.stringify(applyData)
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('신청이 완료되었습니다!');
-                    // 버튼 상태 변경 (새로고침 없이 UI 업데이트)
-                    applyBtn.innerText = '신청완료';
-                    applyBtn.disabled = true;
-                    applyBtn.classList.add('completed');
-                } else {
-                    alert('신청 중 오류가 발생했습니다.'+ JSON.stringify(response));
+                if(currentBtn.dataset.guardType == "00" || currentBtn.dataset.guardType == "01"){
+                    alert('신청 권한이 없습니다. "경호원 신청" 후 캠페인 신청 해주세요.');
+                    return;
                 }
-            })
-            .catch(error => console.error('Error:', error));
+
+                fetch('/apply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [csrfHeader]: csrfToken
+                    },
+                    body: JSON.stringify(applyData)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('신청이 완료되었습니다!');
+                        currentBtn.innerText = '신청완료';
+                        currentBtn.disabled = true;
+                        currentBtn.classList.add('completed');
+                    } else {
+                        alert('신청 중 오류가 발생했습니다.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
         });
+
+        // applyBtn.addEventListener('click', function() {
+        //     // CSRF 토큰 정보 (Spring Security 사용 시 필수)
+        //     const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+        //     const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+        //     // 전송할 데이터 구성
+        //     const applyData = {
+        //         userNo: applyBtn.dataset.userNo,
+        //         userId: applyBtn.dataset.userId,
+        //         campaignId: applyBtn.dataset.campaignId,
+        //         eventPeriodStr: applyBtn.dataset.periodStr,
+        //         eventPeriodEnd: applyBtn.dataset.periodEnd,
+        //         guardType: applyBtn.dataset.guardType
+        //     };
+        //     console.log("전체 dataset:", applyBtn.dataset);
+            
+        //     console.log("th:data-guard-type : " + applyBtn.dataset.guardType);
+        //     if(applyBtn.dataset.guardType == "00" || applyBtn.dataset.guardType == "01"){
+        //         alert("신청시 권한이 없습니다. 경호원 신청 후 캠페인 신청 해주세요.");
+        //         return;
+        //     }
+
+        //     // 비동기 요청 시작
+        //     fetch('/apply', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             [csrfHeader]: csrfToken  // CSRF 헤더 추가
+        //         },
+        //         body: JSON.stringify(applyData)
+        //     })
+        //     .then(response => {
+        //         if (response.ok) {
+        //             alert('신청이 완료되었습니다!');
+        //             // 버튼 상태 변경 (새로고침 없이 UI 업데이트)
+        //             applyBtn.innerText = '신청완료';
+        //             applyBtn.disabled = true;
+        //             applyBtn.classList.add('completed');
+        //         } else {
+        //             alert('신청 중 오류가 발생했습니다.'+ JSON.stringify(response));
+        //         }
+        //     })
+        //     .catch(error => console.error('Error:', error));
+        // });
     });
 
 </script>
@@ -649,6 +700,7 @@
                             th:data-campaign-id="${campaignSelect.campaignId}"
                             th:data-period-str="${campaignSelect.eventPeriodStr}"
                             th:data-period-end="${campaignSelect.eventPeriodEnd}"
+                            th:data-applicants-num="${campaignSelect.applicantsNum}"
                             th:data-guard-type="${guardType}">
                         신청하기
                     </button>
@@ -709,6 +761,7 @@
                         th:data-campaign-id="${campaignSelect.campaignId}"
                         th:data-period-str="${campaignSelect.eventPeriodStr}"
                         th:data-period-end="${campaignSelect.eventPeriodEnd}"
+                        th:data-applicants-num="${campaignSelect.applicantsNum}"
                         th:data-guard-type="${guardType}">
                     신청하기
                 </button>

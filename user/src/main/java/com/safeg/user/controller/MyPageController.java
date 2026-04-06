@@ -3,6 +3,7 @@ package com.safeg.user.controller;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -111,11 +112,11 @@ public class MyPageController {
             FilesVO getIdentity = fileService.getMypageImage(String.valueOf(userIdFromDb), "identification");
             FilesVO getCertificate = fileService.getMypageImage(String.valueOf(userIdFromDb), "certificate");
 
-            UserVO user = authUser.getUserVo();
-            log.info("user.getId() : " + user.getId());
-            log.info("user 유저 : " + user);
+            UserVO userInfo = userService.select(username);
+            log.info("user.getId() : " + userInfo.getId());
+            log.info("user 유저 : " + userInfo);
 
-            UserAddressVO getAddress = myPageService.getAddress(user.getId());
+            UserAddressVO getAddress = myPageService.getAddress(userInfo.getId());
             log.info("getAddress() : " + getAddress);
 
             model.addAttribute("currentURI", request.getRequestURI());
@@ -126,7 +127,7 @@ public class MyPageController {
             model.addAttribute("getIdentity", getIdentity); // 필요한 경우 username도 추가
 
             model.addAttribute("getAddress", getAddress);
-            model.addAttribute("user", user);
+            model.addAttribute("user", userInfo);
         }else{
             return "redirect:/";
         }
@@ -579,7 +580,7 @@ public class MyPageController {
 
     @SuppressWarnings("null")
     @GetMapping("/point")
-    public String pointList (@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception{
+    public String point (@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof CustomUser) {
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
@@ -651,6 +652,12 @@ public class MyPageController {
             log.info("authID: " + authId);
 
             log.info("totalPoint: " + totalPoint);
+            LocalDate today = LocalDate.now();
+            
+            String todayStr = today.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+            log.info("todayStr: " + todayStr);
+            
+            model.addAttribute("today", todayStr);
 
             model.addAttribute("pointList", pointList != null ? pointList : Collections.emptyList());
             model.addAttribute("authId", authId);
@@ -666,6 +673,79 @@ public class MyPageController {
 
         }
         return "mypage/point";
+    }
+
+    @GetMapping("/pointList")
+    public String pointList(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception {
+        // 1. 사용자 정보 확인 (SecurityContext 직접 접근 대신 매개변수 활용 권장)
+        if (authUser == null) return "redirect:/login"; 
+        
+        Long userNo = authUser.getId();
+        String username = authUser.getUsername();
+        
+        log.info("pointList : userNo : " + userNo);
+        log.info("pointList : username : " + username);
+        // 프로필 이미지 및 기본 정보 설정
+        FilesVO file = fileService.getMypageImage(String.valueOf(userNo), "profile");
+        model.addAttribute("userId", userNo);
+        model.addAttribute("username", username);
+        model.addAttribute("file", file);
+        model.addAttribute("id", userNo);
+        model.addAttribute("currentURI", request.getRequestURI());
+    
+        // 2. 날짜 설정
+        String targetMonth = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+    
+        // 3. 포인트 리스트 및 금액 조회 (기본 3종)
+        List<PointHistoryVO> referrerList = myPageService.referrerList(userNo, targetMonth);
+        List<PointHistoryVO> attendList = myPageService.attendList(userNo, targetMonth);
+        List<PointHistoryVO> workList = myPageService.workList(userNo, targetMonth);
+    
+        // 금액 문자열을 안전하게 정수로 변환 (null이면 0)
+        int rAmt = parseAmount(myPageService.referrerAmount(userNo, targetMonth));
+        int aAmt = parseAmount(myPageService.attendAmount(userNo, targetMonth));
+        int wAmt = parseAmount(myPageService.workAmount(userNo, targetMonth));
+        int lAmt = 0; // 리더 금액 초기화
+    
+        // 4. 권한(authId)에 따른 추가 로직 처리
+        String userAuth = myPageService.getUserAuth(userNo);
+        if (userAuth != null && !userAuth.isEmpty()) {
+            model.addAttribute("authId", userAuth);
+    
+            if ("03".equals(userAuth)) {
+                List<PointHistoryVO> leaderList = myPageService.leaderList(userNo, targetMonth);
+                lAmt = parseAmount(myPageService.leaderAmount(userNo, targetMonth));
+    
+                model.addAttribute("leaderList", leaderList != null ? leaderList : Collections.emptyList());
+                model.addAttribute("leaderAmount", lAmt);
+            }
+        }
+    
+        // 5. 공통 Model 설정
+        model.addAttribute("referrerList", referrerList != null ? referrerList : Collections.emptyList());
+        model.addAttribute("attendList", attendList != null ? attendList : Collections.emptyList());
+        model.addAttribute("workList", workList != null ? workList : Collections.emptyList());
+    
+        model.addAttribute("referrerAmount", rAmt);
+        model.addAttribute("attendAmount", aAmt);
+        model.addAttribute("workAmount", wAmt);
+        
+        // 최종 합계 계산 (리더 금액 포함)
+        model.addAttribute("totalPoint", rAmt + wAmt + lAmt);
+    
+        return "mypage/pointList";
+    }
+    
+    /**
+     * String 금액을 안전하게 int로 변환하는 유틸리티 메서드
+     */
+    private int parseAmount(String amt) {
+        if (amt == null || amt.trim().isEmpty()) return 0;
+        try {
+            return Integer.parseInt(amt);
+        } catch (NumberFormatException e) {
+            return 0; // 숫자가 아닌 형식이 올 경우 대비
+        }
     }
 
     @PostMapping("/deleteImage")
@@ -701,7 +781,7 @@ public class MyPageController {
             Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
             String username = customUser.getUsername(); // 로그인 아이디 (userId)
 
-            UserVO user = authUser.getUserVo();
+            UserVO userInfo = userService.select(username);
 
             FilesVO selectProfile = fileService.getMypageImage(String.valueOf(userIdFromDb), "profile");
             FilesVO getIdentity = fileService.getMypageImage(String.valueOf(userIdFromDb), "identification");
@@ -713,7 +793,7 @@ public class MyPageController {
             model.addAttribute("file", selectProfile); // 필요한 경우 username도 추가
             model.addAttribute("getCertificate", getCertificate); // 필요한 경우 username도 추가
             model.addAttribute("getIdentity", getIdentity); // 필요한 경우 username도 추가
-            model.addAttribute("user", user);
+            model.addAttribute("user", userInfo);
         }
 
         return "mypage/guardApply";
@@ -730,11 +810,15 @@ public class MyPageController {
             String username = customUser.getUsername(); // 로그인 아이디 (userId)
             UserVO user = authUser.getUserVo();
             FilesVO selectProfile = fileService.getMypageImage(String.valueOf(userIdFromDb), "profile");
+            
+            int pointFull = myPageService.pointFull(userIdFromDb);
+
             model.addAttribute("currentURI", request.getRequestURI());
             model.addAttribute("userId", userIdFromDb);
             model.addAttribute("username", username);
             model.addAttribute("file", selectProfile);
             model.addAttribute("user", user);
+            model.addAttribute("pointFull", pointFull);
         }
         return "mypage/mypageMenu";
     }

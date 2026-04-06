@@ -46,5 +46,22 @@ public interface MyPageMapper {
 
     public int pointFull(Long id) throws Exception;
 
+    public List<PointHistoryVO> referrerList(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
+
+    public List<PointHistoryVO> attendList(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
+
+    public List<PointHistoryVO> leaderList(@Param("userNo") Long userNo,@Param("targetMonth")  String targetMonth) throws Exception;
+
+    public List<PointHistoryVO> workList(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
+
+    public String referrerAmount(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
+
+    public String attendAmount(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
+
+    public String leaderAmount(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
+
+    public String workAmount(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
+
+    public String getUserAuth(Long userNo) throws Exception;
 
 }

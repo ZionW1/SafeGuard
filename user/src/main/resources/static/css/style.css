@@ -977,6 +977,12 @@ a {
     margin-left: 23%;
 }
 
+.mypage_subtitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #555;
+}
+
 .card-box {
     background-color: #ffffff; /* 하얀 배경 */
     border: 1px solid #e0e0e0;
@@ -2929,12 +2935,14 @@ table.bestPayList {
     }
     
     .nav-item {
+        width: 20%;
+        border: 1px;
         display: flex;
         flex-direction: column;
         align-items: center;
         text-decoration: none;
         color: #888;
-        font-size: 11px;
+        font-size: 14px;
     }
     
     .nav-item.active {
@@ -3055,6 +3063,20 @@ table.bestPayList {
         display: none;
     }
 
+    .mypage_title {
+        font-size: 2.4rem;
+        font-weight: 900;
+        line-height: 1.3;
+        margin-left: 0px;
+        margin-top: 70px;
+    }
+
+    .mypage_subtitle {
+        margin-top: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #555;
+    }
 }
 
   /* 더 작은 모바일 화면 (예: 480px 이하) */
@@ -3326,13 +3348,4 @@ table.bestPayList {
         height: auto;
         display: block;
     }
-
-    .mypage_title {
-        font-size: 2.4rem;
-        font-weight: 900;
-        line-height: 1.3;
-        margin-left: 0px;
-        margin-top: 70px;
-    }
-
 }

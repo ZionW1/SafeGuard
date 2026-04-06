@@ -223,11 +223,203 @@
 
     <select id="pointFull">
         SELECT 
-            point_full
+            COALESCE(sum(amount), 0)
         FROM 
-            user
+            point_history 
         WHERE 
-            id = #{id}
+            user_id = #{userNo}
+        AND
+            is_deleted= 'N'
+    </select>
+    
+    <select id="insertPointSettlement">
+        INSERT INTO point_settlement (
+            user_id, 
+            target_month, 
+            total_work_amount, 
+            total_leader_amount, 
+            total_referral_amount, 
+            total_attend_amount, 
+            final_amount, 
+            status
+        )
+        SELECT 
+            user_id, 
+            #{targetMonth}, -- 예: '2026-03'
+            SUM(CASE WHEN category = 'WORK' THEN amount ELSE 0 END),
+            SUM(CASE WHEN category LIKE 'LEADER%' THEN amount ELSE 0 END),
+            SUM(CASE WHEN category = 'REFERRAL' THEN amount ELSE 0 END),
+            SUM(CASE WHEN category = 'FULL_ATTEND' THEN amount ELSE 0 END),
+            SUM(amount), -- 전체 합계
+            1 -- 상태값 (예: 1: 정산대기)
+        FROM 
+            point_history
+        WHERE 
+            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            AND is_deleted = 'N'
+            AND settlement_status = 'READY'
+        GROUP BY 
+            user_id;
+    </select>
+
+
+    <select id="referrerList" resultType="PointHistoryVO">
+        SELECT 
+            u.user_nm,
+            amount,
+            mission_date
+        FROM 
+            point_history ph
+        LEFT OUTER JOIN user u
+            on u.id = ph.source_id
+        WHERE 
+            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            AND ph.is_deleted = 'N'
+            AND settlement_status = 'READY'
+            and ph.user_id = #{userNo}
+            and category = 'REFERRAL'
+    </select>
+
+    <select id="attendList" resultType="PointHistoryVO">
+        SELECT 
+            u.user_nm,
+            amount,
+            mission_date
+        FROM 
+            point_history ph
+        LEFT OUTER JOIN user u
+            on u.id = ph.user_id
+        WHERE 
+            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            AND ph.is_deleted = 'N'
+            AND settlement_status = 'READY'
+            and ph.user_id = #{userNo}
+            and category = 'FULL_ATTEND'
+    </select>
+
+    <select id="leaderList" resultType="PointHistoryVO">
+        SELECT
+            c.campaign_title,
+            amount,
+            mission_date
+        FROM 
+            point_history ph
+        LEFT OUTER JOIN campaign c
+            on c.campaign_id = ph.campaign_id
+        WHERE 
+            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            AND ph.is_deleted = 'N'
+            AND settlement_status = 'READY'
+            and ph.user_id = #{userNo}
+            and category = 'leader_extra'
+    </select>
+
+    <select id="workList" resultType="PointHistoryVO">
+        SELECT
+            c.campaign_title as campaign_title,
+            (CASE
+                WHEN uc.status = '0' THEN '대기'
+                WHEN uc.status = '1' THEN '출근'
+                WHEN uc.status = '2' THEN '퇴근'
+                WHEN uc.status = '3' THEN '지각'
+                WHEN uc.status = '4' THEN '결근'
+                WHEN uc.status = '5' THEN '무단'
+                WHEN uc.status = '8' THEN '등록'
+                WHEN uc.status = '9' THEN '퇴근'
+                ELSE '없음'
+            END) as status_nm,
+            ph.mission_date,
+            amount
+        FROM 
+            point_history ph
+        LEFT OUTER JOIN campaign c
+            on c.campaign_id = ph.campaign_id
+        LEFT OUTER JOIN user_campaign uc
+            on uc.campaign_id = ph.campaign_id
+            and uc.user_no = ph.user_Id
+            AND uc.apply_date = ph.mission_date 
+            and status = '9'
+        WHERE 
+            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            AND ph.is_deleted = 'N'
+            AND settlement_status = 'READY'
+            and ph.user_id = #{userNo}
+            and category = 'WORK'
+    </select>
+
+
+    <select id="referrerAmount" resultType="String">
+        SELECT
+            SUM(amount) AS referral_amount 
+        FROM
+            point_history
+        WHERE
+            user_id = #{userNo}
+        AND
+            category = 'REFERRAL'
+        AND
+            settlement_status = 'READY'
+        AND
+            is_deleted = 'N'
+        AND
+            mission_date LIKE CONCAT(#{targetMonth}, '%')
+    </select>
+    
+    <select id="attendAmount" resultType="String">
+        SELECT
+            SUM(amount) AS attend_amount 
+        FROM
+            point_history 
+        WHERE
+            user_id = #{userNo}
+        AND
+            category = 'FULL_ATTEND'
+        AND
+            settlement_status = 'READY'
+        AND
+            is_deleted = 'N'
+        AND
+            mission_date LIKE CONCAT(#{targetMonth}, '%')
+    </select>
+
+    <select id="leaderAmount" resultType="String">
+        SELECT
+            SUM(amount) AS leader_amount 
+        FROM
+            point_history
+        WHERE
+            user_id = #{userNo}
+        AND
+            category = 'LEADER_EXTRA'
+        AND
+            settlement_status = 'READY'
+        AND
+            is_deleted = 'N'
+        AND
+            mission_date LIKE CONCAT(#{targetMonth}, '%')
+    </select>
+
+    <select id="workAmount" resultType="String">
+        SELECT
+            SUM(amount) AS work_amount 
+        FROM
+            point_history
+        WHERE
+            user_id = #{userNo}
+        AND
+            category = 'WORK'
+        AND
+            settlement_status = 'READY'
+        AND
+            is_deleted = 'N'
+        AND
+            mission_date LIKE CONCAT(#{targetMonth}, '%')
+    </select>
+
+    <select id="getUserAuth" resultType="String">
+        SELECT auth_id
+        FROM user
+        WHERE id = #{userNo}
         AND is_deleted = 'N'
     </select>
 </mapper>

@@ -250,5 +250,73 @@ public class MyPageServiceImpl implements MyPageService {
 
         return pointFull;
     }
+    @Override
+    public List<PointHistoryVO> referrerList(Long userNo, String targetMonth) throws Exception {
+        // TODO Auto-generated method stub
+        log.info("MyPageServiceImpl referrerList userNo : " + userNo);
+        log.info("MyPageServiceImpl referrerList targetMonth : " + targetMonth);
+        
+        List<PointHistoryVO> referrerList = myPageMapper.referrerList(userNo, targetMonth);
+        
+        log.info("MyPageServiceImpl referrerList referrerList : " + referrerList);
+
+        return referrerList;
+    }
+    @Override
+    public List<PointHistoryVO> attendList(Long userNo, String targetMonth) throws Exception {
+        // TODO Auto-generated method stub
+        List<PointHistoryVO> attendList = myPageMapper.attendList(userNo, targetMonth);
+
+        return attendList;
+    }
+    @Override
+    public List<PointHistoryVO> leaderList(Long userNo, String targetMonth) throws Exception {
+        // TODO Auto-generated method stub
+        List<PointHistoryVO> leaderList = myPageMapper.leaderList(userNo, targetMonth);
+
+        return leaderList;
+    }
+    @Override
+    public List<PointHistoryVO> workList(Long userNo, String targetMonth) throws Exception {
+        // TODO Auto-generated method stub
+        List<PointHistoryVO> workList = myPageMapper.workList(userNo, targetMonth);
+
+        return workList;
+    }
+    @Override
+    public String referrerAmount(Long userNo, String targetMonth) throws Exception {
+        // TODO Auto-generated method stub
+        String referrerAmount = myPageMapper.referrerAmount(userNo, targetMonth);
+
+        return referrerAmount;
+    }
+    @Override
+    public String attendAmount(Long userNo, String targetMonth) throws Exception {
+        // TODO Auto-generated method stub
+        String attendAmount = myPageMapper.attendAmount(userNo, targetMonth);
+
+        return attendAmount;
+    }
+    @Override
+    public String leaderAmount(Long userNo, String targetMonth) throws Exception {
+        // TODO Auto-generated method stub
+        String leaderAmount = myPageMapper.leaderAmount(userNo, targetMonth);
+
+        return leaderAmount;
+    }
+    @Override
+    public String workAmount(Long userNo, String targetMonth) throws Exception {
+        // TODO Auto-generated method stub
+        String workAmount = myPageMapper.workAmount(userNo, targetMonth);
+
+        return workAmount;
+    }
+    @Override
+    public String getUserAuth(Long userNo) throws Exception {
+        // TODO Auto-generated method stub
+        String getUserAuth = myPageMapper.getUserAuth(userNo);
+
+        return getUserAuth;
+    }
     
 }

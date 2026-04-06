@@ -34,36 +34,116 @@
     <!-- ⭐ 여기에는 layout-dialect의 페이지별 JS 삽그먼트도 넣어두면 좋아! ⭐ -->
 
     <nav class="bottom-nav">
-        <a href="/" class="nav-item active">
+        <a href="/" class="nav-item" th:classappend="${currentURI == '/' ? 'active' : ''}">
             <i class="fas fa-home"></i>
             <span>홈</span>
         </a>
-        <a href="/leader01" class="nav-item">
+        <a href="/leader01" class="nav-item" th:classappend="${currentURI == '/leader01' ? 'active' : ''}">
             <i class="fas fa-th-large"></i>
             <span>인솔자</span>
         </a>
-        <a href="/notice01" class="nav-item">
+        <a href="/notice01" class="nav-item" th:classappend="${currentURI == '/notice01' ? 'active' : ''}">
             <i class="far fa-envelope"></i>
             <span>공지사항</span>
         </a>
-        <a href="https://pf.kakao.com/_cqFzX" class="nav-item">
-            <i class="fas fa-ad"></i>
-            <span>행사문의</span>
-        </a>
+        
         <th:block sec:authorize="isAnonymous()">
-        <a href="/user01" class="nav-item">
-            <i class="fas fa-lock"></i>
-            <span>로그인</span>
-        </a>
+            <a href="https://pf.kakao.com/_cqFzX" class="nav-item">
+                <i class="fas fa-ad"></i>
+                <span>행사문의</span>
+            </a>
+            <a href="/user01" class="nav-item">
+                <i class="fas fa-lock"></i>
+                <span>로그인</span>
+            </a>
         </th:block>
         <th:block sec:authorize="!isAnonymous()">
-        <!-- <a th:href="@{/mypage/calendarPage(userId=${#authentication.principal.username})}" class="mypage_link">마이페이지</a> -->
-        <a th:href="@{/mypage/mypageMenu}" class="nav-item">
-            <i class="fas fa-user-plus"></i>
-            <span>내 정보</span>
-        </a>
+            <a th:href="@{/mypage/pointList}" class="nav-item" th:classappend="${currentURI == '/mypage/pointList' ? 'active' : ''}">
+                <i class="fas fa-ad"></i>
+                <span>포인트 내역</span>
+            </a>
+            <a th:href="@{/mypage/mypageMenu}" class="nav-item">
+                <i class="fas fa-user-plus"></i>
+                <span>내 정보</span>
+            </a>
         </th:block>
     </nav>
     <th:block layout:fragment="script"></th:block>
+    <script>
+        // function logout() {
+        //     if (confirm("로그아웃 하시겠습니까?")) {
+        //         window.location.href = "/logout";
+        //     }
+        // }
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentPath = window.location.pathname;
+            console.log("Current Path:", currentPath); // 디버깅용 로그
+            const navItems = document.querySelectorAll('.nav-item');
+
+            navItems.forEach(item => {
+                const itemPath = item.getAttribute('href');
+                
+                // 홈("/")은 정확히 일치할 때만, 나머지는 경로를 포함할 때 active
+                if (itemPath === currentPath || (itemPath !== '/' && currentPath.startsWith(itemPath))) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+
+            // --- 4. [핵심] 비동기 폼 제출 로직 (반드시 DOMContentLoaded 안에 위치) ---
+            const formIds = ['updateFormMobile', 'updateForm']; 
+            formIds.forEach(id => {
+                const form = document.getElementById(id);
+                if (form) {
+                    console.log(`비동기 리스너 등록 성공: ${id}`);
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault(); 
+                        
+                        const csrfTokenTag = document.querySelector('meta[name="_csrf"]');
+                        const csrfHeaderTag = document.querySelector('meta[name="_csrf_header"]');
+                        
+                        if (!csrfTokenTag || !csrfHeaderTag) {
+                            alert("보안 토큰을 찾을 수 없습니다.");
+                            return;
+                        }
+    
+                        const csrfToken = csrfTokenTag.getAttribute('content');
+                        const csrfHeader = csrfHeaderTag.getAttribute('content');
+    
+                        const formData = new FormData(this);
+                        const submitBtn = this.querySelector('.profile_save');
+                        
+                        submitBtn.disabled = true;
+                        submitBtn.innerText = "저장 중...";
+    
+                        fetch(this.action, {
+                            method: 'POST',
+                            headers: { [csrfHeader]: csrfToken },
+                            body: formData
+                        })
+                        .then(res => res.text())
+                        .then(data => {
+                            if (data.includes("success")) {
+                                alert("프로필이 저장되었습니다!");
+                                location.reload();
+                            } else {
+                                alert("저장 실패: " + data);
+                            }
+                        })
+                        .catch(err => {
+                            console.error("전송 에러:", err);
+                            alert("서버 전송 중 오류가 발생했습니다.");
+                        })
+                        .finally(() => {
+                            submitBtn.disabled = false;
+                            submitBtn.innerText = "프로필 사진 저장하기";
+                        });
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

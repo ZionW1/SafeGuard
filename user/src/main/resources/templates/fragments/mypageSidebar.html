@@ -17,7 +17,7 @@
                     </form>
                 </div>
                 <div th:unless="${file != null} ? 'hidden'">
-                    <form class="profile-preview" id="updateForm" action="/updateProfile" method="post" enctype="multipart/form-data">
+                    <form class="profile-preview profile-form" id="updateForm" action="/updateProfile" method="post" enctype="multipart/form-data">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <input type="hidden" name="id" id="id" th:value="${userId}" />
                         <input type="hidden" name="userId" id="userId" th:value="${username}" />
@@ -49,7 +49,7 @@
                         <a href="/mypage/infoUpdate">내 정보</a>
                     </li>
                     <li class="menu-item" th:classappend="${currentURI.startsWith('/mypage/point')} ? 'active' : ''">
-                        <a href="/mypage/point">포인트 내역</a>
+                        <a href="/mypage/pointList">포인트 내역</a>
                     </li>
                     <li class="menu-item" th:classappend="${currentURI.startsWith('/mypage/changePasswordPage')} ? 'active' : ''">
                         <a href="/mypage/changePasswordPage">비밀번호 변경</a>
@@ -68,7 +68,7 @@
         <nav class="m-scroll-menu">
             <a href="/mypage/calendarPage">경호 캘린더</a>|
             <a href="/mypage/infoUpdate">내 정보</a>|
-            <a href="/mypage/point">포인트 내역</a>|
+            <a href="/mypage/pointList">포인트 내역</a>|
             <a href="/mypage/changePasswordPage">비밀번호 변경</a>|
             <a href="/mypage/guardApply">경호원 신청</a>
         </nav>
@@ -89,7 +89,7 @@
                     th:onclick="markFileDeleted([[${userId}]])">프로필 이미지 삭제</button>
         </div>
         <div th:unless="${file != null} ? 'hidden'">
-            <form class="profile-preview" id="updateFormMobile" action="/updateProfile" method="post" enctype="multipart/form-data">
+            <form class="profile-preview profile-form" id="updateFormMobile" action="/updateProfile" method="post" enctype="multipart/form-data">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <input type="hidden" name="id" id="" th:value="${userId}" />
                 <input type="hidden" name="userId" id="" th:value="${username}" />
@@ -110,11 +110,9 @@
             </form>
         </div>
     </div>
-
     <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", () => {
-            // 1. 요소 선택 (HTML의 ID와 정확히 일치시켜야 함)
-            // HTML에 id="drop-area"라고 되어 있다면 아래처럼 수정하세요.
+            // --- 1. 요소 선택 ---
             const dropArea = document.getElementById("drop-area"); 
             const imageInput = document.getElementById("image");
             const preview = document.getElementById("preview");
@@ -124,14 +122,10 @@
             const imageInputM = document.getElementById("image_mobile");
             const previewM = document.getElementById("preview_mobile");
             const defaultImageM = document.getElementById("defaultImage_mobile");
-        
-            // CSRF 관련 (존재 확인 후 가져오기)
-            const csrfInput = document.querySelector('input[name="_csrf"]');
-            const csrfToken = csrfInput ? csrfInput.value : "";
-            const csrfHeaderToSend = "X-CSRF-TOKEN";
-        
-            // --- 초기 상태 설정 함수 ---
+    
+            // --- 2. 초기 상태 설정 ---
             const initDisplay = (input, defImg, prv, imgFileId) => {
+                if (!input) return;
                 const imgFile = document.getElementById(imgFileId);
                 if (defImg && (!input.files || input.files.length === 0)) {
                     defImg.style.display = 'block';
@@ -139,83 +133,37 @@
                     if (imgFile) imgFile.style.display = 'none';
                 }
             };
-        
             initDisplay(imageInput, defaultImage, preview, "imgFile");
             initDisplay(imageInputM, defaultImageM, previewM, "imgFile_mobile");
-        
-            // --- 이벤트 리스너 등록 (요소가 존재할 때만 등록하여 에러 방지) ---
-            
-            // 데스크탑 영역
-            if (dropArea && imageInput) {
-                dropArea.addEventListener("click", () => imageInput.click());
-                
-                dropArea.addEventListener("dragover", (e) => {
-                    e.preventDefault();
-                    dropArea.style.backgroundColor = "#f3e7ff";
-                });
-                dropArea.addEventListener("dragleave", () => {
-                    dropArea.style.backgroundColor = "transparent";
-                });
-                dropArea.addEventListener("drop", (e) => {
-                    e.preventDefault();
-                    dropArea.style.backgroundColor = "transparent";
-                    const file = e.dataTransfer.files[0];
-                    if (file && file.type.startsWith("image/")) {
-                        imageInput.files = e.dataTransfer.files;
-                        showPreview(file, "imgFile", defaultImage, preview);
+    
+            // --- 3. 미리보기 및 드래그앤드롭 (데스크탑/모바일 공통 적용) ---
+            const setupImageEvents = (area, input, def, prv, imgId) => {
+                if (!area || !input) return;
+                area.addEventListener("click", () => input.click());
+                input.addEventListener("change", () => {
+                    const file = input.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const imgFile = document.getElementById(imgId);
+                            if (imgFile) imgFile.style.display = 'none';
+                            if (def) def.style.display = 'none';
+                            prv.src = e.target.result;
+                            prv.style.display = "inline";
+                            prv.classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
                     }
                 });
-        
-                imageInput.addEventListener("change", () => {
-                    const file = imageInput.files[0];
-                    if (file) showPreview(file, "imgFile", defaultImage, preview);
-                });
-            }
-        
-            // 모바일 영역
-            if (dropAreaM && imageInputM) {
-                dropAreaM.addEventListener("click", () => imageInputM.click());
-                
-                dropAreaM.addEventListener("dragover", (e) => {
-                    e.preventDefault();
-                    dropAreaM.style.backgroundColor = "#f3e7ff";
-                });
-                dropAreaM.addEventListener("dragleave", () => {
-                    dropAreaM.style.backgroundColor = "transparent";
-                });
-                dropAreaM.addEventListener("drop", (e) => {
-                    e.preventDefault();
-                    dropAreaM.style.backgroundColor = "transparent";
-                    const file = e.dataTransfer.files[0];
-                    if (file && file.type.startsWith("image/")) {
-                        imageInputM.files = e.dataTransfer.files;
-                        showPreview(file, "imgFile_mobile", defaultImageM, previewM);
-                    }
-                });
-        
-                imageInputM.addEventListener("change", () => {
-                    const file = imageInputM.files[0];
-                    if (file) showPreview(file, "imgFile_mobile", defaultImageM, previewM);
-                });
-            }
-        
-            // --- 공통 함수들 ---
-            function showPreview(file, imgFileId, defImg, prv) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const imgFile = document.getElementById(imgFileId);
-                    if (imgFile) imgFile.style.display = 'none';
-                    if (defImg) defImg.style.display = 'none';
-                    prv.src = e.target.result;
-                    prv.style.display = "inline";
-                };
-                reader.readAsDataURL(file);
-            }
+            };
+            setupImageEvents(dropArea, imageInput, defaultImage, preview, "imgFile");
+            setupImageEvents(dropAreaM, imageInputM, defaultImageM, previewM, "imgFile_mobile");
+    
         });
-        
-        // markFileDeleted와 removeFile은 HTML에서 onclick으로 호출할 수 있으므로 전역 범위에 유지
+    
+        // 전역 함수 (삭제 로직)
         async function markFileDeleted(id) {
-            const csrfToken = document.querySelector('input[name="_csrf"]').value;
+            const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
             const url = `/mypage/markDeleted/${id}`;
             try {
                 const response = await fetch(url, {
@@ -225,7 +173,7 @@
                 if (response.ok) {
                     const text = await response.text();
                     if (text === 'SUCCESS') {
-                        alert('파일 삭제 성공');
+                        alert('삭제되었습니다.');
                         window.location.reload();
                     }
                 }

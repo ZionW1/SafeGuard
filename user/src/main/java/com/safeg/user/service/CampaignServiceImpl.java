@@ -80,6 +80,7 @@ public class CampaignServiceImpl implements CampaignService{
             // applyMapper.insertUserCampaignPeriod(dailyEntriesToInsert); // 아래 Mapper 메서드 참조
         }
         if(result >= 1) {
+            log.info("updateApplicants : " + userCampaignVO.getApplicantsNum());
             int result1 = campaignMapper.updateApplicants(userCampaignVO);
         }
         // int result = campaignMapper.campaignApply(userCampaignVO);

@@ -33,12 +33,15 @@ public class CampaignServiceImpl implements CampaignService{
     }
 
     @Override
-    public int campaignApply(UserCampaignVO userCampaignVO) throws Exception {
+    public String campaignApply(UserCampaignVO userCampaignVO) throws Exception {
         // TODO Auto-generated method stub
         LocalDate startDate;
         LocalDate endDate;
         int result = 0;
-        log.info("getEventPeriodEnd :" +userCampaignVO.getUserId());
+        int result1 = 0;
+        log.info("userCampaignVO : " + userCampaignVO);
+
+        log.info("getEventPeriodEnd : " +userCampaignVO.getUserId());
 
         log.info("getEventPeriodEnd :" +userCampaignVO.getEventPeriodStr());
         log.info("getEventPeriodEnd :" +userCampaignVO.getEventPeriodEnd());
@@ -51,6 +54,12 @@ public class CampaignServiceImpl implements CampaignService{
             throw new IllegalArgumentException("캠페인 기간 날짜 형식 오류: " + e.getMessage());
         }
 
+        int overlapCount = campaignMapper.scheduleOverlap(userCampaignVO);
+        log.info("overlapCount : " + overlapCount);
+        if (overlapCount > 0) {
+            // 중복된 일정이 있음
+            return "OVERLAP";
+        }
         // 3. 시작 날짜부터 종료 날짜까지의 모든 날짜(LocalDate) 리스트 생성
         List<LocalDate> datesInRange = Stream.iterate(startDate, date -> date.plusDays(1))
                                             // startDate와 endDate 모두 포함
@@ -81,10 +90,24 @@ public class CampaignServiceImpl implements CampaignService{
         }
         if(result >= 1) {
             log.info("updateApplicants : " + userCampaignVO.getApplicantsNum());
-            int result1 = campaignMapper.updateApplicants(userCampaignVO);
+            result1 = campaignMapper.updateApplicants(userCampaignVO);
         }
         // int result = campaignMapper.campaignApply(userCampaignVO);
-        return result;
+        return (result1 > 0) ? "SUCCESS" : "FAIL";
+    }
+
+    public String overlapTitle(UserCampaignVO userCampaignVO) throws Exception {
+        log.info("overlapTitle userCampaignVO : " + userCampaignVO);
+        String duplicateTitle = campaignMapper.overlapTitle(userCampaignVO);
+        log.info("조회된 중복 타이틀: [" + duplicateTitle + "]"); // 대괄호를 붙여서 공백이나 빈값 확인
+    
+        // 값이 정말로 있을 때만(null이 아니고, 비어있지 않고, 공백만 있는게 아닐 때) 리턴
+        if (duplicateTitle != null && !duplicateTitle.trim().isEmpty()) {
+            return duplicateTitle;
+        }
+        
+        // 중복이 없으면 명확하게 null을 반환해서 컨트롤러가 if문에 걸리지 않게 함
+        return null;
     }
 
     @Override

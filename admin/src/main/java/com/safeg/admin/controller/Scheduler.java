@@ -34,20 +34,21 @@ public class Scheduler {
         }
     }
 
-    @Scheduled(cron = "0 0 0 L * ?") // ✨ 이 부분이 월말 처리의 핵심이야! ✨
-    public void resetPayOnMonthEnd() throws Exception{
-        LocalDate today = LocalDate.now();
+    // @Scheduled(cron = "0 0 18 1 * ?", zone = "Asia/Seoul") // ✨ 매월 1일 오후 6시 정각에 실행 ✨
+    // public void resetPayOnMonthEnd() throws Exception{
+    //     LocalDate today = LocalDate.now();
         
-        System.out.println("이번 달의 마지막 날(" + today + ")! Pay 컬럼을 0으로 초기화하는 작업을 시작할게!");
+    //     System.out.println("이번 달의 마지막 날(" + today + ")! Pay 컬럼을 0으로 초기화하는 작업을 시작할게!");
         
-        userService.resetAllUserPay();
-        // --- 여기에 'pay' 컬럼을 0으로 업데이트하는 로직을 넣어줘! ---
-        // 예시: 모든 사용자 또는 특정 조건의 pay를 0으로 설정하는 메서드 호출
-        // payService.resetAllUserPayToZero();
-        // 또는 특정 Repository를 통해 직접 DB 업데이트
-        // yourRepository.updatePayToZeroForAllUsers();
-        // -------------------------------------------------------------
+    //     userService.resetAllUserPay();
+    //     userService.resetAllUserApply();
+    //     // --- 여기에 'pay' 컬럼을 0으로 업데이트하는 로직을 넣어줘! ---
+    //     // 예시: 모든 사용자 또는 특정 조건의 pay를 0으로 설정하는 메서드 호출
+    //     // payService.resetAllUserPayToZero();
+    //     // 또는 특정 Repository를 통해 직접 DB 업데이트
+    //     // yourRepository.updatePayToZeroForAllUsers();
+    //     // -------------------------------------------------------------
         
-        System.out.println("Pay 컬럼 0 초기화 작업 완료!");
-    }
+    //     System.out.println("Pay 컬럼 0 초기화 작업 완료!");
+    // }
 }

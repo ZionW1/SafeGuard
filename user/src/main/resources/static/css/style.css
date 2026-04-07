@@ -1351,15 +1351,30 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
 
 .leader-container {
     width: 90%;
-    justify-content: left;  /* 수직 가운데 정렬 */
+    justify-content: center;  /* 수직 가운데 정렬 */
     align-items: center;      /* 수평 가운데 정렬 */
     display: flex;
     flex-wrap: wrap;      /* 아이템들이 줄을 넘으면 자동으로 다음 줄로 넘기기 */
 
     grid-template-columns: repeat(5, 1fr); /* 1줄에 2개 */
-    gap: 10px; /* 카드 사이 간격 */
+    gap: 50px; /* 카드 사이 간격 */
     padding: 0px;
-    margin: 0 auto;
+    margin: 20px auto;
+}
+
+.leader-container-mobile{
+    display: none;
+}
+
+.leader-image {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    display: flex;
 }
 
 .campaign-item {
@@ -1380,6 +1395,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     margin-bottom: 15px;
     align-items: center;
 }
+
 /* PC에서는 모바일 헤더 감추기 */
 @media(min-width: 768px) {
   .mobile-header,
@@ -1837,6 +1853,12 @@ table.bestPayList {
 .mypage_form {
     max-width: 54%;
     margin-top: 20px;
+    margin: 20px 0;
+}
+
+.guardApply_form {
+    max-width: 54%;
+    margin-top: 20px;
     margin: 20px auto;
 }
 
@@ -1999,6 +2021,9 @@ table.bestPayList {
 .calendarMobile {
     display: none;
 }
+.w100 {
+    width: 100%;
+}
 
   /* 모바일 화면 (예: 768px 이하) */
     @media (max-width: 768px) {
@@ -2029,6 +2054,10 @@ table.bestPayList {
     }
 
     .leader-container {
+        display: none;
+    }
+
+    .leader-container-mobile {
         width: 95%;
         justify-content: center;  /* 수직 가운데 정렬 */
         align-items: center;      /* 수평 가운데 정렬 */
@@ -2037,7 +2066,7 @@ table.bestPayList {
         grid-template-columns: repeat(5, 1fr); /* 1줄에 2개 */
         gap: 10px; /* 카드 사이 간격 */
         padding: 0px;
-        margin: 10px auto;
+        margin: 60px auto 20px;
     }
     .campaignTitle{
         display: none;
@@ -2582,6 +2611,12 @@ table.bestPayList {
     }
 
     .mypage_form {
+        max-width: 100%;
+        margin-top: 20px;
+        margin: 20px auto;
+    }
+
+    .guardApply_form {
         max-width: 100%;
         margin-top: 20px;
         margin: 20px auto;

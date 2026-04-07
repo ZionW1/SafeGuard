@@ -29,11 +29,12 @@ public interface UserService {
 
     public int resetAllUserPay() throws Exception;
 
+    public int resetAllUserApply() throws Exception;
+
     public List<UserVO> userAddressList() throws Exception;
 
     public void guardTypeChange(UserVO userVO) throws Exception;
 
     public Long referrerId(String referrerId) throws Exception;
-
 
 }

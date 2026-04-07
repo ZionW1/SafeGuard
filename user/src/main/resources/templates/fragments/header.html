@@ -109,7 +109,7 @@
                     <li><a href="/user02">회원가입</a></li>
                 </th:block>
                 <th:block sec:authorize="isAuthenticated()">
-                    <li><a th:href="@{/mypage/calendarPage(userId=${#authentication.principal.username})}">마이페이지</a></li>
+                    <li><a th:href="@{/mypage/mypageMenu}">내 정보</a></li>
                     <li><a href="javascript:logout()">로그아웃</a></li>
                 </th:block>
             </ul>

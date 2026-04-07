@@ -6,287 +6,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="@{/css/style.css}" />
-    <style>
-        /* 개별 카드 스타일은 이전처럼 유지 (필요에 따라 조정) */
-        
-        .card-image {
-            margin: 0 12px;
+    <link rel="stylesheet" href="/css/style.css" />
 
-            width: 90%;
-            height:  300px; /* 고정 높이 */
-            object-fit: fill; /* 이미지를 비율을 유지하면서 잘라내어 채움 */
-        }
-    
-        .card-info {
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px; /* 내부 요소 간격 */
-        }
-    
-    
-        .card-badge.today { /* "오늘마감" 뱃지 색상 */
-            background-color: #ffe0b2;
-            color: #ef6c00;
-        }
-    
-        .card-title {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #333;
-            margin: 0;
-            line-height: 1.3;
-            height: 2.6em; /* 두 줄까지 표시하고 넘치면 ... 처리 (선택 사항) */
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2; /* 2줄까지만 표시 */
-            -webkit-box-orient: vertical;
-        }
-
-        .card-desc {
-        font-size: 0.9em;
-        color: #666;
-        margin: 0;
-        line-height: 1.4;
-        height: 2.8em; /* 두 줄까지 표시 */
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        }
-        /*  */
-
-        .all_view_container{
-            width: 90%;
-            display: flex;
-            /* flex-wrap: wracampaign-imagep; */
-            gap: 10px; /* 카드 간의 가로세로 간격 */
-            justify-content: flex-start;
-        }
-
-        .campaign_card {
-            width: calc((100% - 16px * 4) / 5); /* 부모 너비에서 간격 빼고 5등분 */
-            box-sizing: border-box;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-        }
-
-
-        .card-badge {
-            background-color: #e0f2f7; /* 기본 뱃지 색상 */
-            color: #01579b;
-            font-size: 0.8em;
-            padding: 4px 8px;
-            border-radius: 4px;
-            align-self: flex-start; /* 뱃지를 왼쪽 정렬 */
-            font-weight: bold;
-        }
-        
-        .modal {
-            display: none; /* 기본 숨김 */
-            position: fixed;
-            z-index: 1000;
-            left: 0; top: 0; width: 100%; height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 20px;
-            width: 80%;
-            max-width: 700px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        .close-btn {
-            font-size: 28px;
-            font-weight: bold;
-            float: right;
-            cursor: pointer;
-        }
-       /* 지역 카테고리 컨테이너 */
-.region-category {
-    width: 100%;
-    max-width: 900px; /* 전체 너비 제한 */
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    padding: 30px;
-}
-
-/* 리스트 래퍼 (안쪽 여백) */
-.region-list-wrapper {
-    padding: 0; /* 필요에 따라 조정 */
-}
-
-/* 개별 지역 그룹 (예: 서울) */
-.region-group {
-    display: flex;
-    flex-direction: column; /* 세로 방향으로 정렬 (제목 위에 서브 리스트) */
-}
-
-/* 메인 지역 타이틀 (예: 서울) 스타일 */
-.region-main-title {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #e0e0e0; /* 밑줄 추가 */
-}
-
-.region-main-title ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.region-main-title .title-text {
-    font-size: 28px; /* 타이틀 글자 크기 */
-    font-weight: bold;
-    color: #343a40;
-    padding: 0;
-    margin: 0;
-}
-
-/* 서브 지역 리스트를 담는 그리드 컨테이너 */
-.region-sub-list-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4개의 열로 균등하게 나눔 */
-    gap: 20px 20px; /* 행과 열 사이의 간격 */
-}
-
-/* 각 서브 지역 리스트 (ul) */
-.region-sub-list-grid ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-/* 각 서브 지역 아이템 (li) */
-.region-sub-list-grid li {
-    font-size: 16px;
-    color: #555555;
-    padding: 8px 0;
-    cursor: pointer;
-    transition: color 0.2s ease, background-color 0.2s ease; /* 호버 효과 */
-}
-
-.region-sub-list-grid li:hover {
-    color: #007bff; /* 호버 시 색상 변경 */
-    /* background-color: #e9ecef; 배경색 변경도 고려할 수 있어 */
-    font-weight: 600; /* 호버 시 글자 굵기 */
-}
-
-/* 반응형 디자인 (선택 사항이지만 좋은 연습!) */
-@media (max-width: 768px) {
-    .region-sub-list-grid {
-        grid-template-columns: repeat(2, 1fr); /* 화면이 작아지면 2열로 */
-    }
-}
-
-@media (max-width: 480px) {
-    .region-sub-list-grid {
-        grid-template-columns: 1fr; /* 더 작아지면 1열로 */
-    }
-    .region-category {
-        padding: 20px;
-    }
-    .region-main-title .title-text {
-        font-size: 24px;
-    }
-}
-    </style>
-    <style>
-        h1 { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 20px; }
-        .article-info { font-size: 0.9em; color: #666; margin-bottom: 20px; }
-        .article-content { line-height: 1.6; }
-        /* CKEditor가 생성하는 HTML 구조에 따라 필요한 CSS를 추가하여 스타일을 유지 */
-        .ck-content { /* CKEditor의 기본 클래스 */
-            font-size: 1em; /* 필요에 따라 조절 */
-            line-height: 1.6em;
-        }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        /* 저장된 CKEditor 내용의 이미지 스타일 유지 */
-        .ck-content img {
-            max-width: 100%;
-            height: auto;
-            display: block; /* 이미지가 줄 바꿈되도록 */
-            margin: 0 auto; /* 중앙 정렬 */
-        }
-        /* 저장된 CKEditor 내용의 캡션 스타일 유지 */
-        .ck-content .image-caption {
-            font-style: italic;
-            text-align: center;
-            font-size: 0.9em;
-            color: #555;
-            margin-top: 5px;
-        }
-
-        .ck-content { /* CKEditor의 기본 클래스 */
-        font-size: 1em; /* 필요에 따라 조절 */
-        line-height: 1.6em;
-        text-align: center; /* CKEditor 콘텐츠의 기본 텍스트 정렬을 초기화 (필요시) */
-    }
-
-    /* ⭐️⭐️⭐️ 이 부분을 수정/추가해줘! ⭐️⭐️⭐️ */
-    .ck-content figure.image { /* CKEditor 이미지를 감싸는 figure 태그 */
-        display: block; /* 블록 요소로 만들어 margin: auto가 작동하도록 함 */
-        margin: 0 auto; /* 좌우 마진을 자동으로 설정하여 가운데 정렬 */
-        max-width: 100%; /* 너무 커지는 것을 방지 */
-    }
-    
-    .ck-content figure.image img { /* figure 안의 실제 이미지 태그 */
-        display: block; /* 블록 요소로 만들어 margin: auto가 작동하도록 함 */
-        margin: 0 auto; /* 좌우 마진을 자동으로 설정하여 가운데 정렬 */
-        max-width: 100%; /* 부모(figure)보다 커지지 않도록 */
-        height: auto; /* 비율 유지 */
-    }
-    
-    /* 캡션도 가운데 정렬되도록 */
-    .ck-content .image-caption {
-        text-align: center; 
-        font-style: italic;
-        font-size: 0.9em;
-        color: #555;
-        margin-top: 5px;
-    }
-    /* 반응형 디자인 (선택 사항이지만 좋은 연습!) */
-    @media (max-width: 768px) {
-        .region-sub-list-grid {
-            grid-template-columns: repeat(2, 1fr); /* 화면이 작아지면 2열로 */
-        }
-    }
-
-    @media (max-width: 480px) {
-        .region-sub-list-grid {
-            grid-template-columns: 1fr; /* 더 작아지면 1열로 */
-        }
-        .region-category {
-            padding: 20px;
-        }
-        .region-main-title .title-text {
-            font-size: 24px;
-        }
-    }
-</style>
 </head>
 <body>
 <main layout:fragment="content">
     <form class="optionForm" action="/campaign08" method="get" id="form">
     </form>
     <div class="leader-container">
+        <!-- <div class="campaign-list" id="popularList"> -->
+
+            <th:block th:each="leader : ${leaderList}">
+                <a th:href="|/leader02?id=${leader.id}|">
+                    <!-- <div class="campaign-item"> -->
+
+                    <div class="campaign-card">
+                        <div th:if="${leader.filePath != null}">
+                            <img id="imgFile" th:src="|/selectProfile?id=${leader.id}&args=1|" alt="파일이미지" class="leader-image"/>    
+                        </div>
+                        <div th:unless="${leader.filePath != null}">
+                            <img id="imgFile" th:src="|/images/not-image.png|" alt="파일이미지" class="leader-image"/>
+                        </div>
+                        <div class="campaign-info-box">
+                            <div class="campaign-tags leader_name">
+                                <span th:text="|${leader.userNm}|"></span> <span>인솔자</span>
+                            </div>
+                            <!-- <div class="campaign-tags">
+                                <span class="tag leader">
+                                    <span th:text="|${campaign.userNm}|"></span>
+                                    <span class="sub-text">인솔자</span>
+                                </span> 
+                                <span class="card-badge"
+                                th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
+                                th:data-campaign-id="${campaign.campaignId}"></span>
+                            </div>
+                            <div class="title-overlay">
+                                <div class="card-title">
+                                    <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
+                                </div>
+                            </div>
+                            <div class="title-overlay">
+                                <div class="card-point">
+                                    포인트 : <span class="campaign-title-text" th:text="${#numbers.formatInteger(campaign.campaignPay, 3, 'COMMA')}"></span>
+                                </div>
+                            </div>
+                            <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div> -->
+                        </div>
+                    </div>
+                    <!-- </div> -->
+                </a>
+        </th:block>
+    </div>
+    <div class="leader-container-mobile">
         <th:block th:each="leader : ${leaderList}">
             <div class="campaign-item">
             <div class="guest-message">

@@ -145,9 +145,11 @@
         ON 
             u.user_id = uc.user_id
         AND
-            uc.status = '2'
+            uc.status in ('2','9')
         WHERE
             u.role in ('USER', 'LEADER')
+        AND
+            uc.is_deleted = 'N'
         GROUP BY
             u.id, u.user_nm, u.email
         ORDER BY
@@ -156,21 +158,25 @@
         LIMIT 10
     </select>
 
-    <select id="bestPayList" resultType="UserVO">
-        SELECT 
-            user_id,
-            user_nm,
-            COALESCE(pay, 0) pay
-            <!-- pay = COALESCE(pay, 0) + (select campaign_pay from campaign where campaign_id = #{campaignId}) -->
-        FROM user
-        WHERE
-            role in ('USER', 'LEADER')
+    <select id="bestPayList" resultType="PointHistoryVO">
+        SELECT
+            u.id,
+            u.user_nm,
+            u.user_id id,
+            COALESCE(sum(amount), 0) amount
+        FROM
+            user u
+        LEFT OUTER JOIN
+            point_history ph
+        ON
+            u.id = ph.user_id
         GROUP BY
-            user_id, user_nm, pay
-        ORDER BY
-            pay desc,
-            user_id asc
-        LIMIT 10
+            ph.user_id,
+            u.user_id,
+            u.user_nm,
+            u.id
+        ORDER BY amount DESC, u.id asc
+        LIMIT 10;
     </select>
     
     <select id="getReferrerNo" resultType="Long">

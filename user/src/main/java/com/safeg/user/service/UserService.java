@@ -2,6 +2,7 @@ package com.safeg.user.service;
 
 import java.util.List;
 
+import com.safeg.user.vo.PointHistoryVO;
 import com.safeg.user.vo.UserAuth;
 import com.safeg.user.vo.UserVO;
 import com.safeg.user.vo.Users;
@@ -34,7 +35,7 @@ public interface UserService {
 
     public List<UserVO> bestAgentList() throws Exception;
 
-    public List<UserVO> bestPayList() throws Exception;
+    public List<PointHistoryVO> bestPayList() throws Exception;
 
     public boolean phoneDuplicate(String phoneNum, String userId) throws Exception;
 

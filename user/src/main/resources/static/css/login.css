@@ -446,7 +446,6 @@ button[type="submit"] {
     }
 
     .popup_X_button {
-        /* font-size: 3em; */
         position: absolute;
         right: 30px;
         text-decoration: none; /* 밑줄 없애기 */

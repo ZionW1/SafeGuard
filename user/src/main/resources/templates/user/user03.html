@@ -35,14 +35,13 @@
       cursor: not-allowed;
     }
     .mypage_button {
-      margin-top: 10px;
+      margin-left: 15px;
       padding: 10px 20px;
       font-size: 1.1rem;
       border: none;
       border-radius: 5px;
       background-color: #f09a67;
       color: white;
-      margin-right: 5px;
       cursor: pointer;
     }
         .mypage_button_width {
@@ -84,10 +83,21 @@
     padding: 10px;           /* 영역 내 간격 */
     }
     .mypage_address {
-        margin-right: 5px;
+        width: 64% ;
+        margin: 15px 0;
     }
     .zone_code {
+        margin-right: 15px;
         width: 100px;
+    }
+    @media (max-width: 768px) {
+        .mypage_button {
+            margin-left: 10px;
+        }
+        .mypage_address {
+            width: 48.9%;
+            margin: 15px 0;
+        }
     }
     </style>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -204,7 +214,7 @@ function execDaumPostcode() {
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                     <input type="hidden" name="id" th:value="${user.id}" />
                     <input type="hidden" name="userId" th:value="${user.userId}" />
-                    <div class="welcome_id">개인정보
+                    <div class="welcome_id">
                         <p>환영합니다, <span sec:authentication="name"></span>님! 마이페이지입니다.</p>
                     </div>
                     <!-- 로그인한 사용자만 이 섹션을 볼 수 있도록 함 -->
@@ -242,11 +252,12 @@ function execDaumPostcode() {
                     </div>
                     <div class="form-row">
                         <!-- <span sec:authentication="name"></span> -->
-                        <input class="mypageInput mypage_address zone_code" type="text" name="zoneCode"  id="zoneCode" placeholder="우편번호" readonly>
-                        <input class="mypageInput mypage_address" type="text" name="address" id="address" placeholder="주소" readonly autocomplete="street-address"><br>
-                        <input class="mypageInput mypage_address" type="text" name="detailAddress"  id="detailAddress" placeholder="상세주소" oninput="updateFullAddress();">
-                        <input class="mypage_button" type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
-
+                        <input class="mypageInput zone_code" type="text" name="zoneCode"  id="zoneCode" placeholder="우편번호" readonly>
+                        <input class="mypageInput" type="text" name="address" id="address" placeholder="주소" readonly autocomplete="street-address"><br>
+                        <div class="w100">
+                            <input class="mypageInput mypage_address" type="text" name="detailAddress"  id="detailAddress" placeholder="상세주소" oninput="updateFullAddress();">
+                            <input class="mypage_button" type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
+                        </div>
                         <input type="hidden" name="province" id="province">
                         <input type="hidden" name="city" id="city">
                         <input type="hidden" name="roadName" id="roadName">

@@ -157,6 +157,16 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
+    public int resetAllUserApply() throws Exception {
+        // TODO Auto-generated method stub
+        int result = userMapper.resetPointHistory();
+        userMapper.resetPointHistory();
+
+        return result;
+    }
+
+    @Override
     public List<UserVO> userAddressList() throws Exception {
         // TODO Auto-generated method stub
         List<UserVO> userAddressList = userMapper.userAddressList();
@@ -177,9 +187,6 @@ public class UserServiceImpl implements UserService{
         log.info("referrerId referrerNo : : : : : : : " + referrerNo);
         return referrerNo;
     }
-
-    
-
     // // 비밀번호 변경 로직도 유사하게 구현하면 돼
     // public void changePassword(String userId, String newRawPassword) {
     //     UserVO user = userRepository.findByUserId(userId); // 사용자 조회

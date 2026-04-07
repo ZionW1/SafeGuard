@@ -91,6 +91,11 @@ public class applyController {
         //     model.addAttribute("leaderStatus", leaderCampaign.getStatus());
         //     // ... 필요한 정보 추가
         // }
+
+        for(int i = 0; i < userCampaignApply.size(); i++){
+            userCampaignApply.get(i).getPhoneNum().replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3");
+        }
+        
         model.addAttribute("userCampaignApply", userCampaignApply);
         model.addAttribute("applicantsNum", userCampaignApply.size()-1); // 신청 수 추가
         UserCampaignVO leaderCampaign = null; // 인솔자를 찾아서 저장할 변수

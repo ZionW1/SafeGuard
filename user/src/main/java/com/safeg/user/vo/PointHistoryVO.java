@@ -31,6 +31,7 @@ public class PointHistoryVO {
     private int leaderPointCount;
 
     private String userNm;
+    private String id;
 
     private int totalPoint;
 

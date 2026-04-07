@@ -33,4 +33,8 @@ public interface CampaignMapper {
 
     public List<CampaignVO> searchCampaign(String schCamp) throws Exception;
 
+    public int scheduleOverlap(UserCampaignVO userCampaignVO) throws Exception;
+
+    public String overlapTitle(UserCampaignVO userCampaignVO) throws Exception;
+
 }

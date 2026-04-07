@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.safeg.user.vo.CampaignVO;
 import com.safeg.user.vo.CustomUser;
+import com.safeg.user.vo.PointHistoryVO;
 import com.safeg.user.vo.UserVO;
 import com.safeg.user.vo.Users;
 
@@ -276,7 +277,7 @@ public class UserController {
         List<UserVO> bestAgentList = userService.bestAgentList();
         model.addAttribute("bestAgentList", bestAgentList);
 
-        List<UserVO> bestPayList = userService.bestPayList();
+        List<PointHistoryVO> bestPayList = userService.bestPayList();
         model.addAttribute("bestPayList", bestPayList);
 
         // // 로그인된 사용자가 있을 경우

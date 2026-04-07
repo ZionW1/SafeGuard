@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.safeg.user.vo.PointHistoryVO;
 import com.safeg.user.vo.UserAuth;
 import com.safeg.user.vo.UserVO;
 import com.safeg.user.vo.Users;
@@ -34,7 +35,7 @@ public interface UserMapper {
 
     public List<UserVO> bestAgentList() throws Exception;
 
-    public List<UserVO> bestPayList() throws Exception;
+    public List<PointHistoryVO> bestPayList() throws Exception;
 
     public Long getReferrerNo(UserVO userVo) throws Exception;
 

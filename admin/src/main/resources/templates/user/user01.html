@@ -102,7 +102,13 @@
                 <a th:href="@{${pageUrl} + '&page=' + ${page.last}}">[마지막]</a>
             </div>
             </div>
-            <a th:href="@{/campaign03}" class="insert">등록</a>
+            <div class="">
+                <button type="button" class="update-btn" id="resetPointBtn">포인트 초기화</button>
+                <button type="button" class="calculate-btn" th:data-user-no="${userCampaign.userNo}" th:data-campaign-id="${userCampaign.campaignId}">정산하기</button>
+            </div>
+            <div class="mgl439per">
+                <a th:href="@{/campaign03}" class="insert">등록</a>
+            </div>
         </div>
     </div>
     <div th:replace="fragments/footer :: mainFooter"></div>
@@ -180,6 +186,84 @@
                 inputArea.innerHTML = `<input class="search_keyword" type="text" name="keyword" placeholder="검색어를 입력해 주세요.">`;
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const resetBtn = document.getElementById('resetPointBtn');
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', function() {
+                    if (!confirm("정말로 포인트를 초기화하시겠습니까?")) return;
+
+                    // 보낼 데이터 (예: userNo가 36인 경우)
+                    const userNo = 36; 
+
+                    // fetch 요청 시작
+                    fetch('/user/resetPoint', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            'userNo': userNo
+                        })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text(); // 서버에서 "success" 같은 문자열을 줄 때
+                        }
+                        throw new Error('네트워크 응답에 문제가 있습니다.');
+                    })
+                    .then(data => {
+                        if (data === "success") {
+                            alert("포인트가 초기화되었습니다.");
+                        } else {
+                            alert("초기화 실패: " + data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("오류가 발생했습니다. 다시 시도해주세요.");
+                    });
+                });
+            }
+
+            document.getElementById('globalCalcBtn').addEventListener('click', function() {
+                // 1차 확인
+                if (!confirm("시스템 내 모든 미정산 데이터를 일괄 정산하시겠습니까?")) return;
+                
+                // 2차 확인 (실수 방지용)
+                const safetyCheck = prompt("실행하시려면 '전체정산'이라고 입력해주세요.");
+                if (safetyCheck !== "전체정산") {
+                    alert("입력이 일치하지 않아 취소되었습니다.");
+                    return;
+                }
+
+                const btn = this;
+                btn.disabled = true;
+                btn.innerText = "정산 처리 중... (창을 닫지 마세요)";
+
+                fetch('/admin/api/v1/calculate-all-users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`총 ${data.processedCount}건의 정산이 완료되었습니다!`);
+                        location.reload(); 
+                    } else {
+                        alert("에러 발생: " + data.message);
+                        btn.disabled = false;
+                        btn.innerText = "시스템 전체 유저 일괄 정산 실행";
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("서버 응답 지연 또는 오류가 발생했습니다.");
+                    btn.disabled = false;
+                });
+            });
+        });
     </script>
 </body>
 </html>

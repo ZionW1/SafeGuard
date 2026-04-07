@@ -1,10 +1,13 @@
 package com.safeg.user.controller;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -256,31 +259,31 @@ public class HomeController {
      */
     @PostMapping("/apply")
     @ResponseBody
-    public String campaignApply(@RequestBody UserCampaignVO userCampaign, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> campaignApply(@RequestBody UserCampaignVO userCampaign, HttpServletRequest request) throws Exception {
         log.info(":::::::::: 캠페인 신청 처리 ::::::::::");
         log.info("캠페인 신청 처리 : " + userCampaign);
 
-        // 캠페인 신청 요청
-        int result = campaignService.campaignApply(userCampaign);
-
+        // 1. [검증] 중복 체크를 가장 먼저 수행!
+        String overlapTitle = campaignService.overlapTitle(userCampaign);
+        log.info("overlapTitle : "+ overlapTitle);
         
-        // // 회원 가입 성공 시, 바로 로그인
-        boolean loginResult = false;
-        // if( result > 0 ) {
-        //     // 암호화 전 비밀번호 다시 세팅
-        //     // 회원가입 시, 비밀번호 암호화하기 때문에, 
-        //     user.setPassword(plainPassword);
-        //     loginResult = userService.login(user, request);
-        // }
-        // if (loginResult){
-        //     return "redirect:/"; // 메인 화면으로 이동
-        // }
-        // if( result > 0){
-        //     return "redirect:/login";
-        // }
+        if (overlapTitle != null && !overlapTitle.trim().isEmpty()) {
+            log.info("중복 발견 - 신청 중단");
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "이미 [" + overlapTitle + "] 캠페인 일정이 있습니다.\n기간을 확인해 주세요.");
+            return ResponseEntity.badRequest().body(response); // 여기서 중단되므로 아래 insert가 실행 안 됨
+        }
 
-        return "redirect:/";
+        // 2. [저장] 검증을 통과했을 때만 실제로 저장 로직 실행
+        String result = campaignService.campaignApply(userCampaign);
         
+        log.info("신청 결과 : " + result);
+
+        if ("SUCCESS".equals(result)) {
+            return ResponseEntity.ok().body("{\"message\": \"success\"}");
+        } else {
+            return ResponseEntity.status(500).body("{\"message\": \"신청 중 오류가 발생했습니다.\"}");
+        }
     }
 
     @GetMapping("/userCampaignApply")

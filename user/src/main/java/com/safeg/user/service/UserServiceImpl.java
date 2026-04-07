@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.safeg.user.vo.FilesVO;
+import com.safeg.user.vo.PointHistoryVO;
 import com.safeg.user.vo.UserAuth;
 import com.safeg.user.vo.UserCampaignVO;
 import com.safeg.user.vo.UserVO;
@@ -228,9 +229,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserVO> bestPayList() throws Exception {
+    public List<PointHistoryVO> bestPayList() throws Exception {
         // TODO Auto-generated method stub
-        List<UserVO> bestPayList = userMapper.bestPayList();
+        List<PointHistoryVO> bestPayList = userMapper.bestPayList();
         return bestPayList;
     }
     

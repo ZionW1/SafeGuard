@@ -71,6 +71,8 @@ body {
     justify-content: space-between;
     margin-bottom: 5px;
     font-size: 14px;
+    flex-direction: column;
+    align-items: flex-start;
 }
 .applicant-info {
     display: flex;
@@ -134,8 +136,14 @@ body {
     display: flex;
     gap: 1.8%;
     align-items: center;
+    flex-wrap: nowrap; /* 줄바꿈 절대 방지 */
+    justify-content: center; /* 버튼 사이 간격을 균등하게 */
     width: 100%;
     margin: 10px auto 15px;
+}
+
+.btn-area a {
+    white-space: nowrap; /* 버튼 안의 글자(출근, 퇴근 등)가 줄바꿈되지 않게 */
 }
 
 .btn-area-confirm {
@@ -174,10 +182,7 @@ body {
     flex-direction: column;
     align-items: flex-start;
 }
-.applicant-item {
-    flex-direction: column;
-    align-items: flex-start;
-}
+
 .list-header {
     flex-direction: column;
     align-items: flex-start;
@@ -200,6 +205,7 @@ body {
 }
 
 .userInfofont {
+    min-width: 200px;
     margin: 0 5px;
     font-size: large;
     font-weight: 500;
@@ -278,8 +284,19 @@ body {
         justify-content: space-between;
         margin-bottom: 5px;
         font-size: 14px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .applicant-item img#imgfile {
+        width: 60px; /* 원하는 너비 */
+        height: 60px; /* 원하는 높이 (너비와 같게 하면 정사각형) */
+        object-fit: cover; /* 이미지가 찌그러지지 않고 비율을 유지하며 꽉 차게 */
+        border-radius: 50%; /* 춘식이처럼 동그랗게 만들고 싶다면 추가 */
+        margin-right: 10px; /* 오른쪽 글자와의 간격 */
     }
     .applicant-info {
+        width: 100%;
         display: flex;
         align-items: center;
     }

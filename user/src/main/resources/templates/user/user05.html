@@ -72,9 +72,9 @@
                 <tbody>
                     <tr th:each="userRank, stat : ${bestPayList}">
                         <td th:text="${stat.count}"></td>
-                        <td th:text="${userRank.userId}"></td>
+                        <td th:text="${userRank.id}"></td>
                         <td th:text="${userRank.userNm}"></td>
-                        <td th:text="${userRank.pay}"></td>
+                        <td th:text="${userRank.amount}"></td>
                     </tr>
                     <tr th:if="${bestPayList.empty}">
                         <td colspan="4">유저가 없습니다.</td>

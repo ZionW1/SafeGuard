@@ -342,4 +342,16 @@ public class UserController {
 
         return response;
     }
+
+    @PostMapping("/user/resetPoint")
+    @ResponseBody
+    public String resetPoint(@RequestParam("userNo") int userNo) {
+        try {
+            userService.resetAllUserPay();
+            userService.resetAllUserApply();
+            return "success";
+        } catch (Exception e) {
+            return "error: " + e.getMessage();
+        }
+    }
 }

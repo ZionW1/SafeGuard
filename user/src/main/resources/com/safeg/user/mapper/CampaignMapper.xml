@@ -56,8 +56,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from user_campaign uc
         left outer join campaign c
         on uc.campaign_id = c.campaign_id
-        where uc.user_Id= #{userId} 
+        where uc.user_Id= #{userId}
         and uc.campaign_id = #{campaignId}
+        and uc.is_deleted = 'N'
     </select>
 
     <insert id="campaignApply" parameterType="java.util.List">
@@ -165,6 +166,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         and c.is_active = 'Y'
         and campaign_title like CONCAT('%', #{schCamp}, '%')
         ORDER BY c.applicants_Num DESC, c.campaign_id desc
+        ]]>
+    </select>
+
+    <select id="scheduleOverlap" resultType="int">
+        <![CDATA[
+            SELECT COUNT(*)
+            FROM user_campaign
+            WHERE user_no = #{userNo}
+            AND is_deleted = 'N'
+            AND (
+                event_str_date <= #{eventPeriodEnd} 
+                AND event_end_date >= #{eventPeriodStr}
+            )
+        ]]>
+    </select>
+
+    <select id="overlapTitle" resultType="String">
+        <![CDATA[
+            SELECT c.campaign_title
+            FROM user_campaign uc
+            LEFT OUTER JOIN campaign c
+            ON uc.campaign_id = c.campaign_id
+            WHERE uc.user_no = #{userNo}
+            AND uc.is_deleted = 'N'
+            AND (
+                uc.event_str_date <= #{eventPeriodEnd}
+                AND uc.event_end_date >= #{eventPeriodStr}
+            )
+            LIMIT 1 -- 여러 개가 겹칠 수 있으니 가장 먼저 걸리는 것 하나만 가져옵니다
         ]]>
     </select>
 </mapper>

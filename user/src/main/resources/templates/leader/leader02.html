@@ -120,13 +120,25 @@
     <main layout:fragment="content">
         <div class="main-side-content">
             <div class="article-container">
-                <div class="notice-title" th:text="${leaderSelect.title}">게시글 제목입니다.</div>
-                <div class="article-info">
-                    <!-- 작성일: <span th:text="${#temporals.format(leaderSelect.createdAt, 'yyyy-MM-dd HH:mm')}"></span> -->
+                <div th:if="${leaderSelect != null}">
+                    <div class="notice-title" th:text="${leaderSelect.title}">게시글 제목입니다.</div>
+                    <div class="article-info">
+                        <!-- 작성일: <span th:text="${#temporals.format(leaderSelect.createdAt, 'yyyy-MM-dd HH:mm')}"></span> -->
+                    </div>
+                    <div class="article-content ck-content">
+                        <!-- ⭐️⭐️⭐️ 여기가 핵심! th:utext를 사용해야 HTML이 그대로 렌더링돼! ⭐️⭐️⭐️ -->
+                        <p th:utext="${leaderSelect.content}"></p>
+                    </div>
                 </div>
-                <div class="article-content ck-content">
-                    <!-- ⭐️⭐️⭐️ 여기가 핵심! th:utext를 사용해야 HTML이 그대로 렌더링돼! ⭐️⭐️⭐️ -->
-                    <p th:utext="${leaderSelect.content}"></p>
+                <div th:unless="${leaderSelect != null}">
+                    <div class="notice-title">소개 글이 아직 없습니다.</div>
+                    <div class="article-info">
+                        <!-- 작성일: <span th:text="${#temporals.format(leaderSelect.createdAt, 'yyyy-MM-dd HH:mm')}"></span> -->
+                    </div>
+                    <div class="article-content ck-content">
+                        <!-- ⭐️⭐️⭐️ 여기가 핵심! th:utext를 사용해야 HTML이 그대로 렌더링돼! ⭐️⭐️⭐️ -->
+                        <p></p>
+                    </div>
                 </div>
             </div>
         </div>

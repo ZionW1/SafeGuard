@@ -10,7 +10,7 @@ public interface CampaignService {
 
     public CampaignVO campaignSelect(Long id) throws Exception;
 
-    public int campaignApply(UserCampaignVO userCampaignVO) throws Exception;
+    public String campaignApply(UserCampaignVO userCampaignVO) throws Exception;
 
     public List<UserCampaignVO> appliedCampaign(String userId) throws Exception;
 
@@ -25,5 +25,7 @@ public interface CampaignService {
     public List<UserCampaignVO> userCampaignApply(String id) throws Exception;
 
     public List<CampaignVO> searchCampaign(String schCamp) throws Exception;
+
+    public String overlapTitle(UserCampaignVO userCampaign) throws Exception;
 
 }

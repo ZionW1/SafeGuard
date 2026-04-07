@@ -56,4 +56,6 @@ public interface UserMapper {
 
     public Long referrerId(String referrerId) throws Exception;
 
+    public void resetAllUserApply() throws Exception;
+
 }

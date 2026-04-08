@@ -170,6 +170,8 @@
             point_history ph
         ON
             u.id = ph.user_id
+        WHERE
+            u.role in ('USER', 'LEADER')
         GROUP BY
             ph.user_id,
             u.user_id,

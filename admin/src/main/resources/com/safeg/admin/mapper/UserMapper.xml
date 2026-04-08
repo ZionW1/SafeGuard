@@ -107,7 +107,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </choose>
             
             /* 페이징 처리 */
-            <!-- LIMIT #{page.index}, #{page.rows} -->
+            LIMIT #{page.index}, #{page.rows}
         ) u
         /* 2. 페이징된 결과에 대해서만 부가 정보 조인 */
         LEFT OUTER JOIN user_address ua ON ua.address_id = u.address_id
@@ -120,33 +120,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
     </select>
 
-    <select id="count" resultType="int">
+    <select id="userCount" resultType="int">
         select count(*) 
         from user u
         where 
-            <if test="option.code == 0">
-                id like CONCAT('%', #{option.keyword}, '%') or
-                name like CONCAT('%', #{option.keyword}, '%') or
-                email like CONCAT('%', #{option.keyword}, '%') or
-                nickname like CONCAT('%', #{option.keyword}, '%') or
-                phone like CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 1">
-            u.id like CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 2">
-                u.name like CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 3">
-                u.email like CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 4">
-                u.nickName like CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 5">
-                u.phone like CONCAT('%', #{option.keyword}, '%')
-            </if>
-        and is_Deleted = 'N'
+            is_Deleted = 'N'
+        <if test="option.keyword != null and option.keyword != ''">
+            <choose>
+                <when test="option.code == 0">
+                    AND (
+                        id like CONCAT('%', #{option.keyword}, '%') or
+                        name like CONCAT('%', #{option.keyword}, '%') or
+                        email like CONCAT('%', #{option.keyword}, '%') or
+                        nickname like CONCAT('%', #{option.keyword}, '%') or
+                        phone like CONCAT('%', #{option.keyword}, '%')
+                    )
+                </when>
+                <when test="option.code == 1">
+                    u.id like CONCAT('%', #{option.keyword}, '%')
+                </when>
+                <when test="option.code == 2">
+                    u.name like CONCAT('%', #{option.keyword}, '%')
+                </when>
+                <when test="option.code == 3">
+                    u.email like CONCAT('%', #{option.keyword}, '%')
+                </when>
+                <when test="option.code == 4">
+                    u.nickName like CONCAT('%', #{option.keyword}, '%')
+                </when>
+                <when test="option.code == 5">
+                    u.phone like CONCAT('%', #{option.keyword}, '%')
+                </when>
+            </choose>
+        </if>
     </select>
 
     <!-- <select id="userSelect" resultMap="userMap"> -->

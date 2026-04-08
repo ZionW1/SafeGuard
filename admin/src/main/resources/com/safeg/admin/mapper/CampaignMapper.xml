@@ -66,24 +66,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="campaignCount" resultType="int">
-        select count(*) 
-        from campaign c
-        where 
-            <if test="option.code == 0">
-                campaign_title like CONCAT('%', #{option.keyword}, '%')
-                or status_code like CONCAT('%', #{option.keyword}, '%')
-                or leader_code like CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 1">
-                campaign_title like CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 2">
-                status_code like CONCAT('%', #{option.keyword}, '%')
-            </if>
-            <if test="option.code == 3">
-                leader_code like CONCAT('%', #{option.keyword}, '%')
-            </if>
-        and is_deleted = 'N'
+        SELECT COUNT(*) 
+        FROM campaign c
+        WHERE is_deleted = 'N'
+        <if test="option.keyword != null and option.keyword != ''">
+            <choose>
+                <when test="option.code == 0">
+                    AND (
+                        campaign_title LIKE CONCAT('%', #{option.keyword}, '%')
+                        OR status_code LIKE CONCAT('%', #{option.keyword}, '%')
+                        OR leader_code LIKE CONCAT('%', #{option.keyword}, '%')
+                    )
+                </when>
+                <when test="option.code == 1">
+                    AND campaign_title LIKE CONCAT('%', #{option.keyword}, '%')
+                </when>
+                <when test="option.code == 2">
+                    AND status_code LIKE CONCAT('%', #{option.keyword}, '%')
+                </when>
+                <when test="option.code == 3">
+                    AND leader_code LIKE CONCAT('%', #{option.keyword}, '%')
+                </when>
+            </choose>
+        </if>
     </select>
 
     <select id="leaderList" resultMap="userMap">

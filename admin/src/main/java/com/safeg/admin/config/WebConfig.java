@@ -31,6 +31,7 @@ public class WebConfig implements WebMvcConfigurer { // ⬅️ WebMvcConfigurer 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String path = "";
+        // System.out.println("path : " + path);
         try {
             path = CommonData.getUploadPath();
         } catch (Exception e) {
@@ -42,4 +43,5 @@ public class WebConfig implements WebMvcConfigurer { // ⬅️ WebMvcConfigurer 
                 .addResourceLocations("file:" + path)
                 .setCachePeriod(0);
     }
+    
 }

@@ -58,4 +58,6 @@ public interface UserMapper {
 
     public void resetAllUserApply() throws Exception;
 
+    public int userCount(@Param("option") Option option) throws Exception;
+
 }

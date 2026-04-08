@@ -49,12 +49,21 @@ public class UserController {
         if(authUser != null){
             UserVO user = authUser.getUserVo();
             // 1. URL은 원본 키워드를 유지 (사용자에게 보여지는 용도)
-            String pageUrl = UriComponentsBuilder.fromPath("/admin/user01")
-            .queryParam("keyword", option.getKeyword()) // 원본 유지
-            .queryParam("code", option.getCode())
-            .queryParam("orderCode", option.getOrderCode())
-            .build()
-            .toUriString();
+            // String pageUrl = UriComponentsBuilder.fromPath("/admin/user01")
+            // .queryParam("keyword", option.getKeyword()) // 원본 유지
+            // .queryParam("code", option.getCode())
+            // .queryParam("orderCode", option.getOrderCode())
+            // .build()
+            // .toUriString();
+
+            String pageUrl = UriComponentsBuilder.fromPath("/user01")
+                        //.queryParam("page", page.getPage())
+                        .queryParam("keyword", option.getKeyword())
+                        .queryParam("code", option.getCode())
+                        // .queryParam("rows", page.getRows())
+                        .queryParam("orderCode", option.getOrderCode())
+                        .build()
+                        .toUriString();
             // 2. DB 검색을 위한 파라미터 가공 (내부 로직)
             if(option.getCode() == 5 && option.getKeyword() != null) {
                 // DB 조회용 객체에만 해시값을 담아서 서비스로 넘김

@@ -35,4 +35,6 @@ public interface FileService {
 
     public List<FilesVO> userImageFile(String id) throws Exception;
 
+    public FilesVO getMypageImage(String id, String string) throws Exception;
+
 }

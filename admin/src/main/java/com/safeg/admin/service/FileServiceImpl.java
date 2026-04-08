@@ -274,4 +274,12 @@ public class FileServiceImpl implements FileService{
         List<FilesVO> image = fileMapper.userImageFile(id);
         return image;
     }
+
+    @Override
+    public FilesVO getMypageImage(String id, String targetType) throws Exception{
+        log.info("id : " + id + " targetType : " + targetType);
+        FilesVO file = fileMapper.getMypageImage(id, targetType);
+        log.info("file : " + file);
+        return file;
+    }
 }

@@ -130,4 +130,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="userImageFile" resultType="FilesVO">
         select target_type from files where file_type = 'user_File' and is_deleted ='N' and target_id = #{id} order by target_type desc
     </select>
+
+    <select id="getMypageImage" resultType="filesVO">
+        SELECT 
+            * 
+        FROM 
+            files 
+        WHERE 
+            target_id = #{id} 
+        AND 
+            target_type=#{targetType} 
+        AND 
+            is_deleted = 'N';
+    </select>
 </mapper>

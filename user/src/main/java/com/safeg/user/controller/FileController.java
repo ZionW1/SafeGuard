@@ -83,7 +83,7 @@ public class FileController {
     }
 
     @GetMapping("/selectProfile")
-    public ResponseEntity<byte[]> selectProfile(@RequestParam("id") String id, @RequestParam("args") String args) throws Exception{
+    public ResponseEntity<byte[]> selectProfile(@RequestParam("id") String id, @RequestParam("args") String args) throws Exception {
         log.info("selectProfile id " + id);
         log.info("args : " + args);
         FilesVO file ;
@@ -145,7 +145,7 @@ public class FileController {
      * @throws Exception
      */
     @GetMapping("/fileImg/{id}")
-    public ResponseEntity<byte[]> download(@PathVariable("id") String id) throws Exception{
+    public ResponseEntity<byte[]> download(@PathVariable("id") String id) throws Exception {
         FilesVO file = fileService.select(id);
 
         String filePath = file.getFilePath();

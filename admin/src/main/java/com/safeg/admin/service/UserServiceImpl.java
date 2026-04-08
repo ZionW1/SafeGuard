@@ -60,9 +60,18 @@ public class UserServiceImpl implements UserService{
     public List<UserVO> userList(Option option, Page page) throws Exception {
         // TODO Auto-generated method stub
         log.info("userList impl 호출 : " + option.getKeyword());
+        log.info("userList impl page 호출 : " + page);
+
+        int total = userCount(option);
+        log.info(":::::::::: total :::::::::: " + total);
+        page.setTotal(total);
         List<UserVO> userList = userMapper.userList(option, page);
 
         return userList;
+    }
+
+    public int userCount(Option option) throws Exception {
+        return userMapper.userCount(option);
     }
 
     @Override

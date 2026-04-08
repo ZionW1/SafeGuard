@@ -250,4 +250,60 @@ public class FileController {
         }
         return "FAIL";
     }
+
+    @GetMapping("/selectProfile")
+    public ResponseEntity<byte[]> selectProfile(@RequestParam("id") String id, @RequestParam("args") String args) throws Exception {
+        log.info("selectProfile id " + id);
+        log.info("args : " + args);
+        FilesVO file ;
+        if(args == null || args.equals("")) {
+            log.warn("Invalid args parameter for selectProfile: {}", args);
+            log.info("Invalid args parameter for selectProfile: {}", args);
+            
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else if(args.equals("2")) {
+            file = fileService.getMypageImage(id, "identification");
+            if (file == null) {
+                log.error("No profile image found for user id: {}", id);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            } else {
+                log.info("Profile image found for user id: {}", id + " : identification");
+            }
+        } else if(args.equals("3")) {
+            file = fileService.getMypageImage(id, "certificate");
+            if (file == null) {
+                log.error("No profile image found for user id: {}", id);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            } else {
+                log.info("Profile image found for user id: {}", id + " : certificate");
+            }
+        }else {
+            file = fileService.getMypageImage(id, "profile");
+            if (file == null) {
+                log.error("No profile image found for user id: {}", id);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            } else {
+                log.info("Profile image found for user id: {}", id + " : profile");
+            }
+        }
+        // FilesVO file = fileService.getMypageImage(id, "profile");
+
+        String filePath = file.getFilePath();
+        log.info("filePath : " + filePath);
+        // 파일 객체 생성
+        File f = new File(filePath);
+        // 파일 데이터
+        byte[] fileData = FileCopyUtils.copyToByteArray(f);
+        
+        // 컨텐츠 파일 지정
+        // 확장자로 컨텐츠 타입 지정
+        // - 확장자 : .jpg, .png ...
+        String ext = filePath.substring(filePath.lastIndexOf(".") + 1); // 확장자
+        MediaType mediaType = MediaUtil.getMediaType(ext);
+        log.info("Detected MediaType: " + mediaType);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(mediaType);
+
+        return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
+    }
 }

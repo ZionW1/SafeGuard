@@ -6,7 +6,9 @@
     <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
     <title>유저 상세보기</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -126,9 +128,25 @@
                     <!-- <span th:unless="${#strings.isEmpty(userSelect?.referrerId)}">
                         <input type="text" name="referrerId" id="referrerId" th:value="${userSelect.referrerId}" placeholder="메모를 입력하세요" />
                     </span> -->
-                    <span>프로필 : </span><span th:text="${profile}"></span>
-                    <span>신분증 : </span><span th:text="${identification}"></span>
-                    <span>이수증 : </span><span th:text="${certificate}"></span>
+                    <span th:if="${profile} == 'Y'">
+                        <a href='javascript:void(0);' th:onclick="getMypageImg([[${userSelect.id}]], '1');"><span>프로필 : </span><span th:text="${profile}"></span></a>
+                    </span>
+                    <span th:unless="${profile} == 'Y'">
+                        <span>프로필 : </span><span th:text="${profile}"></span></a>
+                    </span>
+                    <span th:if="${profile} == 'Y'">
+                        <a href='javascript:void(0);' th:onclick="getMypageImg([[${userSelect.id}]], '2');"><span>신분증 : </span><span th:text="${identification}"></span></a>
+                    </span>
+                    <span th:unless="${profile} == 'Y'">
+                        <span>신분증 : </span><span th:text="${identification}"></span>
+                    </span>
+                    <span th:if="${profile} == 'Y'">
+                        <a href='javascript:void(0);' th:onclick="getMypageImg([[${userSelect.id}]], '3');"><span>이수증 : </span><span th:text="${certificate}"></span></a>
+                    </span>
+                    <span th:unless="${profile} == 'Y'">
+                        <span>이수증 : </span><span th:text="${certificate}"></span>
+                    </span>
+                    
                 </div>
                 <div class="form-row">
                     <div class="">
@@ -156,7 +174,12 @@
                 </div>
             </form>
         </div>
+        <div id="imageModal" class="modal" onclick="closeModal()">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="imgTarget">
+        </div>
     </div>
+    
     <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function() {
             console.log("DOM이 준비되었습니다!");
@@ -459,6 +482,48 @@
                 // 네트워크 오류 또는 catch 블록에서 throw된 에러 처리
                 console.error('Error:', error);
                 alert('요청 처리 중 오류가 발생했습니다: ' + error.message);
+            });
+        }
+
+        function openModal(src) {
+            document.getElementById("imageModal").style.display = "block";
+            document.getElementById("imgTarget").src = src;
+        }
+
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+
+        function showImage(url) {
+            Swal.fire({
+                imageUrl: url,
+                imageAlt: '관리자 확인용 이미지',
+                showCloseButton: true,
+                showConfirmButton: false, // 확인 버튼 숨김
+                width: 'auto',
+                padding: '3px',
+                background: '#fff'
+            });
+        }
+
+        function getMypageImg(userId, args) {
+            console.log("userId = " + userId + ", args : " + args);
+            const imageUrl = `/admin/selectProfile?id=${userId}&args=${args}`;
+
+            Swal.fire({
+                title: '',
+                imageUrl: imageUrl,
+                imageAlt: '프로필 사진',
+                showCloseButton: true,
+                showConfirmButton: true, // 확인 버튼은 필요 없으니 숨김
+                width: 'auto',
+                maxWidth: '800px', // 너무 커지는 것 방지
+                background: '#f8f9fa',
+                padding: '15px',
+                margin: '0 10px',
+                customClass: {
+                    image: 'rounded-lg' // 이미지 모서리를 둥글게 (선택사항)
+                }
             });
         }
     </script>

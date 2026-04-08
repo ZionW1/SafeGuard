@@ -134,16 +134,16 @@
                     <span th:unless="${profile} == 'Y'">
                         <span>프로필 : </span><span th:text="${profile}"></span></a>
                     </span>
-                    <span th:if="${profile} == 'Y'">
+                    <span th:if="${identification} == 'Y'">
                         <a href='javascript:void(0);' th:onclick="getMypageImg([[${userSelect.id}]], '2');"><span>신분증 : </span><span th:text="${identification}"></span></a>
                     </span>
-                    <span th:unless="${profile} == 'Y'">
+                    <span th:unless="${identification} == 'Y'">
                         <span>신분증 : </span><span th:text="${identification}"></span>
                     </span>
-                    <span th:if="${profile} == 'Y'">
+                    <span th:if="${certificate} == 'Y'">
                         <a href='javascript:void(0);' th:onclick="getMypageImg([[${userSelect.id}]], '3');"><span>이수증 : </span><span th:text="${certificate}"></span></a>
                     </span>
-                    <span th:unless="${profile} == 'Y'">
+                    <span th:unless="${certificate} == 'Y'">
                         <span>이수증 : </span><span th:text="${certificate}"></span>
                     </span>
                     
@@ -514,6 +514,8 @@
                 title: '',
                 imageUrl: imageUrl,
                 imageAlt: '프로필 사진',
+                imageWidth: 400,  // 가로 크기 (단위: px, 숫자만 입력)
+                // imageHeight: 400, // 세로 크기 (비율에 맞게 조절하려면 하나만 쓰거나 둘 다 지정)
                 showCloseButton: true,
                 showConfirmButton: true, // 확인 버튼은 필요 없으니 숨김
                 width: 'auto',

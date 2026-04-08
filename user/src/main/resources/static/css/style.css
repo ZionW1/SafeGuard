@@ -2119,10 +2119,8 @@ table.bestPayList {
         justify-content: center;  /* 수직 가운데 정렬 */
         align-items: center;      /* 수평 가운데 정렬 */
         background: #fff;
-        border: 1px solid #ddd;
         border-radius: 8px;
         padding: 0px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         justify-self: end; /* start, center, stretch 등 선택 가능 */
     }
     .campaign-image {

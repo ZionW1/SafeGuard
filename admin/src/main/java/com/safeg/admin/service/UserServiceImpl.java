@@ -205,4 +205,19 @@ public class UserServiceImpl implements UserService{
     //         userRepository.update(user); // DB에 업데이트
     //     }
     // }
+    @Override
+    @Transactional
+    public int settlementAll() throws Exception{
+        int insertedCount = userMapper.settlementAll();
+        userMapper.resetAllUserApply();
+
+        if (insertedCount > 0) {
+            // 2. 정산에 포함된 history 내역들을 'Y'로 변경 (중복 정산 방지)
+            userMapper.resetAllUserPay();
+            userMapper.resetAllUserApply();
+        }
+
+        return insertedCount;
+    }
+
 }

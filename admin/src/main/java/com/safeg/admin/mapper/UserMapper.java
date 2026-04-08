@@ -60,4 +60,6 @@ public interface UserMapper {
 
     public int userCount(@Param("option") Option option) throws Exception;
 
+    public int settlementAll() throws Exception;
+
 }

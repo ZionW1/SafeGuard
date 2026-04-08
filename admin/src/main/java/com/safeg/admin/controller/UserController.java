@@ -363,4 +363,21 @@ public class UserController {
             return "error: " + e.getMessage();
         }
     }
+
+    @PostMapping("/settlementAll")
+    @ResponseBody
+    public Map<String, Object> settlementAll() {
+        log.info("settlementAll");
+        Map<String, Object> result = new HashMap<>();
+        try {
+            // Service를 호출해서 실제 DB 작업을 수행합니다.
+            int count = userService.settlementAll();
+            result.put("success", true);
+            result.put("count", count);
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", e.getMessage());
+        }
+        return result; // 이 데이터가 다시 JS의 'result'로 돌아갑니다.
+    }
 }

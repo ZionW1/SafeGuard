@@ -297,7 +297,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         UPDATE
             point_history ph
         SET
-            settlement_status = 'COMPLETED'
+            settlement_status = 'COMPLETED',
             is_deleted = 'Y'
         WHERE 
             is_deleted = 'N'
@@ -307,7 +307,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         UPDATE 
             point_history 
         SET 
-            settlement_status = 'COMPLETED'
+            settlement_status = 'COMPLETED',
             is_deleted = 'Y'
         WHERE 
             is_deleted = 'N'
@@ -320,6 +320,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             is_deleted = 'Y'
         WHERE
             is_deleted = 'N'
+        AND 
+            apply_date LIKE CONCAT(DATE_FORMAT(now(), '%Y-%m'), '%')
     </update>
 
     <select id="userAddressList" resultType="userVO">
@@ -337,4 +339,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             updated_at = NOW()
         WHERE id = #{id}
     </update>
+
+    <update id="settlementAll">
+        <![CDATA[
+        INSERT INTO point_settlement 
+        (
+            user_id,
+            target_month,
+            total_work_amount,
+            total_leader_amount,
+            total_referral_amount,
+            total_attend_amount,
+            final_amount,
+            status,
+            processed_at
+        )
+        SELECT 
+            user_id,
+            DATE_FORMAT(NOW(), '%Y-%m'),
+            /* DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m') */
+            SUM(CASE WHEN category = 'WORK' THEN amount ELSE 0 END) as total_work,
+            SUM(CASE WHEN category = 'LEADER_EXTRA' THEN amount ELSE 0 END) as total_leader,
+            SUM(CASE WHEN category = 'REFERRAL' THEN amount ELSE 0 END) as total_referral,
+            SUM(CASE WHEN category = 'FULL_ATTEND' THEN amount ELSE 0 END) as total_attend,
+            SUM(amount) as final_amount,
+            'Y',
+            NOW()
+        FROM point_history
+        WHERE is_deleted = 'N'
+        GROUP BY user_id
+        HAVING SUM(amount) > 0
+        ]]>
+</update>
 </mapper>

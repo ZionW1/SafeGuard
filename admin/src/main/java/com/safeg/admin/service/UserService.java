@@ -37,4 +37,6 @@ public interface UserService {
 
     public Long referrerId(String referrerId) throws Exception;
 
+    public int settlementAll() throws Exception;
+
 }

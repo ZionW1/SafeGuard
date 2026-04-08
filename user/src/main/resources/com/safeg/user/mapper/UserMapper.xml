@@ -160,7 +160,7 @@
 
     <select id="bestPayList" resultType="PointHistoryVO">
         SELECT
-            u.id,
+            u.id user_id,
             u.user_nm,
             u.user_id id,
             COALESCE(sum(amount), 0) amount

@@ -121,7 +121,7 @@
                 <input type="hidden" name="userId" th:value="${user.userId}" />
             
                 <div class="section">
-                    <h1>신분증</h1>
+                    <div class="guard_apply_title">신분증</div>
                     <div th:if="${getIdentity != null}" class="form-remove">
                         <img id="imgIdttFile" th:src="|/selectProfile?id=${user.id}&args=2|" alt="신분증" style="max-width: 100%;" />
                         <div>
@@ -138,7 +138,7 @@
                     </div>
                 </div>
                 <div class="section">
-                    <h1>이수증</h1>
+                    <div class="guard_apply_title">이수증</div>
                     <div th:if="${getCertificate != null}" class="form-remove">
                         <img id="imgCertFile" th:src="|/selectProfile?id=${user.id}&args=3|" alt="이수증" style="max-width: 100%;" />
                         <div>

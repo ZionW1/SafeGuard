@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </form> -->
         <form class="optionForm" action="/campaign08" method="get" id="form">
         </form>
-        <div class="campaign-container">
+        <div class="campaign-container close_container">
             <th:block th:if="${!closedCampaign.isEmpty()}">
                 <th:block th:each="campaign : ${closedCampaign}">
                     <div sec:authorize="!isAuthenticated()" class="guest-message">

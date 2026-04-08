@@ -456,12 +456,15 @@ a {
         border-bottom-right-radius: 8px;
         display: flex;
     }
-  
-  .leader_name {
+
+.leader_name {
     text-align: center;
     font-size: x-large;
-  }
-  .campaign-info-box {
+    display: flex;
+    justify-content: center;
+}
+    
+.campaign-info-box {
     font-size: 14px;
   }
   
@@ -469,6 +472,7 @@ a {
     display: flex;
     font-weight: bold;
     margin: 10px 0;
+    gap: 3px;
     /* justify-content: center;
     align-items: center; */
       /* 가로 가운데 정렬 세로 가운데 정렬(필요시) */
@@ -496,9 +500,6 @@ a {
     color: #b151ff; /* 글자색을 살짝 연하게 할 수도 있어 */
   }
 
-    .campaign-title {
-        display: none;
-    }
   .campaign-title-text {
     /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
     /* display: -webkit-box; */
@@ -521,6 +522,10 @@ a {
     line-height: 1.4;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
 }
 
+.campaign-info {
+    display: none;
+}
+
 .campaign-point-text {
     /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
     /* display: -webkit-box; */
@@ -541,6 +546,13 @@ a {
     font-size: 1.1em;
     font-weight: 500;
     line-height: 1.4;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
+}
+
+.tableTitle {
+    font-size: large;
+    font-weight: bold;
+    text-align: left;
+    margin: 15px 0 15px 0;
 }
 
   .recruitment-num{
@@ -1781,7 +1793,7 @@ table.bestPayList {
 }
 
 .bestAgent_title {
-    margin-top: 0px;
+    margin: 10px 0;
     font-size: 2.4em;
     font-weight: 700;
     /* margin: 5%; */
@@ -1818,6 +1830,23 @@ table.bestPayList {
 .section-title-point {
     margin-top: -28px;
     font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: left; /* 제목을 항상 테이블 왼쪽 끝에 맞춤 */
+}
+
+.bestAgent_title {
+    margin: 10px 0;
+    font-size: 2.4em;
+    font-weight: 700;
+    /* margin: 5%; */
+    /* padding-bottom: 10px; */
+    color: #111;
+}
+
+.best_agent_title {
+    margin-top: 0px;
+    font-size: 1.5em;
     font-weight: bold;
     margin-bottom: 15px;
     text-align: left; /* 제목을 항상 테이블 왼쪽 끝에 맞춤 */
@@ -1893,7 +1922,7 @@ table.bestPayList {
 .calendar {
     max-width: 900px;
     height: auto;
-    margin: 20px 23%;
+    margin: 0px 23%;
     padding: 0 auto;
 }
 
@@ -2024,7 +2053,13 @@ table.bestPayList {
 .w100 {
     width: 100%;
 }
-
+.guard_apply_title {
+    margin-top: 15px;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: left; /* 제목을 항상 테이블 왼쪽 끝에 맞춤 */
+}
   /* 모바일 화면 (예: 768px 이하) */
     @media (max-width: 768px) {
     .desktop-header {
@@ -2071,7 +2106,8 @@ table.bestPayList {
     .campaignTitle{
         display: none;
     }
-    .campaign-title {
+    
+    .campaign-info {
         display: block;
     }
 
@@ -2544,7 +2580,7 @@ table.bestPayList {
         color: #111;
     }
     .bestAgent_title {
-        margin-top: 10px;
+        margin: 10px 0;
         font-size: 2em;
         font-weight: 700;
         color: #111;
@@ -2587,14 +2623,17 @@ table.bestPayList {
         margin: 20px auto;
     }
 
-
     .bestAgent-header {
         flex-direction: column;    /* 모바일에서는 위아래로 배치 */
         gap: 20px;
     }
 
+    .sr-only {
+        margin: 60px auto 0;
+    }
+
     .section-title {
-        display: none;
+        /* display: none; */
         width: 100%;
         margin-top: 10px;
         margin-bottom: 10px;
@@ -2619,7 +2658,7 @@ table.bestPayList {
     .guardApply_form {
         max-width: 100%;
         margin-top: 20px;
-        margin: 20px auto;
+        margin: 70px auto 10px;
     }
 
     .table_container {
@@ -2668,7 +2707,7 @@ table.bestPayList {
     .calendar {
         max-width: 900px;
         height: 455px;
-        margin: 20px auto;
+        margin: 70px auto 10px;
         padding: 0 auto;
     }
     .mypage_hr {
@@ -2724,6 +2763,13 @@ table.bestPayList {
         font-size: 1em;
         font-weight: 700;
         line-height: 1.6;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
+    }
+
+    .tableTitle {
+        font-size: large;
+        font-weight: bold;
+        text-align: left;
+        margin: 30px 0 15px 0;
     }
     .recruitment-num{
     font-weight: normal;
@@ -3099,6 +3145,7 @@ table.bestPayList {
     }
 
     .mypage_title {
+        display: none;
         font-size: 2.4rem;
         font-weight: 900;
         line-height: 1.3;
@@ -3107,10 +3154,26 @@ table.bestPayList {
     }
 
     .mypage_subtitle {
-        margin-top: 10px;
+        margin-top: 70px;
         font-size: 1.2rem;
         font-weight: 700;
-        color: #555;
+        color: black;
+    }
+
+    .leader_name {
+        text-align: center;
+        font-size: medium;
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .guard_apply_title {
+        margin-top: 0px;
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-bottom: 15px;
+        text-align: left; /* 제목을 항상 테이블 왼쪽 끝에 맞춤 */
     }
 }
 
@@ -3228,10 +3291,7 @@ table.bestPayList {
         width: 100%;
     }
 
-    .leader_name {
-        text-align: center;
-        font-size: large;
-    }
+    
 
     .campaign-tags .leader {
         padding: 8px 10px;
@@ -3240,12 +3300,16 @@ table.bestPayList {
         color: #b151ff;
     }
     
+    .close_container {
+        margin: 50px auto 20px;
+    }
+    
     .card-badge {
         background-color: #e0f2f7; /* 기본 뱃지 색상 */
         color: #01579b;
         font-size: 1em;
         padding: 8px 10px;
-        margin: 0px 5px ;
+        margin: 0px 0px ;
         border-radius: 4px;
         align-self: flex-start; /* 뱃지를 왼쪽 정렬 */
         font-weight: bold;

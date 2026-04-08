@@ -76,9 +76,9 @@
 </div>
 <div th:fragment="mypageSidebarProfileMobile" class="mobile_sidebar_profile">
     <div class="sr-only">
-        <div class="mrg20_b">프로필 사진</div>
+        <div class="mrg20_b desktop-header">프로필 사진</div>
         <div id="existing_file_section_mobile" th:if="${file != null}" style="max-width: 100%; margin: 0 auto; text-align: center;">
-            <div class="imageDisplayArea">
+            <div class="imageDisplayArea mobile_hidden">
                 <img id="preview_mobile" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
                 <div>
                     <img th:if="${file != null}" id="imgFile_mobile" th:src="|/selectProfile?id=${userId}&args=1|" alt="파일이미지" width="80%" height="200" style="max-width: 100%; margin: 0px auto;" />

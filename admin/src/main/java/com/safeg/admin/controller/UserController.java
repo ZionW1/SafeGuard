@@ -191,9 +191,15 @@ public class UserController {
         return "user/user02";
     }
     @PostMapping("/user03")
-    public String user03(@AuthenticationPrincipal CustomUser authUser, Model model, UserVO userVO) throws Exception {
+    public String user03(@AuthenticationPrincipal CustomUser authUser, Model model, UserVO userVO, 
+        @RequestParam(value="keyword", required=false) String keyword,
+        @RequestParam(value="code", required=false, defaultValue="0") int code,
+        @RequestParam(value="orderCode", required=false, defaultValue="0") int orderCode,
+        @RequestParam(value="page", defaultValue="1") int page
+    ) throws Exception {
         Long referrerNo = 0L;
         log.info(":::::::::: update :::::::::: " + userVO);
+        log.info(":::::::::: update page :::::::::: " + page);
         String userId = String.valueOf(userVO.getId());
         if(userVO.getReferrerId() != null && !userVO.getReferrerId().isEmpty()) {
             log.info("user03 getReferrerId : " + userVO.getReferrerId());
@@ -220,7 +226,7 @@ public class UserController {
             log.info("user03 update fail");
             model.addAttribute("msg", "");
         }
-        return "redirect:/user01";
+        return "redirect:/user01?page=" + page ;
         // redirect:/admin/campaign01
     }
     

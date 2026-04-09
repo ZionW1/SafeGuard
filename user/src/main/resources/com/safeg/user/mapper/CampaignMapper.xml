@@ -95,6 +95,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateCampaign">
         UPDATE campaign set
             is_active ='N'
+            is_deleted= 'Y'
         WHERE campaign_id = #{id}
     </update>
 
@@ -121,13 +122,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             FROM campaign c 
         LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN team_leader t
+        LEFT OUTER JOIN user t
         on c.leader_code = t.id
         Where f.is_deleted = 'N'
         AND f.target_type = 'campaign'
-        AND c.is_deleted = 'N'
+        AND c.is_deleted = 'Y'
         AND c.is_active = 'N'
-        AND c.applicants_Num = c.recruitment_Num
         ORDER BY c.campaign_id desc
         ]]>
     </select>

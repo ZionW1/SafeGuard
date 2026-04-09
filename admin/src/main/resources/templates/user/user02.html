@@ -16,12 +16,16 @@
         <div class="main-content">
             <h1>유저 수정</h1>
             <h5><span>생성일 : </span><span th:text="${userSelect.createdAt}">캠페인 수정</span></h5>
-            <form class="form" th:action="@{/user03}" method="post" id="form" enctype="multipart/form-data">
+            <form class="normalForm" th:action="@{/user03}" method="post" id="form" enctype="multipart/form-data">
                 <!-- <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block> -->
                 <!-- <div th:insert="~{fragments/csrfFragments :: inputCsrf}"></div> -->
                 <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block>
 
                 <input type="hidden" name="id" id="id" th:value="${userSelect.id}" />
+                <input type="hidden" name="page" th:value="${param.page}">
+                <input type="hidden" name="keyword" th:value="${param.keyword}">
+                <input type="hidden" name="code" th:value="${param.code}">
+                <input type="hidden" name="orderCode" th:value="${param.orderCode}">
 
                 <div class="form-row">
                     <div class="form-group">
@@ -101,16 +105,6 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>사용자 메모</label>
-                    <!-- <textarea name="memo" id="memo" rows="4" th:text="${userSelect.memo}"></textarea> -->
-                    <span th:if="${#strings.isEmpty(userSelect?.memo)}">
-                        <input type="text" name="memo" id="memo" value="" placeholder="메모를 입력하세요" />
-                    </span>
-                    <span th:unless="${#strings.isEmpty(userSelect?.memo)}">
-                        <input type="text" name="memo" id="memo" th:value="${userSelect.memo}" required />
-                    </span>
-                </div>
-                <div class="form-group">
                     <label>추천인</label>
                     <!-- <textarea name="memo" id="memo" rows="4" th:text="${userSelect.memo}"></textarea> -->
                     <span th:if="${#strings.isEmpty(userSelect?.referrerId)}">
@@ -120,14 +114,19 @@
                         <input type="text" name="referrerId" id="referrerId" th:value="${userSelect.referrerId}" placeholder="메모를 입력하세요" />
                     </span>
                 </div>
+                <div class="form-group">
+                    <label>거부 사유</label>
+                    <!-- <textarea name="memo" id="memo" rows="4" th:text="${userSelect.memo}"></textarea> -->
+                    <span th:if="${#strings.isEmpty(userSelect?.memo)}">
+                        <!-- <input type="text" name="memo" id="memo" value="" placeholder="메모를 입력하세요" /> -->
+                        <textarea class="memo" name="memo" id="memo" rows="4"></textarea>
+                    </span>
+                    <span th:unless="${#strings.isEmpty(userSelect?.memo)}">
+                        <textarea class="memo" name="memo" id="memo" rows="2" th:text="${userSelect.memo}"></textarea>
+                        <!-- <input type="text" name="memo" id="memo" th:value="${userSelect.memo}" required /> -->
+                    </span>
+                </div>
                 <div class="">
-                    <!-- <label>추천인</label>
-                    <span th:if="${#strings.isEmpty(userSelect?.referrerId)}">
-                        <input type="text" name="referrerId" id="referrerId" value="" placeholder="메모를 입력하세요" />
-                    </span> -->
-                    <!-- <span th:unless="${#strings.isEmpty(userSelect?.referrerId)}">
-                        <input type="text" name="referrerId" id="referrerId" th:value="${userSelect.referrerId}" placeholder="메모를 입력하세요" />
-                    </span> -->
                     <span th:if="${profile} == 'Y'">
                         <a href='javascript:void(0);' th:onclick="getMypageImg([[${userSelect.id}]], '1');"><span>프로필 : </span><span th:text="${profile}"></span></a>
                     </span>
@@ -146,7 +145,6 @@
                     <span th:unless="${certificate} == 'Y'">
                         <span>이수증 : </span><span th:text="${certificate}"></span>
                     </span>
-                    
                 </div>
                 <div class="form-row">
                     <div class="">
@@ -163,9 +161,22 @@
                         <span th:if="${userSelect.guardType == '03'}">
                             <button type="button" class="stop-btn" onclick="guardTypeChnage('02')">경호원 변경</button>
                         </span>
-                        
+                        <button type="button" class="stop-btn" th:if="${userSelect.role == 'LEADER'}" onclick="userUpdate()">일반 유저 변경</button>
+                        <button type="button" class="stop-btn" th:unless="${userSelect.role == 'LEADER'}" onclick="leaderUpdate()">인솔자 변경</button>
+                        <button type="button" class="stop-btn" th:if="${userSelect.isStopped == 'N'}" onclick="userStop()">정지하기</button>
+                        <button type="button" class="stop-btn" th:unless="${userSelect.isStopped == 'N'}" onclick="userUnstop()">정지풀기</button>
+                    </div>
 
-
+                    <div class="mgl32per">
+                        <span th:if="${userSelect.guardType == '00' || userSelect.guardType == '01'}">
+                            <button type="button" class="stop-btn" onclick="guardTypeChnage('02')">경호원 변경</button>
+                        </span>
+                        <span th:if="${userSelect.guardType == '02'}">
+                            <button type="button" class="stop-btn" onclick="guardTypeChnage('03')">수행 변경</button>
+                        </span>
+                        <span th:if="${userSelect.guardType == '03'}">
+                            <button type="button" class="stop-btn" onclick="guardTypeChnage('02')">경호원 변경</button>
+                        </span>
                         <button type="button" class="stop-btn" th:if="${userSelect.role == 'LEADER'}" onclick="userUpdate()">일반 유저 변경</button>
                         <button type="button" class="stop-btn" th:unless="${userSelect.role == 'LEADER'}" onclick="leaderUpdate()">인솔자 변경</button>
                         <button type="button" class="stop-btn" th:if="${userSelect.isStopped == 'N'}" onclick="userStop()">정지하기</button>

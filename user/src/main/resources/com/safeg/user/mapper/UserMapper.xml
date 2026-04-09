@@ -66,6 +66,7 @@
             u.auth_id,
             guard_type,
             full_Address,
+            memo,
             (CASE
                 WHEN auth_id = '01' THEN 'ROLE_ADMIN'
                 WHEN auth_id = '02' THEN 'ROLE_USER'

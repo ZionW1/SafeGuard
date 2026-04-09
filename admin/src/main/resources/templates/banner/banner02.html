@@ -90,7 +90,7 @@
     <div class="main-content">
         <h1>  <a th:href="@{/banner02(id=${bannerSelect.bannerId}, targetType='banner')}">배너 수정</a>
         </h1>
-        <form class="form" id="banner-form" th:action="@{/banner02}" method="post" enctype="multipart/form-data">
+        <form class="normalForm" id="banner-form" th:action="@{/banner02}" method="post" enctype="multipart/form-data">
             <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
 
             <input type="hidden" name="bannerId" th:value="${bannerSelect.bannerId}"/>
@@ -109,7 +109,7 @@
                     <label>배너 이미지</label>
                     <div id="existing-file-section" th:classappend="${file == null} ? 'hidden'">
                         <div class="mrg_auto">
-                            <img id="imgFile" th:src="@{|/banner/img?id=${bannerSelect.bannerId}|}" alt="파일이미지" width="720" height="405" />
+                            <img class="image_view"id="imgFile" th:src="@{|/banner/img?id=${bannerSelect.bannerId}|}" alt="파일이미지"/>
                         </div>
                         <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
                                 th:onclick="bannerRemoveFile(this, [[${bannerSelect.bannerId}]])">기존 이미지 삭제</button>
@@ -117,7 +117,7 @@
                     <div class="upload-box" id="upload-box" th:classappend="${file != null} ? 'hidden'" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px;">
                         <p>이미지를 여기에 끌어다 놓거나 클릭하여 업로드하세요</p>
                         <div>
-                            <input type="file" name="file" id="file" accept="image/*" width="720" height="405" style="display: none;">
+                            <input type="file" name="file" id="file" accept="image/*"style="display: none;">
                             <!-- <img id="preview-image" class="preview-image" alt="배너 이미지 미리보기"> -->
                             <img id="preview-image" class="preview-image" th:src="@{|/banner/img?id=${bannerSelect.bannerId}|}" alt="파일이미지" width="720" height="405" />
                         </div>

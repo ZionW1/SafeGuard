@@ -13,7 +13,6 @@
         <div class="main-content">
             <h1><a th:href="@{/user01}">유저 목록</a></h1>
             <form class="optionForm" th:action="@{/user01}" method="get" id="form">
-                <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block>
                 <input type="hidden" id="savedKeyword" th:value="${option.keyword}">
                 <select class="search_keyword" id="searchCode" name="code" onchange="changeSearchInput()">
                     <option value="0" th:selected="${option.code==0}">전체</option>
@@ -40,16 +39,16 @@
             </form>
             <table class="campaign_Table" border="1">
                 <thead>
-                    <th class="wdt10">No</th>
+                    <th class="wdt5">No</th>
                     <th class="wdt10">아이디</th>
                     <th class="wdt10">이름</th>
                     <th class="wdt15">이메일</th>
                     <th class="wdt10">추천인</th>
                     <th class="wdt10">휴대폰번호</th>
-                    <th class="wdt5">포인트</th>
+                    <th class="wdt11">포인트</th>
                     <!-- <th class="wdt15">주소</th> -->
                     <th class="wdt10">역할</th>
-                    <th class="wdt5">정지</th>
+                    <th class="wdt8">정지</th>
                 </thead>
                 <tbody>
                     <th:block th:if="${userList.isEmpty()}">
@@ -58,7 +57,8 @@
                         </tr>
                     </th:block>
                     <th:block th:each="user, stat: ${userList}">
-                        <tr th:onclick="|location.href='@{/user02(id=${user.id})}'|">
+                        <tr th:onclick="|location.href='@{/user02(id=${user.id}, keyword=${option.keyword}, code=${option.code}, orderCode=${option.orderCode}, page=${page.page})}'|">
+                            <!-- <a th:href="@{/user02(id=${user.id}, page=${paging.page})}"></a> -->
                             <!-- th:onclick="|location.href='@{/user02(id=${user.id})}'|" -->
                             <td><span th:text="${stat.size - stat.index}"></span></td>
                             <td><span th:text="${user.userId}"></span></td>

@@ -221,8 +221,6 @@ function execDaumPostcode() {
                     <div sec:authorize="isAuthenticated()">
                     <!-- #authentication.principal 을 user 변수에 할당하여 편리하게 사용 -->
                     <!-- <div th:with="user = ${#authentication.principal}"> -->
-                        
-                            
                     <div class="section-title">회원정보</div>
                     <div class="form-row">
                         <label for="email">이메일</label>
@@ -265,6 +263,12 @@ function execDaumPostcode() {
                         <input type="hidden" name="jibunAddress" d="jibunAddress">
                         <input type="hidden" name="extraAddress" id="extraAddress">
                         <input type="hidden" name="fullAddress" id="fullAddress" value="">
+                    </div>
+                    <div class="form-row">
+                        <label for="memo">거부 사유</label>
+                        <div>
+                            <span style="white-space: pre-wrap;" th:text="${user.memo}"></span>
+                        </div>
                     </div>
                     <div class="form-row">
                         <button class="mypage_button_width" type="submit">저장하기</button>

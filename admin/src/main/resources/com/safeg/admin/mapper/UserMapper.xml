@@ -126,31 +126,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where 
             is_Deleted = 'N'
         <if test="option.keyword != null and option.keyword != ''">
+        AND
             <choose>
                 <when test="option.code == 0">
-                    AND (
-                        id like CONCAT('%', #{option.keyword}, '%') or
-                        name like CONCAT('%', #{option.keyword}, '%') or
-                        email like CONCAT('%', #{option.keyword}, '%') or
-                        nickname like CONCAT('%', #{option.keyword}, '%') or
-                        phone like CONCAT('%', #{option.keyword}, '%')
-                    )
+                    (u.user_id LIKE CONCAT('%', #{option.keyword}, '%') OR
+                    u.user_nm LIKE CONCAT('%', #{option.keyword}, '%') OR
+                    u.email LIKE CONCAT('%', #{option.keyword}, '%'))
                 </when>
-                <when test="option.code == 1">
-                    u.id like CONCAT('%', #{option.keyword}, '%')
-                </when>
-                <when test="option.code == 2">
-                    u.name like CONCAT('%', #{option.keyword}, '%')
-                </when>
-                <when test="option.code == 3">
-                    u.email like CONCAT('%', #{option.keyword}, '%')
-                </when>
-                <when test="option.code == 4">
-                    u.nickName like CONCAT('%', #{option.keyword}, '%')
-                </when>
-                <when test="option.code == 5">
-                    u.phone like CONCAT('%', #{option.keyword}, '%')
-                </when>
+                <when test="option.code == 1">u.user_id LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                <when test="option.code == 2">u.user_nm LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                <when test="option.code == 3">u.email LIKE CONCAT('%', #{option.keyword}, '%')</when>
+                <when test="option.code == 5">u.phone_hash = #{option.keyword}</when>
+                <when test="option.code == 6">u.guard_type = #{option.keyword}</when>
+                <when test="option.code == 7">u.is_stopped = #{option.keyword}</when>
             </choose>
         </if>
     </select>
@@ -218,7 +206,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- user_nm = #{userNm}, -->
             email = #{email},
             phone_num = #{phoneNum},
-            nickname = #{nickName},
+            nickname = #{nickname},
             bank_nm = #{bankNm},
             depositor = #{depositor},
             account_number = #{accountNumber},

@@ -267,6 +267,17 @@ textarea {
     gap: 12px;
 }
 
+.normalForm {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+    max-width: 950px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
 input[type="file"] {
     border: 1px dashed #bbb;
     background: #f9f8ff;
@@ -329,10 +340,10 @@ table {
 
 th,
 td {
-    padding: 12px 16px;
+    padding: 12px 10px;
     border-bottom: 1px solid #eee;
     text-align: center;
-    font-size: 14px;
+    font-size: 12px;
 }
 th {
     background-color: #f3ecff;
@@ -472,34 +483,46 @@ body {
     width: 300px;
 }
 
-.wdt5{
+.wdt5 {
     width: 5%;
 }
-.wdt10{
+.wdt8 {
+    width: 8%;
+}
+.wdt10 {
     width: 10%;
 }
-.wdt15{
+.wdt11 {
+    width: 11%;
+}
+.wdt15 {
     width: 15%;
 }
-.wdt20{
+.wdt20 {
     width: 20%;
 }
-.wdt25{
+.wdt25 {
     width: 25%;
 }
-.wdt30{
+.wdt30 {
     width: 30%;
 }
-.wdt40{
+.wdt40 {
     width: 40%;
 }
-.wdt50{
+.wdt50 {
     width: 50%;
 }
-.mgl439per{
+.mgl439per {
+    display: block;
     margin-left: 43.9%;
 }
-.mgl50per{
+
+.mgl32per {
+    display: none;
+}
+
+.mgl50per {
     margin-left: 50%;
 }
 .error-msg {
@@ -565,7 +588,7 @@ body {
 }
 
 .data-grid {
-    width: 768px;
+    width: 100%;
     border-collapse: collapse;
 }
 .data-grid th {
@@ -649,6 +672,20 @@ margin: 5px 0 0;
 
 }
 
+.image_view {
+    width: 100%;       /* 부모 너비에 무조건 맞춤 */
+    height: auto;      /* 비율에 맞춰 높이 자동 조절 */
+    display: block;    /* 하단 미세 공백 제거 */
+    object-fit: cover; /* 부모 영역을 가득 채우고 싶을 때 (선택사항) */
+}
+
+.mobile {
+    display: none;
+}
+.pc {
+    display: block;
+}
+
 @media (max-width: 768px) {
     button {
         background-color: #b594ff;
@@ -725,6 +762,17 @@ margin: 5px 0 0;
         border-bottom: 1px solid #ddd;
     }
 
+    .normalForm {
+        background: white;
+        padding: 10px;
+        border-radius: 12px;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+        max-width: 950px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
     .mobile-header.open {
         max-height: 300px; /* 메뉴 항목 충분히 보이도록 조정 */
     }
@@ -751,15 +799,45 @@ margin: 5px 0 0;
         width: 900px;
     }
 
-    .optionForm input[type="text"],
+    input[type="text"],
     input[type="number"],
     select,
     textarea {
         padding: 12px;
         border-radius: 8px;
         border: 1px solid #ccc;
-        width: 160px;
+        width: 150px;
         font-size: 14px;
         box-sizing: border-box;
+    }
+
+    .mobile {
+        display: block;
+    }
+    .pc {
+        display: none;
+    }
+
+    .memo {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        width: 100%;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .data-grid {
+        width: 768px;
+        border-collapse: collapse;
+    }
+
+    .mgl439per {
+        display: none;
+    }
+    
+    .mgl32per {
+        display: block;
+        margin-left: 32%;
     }
 }

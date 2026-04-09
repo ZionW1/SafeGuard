@@ -285,9 +285,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <![CDATA[
             UPDATE campaign
             SET is_deleted = 'Y',
+            is_active = 'N',
             updated_at = NOW()
             WHERE event_Period_end < CURDATE() -- end_date가 오늘 날짜보다 지난 경우 (끝나는 날짜 포함 유무에 따라 <= 또는 <)
             AND is_deleted = 'N'          -- 아직 삭제되지 않은 캠페인만
+            AND is_active = 'Y'
         ]]>
     </update>
 

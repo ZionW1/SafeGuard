@@ -2060,6 +2060,10 @@ table.bestPayList {
     margin-bottom: 15px;
     text-align: left; /* 제목을 항상 테이블 왼쪽 끝에 맞춤 */
 }
+
+.ck-content figure.image {
+    width: 60%;
+}
   /* 모바일 화면 (예: 768px 이하) */
     @media (max-width: 768px) {
     .desktop-header {
@@ -3172,6 +3176,10 @@ table.bestPayList {
         font-weight: bold;
         margin-bottom: 15px;
         text-align: left; /* 제목을 항상 테이블 왼쪽 끝에 맞춤 */
+    }
+
+    .ck-content figure.image {
+        width: 100%;
     }
 }
 

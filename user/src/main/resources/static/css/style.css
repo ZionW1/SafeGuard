@@ -702,13 +702,11 @@ a {
 }
 .notice-title {
     margin: 10px 0 10px 5%;
-    font-size: 2.4em;
+    font-size: 2em;
     font-weight: 700;
-    /* margin: 5%; */
-    /* padding-bottom: 10px; */
     color: #111;
 }
-.article-info { margin: 10px 0 0 5%; font-size: 1.2em; color: #666; margin-bottom: 20px; font-weight: 700;}
+.article-info { margin: 20px 0 0 5%; font-size: 1.2em; color: #666; margin-bottom: 20px; font-weight: 700;}
 
 .sidebar-menu {
     list-style: none;
@@ -2575,10 +2573,8 @@ table.bestPayList {
     
     .notice-title {
         margin-left: 0;
-        font-size: 2em;
+        font-size: 1.5em;
         font-weight: 700;
-        /* margin: 5%; */
-        /* padding-bottom: 10px; */
         color: #111;
     }
     .bestAgent_title {
@@ -3423,15 +3419,6 @@ table.bestPayList {
 
     .article-info {
         margin-left:0; font-size: 1.2em; color: #666; margin-bottom: 20px; font-weight: 700;
-    }
-
-    .notice-title {
-        margin-left: 0;
-        font-size: 2em;
-        font-weight: 700;
-        /* margin: 5%; */
-        /* padding-bottom: 10px; */
-        color: #111;
     }
 
     .stats-info {

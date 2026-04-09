@@ -184,7 +184,7 @@ form.form {
 
 form.optionForm {
     background: f8f4ff;
-    padding: 15px;
+    padding: 15px 0;
     border-radius: 12px;
     /* box-shadow: 0 0 6px rgba(0, 0, 0, 0.05); */
     max-width: 700px;
@@ -815,7 +815,9 @@ margin: 5px 0 0;
         font-size: 14px;
         box-sizing: border-box;
     }
-
+    .wdt160 {
+        width: 160px;
+    }
     .mobile {
         display: block;
     }

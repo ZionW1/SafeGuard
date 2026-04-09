@@ -34,6 +34,17 @@ public class Scheduler {
         }
     }
 
+    @Scheduled(cron = "0 0 10 * * *")
+    public void closeCampaignScheduler() {
+        log.info("CampaignScheduler - 만료된 캠페인 처리 스케줄러 시작.");
+        try {
+            campaignService.updateExpiredCampaigns();
+            log.info("CampaignScheduler - 만료된 캠페인 처리 스케줄러 완료.");
+        } catch (Exception e) {
+            log.error("CampaignScheduler - 만료된 캠페인 처리 중 오류 발생: {}", e.getMessage(), e);
+        }
+    }
+
     // @Scheduled(cron = "0 0 18 1 * ?", zone = "Asia/Seoul") // ✨ 매월 1일 오후 6시 정각에 실행 ✨
     // public void resetPayOnMonthEnd() throws Exception{
     //     LocalDate today = LocalDate.now();

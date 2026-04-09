@@ -264,7 +264,7 @@ function execDaumPostcode() {
                         <input type="hidden" name="extraAddress" id="extraAddress">
                         <input type="hidden" name="fullAddress" id="fullAddress" value="">
                     </div>
-                    <div class="form-row">
+                    <div class="form-row" th:if="${user.memo != null}">
                         <label for="memo">거부 사유</label>
                         <div>
                             <span style="white-space: pre-wrap;" th:text="${user.memo}"></span>

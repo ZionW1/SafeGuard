@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
         <title>캠페인 등록</title>
-        <!-- <link rel="stylesheet" href="/css/style.css"> -->
         <link rel="stylesheet" th:href="@{/css/style.css}">
 
         <!-- 타임리프 자바스크립트 모드 -->
@@ -51,7 +50,7 @@
         <!-- 메인 등록폼 -->
         <div class="main-content">
             <h1>캠페인 등록</h1>
-            <form class="form" th:action="@{/campaign04}" method="post" enctype="multipart/form-data">
+            <form class="normalForm" th:action="@{/campaign04}" method="post" enctype="multipart/form-data">
                 <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
 
                 <!-- 업체 정보 -->
@@ -65,40 +64,64 @@
                         <input type="text" id="companyPh" name="companyPh" required />
                     </div>
                 </div>
-                <div class="form-row">
-                    <!-- <div class="form-group">
-                        <label for="leader">인솔자 선택</label>
-                        <select id="leaderNm" name="leaderNm" th:field="*{leaderList}" onchange="inputLeaderPhoneNumber(this.value)" required >
-                            <option value="">-- 선택하세요 --</option>
-                            <option th:each="leader, stat : ${leaderList}" th:value="${stat.index}" th:text="${leader.userNm}" ></option>
-                        </select>
-                    </div> -->
+                <div class="pc">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="leaderNm">인솔자 선택</label>
+                            <select id="leaderNm" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)" required>
+                                <option value="">-- 선택하세요 --</option>
+                                <option th:each="leader, stat : ${leaderList}" 
+                                        th:value="${stat.index}" 
+                                        th:text="${leader.userNm}">
+                                </option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="leaderCode" name="leaderCode" required />
+                        <input type="hidden" id="leaderNo" name="leaderNo" required />
 
-                    <div class="form-group">
-                        <label for="leaderNm">인솔자 선택</label>
-                        <select id="leaderNm" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)" required>
-                            <option value="">-- 선택하세요 --</option>
-                            <option th:each="leader, stat : ${leaderList}" 
-                                    th:value="${stat.index}" 
-                                    th:text="${leader.userNm}">
-                            </option>
-                        </select>
-                    </div>
-                    <input type="hidden" id="leaderCode" name="leaderCode" required />
-                    <input type="hidden" id="leaderNo" name="leaderNo" required />
+                        <div class="form-group">
+                            <label for="phone">인솔자 연락처</label>
+                            <input type="text" id="leader_contact" name="leader_contact" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="leaderPay">인솔자 급여</label>
+                            <input type="text" id="leaderPay" name="leaderPay" required />
+                        </div>
 
-                    <div class="form-group">
-                        <label for="phone">인솔자 연락처</label>
-                        <input type="text" id="leader_contact" name="leader_contact" required />
+                        <div class="form-group">
+                            <label for="leaderPay">인솔자 포인트</label>
+                            <input type="text" id="leaderPoint" name="leaderPoint" required />
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="leaderPay">인솔자 급여</label>
-                        <input type="text" id="leaderPay" name="leaderPay" required />
+                </div>
+                <div class="mobile">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="leaderNm">인솔자 선택</label>
+                            <select id="leaderNm" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)" required>
+                                <option value="">-- 선택하세요 --</option>
+                                <option th:each="leader, stat : ${leaderList}" 
+                                        th:value="${stat.index}" 
+                                        th:text="${leader.userNm}">
+                                </option>
+                            </select>
+                            <input type="hidden" id="leaderCode" name="leaderCode" required />
+                            <input type="hidden" id="leaderNo" name="leaderNo" required />
+                        </div>
+                        <div class="form-group">
+                            <label>인솔자 연락처</label>
+                            <input type="text" name="leader_contact" id="leader_contact" readonly required />
+                        </div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="leaderPay">인솔자 포인트</label>
-                        <input type="text" id="leaderPoint" name="leaderPoint" required />
+                    <div class="form-row mrg16">
+                        <div class="form-group">
+                            <label for="leaderPay">인솔자 급여</label>
+                            <input type="number" name="leaderPay" id="leaderPay" />
+                        </div>
+                        <div class="form-group">
+                            <label for="leaderPay">인솔자 포인트</label>
+                            <input type="text" id="leaderPoint" name="leaderPoint" />
+                        </div>
                     </div>
                 </div>
 
@@ -155,28 +178,57 @@
                 <!-- 안내사항 -->
                 <div class="form-group">
                     <label>안내사항</label>
-                    <textarea id="mission" name="mission" rows="4"></textarea>
+                    <textarea class="memo" id="mission" name="mission" rows="4"></textarea>
                 </div>
 
                 <!-- 일정 -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>신청기간</label>
-                        <div class="form-row">
-                            <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" required />
-                            <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" required />
+                <div class="pc">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>신청기간</label>
+                            <div class="form-row">
+                                <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" required />
+                                <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>행사기간</label>
+                            <div class="form-row">
+                                <input class="dateInsert" type="date" name="eventPeriodStr" id="eventPeriodStr" required />
+                                <input class="dateInsert" type="date" name="eventPeriodEnd" id="eventPeriodEnd" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>명단발표기간</label>
+                            <div class="form-row">
+                                <input class="dateInsert" type="date" name="resultDate" id="resultDate" required />
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>행사기간</label>
-                        <div class="form-row">
-                            <input class="dateInsert" type="date" name="eventPeriodStr" id="eventPeriodStr" required />
-                            <input class="dateInsert" type="date" name="eventPeriodEnd" id="eventPeriodEnd" required />
+                </div>
+                <div class="mobile">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>신청기간</label>
+                            <div class="form-row">
+                                <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" required />
+                                <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" required />
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="form-row mrg16">
+                        <div class="form-group">
+                            <label>행사기간</label>
+                            <div class="form-row">
+                                <input class="dateInsert" type="date" name="eventPeriodStr" id="eventPeriodStr" required />
+                                <input class="dateInsert" type="date" name="eventPeriodEnd" id="eventPeriodEnd" required />
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>명단발표기간</label>
-                        <div class="form-row">
+                    <div class="form-row mrg16">
+                        <div class="form-group">
+                            <label>명단발표기간</label>
                             <input class="dateInsert" type="date" name="resultDate" id="resultDate" required />
                         </div>
                     </div>

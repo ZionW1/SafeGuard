@@ -254,6 +254,7 @@ textarea {
 }
 .form-row {
     display: flex;
+    width: 100%;
     gap: 16px;
 }
 .form-row .form-group {
@@ -524,6 +525,10 @@ body {
 
 .mgl50per {
     margin-left: 50%;
+}
+
+.mrg16 {
+    margin: 16px 0 0 ;
 }
 .error-msg {
     margin-bottom: 30px; /* 작은 여백 */
@@ -806,7 +811,7 @@ margin: 5px 0 0;
         padding: 12px;
         border-radius: 8px;
         border: 1px solid #ccc;
-        width: 150px;
+        width: 100%;
         font-size: 14px;
         box-sizing: border-box;
     }
@@ -839,5 +844,15 @@ margin: 5px 0 0;
     .mgl32per {
         display: block;
         margin-left: 32%;
+    }
+
+    .dateInsert{
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        width: 48%;
+        font-size: 11px;
+        font-weight: 700;
+        box-sizing: border-box;
     }
 }

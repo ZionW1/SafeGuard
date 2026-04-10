@@ -19,21 +19,10 @@
             Admin_Content
         where
         ]]>
-        <!-- <if test="option.code == 0">
-            (title like CONCAT('%', #{option.keyword}, '%')
-            or content like CONCAT('%', #{option.keyword}, '%')
-            or content_type like CONCAT('%', #{option.keyword}, '%'))
-        </if>
-        <if test="option.code == 1">
+        <if test="option.code == 0">
             title like CONCAT('%', #{option.keyword}, '%')
         </if>
-        <if test="option.code == 2">
-            content like CONCAT('%', #{option.keyword}, '%')
-        </if>
-        <if test="option.code == 3">
-            content_type like CONCAT('%', #{option.keyword}, '%')
-        </if> -->
-        content_type='FAQ'
+        AND content_type='FAQ'
         and is_active = 'Y'
         order by Admin_Content_id desc
         <!-- <if test="option.orderCode == 0">

@@ -161,7 +161,7 @@ a {
     outline: none;
     position: relative;
     top: 20px;
-    left: 3%;
+    left: 5%;
 }
 
 .optionSubmit {
@@ -2114,6 +2114,47 @@ table.bestPayList {
             color: #999;
             font-style: normal;
         }
+    .faq_form {
+        position: relative;
+        display: flex;
+        left: 0;
+        margin: 0 23% 10px;
+        text-align: right;
+        justify-content: right;
+    }
+
+    .faq_search {
+        width: 210px;
+        padding: 10px;
+        font-size: 1em;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        padding-right: 60px;
+        outline: none;
+        position: relative;
+        top: 20px;
+        left: 3%;
+        margin: 0 0 20px;
+    }
+
+    .faq_submit {
+        display: inline-block;
+        width: 25px;  /* 아이콘이 잘 안 보이면 크기를 조금 키워보세요 */
+        height: 25px;
+        margin-top: 2px;
+        border: 0 none;
+        cursor: pointer; /* 마우스 올렸을 때 손가락 모양 추가 */
+        text-indent: -9999em;
+        
+        /* 배경 설정 수정 */
+        background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat center;
+        background-size: contain; /* 아이콘이 버튼 크기에 딱 맞게 조절됩니다 */
+        background-color: transparent; /* 배경색 투명하게 */
+    
+        position: relative;
+        top: 18px;
+        left: -2%;
+    }
 
   /* 모바일 화면 (예: 768px 이하) */
     @media (max-width: 768px) {

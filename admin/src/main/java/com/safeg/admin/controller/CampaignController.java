@@ -37,7 +37,7 @@ public class CampaignController {
     @GetMapping("/campaign01")
     public String campaign01(@AuthenticationPrincipal CustomUser authUser, Model model,
                 // @RequestParam(name="keyword", defaultValue = "") String keyword
-                Option option, 
+                Option option,
                 // @RequestParam(name="rows", defaultValue = "10") int rows
                 Page page
                 ) throws Exception {

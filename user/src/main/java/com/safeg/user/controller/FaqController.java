@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.safeg.user.service.FaqService;
 import com.safeg.user.vo.AdminContentVO;
@@ -31,6 +32,18 @@ public class FaqController {
         
         model.addAttribute("currentURI", request.getRequestURI());
         model.addAttribute("faqList", faqList);
+
+        String pageUrl = UriComponentsBuilder.fromPath("/faq01")
+                        //.queryParam("page", page.getPage())
+                        .queryParam("keyword", option.getKeyword())
+                        .queryParam("code", option.getCode())
+                        // .queryParam("rows", page.getRows())
+                        .queryParam("orderCode", option.getOrderCode())
+                        .build()
+                        .toUriString();
+        log.info("pageRows : " + page.getRows());
+        
+        model.addAttribute("pageUrl", pageUrl);
 
         return "faq/faq01";
     }

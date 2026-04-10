@@ -92,6 +92,10 @@
             <th:block th:replace="~{fragments/noticeSidebar :: sidebarMenu}" />
         </div>
         <span class="notice_title_list">FAQ</span>
+        <form class="faq_form" action="/faq01" id="searchForm" name="searchForm">
+            <input type="text" class="search faq_search" id="keyword" name="keyword" th:value="${param.keyword}" placeholder="검색어를 입력하세요" />
+            <input class="faq_submit" type="submit" id="search_btn" value="">
+        </form>
         <th:block th:each="faq, stat : ${faqList}">
             <div class="faq-list">
                 <div class="faq-item">

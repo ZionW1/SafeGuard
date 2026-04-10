@@ -125,7 +125,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         on c.leader_code = t.id
         Where f.is_deleted = 'N'
         AND f.target_type = 'campaign'
-        AND c.is_deleted = 'Y'
         AND c.is_active = 'N'
         ORDER BY c.campaign_id desc
         ]]>

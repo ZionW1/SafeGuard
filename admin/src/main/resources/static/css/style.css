@@ -354,11 +354,12 @@ th.title {
     width: 30%;
 }
 
-tr {
-    cursor: pointer;
-}
 tr:hover {
     background-color: #f9f3ff;
+}
+
+.pointer {
+    cursor: pointer;
 }
 
 .parent {

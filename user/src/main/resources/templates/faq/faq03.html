@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>강남맛집 FAQ Layout</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
+        body { display: flex; background-color: #fff; color: #333; }
+
+        /* 사이드바 */
+        nav { width: 200px; padding: 40px 20px; border-right: 1px solid #eee; min-height: 100vh; }
+        .user-section { margin-bottom: 30px; font-weight: bold; font-size: 18px; }
+        .menu-title { font-size: 16px; font-weight: bold; margin-bottom: 20px; color: #000; }
+        .menu-list { list-style: none; }
+        .menu-list li { margin-bottom: 15px; font-size: 14px; color: #666; cursor: pointer; }
+        .menu-list li.active { color: #ff6b35; font-weight: bold; }
+        .menu-list li.active::before { content: '> '; }
+
+        /* 메인 콘텐츠 */
+        main { flex: 1; padding: 40px 60px; max-width: 1000px; }
+        h1 { font-size: 28px; margin-bottom: 30px; }
+
+        /* 공지사항 붉은 박스 */
+        .notice-box { background-color: #f9f9f9; padding: 20px; border-radius: 4px; margin-bottom: 30px; line-height: 1.6; }
+        .notice-box p { color: #d9534f; font-size: 14px; font-weight: 500; }
+        .notice-box .star-text { color: #d9534f; }
+
+        /* 검색 바 */
+        .search-container { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .search-container input { border: none; border-bottom: 1px solid #ccc; padding: 5px; width: 250px; outline: none; }
+
+        /* 카테고리 탭 */
+        .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+        .tab { padding: 10px 20px; border: 1px solid #eee; border-radius: 5px; cursor: pointer; font-size: 14px; background: white; }
+        .tab.active { background-color: #ff6b35; color: white; border-color: #ff6b35; }
+
+        /* FAQ 리스트 */
+        .faq-item { border-bottom: 1px solid #eee; }
+        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 15px; }
+        .faq-question:hover { background-color: #fafafa; }
+        .faq-answer { background-color: #f8f9fa; padding: 30px 20px; font-size: 14px; line-height: 1.8; color: #555; }
+        .arrow { transition: transform 0.3s; color: #ccc; }
+        
+        /* 화살표 방향 제어 (예시로 두번째 열어둠) */
+        .open .arrow { transform: rotate(180deg); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="user-section">로그인해주세요</div>
+        <div class="menu-title">고객센터</div>
+        <ul class="menu-list">
+            <li>공지사항</li>
+            <li>1:1 문의</li>
+            <li class="active">FAQ</li>
+            <li>강남맛집 이용가이드</li>
+        </ul>
+    </nav>
+
+    <main>
+        <h1>FAQ</h1>
+
+        <div class="notice-box">
+            <p>리뷰 기간을 반드시 준수 해 주셔야 하며, 기본적으로 기간 연장은 불가 합니다.</p>
+            <p>단, 업체측과 예약 소통 하여 연장 체험이 가능하다고 확정 되신 경우는 제외 입니다.</p>
+            <p class="star-text">★선정된 캠페인의 취소는 나의 캠페인 > 선정된 캠페인의 [체험불가취소] 버튼을 통해 취소요청해 주세요.</p>
+            <p class="star-text">★업체마다 담당자가 상이한 관계로 1개의 문의에는 한 업체의 문의 내용만 작성해 주시길 바라며, 문의시 정확한 업체명 기재 부탁드립니다!</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" placeholder="검색어를 입력하세요">
+        </div>
+
+        <div class="tabs">
+            <button class="tab active">전체</button>
+            <button class="tab">리뷰어 모집</button>
+            <button class="tab">리뷰어 선정</button>
+            <button class="tab">캠페인 참여</button>
+            <button class="tab">캠페인 등록</button>
+            <button class="tab">캠페인 마감</button>
+            <button class="tab">캠페인 진행</button>
+            <button class="tab">회원정보</button>
+            <button class="tab">기타</button>
+        </div>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>[회원정보] 비밀번호 찾기 했는데 이메일이 안와요!</span>
+                    <span class="arrow">∨</span>
+                </div>
+            </div>
+            <div class="faq-item open">
+                <div class="faq-question">
+                    <span>[회원정보] 관심 지역 변경은 어떻게 하나요?</span>
+                    <span class="arrow">∧</span>
+                </div>
+                <div class="faq-answer">
+                    강남맛집 홈페이지 좌측 중하단에 위치한<br><br>
+                    '내 맞춤 지역 캠페인'에서 수정 가능합니다.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>[회원정보] 로그인이 안 돼요!</span>
+                    <span class="arrow">∨</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

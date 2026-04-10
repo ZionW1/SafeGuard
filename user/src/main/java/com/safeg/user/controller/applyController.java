@@ -80,21 +80,10 @@ public class applyController {
         // ※ 주의: 두 번째 인자로 리스트가 아닌 '문자열 날짜'를 넘겨야 함
         List<UserCampaignVO> userCampaignApply = applyService.userCampaignApply(campaignId , finalDate);
 
-        // // 5. 인솔자 찾기 로직 (개선: 스트림이나 향상된 for문 사용 권장)
-        // UserCampaignVO leaderCampaign = userCampaignApply.stream()
-        //     .filter(c -> "8".equals(c.getStatus()))
-        //     .findFirst()
-        //     .orElse(null);
-
-        // if (leaderCampaign != null) {
-        //     model.addAttribute("leaderUserNo", leaderCampaign.getUserNo());
-        //     model.addAttribute("leaderStatus", leaderCampaign.getStatus());
-        //     // ... 필요한 정보 추가
+        // for(int i = 0; i < userCampaignApply.size(); i++){
+        //     // String originalPhone = user.getPhoneNum();
+        //     userCampaignApply.get(i).setPhoneNum(userCampaignApply.get(i).getPhoneNum().replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3"));
         // }
-
-        for(int i = 0; i < userCampaignApply.size(); i++){
-            userCampaignApply.get(i).getPhoneNum().replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3");
-        }
         
         model.addAttribute("userCampaignApply", userCampaignApply);
         model.addAttribute("applicantsNum", userCampaignApply.size()-1); // 신청 수 추가

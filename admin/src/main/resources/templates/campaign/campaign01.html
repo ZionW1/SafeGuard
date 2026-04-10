@@ -47,7 +47,7 @@
                     <thead>
                         <th>ID</th>
                         <th>지역</th>
-                        <th>캠페인명</thss=>
+                        <th>캠페인명</th>
                         <th>인솔자</th>
                         <th>생성일</th>
                         <th>신청자수</th>
@@ -64,7 +64,7 @@
                     </div>
                         <th:block th:each="campaign : ${campaignsList}">
                             <!-- <a th:href="|/admin/campaign/select?id=${campaign.id}|"> -->
-                            <tr >
+                            <tr>
                                 <td><span th:text="${campaign.campaignId}"></span></td>
                                 <td><span th:text="${campaign.placeAddr}"></span></td>
                                 <td><span th:text="${campaign.campaignTitle}"></span></td>
@@ -73,10 +73,10 @@
                                 <td><span th:text="${campaign.createdAt}"></span></td>
                                 <td><span th:text="${campaign.applicantsNum}"></span></td>
                                 <td><span th:text="${campaign.recruitmentNum}"></span></td>
-                                <td>
+                                <td class="pointer">
                                     <a th:href="|/apply/userCampaignApply/${campaign.campaignId}|">명단보기</a>
                                 </td>
-                                <td>
+                                <td class="pointer">
                                     <a th:onclick="|location.href='@{/campaign02(id=${campaign.campaignId})}'|">상세보기</a>
                                 </td>
                             </tr>

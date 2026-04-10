@@ -57,7 +57,7 @@
                         </tr>
                     </th:block>
                     <th:block th:each="user, stat: ${userList}">
-                        <tr th:onclick="|location.href='@{/user02(id=${user.id}, keyword=${option.keyword}, code=${option.code}, orderCode=${option.orderCode}, page=${page.page})}'|">
+                        <tr class="pointer" th:onclick="|location.href='@{/user02(id=${user.id}, keyword=${option.keyword}, code=${option.code}, orderCode=${option.orderCode}, page=${page.page})}'|">
                             <!-- <a th:href="@{/user02(id=${user.id}, page=${paging.page})}"></a> -->
                             <!-- th:onclick="|location.href='@{/user02(id=${user.id})}'|" -->
                             <td><span th:text="${stat.size - stat.index}"></span></td>

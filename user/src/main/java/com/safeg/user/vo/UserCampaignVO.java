@@ -76,4 +76,23 @@ public class UserCampaignVO {
 
     private int pointFull;
     private String filePath;
+
+    public String getHyphenPhone() {
+        // 1. 데이터가 없거나 길이가 짧은 경우 그대로 반환 (NPE 방어)
+        if (this.phoneNum == null || this.phoneNum.length() < 10) {
+            return this.phoneNum; 
+        }
+        
+        // 2. 11자리인 경우 (01012345678 -> 010-1234-5678)
+        if (this.phoneNum.length() == 11) {
+            return this.phoneNum.replaceFirst("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3");
+        }
+        
+        // 3. 10자리인 경우 (021234567 -> 02-123-4567 등 예외 처리)
+        if (this.phoneNum.length() == 10) {
+            return this.phoneNum.replaceFirst("(\\d{2,3})(\\d{3,4})(\\d{4})", "$1-$2-$3");
+        }
+    
+        return this.phoneNum;
+    }
 }

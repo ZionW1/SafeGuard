@@ -64,6 +64,9 @@
                         <input type="text" id="companyPh" name="companyPh" />
                     </div>
                 </div>
+                <input type="hidden" id="leaderCode" name="leaderCode" />
+                <input type="hidden" id="leaderNo" name="leaderNo" />
+
                 <div class="pc">
                     <div class="form-row">
                         <div class="form-group">
@@ -76,9 +79,6 @@
                                 </option>
                             </select>
                         </div>
-                        <input type="hidden" id="leaderCode" name="leaderCode" />
-                        <input type="hidden" id="leaderNo" name="leaderNo" />
-
                         <div class="form-group">
                             <label for="phone">인솔자 연락처</label>
                             <input type="text" id="leader_contact" name="leader_contact" />
@@ -105,8 +105,6 @@
                                         th:text="${leader.userNm}">
                                 </option>
                             </select>
-                            <input type="hidden" id="leaderCode" name="leaderCode" />
-                            <input type="hidden" id="leaderNo" name="leaderNo" />
                         </div>
                         <div class="form-group">
                             <label>인솔자 연락처</label>

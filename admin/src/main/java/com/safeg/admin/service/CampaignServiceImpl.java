@@ -138,6 +138,7 @@ public class CampaignServiceImpl implements CampaignService{
             dailyEntry.setApplyDate(date);
             dailyEntriesToInsert.add(dailyEntry);
         }
+        log.info("dailyEntry : " + dailyEntriesToInsert.get(0).getUserId());
 
         // 5. 매퍼를 통해 DB에 배치 삽입 (또는 하나씩 삽입)
         if (!dailyEntriesToInsert.isEmpty()) {

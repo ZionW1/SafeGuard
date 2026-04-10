@@ -57,18 +57,18 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="companies">업체명</label>
-                        <input type="text" name="companyNm" id="companyNm" required />
+                        <input type="text" name="companyNm" id="companyNm" />
                     </div>
                     <div class="form-group">
                         <label>고객 연락처</label>
-                        <input type="text" id="companyPh" name="companyPh" required />
+                        <input type="text" id="companyPh" name="companyPh" />
                     </div>
                 </div>
                 <div class="pc">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="leaderNm">인솔자 선택</label>
-                            <select id="leaderNm" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)" required>
+                            <select id="leaderNm" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)">
                                 <option value="">-- 선택하세요 --</option>
                                 <option th:each="leader, stat : ${leaderList}" 
                                         th:value="${stat.index}" 
@@ -76,21 +76,21 @@
                                 </option>
                             </select>
                         </div>
-                        <input type="hidden" id="leaderCode" name="leaderCode" required />
-                        <input type="hidden" id="leaderNo" name="leaderNo" required />
+                        <input type="hidden" id="leaderCode" name="leaderCode" />
+                        <input type="hidden" id="leaderNo" name="leaderNo" />
 
                         <div class="form-group">
                             <label for="phone">인솔자 연락처</label>
-                            <input type="text" id="leader_contact" name="leader_contact" required />
+                            <input type="text" id="leader_contact" name="leader_contact" />
                         </div>
                         <div class="form-group">
                             <label for="leaderPay">인솔자 급여</label>
-                            <input type="text" id="leaderPay" name="leaderPay" required />
+                            <input type="text" id="leaderPay" name="leaderPay" />
                         </div>
 
                         <div class="form-group">
                             <label for="leaderPay">인솔자 포인트</label>
-                            <input type="text" id="leaderPoint" name="leaderPoint" required />
+                            <input type="text" id="leaderPoint" name="leaderPoint" />
                         </div>
                     </div>
                 </div>
@@ -98,19 +98,19 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="leaderNm">인솔자 선택</label>
-                            <select id="leaderNm" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)" required>
+                            <select id="leaderNm" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)">
                                 <option value="">-- 선택하세요 --</option>
                                 <option th:each="leader, stat : ${leaderList}" 
                                         th:value="${stat.index}" 
                                         th:text="${leader.userNm}">
                                 </option>
                             </select>
-                            <input type="hidden" id="leaderCode" name="leaderCode" required />
-                            <input type="hidden" id="leaderNo" name="leaderNo" required />
+                            <input type="hidden" id="leaderCode" name="leaderCode" />
+                            <input type="hidden" id="leaderNo" name="leaderNo" />
                         </div>
                         <div class="form-group">
                             <label>인솔자 연락처</label>
-                            <input type="text" name="leader_contact" id="leader_contact" readonly required />
+                            <input type="text" name="leader_contact" id="leader_contact" readonly />
                         </div>
                     </div>
                     <div class="form-row mrg16">
@@ -128,16 +128,16 @@
                 <!-- 캠페인 정보 -->
                 <div class="form-group">
                     <label>캠페인명</label>
-                    <input type="text" id="campaignTitle" name="campaignTitle" required />
+                    <input type="text" id="campaignTitle" name="campaignTitle" />
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="campaignPay">캠페인 급여</label>
-                        <input type="text" id="campaignPay" name="campaignPay" required />
+                        <input type="text" id="campaignPay" name="campaignPay" />
                     </div>
                     <!-- <div class="form-group">
                         <label for="securityType">경호/진행/수행 구분</label>
-                        <select id="securityType" name="securityType" th:field="*{securityType}" onchange="securityTypeChange(this.value)" required>
+                        <select id="securityType" name="securityType" th:field="*{securityType}" onchange="securityTypeChange(this.value)">
                             <option value="">-- 선택하세요 --</option>
                             <option name=""th:each="type : ${securityType}" th:value="${type.code}" th:text="${type.codeName}"></option>
                         </select>
@@ -145,7 +145,7 @@
                     </div> -->
                     <div class="form-group">
                         <label for="securityType">경호/진행/수행 구분</label>
-                        <select id="securityType" name="securityType" onchange="securityTypeChange(this.value)" required>
+                        <select id="securityType" name="securityType" onchange="securityTypeChange(this.value)">
                             <option value="">-- 선택하세요 --</option>
                             <option th:each="type : ${securityType}" 
                                     th:value="${type.code}" 
@@ -167,7 +167,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>모집 인원 수</label>
-                        <input type="number" id="recruitmentNum" name="recruitmentNum" required />
+                        <input type="number" id="recruitmentNum" name="recruitmentNum" />
                     </div>
                     <div class="form-group">
                         <label for="placeAddr">주소</label>
@@ -187,21 +187,21 @@
                         <div class="form-group">
                             <label>신청기간</label>
                             <div class="form-row">
-                                <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" required />
-                                <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" required />
+                                <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" />
+                                <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label>행사기간</label>
                             <div class="form-row">
-                                <input class="dateInsert" type="date" name="eventPeriodStr" id="eventPeriodStr" required />
-                                <input class="dateInsert" type="date" name="eventPeriodEnd" id="eventPeriodEnd" required />
+                                <input class="dateInsert" type="date" name="eventPeriodStr" id="eventPeriodStr" />
+                                <input class="dateInsert" type="date" name="eventPeriodEnd" id="eventPeriodEnd" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label>명단발표기간</label>
                             <div class="form-row">
-                                <input class="dateInsert" type="date" name="resultDate" id="resultDate" required />
+                                <input class="dateInsert" type="date" name="resultDate" id="resultDate" />
                             </div>
                         </div>
                     </div>
@@ -211,8 +211,8 @@
                         <div class="form-group">
                             <label>신청기간</label>
                             <div class="form-row">
-                                <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" required />
-                                <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" required />
+                                <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" />
+                                <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" />
                             </div>
                         </div>
                         
@@ -221,15 +221,15 @@
                         <div class="form-group">
                             <label>행사기간</label>
                             <div class="form-row">
-                                <input class="dateInsert" type="date" name="eventPeriodStr" id="eventPeriodStr" required />
-                                <input class="dateInsert" type="date" name="eventPeriodEnd" id="eventPeriodEnd" required />
+                                <input class="dateInsert" type="date" name="eventPeriodStr" id="eventPeriodStr" />
+                                <input class="dateInsert" type="date" name="eventPeriodEnd" id="eventPeriodEnd" />
                             </div>
                         </div>
                     </div>
                     <div class="form-row mrg16">
                         <div class="form-group">
                             <label>명단발표기간</label>
-                            <input class="dateInsert" type="date" name="resultDate" id="resultDate" required />
+                            <input class="dateInsert" type="date" name="resultDate" id="resultDate" />
                         </div>
                     </div>
                 </div>

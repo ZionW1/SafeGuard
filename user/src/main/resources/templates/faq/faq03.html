@@ -44,6 +44,28 @@
         
         /* 화살표 방향 제어 (예시로 두번째 열어둠) */
         .open .arrow { transform: rotate(180deg); }
+
+        /* 기본적으로 답변은 숨깁니다. */
+.faq-answer {
+    display: none; 
+    background-color: #f8f9fa;
+    padding: 30px 20px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #555;
+}
+
+/* 부모 요소에 'open' 클래스가 있을 때만 답변을 보여줍니다. */
+.faq-item.open .faq-answer {
+    display: block;
+}
+
+/* 화살표 스타일 보강 */
+.arrow {
+    font-weight: bold;
+    color: #999;
+    font-style: normal;
+}
     </style>
 </head>
 <body>
@@ -84,32 +106,72 @@
             <button class="tab">회원정보</button>
             <button class="tab">기타</button>
         </div>
-
-        <div class="faq-list">
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>[회원정보] 비밀번호 찾기 했는데 이메일이 안와요!</span>
-                    <span class="arrow">∨</span>
+        <th:block th:each="faq, stat : ${faqList}">
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class=title th:text="${faq.title}"></span>
+                        <span class="arrow">∨</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p th:utext="${faq.content}"></p>
+                    </div>
                 </div>
+                <!-- <div class="faq-item open">
+                    <div class="faq-question">
+                        <span>[회원정보] 관심 지역 변경은 어떻게 하나요?</span>
+                        <span class="arrow">∧</span>
+                    </div>
+                    <div class="faq-answer">
+                        강남맛집 홈페이지 좌측 중하단에 위치한<br><br>
+                        '내 맞춤 지역 캠페인'에서 수정 가능합니다.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>[회원정보] 로그인이 안 돼요!</span>
+                        <span class="arrow">∨</span>
+                    </div>
+                </div> -->
             </div>
-            <div class="faq-item open">
-                <div class="faq-question">
-                    <span>[회원정보] 관심 지역 변경은 어떻게 하나요?</span>
-                    <span class="arrow">∧</span>
-                </div>
-                <div class="faq-answer">
-                    강남맛집 홈페이지 좌측 중하단에 위치한<br><br>
-                    '내 맞춤 지역 캠페인'에서 수정 가능합니다.
-                </div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>[회원정보] 로그인이 안 돼요!</span>
-                    <span class="arrow">∨</span>
-                </div>
-            </div>
+        </th:block>
+        <div class="notice-box">
+            FAQ 카테고리에서 원하시는 내용이 없는 경우에만 <a href="https://pf.kakao.com/_cqFzX">1:1 문의</a>가 가능합니다. <a href="https://pf.kakao.com/_cqFzX">1:1 문의하기 > </a>
         </div>
     </main>
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 모든 질문(faq-question) 요소를 선택합니다.
+            const questions = document.querySelectorAll('.faq-question');
+    
+            questions.forEach(question => {
+                question.addEventListener('click', function() {
+                    // 클릭된 질문의 부모 요소인 .faq-item을 찾습니다.
+                    const faqItem = this.parentElement;
+                    const arrow = this.querySelector('.arrow');
+    
+                    // 현재 클릭한 아이템이 열려있는지 확인합니다.
+                    const isOpen = faqItem.classList.contains('open');
+    
+                    // (선택사항) 다른 열려있는 질문들을 모두 닫고 싶다면 아래 코드를 활성화하세요.
+                    /*
+                    document.querySelectorAll('.faq-item').forEach(item => {
+                        item.classList.remove('open');
+                        item.querySelector('.arrow').textContent = '∨';
+                    });
+                    */
+    
+                    // 상태를 반전시킵니다.
+                    if (isOpen) {
+                        faqItem.classList.remove('open');
+                        arrow.textContent = '∨';
+                    } else {
+                        faqItem.classList.add('open');
+                        arrow.textContent = '∧';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -2130,24 +2130,23 @@ table.bestPayList {
     }
 
     .faq_search {
-        width: 210px;
-        padding: 10px;
+        width: 100%;
+        padding: 10px 20px 10px 5px;
         font-size: 1em;
         border: none;
         border-bottom: 2px solid #ccc;
-        padding-right: 60px;
         outline: none;
         position: relative;
-        top: 20px;
+        top: 10px;
         left: 3%;
-        margin: 0 0 20px;
+        margin: 0 0 10px;
     }
 
     .faq_submit {
         display: inline-block;
         width: 25px;  /* 아이콘이 잘 안 보이면 크기를 조금 키워보세요 */
         height: 25px;
-        margin-top: 2px;
+        margin-top: 0px;
         border: 0 none;
         cursor: pointer; /* 마우스 올렸을 때 손가락 모양 추가 */
         text-indent: -9999em;
@@ -3366,6 +3365,16 @@ table.bestPayList {
     .mobile_view {
         display: block;
     }
+
+    .faq_form {
+        position: relative;
+        display: flex;
+        left: 0;
+        margin: 0;
+        text-align: right;
+        justify-content: left;
+    }
+
 }
 
   /* 더 작은 모바일 화면 (예: 480px 이하) */

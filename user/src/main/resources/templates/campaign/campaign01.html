@@ -659,19 +659,20 @@
             <!-- 이미지 경로는 마이클 환경에 맞게 수정해주세요 -->
             <!-- <img src="image2.jpg" alt="음식 이미지 2" /> -->
         </div>
-        <div class="mrg15-bottom">
-            <div class="campaign-point-text">포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span></div>
-            <div class="campaign-point-text"> [만근포인트 : 10,000]</div>
+        <div class="mobile_view">
+            <div class="mrg15-bottom">
+                <div class="campaign-point-text">포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span></div>
+                <div class="campaign-point-text"> [만근포인트 : 10,000]</div>
+            </div>
+            <nav class="tabs" role="tablist" aria-label="탭 메뉴">
+                <div class="tab active" role="tab" tabindex="0" aria-selected="true" aria-controls="campaign" id="tab-campaign">
+                    캠페인 정보
+                </div>
+                <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="calendar" id="tab-calendar">
+                    행사 기간
+                </div>
+            </nav>
         </div>
-        <nav class="tabs" role="tablist" aria-label="탭 메뉴">
-            <div class="tab active" role="tab" tabindex="0" aria-selected="true" aria-controls="campaign" id="tab-campaign">
-                캠페인 정보
-            </div>
-            <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="calendar" id="tab-calendar">
-                행사 기간
-            </div>
-        </nav>
-
         <div class="section-title">
             모집인원 <span class="highlight-pink">총 <span th:text="${campaignSelect.applicantsNum}"></span> / <span th:text="${campaignSelect.recruitmentNum}"></span>명</span>
         </div>

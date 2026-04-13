@@ -968,6 +968,10 @@ a {
     
 }
 
+.mobile_view {
+    display: none;
+}
+
 .wdt200{ 
     width: 200px;
 }
@@ -3058,7 +3062,7 @@ table.bestPayList {
         font-size: 0.875rem;
     }
     .tab.active {
-        color: #ff6600;
+        color: #fff;
         border-bottom: 2px solid #ff6600;
     }
     .tab .count {
@@ -3332,6 +3336,10 @@ table.bestPayList {
     .notice-box { background-color: #f9f9f9; padding: 20px; border-radius: 4px; margin: 20px 0 20px; line-height: 1.6; }
     .notice-box p { color: #d9534f; font-size: 14px; font-weight: 500; }
     .notice-box .star-text { color: #d9534f; }
+
+    .mobile_view {
+        display: block;
+    }
 }
 
   /* 더 작은 모바일 화면 (예: 480px 이하) */

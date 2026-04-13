@@ -471,30 +471,32 @@
                 
                 if(campaign.typeCode == "02"){
                     // 1. 체크할 항목들을 '변수명: 표시이름' 형태로 정의합니다.
-                    const requiredFields = {
-                        bankNm: "은행명",
-                        accountNumber: "계좌번호",
-                        depositor: "예금주",
-                        fullAddress: "주소",
-                        savedName: "프로필 이미지",
-                        email: "이메일",
-                        phoneHash: "전화번호"
-                    };
+                    if(currentBtn.dataset.guardType == "00" || currentBtn.dataset.guardType == "01") {
+                        const requiredFields = {
+                            bankNm: "은행명",
+                            accountNumber: "계좌번호",
+                            depositor: "예금주",
+                            fullAddress: "주소",
+                            savedName: "프로필 이미지",
+                            email: "이메일",
+                            phoneHash: "전화번호"
+                        };
 
-                    // 2. 반복문을 돌면서 비어있는 항목을 찾습니다.
-                    for (const [key, label] of Object.entries(requiredFields)) {
-                        if (!user[key]) { // 값이 null, undefined, "" 인 경우
-                            alert(label + " 정보가 없습니다.\n'내정보'에서 입력 후 저장해 주세요.");
-                            
-                            // 필요하다면 해당 입력창으로 포커스를 보낼 수도 있습니다.
-                            // document.getElementById(key).focus(); 
-                            
-                            return; // 하나라도 없으면 여기서 중단
+                        // 2. 반복문을 돌면서 비어있는 항목을 찾습니다.
+                        for (const [key, label] of Object.entries(requiredFields)) {
+                            if (!user[key]) { // 값이 null, undefined, "" 인 경우
+                                alert(label + " 정보가 없습니다.\n'내정보'에서 입력 후 저장해 주세요.");
+                                
+                                // 필요하다면 해당 입력창으로 포커스를 보낼 수도 있습니다.
+                                // document.getElementById(key).focus(); 
+                                
+                                return; // 하나라도 없으면 여기서 중단
+                            }
                         }
-                    }
 
-                    // 3. 모든 관문을 통과하면 실행
-                    console.log("모든 정보가 확인되었습니다!");
+                        // 3. 모든 관문을 통과하면 실행
+                        console.log("모든 정보가 확인되었습니다!");
+                    }
                 }
                 if(campaign.typeCode == "01"){
                     if(currentBtn.dataset.guardType == "00" || currentBtn.dataset.guardType == "01"){
@@ -504,7 +506,7 @@
                 }
 
                 if(campaign.typeCode == "03"){
-                    if(currentBtn.dataset.guardType != "03" || currentBtn.dataset.guardType != "04"){
+                    if(currentBtn.dataset.guardType != "03"){
                         alert('신청 권한이 없습니다.');
                         return;
                     }

@@ -29,6 +29,10 @@ public class CustomUser implements UserDetails {
         return id;
     }
 
+    public void setUserVo(UserVO userVo) {
+        this.userVo = userVo;
+    }
+
     /**
      * 🔐 권한 정보 메소드
      * ✅ UserDetails 를 CustomUser 로 구현하여,

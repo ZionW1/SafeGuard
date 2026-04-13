@@ -136,12 +136,12 @@
             </div>
             <div class="article-container">
 
-                <div class="article-info">
+                <!-- <div class="article-info">
                     <span class="notice-title" th:text="${useGuide01?.title ?: '제목이 없습니다.'}">게시글 제목입니다.
                         작성자: <span th:text="${useGuide01?.author}"></span> |
                         작성일: <span th:text="${useGuide01?.createdAt != null ? #temporals.format(useGuide01.createdAt, 'yyyy-MM-dd') : '-'}"></span>
                     </span>
-                </div>
+                </div> -->
                 <div class="article-content ck-content">
                     <p th:utext="${useGuide01?.content ?: '내용이 없습니다.'}"></p>
                 </div>

@@ -47,6 +47,7 @@
     max-width: 200px; /* 화면 크기에 따라 적절히 조절 (예: 150px~250px) */
     padding: 10px;
     vertical-align: middle;
+    text-align: center;
 }
 
 /* 2. 실제 스크롤이 발생하는 박스 */
@@ -106,23 +107,20 @@
                 </tr>
             </thead>
             <tbody>
+                <th:block th:each="notice, stat : ${noticeListFixed}">
+                    <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
+                        <td><img class="notice_image" src="/images/megaphone.png" alt="공지사항 이미지" ></td>
+                        <td class="title"><span th:text="${notice.title}"></span></td>
+                        <td style="text-align: center;" ><span th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}"></span></td>
+                    </tr>
+                </th:block>
                 <th:block th:each="notice, stat : ${noticeList}">
-                            <!-- <a th:href="|/admin/campaign/select?id=${campaign.id}|"> -->
-                            <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
-                                <td th:if="${notice.fixed != 'on'}"><span th:text="${stat.size - stat.index}"></span></td>
-                                <td span th:unless="${notice.fixed != 'on'}">[공지]</td>
-                                <td class="title"><span th:text="${notice.title}"></span></td>
-                                <td style="text-align: center;" ><span th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}"></span></td>
-                            </tr>
-                            <!-- <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
-                                <td style="text-align: center;" ><span>2</span></td>
-                                <td class="title"><div class="title-scroll-box">
-                                    여기에 아주아주 긴 공지사항 제목이 들어갑니다. 옆으로 밀어서 전체 내용을 확인하세요!
-                                </div></td>
-                                <td style="text-align: center;" ><span th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}"></span></td>
-                            </tr> -->
-                        </th:block>
-                    <!-- 실제 데이터는 서버에서 가져와서 반복문으로 채워질 부분 -->
+                    <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
+                        <td><span th:text="${stat.size - stat.index}"></span></td>
+                        <td class="title"><span th:text="${notice.title}"></span></td>
+                        <td style="text-align: center;" ><span th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}"></span></td>
+                    </tr>
+                </th:block>
             </tbody>
         </table>
         <table class="notice-table_mobile">
@@ -137,13 +135,15 @@
                 </tr>
             </thead>
             <tbody>
+                <th:block th:each="notice, stat : ${noticeListFixed}">
+                    <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
+                        <td><img class="notice_image" src="/images/megaphone.png" alt="공지사항 이미지" ></td>
+                        <td class="title"><span th:text="${notice.title}"></span></td>
+                    </tr>
+                </th:block>
                 <th:block th:each="notice, stat : ${noticeList}">
                     <tr th:onclick="|location.href='@{/notice02(id=${notice.adminContentId})}'|">
-                        
-                        <td style="text-align: center;">
-                            <span th:if="${notice.fixed != 'on'}" th:text="${stat.size - stat.index}"></span>
-                            <span th:unless="${notice.fixed != 'on'}"></span>
-                        </td>
+                        <td><span th:text="${stat.size - stat.index}"></span></td>
                         <td class="title"><span th:text="${notice.title}"></span></td>
                     </tr>
                 </th:block>

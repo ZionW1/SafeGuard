@@ -21,8 +21,15 @@ public class NoticeServiceImpl implements NoticeService {
         List<AdminContentVO> noticeList = noticeMapper.noticeList();
 
         return noticeList;
-
     }
+
+    @Override
+    public List<AdminContentVO> noticeListFixed() throws Exception {
+        // TODO Auto-generated method stub
+        List<AdminContentVO> noticeListFixed = noticeMapper.noticeListFixed();
+
+        return noticeListFixed;    }
+    
 
     @Override
     public AdminContentVO noticeSelect(String id) throws Exception {
@@ -31,5 +38,5 @@ public class NoticeServiceImpl implements NoticeService {
 
         return noticeSelect;
     }
-    
+
 }

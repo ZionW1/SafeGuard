@@ -2162,6 +2162,14 @@ table.bestPayList {
         left: -2%;
     }
 
+    .notice_image {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #ccc; /* 이미지 없을 때 회색 원 */
+        display: inline-block;
+    }
+
   /* 모바일 화면 (예: 768px 이하) */
     @media (max-width: 768px) {
     .desktop-header {
@@ -3198,6 +3206,7 @@ table.bestPayList {
         background-color: #ccc; /* 이미지 없을 때 회색 원 */
         display: inline-block;
     }
+
     .profile .username {
         margin-top: 8px;
         font-weight: 700;
@@ -3567,7 +3576,7 @@ table.bestPayList {
     }
     
     .notice-table_mobile td.title {
-        text-align: left;      /* 제목은 왼쪽 정렬 */
+        text-align: center;      /* 제목은 왼쪽 정렬 */
         color: #333;
         padding-left: 15px;    /* 번호와 떨어뜨리는 여백 */
         cursor: pointer;

@@ -36,9 +36,31 @@
         </if> -->
         content_type='NOTICE'
         and is_active = 'Y'
+        and fixed = 'N'
         <!-- <if test="option.orderCode == 0">
             order by AdminContent_id desc
         </if> -->
+        order by fixed desc, Admin_Content_id desc
+    </select>
+
+    <select id="noticeListFixed" resultType="AdminContentVO">
+        <![CDATA[
+        SELECT 
+            Admin_Content_id,
+            title,
+            content,
+            content_type,
+            author,
+            fixed,
+            created_at,
+            updated_at
+        FROM 
+            Admin_Content
+        where
+        ]]>
+        content_type='NOTICE'
+        and is_active = 'Y'
+        and fixed = 'on'
         order by fixed desc, Admin_Content_id desc
     </select>
 

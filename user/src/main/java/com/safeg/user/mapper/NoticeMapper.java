@@ -13,5 +13,7 @@ public interface NoticeMapper {
     public List<AdminContentVO> noticeList() throws Exception;
 
     public AdminContentVO noticeSelect(String id) throws Exception;
+
+    public List<AdminContentVO> noticeListFixed() throws Exception;
     
 }

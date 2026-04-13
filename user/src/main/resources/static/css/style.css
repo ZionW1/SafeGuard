@@ -2234,8 +2234,8 @@ table.bestPayList {
         justify-self: end; /* start, center, stretch 등 선택 가능 */
     }
     .campaign-image {
-        width: 165px;
-        height: 165px;
+        width: 220px;
+        height: 220px;
         object-fit: cover;
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
@@ -2408,7 +2408,7 @@ table.bestPayList {
 
     .campaign-stats {
         font-weight: bold;
-        font-size: 1.1em;
+        font-size: 1.0em;
         /* padding: 10px 0px; */
         color: #333;
         margin-bottom: 10px;
@@ -2828,6 +2828,24 @@ table.bestPayList {
         margin-left: 0%;
     }
 
+/* 캠페인 카드 (덮어쓰기) */
+.campaign-card {
+    flex: 0 0 auto;
+    width: 220px;
+    /* border: 1px solid #ccc; */
+    border-radius: 8px;
+    background: white;
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+    scroll-snap-align: start;
+}
+
+.campaign-tags .leader {
+    padding: 8px 10px;
+    font-size: 1.em;
+    background: #f8e1ff;
+    color: #b151ff;
+}
+
         .campaign-title-text {
             display: -webkit-box;
             -webkit-box-orient: vertical;
@@ -2836,8 +2854,7 @@ table.bestPayList {
             text-overflow: ellipsis;
             
             /* 너비를 부모에 꽉 차게 강제 */
-            width: 100%; 
-            max-width: 100%; /* 추가 */
+            width: 220px;
             
             font-size: 1.2rem;     /* 1.4em은 모바일에서 너무 커서 한 줄에 몇 자 안 들어갈 수 있어요 */
             line-height: 1.4;
@@ -2854,7 +2871,7 @@ table.bestPayList {
         }
 
         .title-overlay {
-            width: 45%;
+            width: 100%;
         }
     
 
@@ -3611,5 +3628,40 @@ table.bestPayList {
         max-width: 100%;
         height: auto;
         display: block;
+    }
+
+    .campaign-title-text {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2; /* 2줄 제한 */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        
+        /* 너비를 부모에 꽉 차게 강제 */
+        width: 165px;
+        
+        font-size: 1.2rem;     /* 1.4em은 모바일에서 너무 커서 한 줄에 몇 자 안 들어갈 수 있어요 */
+        line-height: 1.4;
+        height: 2.8em;        /* (line-height 1.4 * 2줄) 딱 맞춰주기 */
+        
+        word-break: break-all; 
+        white-space: normal;  /* 중요: white-space가 nowrap이면 한 줄로만 나옵니다 */
+    }
+
+    .campaign-image {
+        width: 165px;
+        height: 165px;
+        object-fit: cover;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        display: flex;
+    }
+
+    /* 내부 span들은 한 줄로 흐르게 처리 */
+    .campaign-title-text span {
+        display: inline;
+        vertical-align: baseline;
     }
 }

@@ -73,14 +73,12 @@
     </insert>
 
     <update id="noticeUpdate" parameterType="AdminContentVO">
-        <![CDATA[
         UPDATE Admin_Content
         SET title = #{title},
             content = #{content},
-            fixed = #{fixed},
+            <if test="fixed != null">fixed = #{fixed},</if>
             updated_at = NOW()
         WHERE Admin_Content_id = #{adminContentId}
-        ]]>
     </update>
 
     <update id="noticeDelete">

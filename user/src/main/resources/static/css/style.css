@@ -690,11 +690,10 @@ a {
   /* 사이드바 스타일 */
 .sidebar {
     width: 16%;
-    /* width: 100%; */
     border-right: 1px solid #ddd;
     box-sizing: border-box;
     float: left;
-    height: 55vh; /* 필요에 따라 조절 */
+    height: 100vh;
 }
 
 .sidebar h3, .sidebar h4 {

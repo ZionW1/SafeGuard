@@ -19,6 +19,13 @@
         }
         .article-info { margin: 10px 0 0 5%; font-size: 1.2em; color: #666; margin-bottom: 20px; font-weight: 700;}
         .article-content { line-height: 1.6; }
+
+        .article-content ul {
+            list-style-position: inside; /* 점을 글자 바로 옆(안쪽)으로 이동 */
+            padding-left: 0;             /* 기본 왼쪽 여백 제거 */
+            display: inline-block;       /* 내용만큼만 너비를 차지하게 함 */
+            text-align: left;            /* 글자들은 왼쪽 정렬 유지 */
+        }
         /* CKEditor가 생성하는 HTML 구조에 따라 필요한 CSS를 추가하여 스타일을 유지 */
         .ck-content { /* CKEditor의 기본 클래스 */
             margin-top: 50px;

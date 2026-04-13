@@ -48,6 +48,7 @@
             content,
             content_type,
             author,
+            fixed,
             created_at,
             updated_at
         FROM 
@@ -61,8 +62,8 @@
 
     <insert id="noticeInsert" parameterType="AdminContentVO">
         <![CDATA[
-        INSERT INTO Admin_Content (title, content, content_type, author)
-        VALUES (#{title}, #{content}, #{contentType}, #{author})
+        INSERT INTO Admin_Content (title, content, content_type, author, fixed)
+        VALUES (#{title}, #{content}, #{contentType}, #{author}, #{fixed})
         ]]>
     </insert>
 
@@ -71,6 +72,7 @@
         UPDATE Admin_Content
         SET title = #{title},
             content = #{content},
+            fixed = #{fixed},
             updated_at = NOW()
         WHERE Admin_Content_id = #{adminContentId}
         ]]>

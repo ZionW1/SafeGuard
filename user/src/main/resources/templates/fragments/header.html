@@ -44,7 +44,7 @@
                     </th:block>
                     <th:block sec:authorize="isAuthenticated()">
                         <div class="welcome-msg">안녕하세요, <span sec:authentication="name"></span>님!</div>
-                        <a th:href="@{/mypage/calendarPage(userId=${#authentication.principal.username})}" class="auth-link">마이페이지</a>
+                        <a th:href="@{/mypage/calendarPage(userId=${#authentication.principal.username})}" class="auth-link">내 정보</a>
                         <a href="javascript:logout()" class="auth-link">로그아웃</a>
                     </th:block>
                 </div>

@@ -84,4 +84,39 @@ public class CustomUser implements UserDetails {
             ", authorities=" + getAuthorities() +
             '}';
     }
+
+    @ToString.Include
+    public String getBankNm() {
+        return userVo.getBankNm();
+    }
+
+    @ToString.Include
+    public String getAccountNumber() {
+        return userVo.getAccountNumber();
+    }
+
+    @ToString.Include
+    public String getDepositor() {
+        return userVo.getDepositor();
+    }
+
+    @ToString.Include
+    public String getPhoneHash() {
+        return userVo.getPhoneHash();
+    }
+
+    @ToString.Include
+    public String getEmail() {
+        return userVo.getEmail();
+    }
+
+    @ToString.Include
+    public String getFullAddress() {
+        return userVo.getFullAddress();
+    }
+
+    @ToString.Include
+    public String getSavedName() {
+        return userVo.getSavedName();
+    }
 }

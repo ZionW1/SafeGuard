@@ -61,7 +61,6 @@ public class SecurityConfig {
             .requestMatchers("/auth/**").permitAll()
             .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated());
-        log.info("::::: SecurityFilterChain - 인가 설정 완료 :::::");
         // 폼 로그인 설정
         http.formLogin(login -> login.loginPage("/login") // 로그인 페이지 경로
             .loginProcessingUrl("/login")  // 로그인 요청 경로

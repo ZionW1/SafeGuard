@@ -21,21 +21,6 @@ public class AuthController {
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
-    
-    // 비동기 호출 메서드
-    // @PostMapping("/sendCode")
-    // public CompletableFuture<ResponseEntity<String>> sendCode(@RequestParam("phoneNumber") String phoneNumber) {
-    //     log.info("sendCode " + phoneNumber);
-    //     return authService.sendAuthCode(phoneNumber)
-    //         .thenApply(success -> {
-    //             if (success) {
-    //                 return ResponseEntity.ok("인증번호 발송 성공");
-    //             } else {
-    //                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("문자 발송 실패");
-    //             }
-    //         }
-    //     );
-    // }
 
     @PostMapping("/sendCode")
     public CompletableFuture<ResponseEntity<String>> sendCode(@RequestParam("phoneNumber") String phoneNumber) throws Exception{

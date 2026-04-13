@@ -234,164 +234,163 @@
 </script>
 <script th:inline="javascript">
     let campaign = /*[[${campaignSelect}]]*/ null;
+    let user = /*[[${user}]]*/ null;
     console.log("campaign : " + JSON.stringify(campaign))
     document.addEventListener('DOMContentLoaded', function() {
         kakao.maps.load(function() {
-        // var container = document.getElementById('map');
-        // var options = {
-        //     center: new kakao.maps.LatLng(33.450701, 126.570667),
-        //     level: 3
-        // };
+            // var container = document.getElementById('map');
+            // var options = {
+            //     center: new kakao.maps.LatLng(33.450701, 126.570667),
+            //     level: 3
+            // };
 
-        // var map = new kakao.maps.Map(container, options);
+            // var map = new kakao.maps.Map(container, options);
 
-        // // 마커가 표시될 위치입니다 
-        // var markerPosition  = new kakao.maps.LatLng(33.450701, 126.570667); 
+            // // 마커가 표시될 위치입니다 
+            // var markerPosition  = new kakao.maps.LatLng(33.450701, 126.570667); 
 
-        // // 마커를 생성합니다
-        // var marker = new kakao.maps.Marker({
-        //     position: markerPosition
-        // });
+            // // 마커를 생성합니다
+            // var marker = new kakao.maps.Marker({
+            //     position: markerPosition
+            // });
 
-        // // 마커가 지도 위에 표시되도록 설정합니다
-        // marker.setMap(map);
+            // // 마커가 지도 위에 표시되도록 설정합니다
+            // marker.setMap(map);
 
 
-        console.log("지도")
-        var xx = "";
-        var yy = "";
-        
-        // 주소-좌표 변환 객체를 생성합니다
-        var geocoder = new kakao.maps.services.Geocoder();
+            console.log("지도")
+            var xx = "";
+            var yy = "";
+            
+            // 주소-좌표 변환 객체를 생성합니다
+            var geocoder = new kakao.maps.services.Geocoder();
 
         // 주소로 좌표를 검색합니다
-        geocoder.addressSearch(campaign.placeAddr, function(result, status) {
-            // 정상적으로 검색이 완료됐으면 
+            geocoder.addressSearch(campaign.placeAddr, function(result, status) {
+                // 정상적으로 검색이 완료됐으면 
                 if (status === kakao.maps.services.Status.OK) {
 
-                    xx = result[0].x;
-                    yy = result[0].y;
-                    
-                    console.log("yyyyyy : " + yy);
-                    console.log("xxxxxx : " + xx);
-                    
-                    
-                var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                        xx = result[0].x;
+                        yy = result[0].y;
+                        
+                        console.log("yyyyyy : " + yy);
+                        console.log("xxxxxx : " + xx);
+                        
+                        
+                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-                // 결과값으로 받은 위치를 마커로 표시합니다
-                var marker = new kakao.maps.Marker({
-                    map: map,
-                    position: coords
-                });
-
-                // 인포윈도우로 장소에 대한 설명을 표시합니다
-                var infowindow = new kakao.maps.InfoWindow({
-                    content: '<div style="width:150px;text-align:center;padding:6px 0;">주소지</div>'
-                });
-                infowindow.open(map, marker);
-
-                // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-                map.setCenter(coords);
-            } 
-        }); 
-        
-        
-        var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
-        var options = { //지도를 생성할 때 필요한 기본 옵션
-            center: new kakao.maps.LatLng(yy, xx), //지도의 중심좌표.
-            level: 3 //지도의 레벨(확대, 축소 정도)
-        };
-
-        var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
-    });
-    // campaignSelect.eventPeriodStr
-    var calendarEl = document.getElementById('calendar');
-    var calendar_month = campaign.eventPeriodStr;
-    console.log("calendar_month" + calendar_month);
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth', // 월별 보기
-        initialDate: calendar_month,   // ← 원하는 날짜
-        locale: 'ko', // 한국어 설정
-        headerToolbar: {
-            right: 'prev next today',
-        },
-        width: '100%',
-        height: 600,
-        events: function(fetchInfo, successCallback, failureCallback) {
-            console.log("cmpaign.apapPeriodStr + "  + campaign.campaignId);
-            // Spring Boot 백엔드 API 호출
-            fetch("/campaign07?id=" + campaign.campaignId)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    // 데이터베이스에서 가져온 JSON 데이터를 FullCalendar 이벤트 형식으로 변환하여 전달
-                    // (백엔드에서 이미 변환했다면 바로 successCallback(data) 호출)그리고 event날짜랑 event 없는 날짜랑 크기를 똑같이 하고 싶어
-                    let events = [];
-            // data가 유효한 객체인지 확인
-            if (data && typeof data === 'object') { 
-                // data가 배열이 아닌 단일 객체인 경우
-                // FullCalendar는 이벤트를 배열 형태로 기대하므로, 단일 객체를 배열에 담아서 전달
-                // events.push({
-                //     // campaignTitle 또는 원하는 다른 필드를 title로 사용
-                //     title: '신청일', // 달력에 표시될 제목
-                //     start: data.appPeriodStr,
-                //     end: data.appPeriodEnd,
-                //     // 다른 필요한 정보들을 추가할 수 있어 (예: url, description 등)
-                // });
-                 // 1. 신청 기간 (appPeriodStr ~ appPeriodEnd)
-                if (data.appPeriodStr && data.appPeriodEnd) {
-                    let appEndDate = new Date(data.appPeriodEnd); // 'YYYY-MM-DD' 문자열을 Date 객체로 변환
-                    appEndDate.setDate(appEndDate.getDate() + 1); // 현재 Date 객체에 하루를 더해줘
-                    let formattedAppEndDate = appEndDate.toISOString().slice(0, 10); 
-
-                    events.push({
-                        title: '신청 기간', // 이 기간의 제목
-                        start: data.appPeriodStr,
-                        end: formattedAppEndDate,
-                        color: '#4285F4', // 파란색 (구분하기 위해)
-                        extendedProps: { // 추가 정보를 여기에 넣을 수 있어
-                            type: '신청'
-                        }
+                    // 결과값으로 받은 위치를 마커로 표시합니다
+                    var marker = new kakao.maps.Marker({
+                        map: map,
+                        position: coords
                     });
-                }
 
-                // 2. 이벤트 진행 기간 (eventPeriodStr ~ eventPeriodEnd)
-                // campaignVO에 eventPeriodStr, eventPeriodEnd 필드가 있다면 활용
-                if (data.eventPeriodStr && data.eventPeriodEnd) {
-                    let appEndDate = new Date(data.eventPeriodEnd); // 'YYYY-MM-DD' 문자열을 Date 객체로 변환
-                    appEndDate.setDate(appEndDate.getDate() + 1); // 현재 Date 객체에 하루를 더해줘
-                    let formattedAppEndDate = appEndDate.toISOString().slice(0, 10); 
-
-                    events.push({
-                        title: '이벤트 진행', // 이 기간의 제목
-                        start: data.eventPeriodStr,
-                        end: formattedAppEndDate,
-                        color: '#DB4437', // 빨간색 (구분하기 위해)
-                        extendedProps: {
-                            type: '진행'
-                        }
+                    // 인포윈도우로 장소에 대한 설명을 표시합니다
+                    var infowindow = new kakao.maps.InfoWindow({
+                        content: '<div style="width:150px;text-align:center;padding:6px 0;">주소지</div>'
                     });
-                }
-                
-                // 3. 결과 발표일 (resultDate)
-                // campaignVO에 resultDate 필드가 있다면 활용
-                
+                    infowindow.open(map, marker);
 
-                // 여기에 campaignVO 내에 다른 날짜 관련 필드가 더 있다면,
-                // 위와 같은 방식으로 if문과 push를 사용하여 추가하면 돼!
-            } else {
-                console.warn('Server response for /campaignSelect was not a valid object:', data);
+                    // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+                    map.setCenter(coords);
+                } 
+            });
+            var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+            var options = { //지도를 생성할 때 필요한 기본 옵션
+                center: new kakao.maps.LatLng(yy, xx), //지도의 중심좌표.
+                level: 3 //지도의 레벨(확대, 축소 정도)
+            };
+
+            var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+        });
+        // campaignSelect.eventPeriodStr
+        var calendarEl = document.getElementById('calendar');
+        var calendar_month = campaign.eventPeriodStr;
+        console.log("calendar_month" + calendar_month);
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth', // 월별 보기
+            initialDate: calendar_month,   // ← 원하는 날짜
+            locale: 'ko', // 한국어 설정
+            headerToolbar: {
+                right: 'prev next today',
+            },
+            width: '100%',
+            height: 600,
+            events: function(fetchInfo, successCallback, failureCallback) {
+                console.log("cmpaign.apapPeriodStr + "  + campaign.campaignId);
+                // Spring Boot 백엔드 API 호출
+                fetch("/campaign07?id=" + campaign.campaignId)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        // 데이터베이스에서 가져온 JSON 데이터를 FullCalendar 이벤트 형식으로 변환하여 전달
+                        // (백엔드에서 이미 변환했다면 바로 successCallback(data) 호출)그리고 event날짜랑 event 없는 날짜랑 크기를 똑같이 하고 싶어
+                        let events = [];
+                // data가 유효한 객체인지 확인
+                if (data && typeof data === 'object') { 
+                    // data가 배열이 아닌 단일 객체인 경우
+                    // FullCalendar는 이벤트를 배열 형태로 기대하므로, 단일 객체를 배열에 담아서 전달
+                    // events.push({
+                    //     // campaignTitle 또는 원하는 다른 필드를 title로 사용
+                    //     title: '신청일', // 달력에 표시될 제목
+                    //     start: data.appPeriodStr,
+                    //     end: data.appPeriodEnd,
+                    //     // 다른 필요한 정보들을 추가할 수 있어 (예: url, description 등)
+                    // });
+                    // 1. 신청 기간 (appPeriodStr ~ appPeriodEnd)
+                    if (data.appPeriodStr && data.appPeriodEnd) {
+                        let appEndDate = new Date(data.appPeriodEnd); // 'YYYY-MM-DD' 문자열을 Date 객체로 변환
+                        appEndDate.setDate(appEndDate.getDate() + 1); // 현재 Date 객체에 하루를 더해줘
+                        let formattedAppEndDate = appEndDate.toISOString().slice(0, 10); 
+
+                        events.push({
+                            title: '신청 기간', // 이 기간의 제목
+                            start: data.appPeriodStr,
+                            end: formattedAppEndDate,
+                            color: '#4285F4', // 파란색 (구분하기 위해)
+                            extendedProps: { // 추가 정보를 여기에 넣을 수 있어
+                                type: '신청'
+                            }
+                        });
+                    }
+
+                    // 2. 이벤트 진행 기간 (eventPeriodStr ~ eventPeriodEnd)
+                    // campaignVO에 eventPeriodStr, eventPeriodEnd 필드가 있다면 활용
+                    if (data.eventPeriodStr && data.eventPeriodEnd) {
+                        let appEndDate = new Date(data.eventPeriodEnd); // 'YYYY-MM-DD' 문자열을 Date 객체로 변환
+                        appEndDate.setDate(appEndDate.getDate() + 1); // 현재 Date 객체에 하루를 더해줘
+                        let formattedAppEndDate = appEndDate.toISOString().slice(0, 10); 
+
+                        events.push({
+                            title: '이벤트 진행', // 이 기간의 제목
+                            start: data.eventPeriodStr,
+                            end: formattedAppEndDate,
+                            color: '#DB4437', // 빨간색 (구분하기 위해)
+                            extendedProps: {
+                                type: '진행'
+                            }
+                        });
+                    }
+                    
+                    // 3. 결과 발표일 (resultDate)
+                    // campaignVO에 resultDate 필드가 있다면 활용
+                    
+
+                    // 여기에 campaignVO 내에 다른 날짜 관련 필드가 더 있다면,
+                    // 위와 같은 방식으로 if문과 push를 사용하여 추가하면 돼!
+                } else {
+                    console.warn('Server response for /campaignSelect was not a valid object:', data);
+                }
+                        successCallback(events);
+                    })
+                    .catch(error => {
+                        console.log('Error fetching events:' + error);
+                        failureCallback(error);
+                    });
             }
-                    successCallback(events);
-                })
-                .catch(error => {
-                    console.log('Error fetching events:' + error);
-                    failureCallback(error);
-                });
-        }
-        // 다른 FullCalendar 옵션들 (예: 클릭 이벤트, 드래그앤드롭 등)
-    });
-    calendar.render();
+            // 다른 FullCalendar 옵션들 (예: 클릭 이벤트, 드래그앤드롭 등)
+        });
+        calendar.render();
 
         // let whiteSal = campaign.whiteSal;
         // let greenSal = campaign.greenSal;
@@ -418,81 +417,48 @@
         document.querySelectorAll('.d-Day').forEach(function(badge) {
 
             console.log("badge + " + badge);
-        if (badge) {
-            const dateStr = badge.dataset.eventEndDateStr;
-            console.log("dataStr : " + dateStr)
+            if (badge) {
+                const dateStr = badge.dataset.eventEndDateStr;
+                console.log("dataStr : " + dateStr)
 
-            if (!dateStr) {
-                badge.textContent = '기간 미정';
-            } else {
-                const eventDate = new Date(dateStr.replace(/\./g, '/'));
-                eventDate.setHours(0, 0, 0, 0);
-                if (isNaN(eventDate.getTime())) {
-                    badge.textContent = '날짜 오류';
+                if (!dateStr) {
+                    badge.textContent = '기간 미정';
                 } else {
-                    const diffDays = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
-                    if (diffDays === 0) {
-                        badge.textContent = `오늘이 신청 마지막 날이에요.`;
-                        badge.classList.add('today');
-                    } else if (diffDays > 0) {
-                        badge.textContent = `신청기간이 D-${diffDays} 남았어요`;
+                    const eventDate = new Date(dateStr.replace(/\./g, '/'));
+                    eventDate.setHours(0, 0, 0, 0);
+                    if (isNaN(eventDate.getTime())) {
+                        badge.textContent = '날짜 오류';
                     } else {
-                        badge.textContent = '마감됨';
+                        const diffDays = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
+                        if (diffDays === 0) {
+                            badge.textContent = `오늘이 신청 마지막 날이에요.`;
+                            badge.classList.add('today');
+                        } else if (diffDays > 0) {
+                            badge.textContent = `신청기간이 D-${diffDays} 남았어요`;
+                        } else {
+                            badge.textContent = '마감됨';
+                        }
                     }
                 }
             }
-        }
         });
-
-    });
-    function login(){
-        var link = '/user01';
-        location.href=link;
-    }
-    
-            // document.querySelectorAll('.d-Day').forEach(function(badge) {
-            //     const dateStr = badge.dataset.eventEndDateStr; // ${item.eventPeriodEnd != null ? #temporals.format(item.eventPeriodEnd, 'yyyy/MM/dd') : ''}
-            //     console.log("dataStr : " + dateStr)
-            //     if (!dateStr) {
-            //     badge.textContent = '기간 미정';
-            //     return;
-            //     }
-            //     const eventDate = new Date(dateStr.replace(/\./g, '/'));
-            //     eventDate.setHours(0, 0, 0, 0);
-            
-            //     if (isNaN(eventDate.getTime())) {
-            //     badge.textContent = '날짜 오류';
-            //     return;
-            //     }
-            
-            //     const diffDays = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
-            //     if (diffDays === 0) {
-            //     badge.textContent = '오늘마감';
-            //     badge.classList.add('today');
-            //     } else if (diffDays > 0) {
-            //     badge.textContent = `D-${diffDays}`;
-            //     } else {
-            //     badge.textContent = '마감됨';
-            //     }
-            // });
-            document.addEventListener('DOMContentLoaded', function() {
         const applyBtn = document.getElementById('btn-submit-apply');
         const applyButtons = document.querySelectorAll('.btn-apply');
         if (!applyButtons) return;
-
         applyButtons.forEach(btn => {
             btn.addEventListener('click', function() {
                 const currentBtn = this; // 클릭된 바로 그 버튼
+                console.log("campaign : " + JSON.stringify(user))
                 console.log("dataset : " + JSON.stringify(currentBtn.dataset));
                 const csrfTokenTag = document.querySelector('meta[name="_csrf"]');
-            const csrfHeaderTag = document.querySelector('meta[name="_csrf_header"]');
-            
-            if (!csrfTokenTag || !csrfHeaderTag) {
-                alert("보안 토큰을 찾을 수 없습니다.");
-                return;
-            }
-            const csrfToken = csrfTokenTag.getAttribute('content');
-            const csrfHeader = csrfHeaderTag.getAttribute('content'); // 에러 해결 지점
+                const csrfHeaderTag = document.querySelector('meta[name="_csrf_header"]');
+                
+                if (!csrfTokenTag || !csrfHeaderTag) {
+                    alert("보안 토큰을 찾을 수 없습니다.");
+                    return;
+                }
+                const csrfToken = csrfTokenTag.getAttribute('content');
+                const csrfHeader = csrfHeaderTag.getAttribute('content'); // 에러 해결 지점
                 const applyData = {
                     userNo: currentBtn.dataset.userNo,
                     userId: currentBtn.dataset.userId,
@@ -502,12 +468,41 @@
                     guardType: currentBtn.dataset.guardType,
                     applicantsNum: currentBtn.dataset.applicantsNum
                 };
+                
+                if(campaign.typeCode == "02"){
+                    // 1. 체크할 항목들을 '변수명: 표시이름' 형태로 정의합니다.
+                    const requiredFields = {
+                        bankNm: "은행명",
+                        accountNumber: "계좌번호",
+                        depositor: "예금주",
+                        fullAddress: "주소",
+                        savedName: "프로필 이미지",
+                        email: "이메일",
+                        phoneHash: "전화번호"
+                    };
 
-                if(currentBtn.dataset.guardType == "00" || currentBtn.dataset.guardType == "01"){
-                    alert('신청 권한이 없습니다. "경호원 신청" 후 캠페인 신청 해주세요.');
-                    return;
+                    // 2. 반복문을 돌면서 비어있는 항목을 찾습니다.
+                    for (const [key, label] of Object.entries(requiredFields)) {
+                        if (!user[key]) { // 값이 null, undefined, "" 인 경우
+                            alert(label + " 정보가 없습니다.\n'내정보'에서 입력 후 저장해 주세요.");
+                            
+                            // 필요하다면 해당 입력창으로 포커스를 보낼 수도 있습니다.
+                            // document.getElementById(key).focus(); 
+                            
+                            return; // 하나라도 없으면 여기서 중단
+                        }
+                    }
+
+                    // 3. 모든 관문을 통과하면 실행
+                    console.log("모든 정보가 확인되었습니다!");
                 }
-
+                if(campaign.typeCode == "01"){
+                    if(currentBtn.dataset.guardType == "00" || currentBtn.dataset.guardType == "01"){
+                        alert('신청 권한이 없습니다. "경호원 신청" 후 캠페인 신청 해주세요.');
+                        return;
+                    }
+                }
+                
                 fetch('/apply', {
                     method: 'POST',
                     headers: {
@@ -539,6 +534,39 @@
                 });
             });
         });
+    });
+        function login(){
+            var link = '/user01';
+            location.href=link;
+        }
+    
+            // document.querySelectorAll('.d-Day').forEach(function(badge) {
+            //     const dateStr = badge.dataset.eventEndDateStr; // ${item.eventPeriodEnd != null ? #temporals.format(item.eventPeriodEnd, 'yyyy/MM/dd') : ''}
+            //     console.log("dataStr : " + dateStr)
+            //     if (!dateStr) {
+            //     badge.textContent = '기간 미정';
+            //     return;
+            //     }
+            //     const eventDate = new Date(dateStr.replace(/\./g, '/'));
+            //     eventDate.setHours(0, 0, 0, 0);
+            
+            //     if (isNaN(eventDate.getTime())) {
+            //     badge.textContent = '날짜 오류';
+            //     return;
+            //     }
+            
+            //     const diffDays = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
+            //     if (diffDays === 0) {
+            //     badge.textContent = '오늘마감';
+            //     badge.classList.add('today');
+            //     } else if (diffDays > 0) {
+            //     badge.textContent = `D-${diffDays}`;
+            //     } else {
+            //     badge.textContent = '마감됨';
+            //     }
+            // });
+            document.addEventListener('DOMContentLoaded', function() {
+        
 
         // applyBtn.addEventListener('click', function() {
         //     // CSRF 토큰 정보 (Spring Security 사용 시 필수)
@@ -609,14 +637,17 @@
                     <span class="highlight-pink">총 <span th:text="${campaignSelect.applicantsNum}"></span> / <span th:text="${campaignSelect.recruitmentNum}"></span>명</span>
                 </div>
             </div>
-            <div class="mrg15-bottom ">
+            <!-- <div class="mrg15-bottom ">
                 <span class="d-Day d-Day-info"th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
                         th:data-campaign-id="${campaignSelect.campaignId}"></span>
-            </div>
+            </div> -->
             
             <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile-img"/><br>
         </div>
-        
+        <div>
+            <span class="d-Day d-Day-info" th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
+                th:data-campaign-id="${campaignSelect.campaignId}"></span>
+        </div>
     </section>
     <section class="left-view">
         <div class="campaignTitle">

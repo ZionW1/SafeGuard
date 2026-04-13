@@ -500,26 +500,33 @@ a {
     color: #b151ff; /* 글자색을 살짝 연하게 할 수도 있어 */
   }
 
-  .campaign-title-text {
-    /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
-    /* display: -webkit-box; */
+.campaign-title-text {
+    display: -webkit-box;
     -webkit-box-orient: vertical;
-    
-    /* 2. 핵심 설정: 최대 몇 줄까지 보여줄지 결정 */
-    -webkit-line-clamp: 2; 
-    
-    /* 3. 넘치는 부분 처리 */
+    -webkit-line-clamp: 2; /* 2줄 제한 */
     overflow: hidden;
     text-overflow: ellipsis;
     
-    /* 4. 기존 한 줄 고정 코드는 반드시 삭제하거나 주석 처리하세요 */
-    /* white-space: nowrap;  <- 이 줄이 있으면 무조건 한 줄만 나옵니다. 삭제 필수! */
+    /* 너비를 부모에 꽉 차게 강제 */
+    width: 100%; 
+    max-width: 100%; /* 추가 */
+    
+    font-size: 1.2rem;     /* 1.4em은 모바일에서 너무 커서 한 줄에 몇 자 안 들어갈 수 있어요 */
+    line-height: 1.4;
+    height: 2.8em;        /* (line-height 1.4 * 2줄) 딱 맞춰주기 */
+    
+    word-break: break-all; 
+    white-space: normal;  /* 중요: white-space가 nowrap이면 한 줄로만 나옵니다 */
+}
 
-    /* 추가 디자인 제안 */
+/* 내부 span들은 한 줄로 흐르게 처리 */
+.campaign-title-text span {
+    display: inline;
+    vertical-align: baseline;
+}
+
+.title-overlay {
     width: 100%;
-    font-size: 1.1em;
-    font-weight: 500;
-    line-height: 1.4;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
 }
 
 .campaign-info {
@@ -1948,11 +1955,6 @@ table.bestPayList {
 }
 
 .d-Day-info {
-    width: 200px;
-    position: absolute;
-    top: 120px;
-    left: 0;
-    height: 20px;
     font-weight: 700;
     color: #ff6c26;
 }
@@ -2642,14 +2644,14 @@ table.bestPayList {
         margin-bottom: 0px;
         line-height: 1;
          /* 두 줄 말줄임 설정 (가장 추천하는 모바일 방식) */
-    display: -webkit-box;
-    -webkit-line-clamp: 2;    /* 보여줄 줄 수 (2줄) */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    
-    /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
-    /* white-space: nowrap; */ 
+        display: -webkit-box;
+        -webkit-line-clamp: 2;    /* 보여줄 줄 수 (2줄) */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        
+        /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
+        /* white-space: nowrap; */ 
     }
     
     .notice-table {
@@ -2813,26 +2815,39 @@ table.bestPayList {
     .mypage_info_form {
         margin-left: 0%;
     }
-    .campaign-title-text {
-        /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
-        /* display: -webkit-box; */
-        -webkit-box-orient: vertical;
-        
-        /* 2. 핵심 설정: 최대 몇 줄까지 보여줄지 결정 */
-        -webkit-line-clamp: 2; 
-        
-        /* 3. 넘치는 부분 처리 */
-        overflow: hidden;
-        text-overflow: ellipsis;
-        
-        /* 4. 기존 한 줄 고정 코드는 반드시 삭제하거나 주석 처리하세요 */
-        /* white-space: nowrap;  <- 이 줄이 있으면 무조건 한 줄만 나옵니다. 삭제 필수! */
+
+        .campaign-title-text {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2; /* 2줄 제한 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            
+            /* 너비를 부모에 꽉 차게 강제 */
+            width: 100%; 
+            max-width: 100%; /* 추가 */
+            
+            font-size: 1.2rem;     /* 1.4em은 모바일에서 너무 커서 한 줄에 몇 자 안 들어갈 수 있어요 */
+            line-height: 1.4;
+            height: 2.8em;        /* (line-height 1.4 * 2줄) 딱 맞춰주기 */
+            
+            word-break: break-all; 
+            white-space: normal;  /* 중요: white-space가 nowrap이면 한 줄로만 나옵니다 */
+        }
     
-        /* 추가 디자인 제안 */
-        width: 100%;
-        font-size: 0.8em;
-        font-weight: 700;
-        line-height: 0.8;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
+        /* 내부 span들은 한 줄로 흐르게 처리 */
+        .campaign-title-text span {
+            display: inline;
+            vertical-align: baseline;
+        }
+
+        .title-overlay {
+            width: 45%;
+        }
+    
+
+    .card-point {
+        font-size: 1.2em;
     }
 
     .campaign-point-text {

@@ -13,6 +13,7 @@
             content,
             content_type,
             author,
+            fixed,
             created_at,
             updated_at
         FROM 
@@ -38,7 +39,7 @@
         <!-- <if test="option.orderCode == 0">
             order by AdminContent_id desc
         </if> -->
-        order by Admin_Content_id desc
+        order by fixed desc, Admin_Content_id desc
     </select>
 
     <select id="noticeSelect" resultType="AdminContentVO">

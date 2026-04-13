@@ -204,4 +204,6 @@ public class UserVO {
     private String phoneHash;
     private boolean isDuplicate;
 
+
+    private String savedName;
 }

@@ -8,7 +8,7 @@
         <id property="no" column="no" />
         <result property="id" column="id" />
         <result property="accountNumber" column="account_number" />
-        <result property="bank" column="bank" />
+        <result property="bankNm" column="bank_nm" />
         <result property="depositor" column="depositor" />
         <result property="name" column="name" />
         <result property="email" column="email" />
@@ -27,6 +27,7 @@
         <result property="updatedAt" column="updated_at" />
         <result property="referrer" column="referrer" />
         <result property="enabled" column="enabled" />
+        <result property="filePath" column="file_path" />
         <collection property="authList" resultMap="authMap"></collection>
     </resultMap>
         
@@ -40,21 +41,43 @@
 
     <!-- 회원 조회 - id -->
     <select id="select" resultMap="userMap">
-        SELECT u.no
-            ,u.id
-            ,u.password
-            ,u.name
-            ,u.email
-            ,enabled
-            ,phone
-            ,role_cd
-            ,role
-            ,nickname
-            ,u.created_at
-            ,u.updated_at
-            ,auth
-        FROM user u LEFT OUTER JOIN user_auth auth 
-        ON u.Id = auth.id
+        SELECT 
+            u.id,
+            u.user_id,
+            u.password,
+            u.user_nm,
+            u.email,
+            u.enabled,
+            u.phone_num,
+            u.nickname,
+            u.bank_nm,
+            u.depositor,
+            u.account_number,
+            u.created_at,
+            u.updated_at,
+            u.auth_id,
+            guard_type,
+            full_Address,
+            u.phone_hash,
+            memo,
+            (CASE
+                WHEN auth_id = '01' THEN 'ROLE_ADMIN'
+                WHEN auth_id = '02' THEN 'ROLE_USER'
+                WHEN auth_id = '03' THEN 'ROLE_LEADER'
+                ELSE 'X'
+            END) AS auth,
+            f.file_path file_path
+        FROM 
+            user u 
+        LEFT OUTER JOIN 
+            user_address ua
+        ON u.id = ua.user_id
+		and ua.is_deleted ='N'
+        LEFT OUTER JOIN
+            files f
+        ON u.id = f.target_id
+        AND target_type = 'profile'
+		and f.is_deleted ='N'
         WHERE u.id = #{id}
     </select>
 

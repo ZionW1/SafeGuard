@@ -22,7 +22,7 @@ public class AdminContentVO {
     private LocalDate createdAt;
     private LocalDate updatedAt;
     private String isActive;
-
+    private String fixed;
     private String action;
 
 }

@@ -502,6 +502,13 @@
                         return;
                     }
                 }
+
+                if(campaign.typeCode == "03"){
+                    if(currentBtn.dataset.guardType != "03" || currentBtn.dataset.guardType != "04"){
+                        alert('신청 권한이 없습니다.');
+                        return;
+                    }
+                }
                 
                 fetch('/apply', {
                     method: 'POST',

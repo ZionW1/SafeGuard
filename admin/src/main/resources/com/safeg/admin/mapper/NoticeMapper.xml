@@ -61,10 +61,15 @@
     </select>
 
     <insert id="noticeInsert" parameterType="AdminContentVO">
-        <![CDATA[
-        INSERT INTO Admin_Content (title, content, content_type, author, fixed)
-        VALUES (#{title}, #{content}, #{contentType}, #{author}, #{fixed})
-        ]]>
+        INSERT INTO 
+            Admin_Content (
+            title, content, content_type, author
+            <if test="fixed != null">, fixed</if>
+        )
+        VALUES (
+            #{title}, #{content}, #{contentType}, #{author}
+            <if test="fixed != null">, #{fixed}</if>
+        )
     </insert>
 
     <update id="noticeUpdate" parameterType="AdminContentVO">

@@ -65,14 +65,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         // 인증된 사용자 정보
 
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
-        log.info("customUser : " + customUser);
         UserVO user = customUser.getUserVo();
-        log.info("user : " + user);
-
-        log.info("아이디 : " + user.getUserId());
-        log.info("비밀번호 : " + user.getPassword());
-        log.info("권한 : " + user.getAuthList().get(0).getAuth());
-        log.info("폰 번호 : " + user.getPhoneNum());
 
         // 사용자 권한 가져오기
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

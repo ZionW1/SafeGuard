@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @Slf4j
 @RequestMapping("/apply")
-public class ApplyController {
+public class applyController {
     
     @Autowired
     ApplyService applyService;

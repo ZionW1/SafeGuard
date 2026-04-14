@@ -28,4 +28,10 @@ public interface CampaignService {
 
     public String overlapTitle(UserCampaignVO userCampaign) throws Exception;
 
+    public List<CampaignVO> campaignProgress() throws Exception;
+
+    public List<CampaignVO> campaignGuard() throws Exception;
+
+    public List<CampaignVO> campaignFulfill() throws Exception;
+
 }

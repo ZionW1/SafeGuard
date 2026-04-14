@@ -37,4 +37,10 @@ public interface CampaignMapper {
 
     public String overlapTitle(UserCampaignVO userCampaignVO) throws Exception;
 
+    public List<CampaignVO> campaignProgress() throws Exception;
+
+    public List<CampaignVO> campaignGuard() throws Exception;
+
+    public List<CampaignVO> campaignFulfill() throws Exception;
+
 }

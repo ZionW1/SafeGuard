@@ -161,4 +161,28 @@ public class CampaignServiceImpl implements CampaignService{
 
         return searchCampaign;
     }
+
+    @Override
+    public List<CampaignVO> campaignProgress() throws Exception {
+        // TODO Auto-generated method stub
+        List<CampaignVO> campaignProgress = campaignMapper.campaignProgress();
+
+        return campaignProgress;
+    }
+
+    @Override
+    public List<CampaignVO> campaignGuard() throws Exception {
+        // TODO Auto-generated method stub
+        List<CampaignVO> campaignGuard = campaignMapper.campaignGuard();
+
+        return campaignGuard;
+    }
+
+    @Override
+    public List<CampaignVO> campaignFulfill() throws Exception {
+        // TODO Auto-generated method stub
+        List<CampaignVO> campaignFulfill = campaignMapper.campaignFulfill();
+
+        return campaignFulfill;    
+    }
 }

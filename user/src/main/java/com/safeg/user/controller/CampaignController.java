@@ -280,4 +280,49 @@ public class CampaignController {
     
 //     return "campaign/list"; // 전체 페이지 리턴
 // }
+
+@GetMapping("/campaign04")
+    public String campaign04(@AuthenticationPrincipal CustomUser authUser, Model model) throws Exception {
+        // 진행 캠페인 정보 조회
+        List<CampaignVO> campaignProgress = campaignsService.campaignProgress();
+        // 로그인된 사용자가 있을 경우
+        if (authUser != null) {
+            UserVO user = authUser.getUserVo();
+            model.addAttribute("user", user);
+        }
+        model.addAttribute("campaignProgress", campaignProgress);
+
+        return "campaign/campaign04";
+    }
+
+    @GetMapping("/campaign05")
+    public String campaign05(@AuthenticationPrincipal CustomUser authUser, Model model) throws Exception {
+        log.info(":::::::::: campaign01 화면 authUser :::::::::: " + authUser);
+
+       // 진행 캠페인 정보 조회
+        List<CampaignVO> campaignGuard = campaignsService.campaignGuard();
+        // 로그인된 사용자가 있을 경우
+        if (authUser != null) {
+            UserVO user = authUser.getUserVo();
+            model.addAttribute("user", user);
+        }
+        model.addAttribute("campaignGuard", campaignGuard);
+
+        return "campaign/campaign05";
+    }
+
+    @GetMapping("/campaign06")
+    public String campaign06(@AuthenticationPrincipal CustomUser authUser, Model model) throws Exception {
+       // 진행 캠페인 정보 조회
+        List<CampaignVO> campaignFulfill = campaignsService.campaignFulfill();
+        // 로그인된 사용자가 있을 경우
+        if (authUser != null) {
+            UserVO user = authUser.getUserVo();
+            model.addAttribute("user", user);
+        }
+        model.addAttribute("campaignFulfill", campaignFulfill);
+
+        return "campaign/campaign06";
+    }
+
 }

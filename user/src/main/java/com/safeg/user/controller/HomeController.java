@@ -72,14 +72,7 @@ public class HomeController {
         List<BannerVO> bannerList = bannerService.bannerList();
 
         if (campaignFavorite != null && !campaignFavorite.isEmpty()) { // 리스트가 null이 아니고 비어있지 않을 때만!
-            log.info("campaignFavorite.get(0) = " + campaignFavorite.get(0)); // 이제 안전해!
-            
             for (int i = 0; i < campaignFavorite.size(); i++) {
-                // 이 for 루프도 campaignFavorite이 비어있으면 실행 안 될 거라 이 부분은 괜찮아!
-                log.info("campaignFavorite.get(i).() " + campaignFavorite.toString()); // toString()은 리스트 전체를 출력해
-                log.info("campaignFavorite.get(i).getRecruitNum() " + campaignFavorite.get(i).getRecruitNum());
-                log.info("campaignFavorite.get(i).getApplicantsNum() " + campaignFavorite.get(i).getApplicantsNum());
-    
                 if (campaignFavorite.get(i).getApplicantsNum() == campaignFavorite.get(i).getRecruitmentNum()) {
                     campaignService.updateCampaign(campaignFavorite.get(i).getCampaignId());
                     List<UserCampaignVO> userCampaignVO = mainService.applyDate(campaignFavorite.get(i).getCampaignId());
@@ -93,7 +86,6 @@ public class HomeController {
             // 예를 들어, model.addAttribute("noFavoriteCampaigns", true); 같은 것을 추가해서 템플릿에서 조건부 렌더링 가능
         }
         
-        log.info("bannerList : : : : " + bannerList);
         model.addAttribute("campaignFavorite", campaignFavorite);
         model.addAttribute("campaignWorkable", campaignWorkable);
         model.addAttribute("campaignNew", campaignNew);
@@ -102,10 +94,7 @@ public class HomeController {
 
         //model.addAttribute("pageUrl", pageUrl);
         if(authUser != null){
-            log.info("authUser : " + authUser);
             UserVO user = authUser.getUserVo();
-            log.info("user : " + user);
-
             model.addAttribute("user", user);
         }
         

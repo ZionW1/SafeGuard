@@ -148,9 +148,10 @@ a {
 }
 
 .logo_image{
-    margin-top: 10px;
+    margin-top: 25px;
     width: 210px;
 }
+
 .search {
     width: 210px;
     padding: 10px;
@@ -179,8 +180,8 @@ a {
     background-color: transparent; /* 배경색 투명하게 */
 
     position: relative;
-    top: 18px;
-    left: -7%;
+    top: 15px;
+    left: -35px;
 }
 /* 광고 */
 .header-right {
@@ -218,6 +219,7 @@ a {
     padding: 0 40px;
     height: 56px;
 }
+
 .bestAgent-title {
     font-size: 24px;
     font-weight: 700;
@@ -229,6 +231,71 @@ a {
     font-weight: 700;
     color: #111;
 }
+
+.desktop_search_form{
+    position: relative;
+    left: -120%;
+    top: 35px;
+}
+
+
+.desktop_search {
+    width: 345px;
+    font-size: 1.4em;
+    padding-right: 40px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    outline: none;
+    position: absolute;
+    top: 20px;
+    left: -395px;
+}
+
+.three-list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    top: -33px;
+}
+
+.three-list li {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+/* ★ 핵심: 구분선 그리기 */
+.three-list li:not(:last-child)::after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 12px; /* 선의 높이 */
+    background-color: #000000; /* 선의 색상 */
+    position: absolute;
+    right: 0; /* li의 맨 오른쪽에 배치 */
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* 메뉴 링크 스타일 */
+.three-list li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 1.5em;
+    font-weight: 700;
+    padding: 0 15px; /* 양옆 간격을 여기서 조절하세요 */
+    display: block;
+}
+
+.three-link {
+    padding: 0 10px;
+    text-decoration: none;
+    color: #333;
+}
+
 .nav-list {
     display: flex;
     gap: 20px;
@@ -1062,7 +1129,7 @@ a {
     /* flex: 0 0 calc((100% / 7) - 16px * (6 / 7)); */
     flex: 0 0 calc((100% - (30px * 5)) / 6); 
     min-width: calc((100% - (30px * 5)) / 6);
-    height: 60%;
+    height: 100%;
     background: white;
     border-radius: 14px;
     box-shadow: 0 5px 16px rgba(0,0,0,0.3);
@@ -1076,8 +1143,8 @@ a {
     font-weight: 700;
     user-select: none;
     transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease, height 0.3s ease; /* 강조 효과도 부드럽게 */
-    
 }
+
 .card-grid-container {
     width: 100%;
     display: grid;                   /* Grid 컨테이너로 만듦 */

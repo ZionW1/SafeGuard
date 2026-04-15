@@ -712,6 +712,7 @@ margin: 5px 0 0;
     display: block;
 }
 
+
 @media (max-width: 768px) {
     button {
         background-color: #b594ff;

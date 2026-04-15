@@ -62,7 +62,7 @@
                         </div>
                         <!-- <div th:unless="${userCampaign.status=='8'} || ${userCampaign.status=='9'}"> -->
                         <div th:unless="${userCampaign.status=='8' || userCampaign.status=='9'}">
-                            <div th:if="${userCampaign == null || userCampaign.filePath == null}">
+                            <div th:if="${userCampaign.filePath == null}">
                                 <img id="imgFile" src="/images/not-image.png" alt="파일이미지" width="50" height="50" />
                             </div>
                             <div class="" th:unless="${userCampaign.filePath == null}">

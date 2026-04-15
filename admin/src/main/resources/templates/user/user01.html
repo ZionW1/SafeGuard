@@ -38,6 +38,17 @@
                 
             </form>
             <table class="campaign_Table" border="1">
+                <colgroup>
+                    <col width="5%"></col>
+                    <col width="10%"></col>
+                    <col width="5%"></col>
+                    <col width="*"></col>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                </colgroup>
                 <thead>
                     <th class="wdt5">No</th>
                     <th class="wdt10">아이디</th>
@@ -60,7 +71,7 @@
                         <tr class="pointer" th:onclick="|location.href='@{/user02(id=${user.id}, keyword=${option.keyword}, code=${option.code}, orderCode=${option.orderCode}, page=${page.page})}'|">
                             <!-- <a th:href="@{/user02(id=${user.id}, page=${paging.page})}"></a> -->
                             <!-- th:onclick="|location.href='@{/user02(id=${user.id})}'|" -->
-                            <td><span th:text="${stat.size - stat.index}"></span></td>
+                            <td><span th:text="${user.id}"></span></td>
                             <td><span th:text="${user.userId}"></span></td>
                             <td><span th:text="${user.userNm}"></span></td>
                             <td><span th:text="${user.email}"></span></td>

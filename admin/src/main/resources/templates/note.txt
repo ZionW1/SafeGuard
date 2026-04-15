@@ -1,0 +1,3 @@
+<div class="welcome-msg">
+    <a th:href="@{/join}">Create New</a>
+</div>

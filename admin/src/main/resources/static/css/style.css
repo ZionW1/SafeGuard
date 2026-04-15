@@ -128,7 +128,7 @@ footer {
 .sidebar {
     float: left;
     max-width: 100%;
-    min-height: 100%;
+    min-height: 100vh;
     background-color: #d8c7ff;
     padding: 20px;
     box-sizing: border-box;

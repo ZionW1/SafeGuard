@@ -34,9 +34,6 @@
                 </div>
             </div>
         </form>
-        <div class="welcome-msg">
-            <a th:href="@{/join}">Create New</a>
-        </div>
     </div>
     <script th:inline="javascript">
         function togglePasswordVisibility(fieldId) {
@@ -81,11 +78,14 @@
                 body: formData
             })
             .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => { throw new Error(data.error); });
+                if (response.ok) {
+                    const userId = document.getElementById('userId').value;
+                    if (userId === 'semiAdmin') {
+                        window.location.href = '/admin/campaign09';
+                    } else {
+                        window.location.href = '/admin/campaign01';
+                    }
                 }
-                // 성공 시 바로 이동
-                window.location.href = '/admin/campaign01';
             })
             .catch(err => {
                 alert(err.message);

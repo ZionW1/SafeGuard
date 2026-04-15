@@ -10,13 +10,8 @@
         <!-- 타임리프 자바스크립트 모드 -->
         <script th:inline="javascript">
             document.addEventListener("DOMContentLoaded", function() {
-                console.log("DOM이 준비되었습니다!");
                 // 여기에 실행하고 싶은 코드 작성
                 const leaderList = /*[[${leaderList}]]*/ [];
-                console.log("campaignSelect : " + JSON.stringify(leaderList));
-
-                
-                
             });
 
             function securityTypeChange(typeCode) {
@@ -46,7 +41,12 @@
     <body>
         <div class="admin-container">
         <!-- 사이드바 -->
-        <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        <div th:if="${user} == 'semiAdmin'">
+            <div th:replace="~{fragments/sidebar :: sidebarFragment-semi}"></div>
+        </div>
+        <div th:unless="${user} == 'semiAdmin'">
+            <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        </div>
         <!-- 메인 등록폼 -->
         <div class="main-content">
             <h1>캠페인 등록</h1>

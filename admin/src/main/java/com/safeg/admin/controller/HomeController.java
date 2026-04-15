@@ -141,7 +141,7 @@ public class HomeController {
         int result = userService.userJoin(userVO);
         log.info("join02 : " + result);
 
-        return "redirect:/admin/campaign01";
+        return "redirect:/campaign01";
     }
 
     @PostMapping("/signup")

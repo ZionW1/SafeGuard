@@ -227,7 +227,6 @@ public class UserController {
             model.addAttribute("msg", "");
         }
         return "redirect:/user01?page=" + page ;
-        // redirect:/admin/campaign01
     }
     
     @PostMapping("/user04")
@@ -243,27 +242,12 @@ public class UserController {
             log.info("user04 userRemove fail");
         }
         return "redirect:/user01";
-        // redirect:/admin/campaign01
     }
 
     // 리더자로 변경
     @PostMapping("/user05")
     @ResponseBody
     public Map<String, Object> user05(@ModelAttribute UserVO userVO) throws Exception {
-        // log.info(":::::::::: remove :::::::::: " + id);
-        // log.info(id);
-
-        // int result = userService.userUpdate(id);
-        
-        // if(result > 0){
-        //     log.info("user05 userUpdate success");
-        // } else {
-        //     log.info("user05 userUpdate fail");
-        // }
-        // return "redirect:/admin/user02?id=" + id;
-        // // redirect:/admin/campaign01
-        // 또는 UserVO 형태로 받을 수 있음
-    // public Map<String, Object> updateUserToGeneral(UserVO userVO) {
         log.info(":::::::::: user05 userUpdate :::::::::: " + userVO.getId());
         Map<String, Object> response = new HashMap<>();
         try {

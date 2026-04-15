@@ -35,16 +35,10 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
     public void onAuthenticationSuccess(HttpServletRequest request
                                 , HttpServletResponse response
                                 , Authentication authentication) throws ServletException, IOException {
-
-
-        log.info("로그인 성공...");
-
         // 아이디 저장
         String rememberId = request.getParameter("remember-id"); // ✅ 아이디 저장 여부
         String username = request.getParameter("userId");            // 👩‍💼 아이디
-        log.info("rememberId  : " + rememberId);
-        log.info("username  : " + username);
-
+        log.info("username : " + username);
         // 아이디 저장 체크 ✅
         if( rememberId != null && rememberId.equals("on") ) {
             Cookie cookie = new Cookie("remember-id", username);  // 쿠키에 아이디 등록
@@ -59,44 +53,38 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
             cookie.setPath("/");
             response.addCookie(cookie);
         }
-        
-
 
         // 인증된 사용자 정보
-
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         UserVO user = customUser.getUserVo();
 
         // 사용자 권한 가져오기
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-
-        // log.info(authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
-
-        // ⭐️ 역할에 따른 리다이렉트 로직 구현 ⭐️
-        // if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-        //     // ROLE_ADMIN 권한이 있다면 /admin/dashboard 로 이동
-        //     response.sendRedirect("/admin/campaign01");
-        // } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
-        //     // ROLE_USER 권한이 있다면 /user/dashboard 로 이동
-        //     response.sendRedirect("/user/dashboard");
-        // } else {
-        //     // 그 외 권한은 기본 페이지로 이동 (fallback)
-        //     response.sendRedirect("/main");
-        // }
-
+        
         if (authorities != null) {
+            // 1. 관리자 권한 확인
             if (authorities.stream().anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()))) {
-                response.sendRedirect("/admin/campaign01");
-                return;
-            } else if (authorities.stream().anyMatch(a -> "ROLE_USER".equals(a.getAuthority()))) {
-                response.sendRedirect("/user/dashboard");
+                log.info("관리자 로그인 성공: {}", username);
+                
+                // 2. 특정 아이디(semiAdmin)인 경우
+                if ("semiAdmin".equals(username)) {
+                    log.info("semiAdmin 전용 페이지로 이동");
+                    response.sendRedirect("/admin/campaign09");
+                } 
+                // 3. 일반 관리자인 경우
+                else {
+                    log.info("일반 관리자 페이지로 이동");
+                    response.sendRedirect("/admin/campaign09");
+                }
+                return; // 리다이렉트 후 종료
+            } 
+            
+            // 4. 일반 사용자 권한 확인
+            else if (authorities.stream().anyMatch(a -> "ROLE_USER".equals(a.getAuthority()))) {
+                log.info("일반 사용자 메인으로 이동");
+                response.sendRedirect("/");
                 return;
             }
         }
-        response.sendRedirect("/main");
-
-        // response.sendRedirect("/"); // 로그인 후 경로
-        // super.onAuthenticationSuccess(request, response, authentication);
     }
-
 }

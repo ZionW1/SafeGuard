@@ -8,7 +8,6 @@
 
     <!-- ⭐️ 프래그먼트 하나로 통합하거나 이름을 다르게 지정하세요 ⭐️ -->
     <div th:fragment="sidebarFragment">
-        
         <!-- 1. 데스크탑 사이드바 -->
         <div class="desktop-header sidebar">
             <div class="sidebar-menu">
@@ -54,6 +53,76 @@
                 <li><a th:href="@{/useGuide01}">이용가이드</a></li>
                 <li><a th:href="@{/leader01}">인솔자</a></li>
                 <li><a th:href="@{/user01}">유저</a></li>
+                <li><hr></li>
+                <!-- 시큐리티 적용 부분 -->
+                <li sec:authorize="isAnonymous()"><a th:href="@{/login}">로그인</a></li>
+                <li sec:authorize="isAuthenticated()"><a href="javascript:logout()">로그아웃</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 오버레이 -->
+        <div class="drawer-overlay" id="drawerOverlay"></div>
+
+        <!-- 스크립트는 프래그먼트 안에 포함시켜야 불러온 페이지에서도 동작함 -->
+        <script>
+            // 중복 실행 방지를 위해 즉시 실행 함수나 체크 로직을 넣는 것이 좋음
+            (function() {
+                const openBtn = document.getElementById('mMenuOpen');
+                const closeBtn = document.getElementById('mMenuClose');
+                const drawer = document.getElementById('mobileDrawer');
+                const overlay = document.getElementById('drawerOverlay');
+
+                function toggleDrawer() {
+                    if(drawer && overlay) {
+                        drawer.classList.toggle('open');
+                        overlay.classList.toggle('active');
+                    }
+                }
+
+                if(openBtn) openBtn.onclick = toggleDrawer;
+                if(closeBtn) closeBtn.onclick = toggleDrawer;
+                if(overlay) overlay.onclick = toggleDrawer;
+            })();
+
+            function logout() {
+                if (confirm("로그아웃 하시겠습니까?")) {
+                    window.location.href = "/logout";
+                }
+            }
+        </script>
+    </div>
+
+    <div th:fragment="sidebarFragment-semi">
+        <!-- 1. 데스크탑 사이드바 -->
+        <div class="desktop-header sidebar">
+            <div class="sidebar-menu" style="width: 225px;">
+                <h2><a th:href="@{/campaign01}">챗짱 Admin</a></h2>
+                <a th:href="@{/campaign01}"><div class="menu-item">캠페인 목록 요약</div></a>
+                <a th:href="@{/campaign03}"><div class="menu-item">캠페인 등록</div></a>
+
+                <a href="javascript:logout()">로그아웃</a>
+            </div>
+        </div>
+
+        <!-- 2. 모바일 상단 바 -->
+        <div class="mobile-top-bar">
+            <div class="mobile-logo">
+                <a th:href="@{/}">
+                    <!-- <img th:src="@{/images/행집.jpeg}" alt="로고" class="logo_image" style="width: 80px; height: 40px;"/> -->
+                </a>
+            </div>
+            <button class="hamburger-btn" id="mMenuOpen">☰</button>
+        </div>
+
+        <!-- 3. 모바일 서랍장(Drawer) -->
+        <aside class="mobile-side-drawer sidebar" id="mobileDrawer">
+            <div class="drawer-header">
+                <button class="close-btn" id="mMenuClose">✕</button>
+            </div>
+            <ul class="drawer-list">
+                <li><h2><a th:href="@{/campaign01}">챗짱 Admin</a></h2></li>
+                <li><a th:href="@{/campaign01}">캠페인 목록 요약</a></li>
+                <li><a th:href="@{/campaign03}">캠페인 등록</a></li>
                 <li><hr></li>
                 <!-- 시큐리티 적용 부분 -->
                 <li sec:authorize="isAnonymous()"><a th:href="@{/login}">로그인</a></li>

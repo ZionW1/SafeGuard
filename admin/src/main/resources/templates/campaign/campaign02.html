@@ -185,8 +185,12 @@
     </head>
     <body>
         <div class="admin-container">
-            <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
-
+            <div th:if="${user} == 'semiAdmin'">
+                <div th:replace="~{fragments/sidebar :: sidebarFragment-semi}"></div>
+            </div>
+            <div th:unless="${user} == 'semiAdmin'">
+                <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+            </div>
             <div class="main-content">
                 <h1>캠페인 수정</h1>
                 <form class="normalForm" th:action="@{/campaign05}" method="post" id="form" enctype="multipart/form-data">

@@ -122,6 +122,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.app_period_end,
             event_Period_str,
             event_Period_End,
+            campaign_pay,
             t.user_nm
             FROM campaign c 
         LEFT OUTER JOIN files f

@@ -32,12 +32,6 @@
             overflow: hidden;
         }
 
-        #swiperReview {
-            transition-delay: 0.1s;
-            overflow: hidden;
-            padding-bottom: 40px;
-        }
-
         .swiper-slide {
             text-align: center;
             display: flex;
@@ -45,12 +39,14 @@
             align-items: center;
             transition: transform 0.3s ease; /* 부드러운 확대 효과 */
             opacity: 0.5; /* 주변 이미지들은 약간 흐리게 */
+
         }
 
         .swiper-slide img {
             width: 100%;
             height: auto;
             border-radius: 10px;
+            
         }
 
         .swiper-slide-active {
@@ -60,7 +56,12 @@
 
         /* 가운데 있는 4번째 슬라이드 강조 */
         .swiper-slide-active img{
-            transform: scale(1.3); /* 1.3배 확대 */
+            /* transform: scale(1.3); 1.3배 확대 */
+            position: relative;
+            top: -90px;
+            width: 120%;
+            height: auto;
+            
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -152,16 +153,16 @@
             <div id="swiperReview">
                 <div class="swiper-container swiper-initialized swiper-horizontal">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide"><img src="/images/sample_images_00.png" alt="이미지 1"></div>
-                        <div class="swiper-slide"><img src="/images/sample_images_01.png" alt="이미지 2"></div>
-                        <div class="swiper-slide"><img src="/images/sample_images_02.png" alt="이미지 3"></div>
-                        <div class="swiper-slide"><img src="/images/sample_images_03.png" alt="이미지 4"></div>
-                        <div class="swiper-slide"><img src="/images/sample_images_04.png" alt="이미지 5"></div>
-                        <div class="swiper-slide"><img src="/images/sample_images_05.png" alt="이미지 6"></div>
-                        <div class="swiper-slide"><img src="/images/sample_images_06.png" alt="이미지 7"></div>
-                        <div class="swiper-slide"><img src="/images/sample_images_07.png" alt="이미지 8"></div>
-                        <div class="swiper-slide"><img src="/images/sample_images_08.png" alt="이미지 9"></div>
-                        <div class="swiper-slide"><img src="/images/sample_images_09.png" alt="이미지 10"></div>
+                        <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 1"></div>
+                        <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 2"></div>
+                        <div class="swiper-slide"><img src="/images/Flower.png" alt="이미지 3"></div>
+                        <div class="swiper-slide"><img src="/images/WelcomeToYeoncheon.png" alt="이미지 4"></div>
+                        <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 5"></div>
+                        <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 6"></div>
+                        <div class="swiper-slide"><img src="/images/Flower.png" alt="이미지 7"></div>
+                        <div class="swiper-slide"><img src="/images/WelcomeToYeoncheon.png" alt="이미지 8"></div>
+                        <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 9"></div>
+                        <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 10"></div>
                     </div>
                 </div>
             </div>
@@ -503,6 +504,7 @@
                 //     swiperInfi1();
                 //     swiperInfi2();
                 // });
+                
                 const $slider = $("#swiperReview");
                 let slideInx = 0; // 현재 슬라이드 인덱스
 
@@ -515,18 +517,18 @@
                     loop: true,
                     slidesPerView: 1.5,
                     spaceBetween: 15,
-                    loopAdditionalSlides: 5,
+                    loopAdditionalSlides: 1,
                     centeredSlides: true,
                     // allowTouchMove: false,
                     breakpoints: {
                         1501: {
                             slidesPerView: 6,
-                            spaceBetween: 25,
+                            spaceBetween: 0,
                             allowTouchMove: false,
                         },
                         770: {
                             slidesPerView: 4,
-                            spaceBetween: 25,
+                            spaceBetween: 0,
                             allowTouchMove: false,
                         },
                         500: {
@@ -556,6 +558,7 @@
                     $slider.find(".first").prev().addClass("first2").siblings().removeClass("first2");
                     $slider.find(".last").next().addClass("last2").siblings().removeClass("last2");
                 }
+            
         </script>
     </main>
 </body>

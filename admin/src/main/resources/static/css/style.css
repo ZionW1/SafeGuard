@@ -102,8 +102,8 @@ footer {
     display: flex;
     justify-content: flex-start;
     gap: 15px;
-    font-size: 13px;
-    margin-bottom: 20px;
+    font-size: 1em;
+    margin: 10px 0;
     color: #555;
 }
 
@@ -712,6 +712,11 @@ margin: 5px 0 0;
     display: block;
 }
 
+input[type=checkbox] {
+
+    zoom: 2;
+    
+}
 
 @media (max-width: 768px) {
     button {

@@ -36,8 +36,6 @@ public class CampaignController {
 
     @GetMapping("/campaign01")
     public String campaign01(@AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {
-        log.info("campaign01");
-
         List<CampaignVO> campaignsList = campaignsService.campaignList(option, page);
 
         model.addAttribute("campaignsList", campaignsList);
@@ -57,7 +55,6 @@ public class CampaignController {
         model.addAttribute("pageUrl", pageUrl);
 
         if(authUser != null){
-            log.info("authUser : " + authUser);
             UserVO user = authUser.getUserVo();
             log.info("user : " + user);
 
@@ -107,7 +104,7 @@ public class CampaignController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         String username = customUser.getUsername(); // 로그인 아이디 (userId)
-        
+
         List<UserVO> leaderList = campaignsService.leaderList();
         List<CampaignVO> securityType = campaignsService.securityType();
 

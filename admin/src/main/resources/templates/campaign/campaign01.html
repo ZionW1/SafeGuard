@@ -11,8 +11,12 @@
     <body>
         <div class="admin-container">
             <!-- 사이드바 -->
-            <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
-            <!-- java -jar build/libs/admin-0.0.1-SNAPSHOT.war -->
+            <div th:if="${user.userId} == 'semiAdmin'">
+                <div th:replace="~{fragments/sidebar :: sidebarFragment-semi}"></div>
+            </div>
+            <div th:unless="${user.userId} == 'semiAdmin'">
+                <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+            </div>            <!-- java -jar build/libs/admin-0.0.1-SNAPSHOT.war -->
             <!-- 본문 영역 --> 
             <div class="main-content">
                 

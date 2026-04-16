@@ -89,6 +89,7 @@ public class HomeController {
         // return "/admin/list";
         return "index";
     }
+    
     @GetMapping("/join")
     public String join01(Model model) throws Exception{
         log.info(":::::::::: 어드민 가입 화면 ::::::::::");

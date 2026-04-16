@@ -79,12 +79,7 @@
             })
             .then(response => {
                 if (response.ok) {
-                    const userId = document.getElementById('userId').value;
-                    if (userId === 'semiAdmin') {
-                        window.location.href = '/admin/campaign09';
-                    } else {
-                        window.location.href = '/admin/campaign01';
-                    }
+                    window.location.href = '/admin/campaign01';
                 }
             })
             .catch(err => {

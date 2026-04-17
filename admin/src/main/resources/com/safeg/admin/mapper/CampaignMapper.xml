@@ -9,8 +9,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <!-- 다른 컬럼 매핑 -->
         <result column="App_period_str" property="AppPeriodStr"
                 jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
-        <!-- ⭐ TypeHandler 클래스의 풀 패키지 경로를 여기에 넣어줘! ⭐ -->
-        <!-- App_period_end 등 다른 LocalDate 필드도 동일하게 설정 -->
         <result column="App_period_end" property="AppPeriodEnd"
                 jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
         <result column="event_Period_str" property="eventPeriodStr"
@@ -40,7 +38,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="applicantsNum" column="applicants_Num" />
         <result property="recruitmentNum" column="recruitment_Num" />
         <result property="userNm" column="user_nm" />
-        
+        <result column="App_period_str" property="AppPeriodStr"
+                jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
+        <result column="App_period_end" property="AppPeriodEnd"
+                jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
+        <result column="event_Period_str" property="eventPeriodStr"
+                jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
+        <result column="event_Period_end" property="eventPeriodEnd"
+                jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
+        <result column="result_date" property="resultDate"
+                jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
         <result property="leaderPhone" column="leader_Phone" 
                 typeHandler="com.safeg.admin.util.CryptoTypeHandler"/>
     </resultMap>
@@ -370,32 +377,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             type_code,
             applicants_Num,
             recruitment_Num,
+            result_date,
             u.user_nm,
-            u.phone_hash leader_Phone
+            c.app_period_str,
+            c.app_period_end,
+            c.event_Period_str,
+            c.event_Period_End,
+            u.phone_num leader_Phone
         FROM campaign c
         LEFT OUTER JOIN user u
         ON c.leader_code = u.id
-        WHERE 
-        <if test="option.code == 0">
-            (campaign_title like CONCAT('%', #{option.keyword}, '%')
-            or place_addr like CONCAT('%', #{option.keyword}, '%'))
-        </if>
-        <if test="option.code == 1">
-            campaign_title like CONCAT('%', #{option.keyword}, '%')
-        </if>
-        <if test="option.code == 2">
-            place_addr like CONCAT('%', #{option.keyword}, '%')
-        </if>
-        <if test="option.code == 3">
-            tl.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
-        </if>
-        AND c.is_deleted = 'N'
+        where
+        c.is_deleted = 'N'
         AND c.is_active = 'N'
-        <if test="option.orderCode == 0">
-            order by campaign_Id desc
-        </if>
-        <if test="option.orderCode == 1">
-            order by campaign_title asc, campaign_id desc
-        </if>
-    </select>    
+        order by campaign_Id desc
+    </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.safeg.admin.controller;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,12 @@ public class Scheduler {
     @Scheduled(cron = "0 0 10 * * *")
     public void closeCampaignScheduler() { // 👈 Model model 파라미터 제거!
         log.info("CloseCampaignScheduler - 알림톡 발송 스케줄러 시작.");
+         // 현재 날짜 구하기        
+        LocalDate now = LocalDate.now();         
+        // 포맷 정의        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");         
+        // 포맷 적용        
+        String formatedNow = now.format(formatter);
         
         try {
             List<CampaignVO> closedCampaign = campaignService.closedCampaign();
@@ -55,8 +62,11 @@ public class Scheduler {
                     // 안전한 문자열 조립 (String.valueOf는 null일 경우 "null" 문자열을 반환하여 에러를 막음)
                     String appPeriod = String.valueOf(campaignsVO.getAppPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getAppPeriodEnd());
                     String eventPeriod = String.valueOf(campaignsVO.getEventPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getEventPeriodEnd());
+                    String resultDateStr = String.valueOf(campaignsVO.getResultDate());
 
-                    aligoSmsService.rosterCheckAsync(campaignsVO.getLeaderPhone(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), appPeriod, eventPeriod, "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(), campaignsVO.getCompanyPh());
+                    if (formatedNow.equals(resultDateStr)) {
+                        aligoSmsService.rosterCheckAsync(campaignsVO.getLeaderPhone(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), appPeriod, eventPeriod, "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(), campaignsVO.getCompanyPh());
+                    }
                 } catch (Exception e) {
                     log.error("캠페인 ID {} 발송 중 개별 오류: {}", campaignsVO.getCampaignId(), e.getMessage());
                 }

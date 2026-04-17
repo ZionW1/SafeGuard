@@ -30,6 +30,7 @@ import com.safeg.user.vo.Page;
 import com.safeg.user.vo.UserCampaignVO;
 import com.safeg.user.vo.UserVO;
 import com.safeg.user.vo.Users;
+import com.safeg.user.service.AligoSmsService;
 import com.safeg.user.service.AuthService;
 import com.safeg.user.service.BannerService;
 import com.safeg.user.service.CampaignService;
@@ -59,6 +60,10 @@ public class HomeController {
 
     @Autowired
     CampaignService campaignService;
+
+    @Autowired
+    private AligoSmsService aligoSmsService;
+
     @GetMapping("")
     // public String home(Principal principal, Model) throws Exception{
     // public Stirng home(Authentication authentication, Model model) throws Exception{
@@ -76,8 +81,10 @@ public class HomeController {
                 if (campaignFavorite.get(i).getApplicantsNum() == campaignFavorite.get(i).getRecruitmentNum()) {
                     campaignService.updateCampaign(campaignFavorite.get(i).getCampaignId());
                     List<UserCampaignVO> userCampaignVO = mainService.applyDate(campaignFavorite.get(i).getCampaignId());
+                    
 
-                    authService.sendApply(campaignFavorite.get(i).getCampaignId(), userCampaignVO);
+
+                    // authService.sendApply(campaignFavorite.get(i).getCampaignId(), userCampaignVO);
                 }
             }
         } else {

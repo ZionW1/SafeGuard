@@ -119,6 +119,10 @@ public class CampaignController {
     // 등록 처리
     @PostMapping("/campaign04")
     public String campaign04(CampaignVO campaignVO) throws Exception {
+        log.info("campaignVO.toString : " + campaignVO.toString());
+
+        campaignVO.setLeaderPhone(campaignVO.getLeaderPhone().replace(",", ""));
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         String username = customUser.getUsername(); // 로그인 아이디 (userId)
@@ -126,10 +130,6 @@ public class CampaignController {
         int result = campaignsService.campaignInsert(campaignVO);
 
         if(result > 0){
-            if ("semiAdmin".equals(username)) {
-                log.info("semiAdmin 전용 페이지로 이동");
-                return "redirect:/campaign09";
-            } 
             return "redirect:/campaign01";
         }
         return "redirect:/insert?error";
@@ -147,10 +147,6 @@ public class CampaignController {
             int result = campaignsService.campaignUpdate(campaign);
             if(result > 0){
                 reAttr.addFlashAttribute("message", "수정이 완료되었습니다.");
-                if ("semiAdmin".equals(username)) {
-                    log.info("semiAdmin 전용 페이지로 이동");
-                    return "redirect:/campaign09";
-                } 
                 return "redirect:/campaign01";
             } else {
                 // 업데이트된 행이 0개인 경우
@@ -174,10 +170,6 @@ public class CampaignController {
         int result = campaignsService.campaignDelete(id);
 
         if(result > 0){
-            if ("semiAdmin".equals(username)) {
-                log.info("semiAdmin 전용 페이지로 이동");
-                return "redirect:/campaign09";
-            } 
             return "redirect:/campaign01";
         }
         return "redirect:/campaign02?error&id="+id;
@@ -237,4 +229,5 @@ public class CampaignController {
 
         return "campaign/campaign09";
     }
+    
 }

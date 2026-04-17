@@ -24,6 +24,9 @@ public class CampaignServiceImpl implements CampaignService{
     @Autowired
     CampaignMapper campaignMapper;
 
+    @Autowired
+    private AligoSmsService aligoSmsService;
+
     @Override
     public CampaignVO campaignSelect(Long id) throws Exception{
         // TODO Auto-generated method stub
@@ -93,6 +96,23 @@ public class CampaignServiceImpl implements CampaignService{
             result1 = campaignMapper.updateApplicants(userCampaignVO);
         }
         // int result = campaignMapper.campaignApply(userCampaignVO);
+
+        CampaignVO campaignsVO = campaignMapper.notActiveCampaign(userCampaignVO.getCampaignId());
+
+        log.info("notActiveCampaign : " + campaignsVO);
+        if (campaignsVO != null) {
+            try {
+                updateCampaign(campaignsVO.getCampaignId());
+
+                // 안전한 문자열 조립 (String.valueOf는 null일 경우 "null" 문자열을 반환하여 에러를 막음)
+                String appPeriod = String.valueOf(campaignsVO.getAppPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getAppPeriodEnd());
+                String eventPeriod = String.valueOf(campaignsVO.getEventPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getEventPeriodEnd());
+                
+                aligoSmsService.rosterCheckAsync(campaignsVO.getLeaderPhone(), campaignsVO.getTypeCode(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), appPeriod, eventPeriod, "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(), campaignsVO.getCompanyPh());
+            } catch (Exception e) {
+                log.error("캠페인 ID {} 발송 중 개별 오류: {}", campaignsVO.getCampaignId(), e.getMessage());
+            }
+        }
         return (result1 > 0) ? "SUCCESS" : "FAIL";
     }
 

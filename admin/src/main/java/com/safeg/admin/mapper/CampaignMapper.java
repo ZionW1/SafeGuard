@@ -41,4 +41,6 @@ public interface CampaignMapper {
 
     public int insertCampaignLeaderApply(@Param("dailyEntries") List<UserCampaignVO> userCampaign) throws Exception;
 
+    public List<CampaignVO> closedCampaign() throws Exception;
+
 }

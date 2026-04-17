@@ -310,4 +310,20 @@
         WHERE
             campaign_id = #{campaignId}
     </select>
+
+    <update id="updateIsActive">
+        <![CDATA[
+            UPDATE campaign
+            SET
+                is_active = 'N',
+                updated_at = NOW()
+            WHERE
+                is_active = 'Y'
+            AND
+                is_deleted = 'N'
+            AND
+                campaign_id = #{campaignId}
+        ]]>
+    </update>
+
 </mapper>

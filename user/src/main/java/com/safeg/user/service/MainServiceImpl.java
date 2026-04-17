@@ -121,6 +121,7 @@ public class MainServiceImpl implements MainService{
     public List<UserCampaignVO> applyDate(Long campaignId) throws Exception {
         // TODO Auto-generated method stub
         List<UserCampaignVO> applyDate = mainMapper.applyDate(campaignId);
+        mainMapper.updateIsActive(campaignId);
 
         return applyDate;
     }

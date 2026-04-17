@@ -31,5 +31,7 @@ public interface CampaignService {
 
     public int updateExpiredCampaigns() throws Exception;
 
+    public List<CampaignVO> closedCampaign() throws Exception;
+
     
 }

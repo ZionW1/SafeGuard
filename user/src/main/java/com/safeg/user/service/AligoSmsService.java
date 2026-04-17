@@ -38,6 +38,9 @@ public class AligoSmsService {
     private final String ALIGO_URL = "https://apis.aligo.in/send/";
     private final String KAKAO_URL = "https://kakaoapi.aligo.in/akv10/alimtalk/send/";
 
+    RestTemplate restTemplate = new RestTemplate();
+
+
     // public boolean sendAuthSms(String phoneNumber, String authCode) throws JsonMappingException, JsonProcessingException {
     //     log.info("AligoSmsService sendAuthSms + " + phoneNumber + ", " + authCode);
     //     RestTemplate restTemplate = new RestTemplate();
@@ -235,5 +238,94 @@ public class AligoSmsService {
             log.error("비동기 전송 중 에러: ", e);
             return CompletableFuture.completedFuture(false);
         }
+    }
+
+    @Async("taskExecutor")
+    public CompletableFuture<Boolean> rosterCheckAsync(
+            String receiver, String type, String eventName, int count, String appPeriod, String eventPeriod, String link, String companyPh) {
+        try {
+            // 실제 알림톡 발송 로직 호출
+            boolean result = rosterChecktalk(receiver, type, eventName, count, appPeriod, eventPeriod, link, companyPh);
+            return CompletableFuture.completedFuture(result);
+        } catch (Exception e) {
+            log.error("비동기 알림톡 전송 중 에러 발생: ", e);
+            return CompletableFuture.completedFuture(false);
+        }
+    }
+
+    private boolean rosterChecktalk(String receiver, String type, String eventName, int count, String appPeriod, String eventPeriod, String link, String companyPh) {
+        log.info("sendAlimtalk : receiver : " + receiver + " type : " + type + " eventName : " + eventName + " appPeriod : " + appPeriod + " eventPeriod : " + eventPeriod + " link : " + link + " leaderPhone : " + companyPh);
+        String url = "https://kakaoapi.aligo.in/akv10/alimtalk/send/";
+    
+
+        // 예시: 템플릿을 통째로 복사해서 가져온 경우
+        String template = "[%s] 운영 인솔자 지정 및 업무 안내\n" +
+        "\n" +
+        "안녕하세요. 관리자에 의해 [%s]의 운영 인솔자로 지정되셨기에 관련 명단과 업무 내용을 안내드립니다.\n" +
+        "\n" +
+        "확정된 명단을 확인하시어 배정된 행사의 현장 운영에 참고해 주시기 바랍니다.\n" +
+        "\n" +
+        "1. 행사 확정 정보\n" +
+        "\n" +
+        "확정인원 : %d명\n" +
+        "\n" +
+        "행사기간 : %s\n" +
+        "\n" +
+        "[당첨자 명단 확인]\n" +
+        "%s\n" +
+        "\n" +
+        "※ 인솔자 업무 안내\n" +
+        "\n" +
+        "현장 인원 출석 시 모바일 명단을 반드시 대조해 주세요.\n" +
+        "\n" +
+        "명단의 '출석체크' 버튼을 현장 상황에 맞게 꼭 눌러주시기 바랍니다.\n" +
+        "\n" +
+        "[담당자 문의]\n" +
+        "%s";
+
+        String message = String.format(template, type, eventName, count, eventPeriod, link, companyPh);
+        String buttonJson = "{\"button\": [{\"name\": \"채널 추가\", \"linkType\": \"AC\"}]}";
+        // 예시: 템플릿을 통째로 복사해서 가져온 경우
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("apikey", apiKey);
+        params.add("userid", userId);
+        params.add("senderkey", "ff7f69c328188f85aa26867582ce55a57358b4a3");
+        params.add("tpl_code", "UG_4123"); // 예: TF_0001
+        params.add("sender", sender); 
+        params.add("receiver_1", receiver);
+        params.add("subject_1", "인솔자 명단 안내");
+        params.add("message_1", message);
+        params.add("button_1", buttonJson);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+
+        try {
+            // RestTemplate 등을 이용해 POST 요청 (이미 bean 등록되어 있다고 가정)
+            // ResponseEntity<Map> response = restTemplate.postForEntity(url, params, Map.class);
+            // String resultCode = String.valueOf(response.getBody().get("result_code"));
+            
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            log.info("알리고 전체 응답: " + response.getBody());
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode root = objectMapper.readTree(response.getBody());
+                
+                // 알리고는 성공 시 result_code가 정수 1 또는 문자열 "1"로 옵니다.
+                String resultCode = root.path("result_code").asText();
+                return "1".equals(resultCode);
+            }
+            
+            // return "1".equals(resultCode);
+        } catch (Exception e) {
+            log.error("알림톡 API 통신 실패", e);
+            return false;
+        }
+        return false;
     }
 }

@@ -208,19 +208,19 @@ public class HomeController {
         return "test";
     }
 
-    @PostMapping("/api/sms/send-notice")
-    @ResponseBody
-    public ResponseEntity<String> sendNotice(@RequestBody Map<String, String> data) {
-        // 비동기 메서드 호출 (결과를 기다리지 않고 바로 다음 줄 실행)
-        aligoSmsService.sendEventNoticeAsync(
-            data.get("receiver"), 
-            data.get("eventName"), 
-            data.get("count"), 
-            data.get("period"), 
-            data.get("link")
-        );
+    // @PostMapping("/api/sms/send-notice")
+    // @ResponseBody
+    // public ResponseEntity<String> sendNotice(@RequestBody Map<String, String> data) {
+    //     // 비동기 메서드 호출 (결과를 기다리지 않고 바로 다음 줄 실행)
+    //     aligoSmsService.sendEventNoticeAsync(
+    //         data.get("receiver"), 
+    //         data.get("eventName"), 
+    //         data.get("count"), 
+    //         data.get("period"), 
+    //         data.get("link")
+    //     );
 
-        // 알림톡 발송 시작 여부만 즉시 응답 (사용자 대기 시간 없음)
-        return ResponseEntity.ok("발송 요청이 완료되었습니다.");
-    }
+    //     // 알림톡 발송 시작 여부만 즉시 응답 (사용자 대기 시간 없음)
+    //     return ResponseEntity.ok("발송 요청이 완료되었습니다.");
+    // }
 }

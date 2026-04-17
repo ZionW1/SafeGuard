@@ -35,6 +35,9 @@ public class CampaignServiceImpl implements CampaignService{
     @Autowired 
     FileService fileService;
 
+    @Autowired
+    AligoSmsService aligoSmsService;
+
     @Override
     public List<CampaignVO> campaignList(Option option, Page page) throws Exception {
         // TODO Auto-generated method stub
@@ -147,6 +150,18 @@ public class CampaignServiceImpl implements CampaignService{
             result = campaignsMapper.insertCampaignLeaderApply(dailyEntriesToInsert);
             // applyMapper.insertUserCampaignPeriod(dailyEntriesToInsert); // 아래 Mapper 메서드 참조
         }
+        // HomeController 또는 Service에서 호출 시
+        if ("01".equals(campaignsVO.getTypeCode())) {
+            campaignsVO.setTypeNm("경호");
+        } else if ("02".equals(campaignsVO.getTypeCode())) {
+            campaignsVO.setTypeNm("진행");
+        } else if ("03".equals(campaignsVO.getTypeCode())) {
+            campaignsVO.setTypeNm("수행");
+        }
+
+        String AppPeriod = campaignsVO.getAppPeriodStr().toString() + " ~ "+ campaignsVO.getAppPeriodEnd().toString();
+        String EventPeriod = campaignsVO.getEventPeriodStr().toString() + " ~ "+ campaignsVO.getEventPeriodEnd().toString();
+        aligoSmsService.registrationAsync(campaignsVO.getCompanyPh(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), AppPeriod, EventPeriod, "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(), campaignsVO.getLeaderPhone());
 
         return result;
     }
@@ -259,4 +274,9 @@ public class CampaignServiceImpl implements CampaignService{
         return updatedCount;
     }
 
+    public List<CampaignVO> closedCampaign() throws Exception {
+        List<CampaignVO> closedCampaign = campaignsMapper.closedCampaign();
+
+        return closedCampaign;
+    }
 }

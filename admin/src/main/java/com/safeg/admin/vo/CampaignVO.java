@@ -29,6 +29,7 @@ public class CampaignVO {
 	private String campTitle;
 	private String leaderCode;
     private String typeCode;
+    private String typeNm;
     private String statusCode;
     private String placeAddr;
     private String mission;

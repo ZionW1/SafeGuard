@@ -19,6 +19,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
         <result column="result_date" property="resultDate"
                 jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
+        <result property="leaderPhone" column="leader_Phone" 
+                typeHandler="com.safeg.admin.util.CryptoTypeHandler"/>
         <!-- ... 다른 컬럼 매핑 -->
     </resultMap>
     <resultMap id="userMap" type="com.safeg.admin.vo.UserVO">
@@ -26,9 +28,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="userId" column="user_id" />
         <result property="userNm" column="user_nm" />
         <result property="phoneNum" column="phone_num"
-                        typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
+                typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
     </resultMap>
-    
+    <resultMap type="com.safeg.admin.vo.CampaignVO" id="closedCampaignMap">
+        <id property="campaignId" column="campaign_Id" />
+        <result property="placeAddr" column="place_addr" />
+        <result property="campaignTitle" column="campaign_title" />
+        <result property="companyPh" column="company_ph" />
+        <result property="createdAt" column="created_at" />
+        <result property="typeCode" column="type_code" />
+        <result property="applicantsNum" column="applicants_Num" />
+        <result property="recruitmentNum" column="recruitment_Num" />
+        <result property="userNm" column="user_nm" />
+        
+        <result property="leaderPhone" column="leader_Phone" 
+                typeHandler="com.safeg.admin.util.CryptoTypeHandler"/>
+    </resultMap>
     <!-- 목록 -->
     <select id="campaignList" resultType="CampaignVO">
         select c.campaign_Id,
@@ -284,11 +299,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateExpiredCampaignsStatus">
         <![CDATA[
             UPDATE campaign
-            SET is_deleted = 'Y',
-            is_active = 'N',
-            updated_at = NOW()
-            WHERE event_Period_end < CURDATE() -- end_date가 오늘 날짜보다 지난 경우 (끝나는 날짜 포함 유무에 따라 <= 또는 <)
-            AND is_deleted = 'N'          -- 아직 삭제되지 않은 캠페인만
+            SET
+                is_active = 'N',
+                updated_at = NOW()
+            WHERE 
+                result_date < CURDATE()
+            AND is_active = 'Y'
         ]]>
     </update>
 
@@ -343,4 +359,43 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         )
         </foreach>
     </insert>
+
+    <select id="closedCampaign" resultMap="closedCampaignMap">
+        SELECT
+            c.campaign_Id,
+            place_addr,
+            campaign_title,
+            company_ph,
+            DATE_FORMAT(c.created_at, '%Y.%m.%d') created_at,
+            type_code,
+            applicants_Num,
+            recruitment_Num,
+            u.user_nm,
+            u.phone_hash leader_Phone
+        FROM campaign c
+        LEFT OUTER JOIN user u
+        ON c.leader_code = u.id
+        WHERE 
+        <if test="option.code == 0">
+            (campaign_title like CONCAT('%', #{option.keyword}, '%')
+            or place_addr like CONCAT('%', #{option.keyword}, '%'))
+        </if>
+        <if test="option.code == 1">
+            campaign_title like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 2">
+            place_addr like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 3">
+            tl.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
+        </if>
+        AND c.is_deleted = 'N'
+        AND c.is_active = 'N'
+        <if test="option.orderCode == 0">
+            order by campaign_Id desc
+        </if>
+        <if test="option.orderCode == 1">
+            order by campaign_title asc, campaign_id desc
+        </if>
+    </select>    
 </mapper>

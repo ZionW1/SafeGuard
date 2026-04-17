@@ -43,4 +43,6 @@ public interface CampaignMapper {
 
     public List<CampaignVO> campaignFulfill() throws Exception;
 
+    public CampaignVO notActiveCampaign(Long campaignId) throws Exception;
+
 }

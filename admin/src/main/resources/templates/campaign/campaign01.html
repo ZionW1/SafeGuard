@@ -169,8 +169,8 @@
             console.log("b : " + userGuideList);
             });
         </script> -->
-        <div th:replace="fragments/footer :: mainFooter"></div>
+        <div th:replace="~{fragments/footer :: mainFooter}"></div>
         <!-- <script src="/js/common.js"></script> -->
-
+        <div th:replace="~{fragments/sidebar :: adminScript}"></div>
     </body>
 </html>

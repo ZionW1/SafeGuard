@@ -17,6 +17,7 @@ public class CryptoTypeHandler extends BaseTypeHandler<String> {
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, String parameter, JdbcType jdbcType) throws SQLException {
+        log.info("PreparedStatement 핸들러 작동함!");
         try {
             // DB에 저장하기 전 암호화
             ps.setString(i, EncryptionUtil.encrypt(parameter));
@@ -28,6 +29,8 @@ public class CryptoTypeHandler extends BaseTypeHandler<String> {
 
     @Override
     public String getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        log.info("columnName 핸들러 작동함!");
+
         try {
             // DB에서 가져온 후 복호화
             return EncryptionUtil.decrypt(rs.getString(columnName));
@@ -38,6 +41,8 @@ public class CryptoTypeHandler extends BaseTypeHandler<String> {
 
     @Override
     public String getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        log.info("columnIndex 핸들러 작동함!");
+
         try {
             return EncryptionUtil.decrypt(rs.getString(columnIndex));
         } catch (Exception e) {
@@ -47,6 +52,8 @@ public class CryptoTypeHandler extends BaseTypeHandler<String> {
 
     @Override
     public String getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        log.info("CallableStatement 핸들러 작동함!");
+
         try {
             return EncryptionUtil.decrypt(cs.getString(columnIndex));
         } catch (Exception e) {

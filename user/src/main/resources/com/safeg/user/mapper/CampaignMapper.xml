@@ -5,6 +5,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <!-- namespace="매퍼 인터페이스 경로" --> 
 <mapper namespace="com.safeg.user.mapper.CampaignMapper">
+    <resultMap type="com.safeg.user.vo.CampaignVO" id="closedCampaignMap">
+        <id property="campaignId" column="campaign_id" />
+        <result property="companyPh" column="company_ph" />
+        <result property="campaignTitle" column="campaign_Title" />
+        <result property="recruitmentNum" column="recruitment_Num" />
+        <result property="applicantsNum" column="applicants_Num" />
+        <result property="savedName" column="saved_name" />
+        <result property="filePath" column="file_path" />
+        <result property="typeCode" column="type_code" />
+        <result property="appPeriodStr" column="app_period_str" />
+        <result property="appPeriodEnd" column="app_period_end" />
+        <result property="eventPeriodStr" column="event_Period_str" />
+        <result property="eventPeriodEnd" column="event_Period_End" />
+        <result property="campaignPay" column="campaign_pay" />
+        <result property="userNm" column="user_nm" />
+        
+        <result property="leaderPhone" column="leader_phone"
+            typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+    </resultMap>
+    
     <select id="campaignSelect" resultType="campaignVO">
         select 
             campaign_id,
@@ -103,7 +123,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE campaign_id = #{id}
     </update>
 
-    <select id="closedCampaign" resultType="CampaignVO">
+    <select id="closedCampaign" resultMap="closedCampaignMap">
         <![CDATA[
         SELECT 
             c.campaign_id, 
@@ -123,7 +143,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             event_Period_str,
             event_Period_End,
             campaign_pay,
-            t.user_nm
+            t.user_nm,
+            t.phone_num as leader_phone
             FROM campaign c 
         LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
@@ -132,6 +153,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         Where f.is_deleted = 'N'
         AND f.target_type = 'campaign'
         AND c.is_active = 'N'
+        ORDER BY c.campaign_id desc
+        ]]>
+    </select>
+
+    <select id="notActiveCampaign" resultMap="closedCampaignMap">
+        <![CDATA[
+        SELECT 
+            c.campaign_id, 
+            c.campaign_Title, 
+            c.recruitment_Num,
+            c.applicants_Num,
+            c.company_ph,
+            f.saved_name, 
+            f.file_path,
+            (CASE
+                WHEN type_code = '01' THEN '경호'
+                WHEN type_code = '02' THEN '진행'
+                WHEN type_code = '03' THEN '수행'
+                ELSE ''
+            END) as type_code,
+            c.app_period_str,
+            c.app_period_end,
+            event_Period_str,
+            event_Period_End,
+            campaign_pay,
+            t.user_nm,
+            t.phone_num as leader_phone
+            FROM campaign c 
+        LEFT OUTER JOIN files f
+        ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN user t
+        on c.leader_code = t.id
+        Where f.is_deleted = 'N'
+        AND f.target_type = 'campaign'
+        AND c.campaign_id = #{campaignId}
+        AND recruitment_Num = applicants_Num
         ORDER BY c.campaign_id desc
         ]]>
     </select>

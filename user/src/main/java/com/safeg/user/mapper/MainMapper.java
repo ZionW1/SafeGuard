@@ -42,4 +42,6 @@ public interface MainMapper {
 
     public List<UserCampaignVO> applyDate(Long campaignId) throws Exception;
 
+    public void updateIsActive(Long campaignId) throws Exception;
+
 }

@@ -73,7 +73,7 @@
         Where f.is_deleted = 'N'
         and f.target_type = 'campaign'
         and c.is_deleted = 'N'
-        and c.app_Period_end >= now()
+        and c.app_Period_end >= CURDATE()
         and c.applicants_Num <= c.recruitment_Num
         and c.is_active = 'Y'
         ORDER BY c.applicants_Num DESC, c.campaign_id desc
@@ -111,7 +111,7 @@
         Where f.is_deleted = 'N'
         and f.target_type = 'campaign'
         and c.is_deleted = 'N'
-        and c.app_Period_End > now()
+        and c.app_Period_End > CURDATE()
         and c.applicants_Num = 0
         and c.is_active = 'Y'
         ORDER BY campaign_id asc
@@ -146,7 +146,7 @@
         on c.leader_code = t.id
         Where f.is_deleted = 'N'
         and f.target_type = 'campaign'
-        and c.app_Period_End > now()
+        and c.app_Period_End > CURDATE()
         and c.is_deleted = 'N'
         and c.is_active = 'Y'
         ORDER BY c.created_at desc
@@ -226,7 +226,7 @@
         and f.target_type = 'campaign'
         and c.is_deleted = 'N'
         Where f.is_deleted = 'N'
-        and c.app_Period_End > now()
+        and c.app_Period_End > CURDATE()
         and t.id is not null 
         and is_active = 'Y'
         ]]>

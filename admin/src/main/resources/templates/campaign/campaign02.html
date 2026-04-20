@@ -10,52 +10,76 @@
         <script th:inline="javascript">
             document.addEventListener("DOMContentLoaded", function() {
                 let file = /*[[${file}]]*/ null;
-
-                
-                
                 console.log("DOM이 준비되었습니다!");
                 // 여기에 실행하고 싶은 코드 작성
                 const campaignSelect = /*[[${campaignSelect}]]*/ [];
                 const leaderList = /*[[${leaderList}]]*/ [];
-                console.log(campaignSelect);
+                console.log(JSON.stringify(leaderList));
                 console.log("campaignSelect : " + JSON.stringify(campaignSelect));
 
-                // if(campaignSelect != null){
+    // 1. 인솔자 선택 초기화
+    const selectElement = document.getElementById('leaderNm_pc');
+    if (campaignSelect.leaderNo) {
+        // leaderNo와 일치하는 인덱스를 찾아 선택 상태로 만듦
+        const targetIdx = leaderList.findIndex(l => l.id == campaignSelect.leaderNo);
+        if (targetIdx !== -1) {
+            selectElement.value = targetIdx; // stat.index가 value이므로
+            document.getElementById("leaderPhone").value = campaignSelect.leaderPhone || "";
+            document.getElementById("leaderNo").value = campaignSelect.leaderNo;
+            document.getElementById("leaderCode").value = campaignSelect.leaderCode;
+        }
+    }
+
+    // 2. 인솔자 급여 및 포인트 초기값 세팅 (가장 중요!)
+    // 서버에서 받은 값을 화면용(sync-pay, sync-point) input들에 넣어줍니다.
+    const initialPay = campaignSelect.leaderPay || "";
+    const initialPoint = campaignSelect.leaderPoint || "";
+
+    // 화면용 input 채우기
+    document.querySelectorAll(".sync-pay").forEach(el => el.value = initialPay);
+    document.querySelectorAll(".sync-point").forEach(el => el.value = initialPoint);
+
+    // 전송용 hidden 필드 채우기 (이미 HTML에서 th:value로 채웠다면 생략 가능)
+    if(document.getElementById("leaderPay")) document.getElementById("leaderPay").value = initialPay;
+    if(document.getElementById("leaderPoint")) document.getElementById("leaderPoint").value = initialPoint;
+
+    // 3. 경호타입 초기화
+    if(campaignSelect.typeCode){
+        document.getElementById("securityType").value = campaignSelect.typeCode;
+        document.getElementById("typeCode").value = campaignSelect.typeCode;
+    }
+
+    const initialEventStr = campaignSelect.eventPeriodStr || "";
+    const initialEventEnd = campaignSelect.eventPeriodEnd || "";
+    const initialRstDate = campaignSelect.resultDate || "";
+    
+    document.querySelectorAll(".sync-event-str").forEach(el => el.value = initialEventStr);
+    document.querySelectorAll(".sync-event-end").forEach(el => el.value = initialEventEnd);
+    document.querySelectorAll(".sync-event-rst").forEach(el => el.value = initialRstDate);
+    
+    if(document.getElementById("eventPeriodStr")) document.getElementById("eventPeriodStr").value = initialEventStr;
+    if(document.getElementById("eventPeriodEnd")) document.getElementById("eventPeriodEnd").value = initialEventEnd;
+    if(document.getElementById("resultDate")) document.getElementById("resultDate").value = initialRstDate;
+
+                // if(leaderList != null){
                 //     console.log("leaderCode")
-                //     document.getElementById("leader_contact").value = campaignSelect.phoneNum;
-                //     document.getElementById("leaderNo").value = campaignSelect.leaderCode;
-                    
-                //     const selectElement = document.getElementById('leader');
-                    
-                //     // selectElement.value = campaignSelect.leaderName;
-                //     for(let i = 0; i < selectElement.options.length; i++) {
-                //         console.log("option value: " + selectElement.options[i].text);
-                //         selectElement.options[i].value = campaignSelect.leaderCode;
+                //     if(campaignSelect.leaderPhone == null){
+                //         document.getElementById("leader_contact").value = "";
                 //     }
-                //     selectElement.selectedIndex = campaignSelect.leaderCode;
+                //     else{
+                //         document.getElementById("leaderPhone").value = campaignSelect.leaderPhone;
+                //     }
+                //     document.getElementById("leaderCode").value = campaignSelect.leaderCode;
+                //     document.getElementById("leaderNo").value = campaignSelect.leaderNo;
+                    
+                //     // const selectElement = document.getElementById('leaderNm');
+                    
+                //     selectElement.value = campaignSelect.leaderCode;
+                //     for(let i = 0; i < selectElement.options.length; i++) {
+                //         selectElement.options[i].value = leaderList[i].id;
+                //     }
                     
                 // }
-
-                if(leaderList != null){
-                    console.log("leaderCode")
-                    if(campaignSelect.leaderPhone == null){
-                        document.getElementById("leader_contact").value = "";
-                    }
-                    else{
-                        document.getElementById("leader_contact").value = campaignSelect.leaderPhone;
-                    }
-                    document.getElementById("leaderCode").value = campaignSelect.leaderCode;
-                    document.getElementById("leaderNo").value = campaignSelect.leaderNo;
-                    document.getElementById("leaderCode").value = campaignSelect.leaderId;
-                    const selectElement = document.getElementById('leader');
-                    
-                    selectElement.value = campaignSelect.leaderCode;
-                    for(let i = 0; i < selectElement.options.length; i++) {
-                        selectElement.options[i].value = i
-                    }
-                    // selectElement.selectedIndex = campaignSelect.leaderCode;
-                    
-                }
 
                 if(campaignSelect.typeCode != null){
                     console.log("typeCode")
@@ -86,17 +110,17 @@
                 console.log("선택된 인솔자 ID: " + idx);
                 const leaderList = /*[[${leaderList}]]*/ [];
 
-                console.log("selectPhoneNumber : " + JSON.stringify(leaderList[idx-1]));
+                console.log("selectPhoneNumber : " + JSON.stringify(leaderList[idx]));
 
-                const selectPhoneNumber = leaderList[idx-1].phoneNum;
-                const selectNo = leaderList[idx-1].id;
-                const selectId = leaderList[idx-1].userId;
+                const selectPhoneNumber = leaderList[idx].phoneNum;
+                const selectNo = leaderList[idx].id;
+                const selectId = leaderList[idx].userId;
 
                 console.log("selectPhoneNumber : " + selectPhoneNumber);
 
-                document.getElementById("leader_contact").value = selectPhoneNumber;
+                document.getElementById("leaderPhone").value = selectPhoneNumber;
                 document.getElementById("leaderNo").value = selectNo;
-                document.getElementById("leaderCode").value = selectId;
+                document.getElementById("leaderCode").value = selectNo;
 
                 console.log("a" + selectPhoneNumber);
             }
@@ -207,57 +231,45 @@
                             <input type="text" name="companyPh" id="companyPh" th:value="${campaignSelect.companyPh}" />
                         </div>
                     </div>
-                    <div class="pc">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="leader">인솔자 선택</label>
-                                <select id="leader" name="leader" onchange="inputLeaderPhoneNumber(this.value)" th:field="*{campaignSelect.leaderCode}" >
-                                    <option value="">-- 선택하세요 --</option>
-                                    <option th:each="leader, stat : ${leaderList}" th:value="${leader.id}" th:selected="${leader.id == campaignSelect.leaderCode}" th:text="${leader.userNm}"></option>
-                                </select>
-                                <input type="hidden" id="leaderCode" name="leaderCode" />
-                                <input type="hidden" id="leaderNo" name="leaderNo" />
-                            </div>
-                            <div class="form-group">
-                                <label>인솔자 연락처</label>
-                                <input type="text" name="leader_contact" id="leader_contact" readonly />
-                            </div>
-                            <div class="form-group">
-                                <label for="leaderPay">인솔자 급여</label>
-                                <input type="number" name="leaderPay" id="leaderPay" th:value="${campaignSelect.leaderPay}" />
-                                <!-- th:value="${campaignSelect.leaderPay}" -->
-                            </div>
-                            <div class="form-group">
-                                <label for="leaderPay">인솔자 포인트</label>
-                                <input type="text" id="leaderPoint" name="leaderPoint" th:value="${campaignSelect.leaderPoint}" />
-                            </div>
+                    
+                <input type="hidden" id="leaderCode" name="leaderCode" />
+                <input type="hidden" id="leaderNo" name="leaderNo" />
+                
+                <input type="hidden" name="leaderPay" id="leaderPay" />
+                <input type="hidden" name="leaderPoint" id="leaderPoint" />
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="leaderNm_pc">인솔자 선택</label>
+                            <select id="leaderNm_pc" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)" class="sync-nm" >
+                                <option value="">-- 선택하세요 --</option>
+                                <option th:each="leader, stat : ${leaderList}" 
+                                        th:value="${stat.index}" 
+                                        th:text="${leader.userNm}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="leaderPhone">인솔자 연락처</label>
+                            <input type="text" id="leaderPhone" name="leaderPhone" class="sync-phone" readonly/>
+                        </div>
+                        <div class="form-group pc">
+                            <label for="leaderPay_pc">인솔자 급여</label>
+                            <input type="text" id="leaderPay_pc" class="sync-pay" />
+                        </div>
+                        <div class="form-group pc">
+                            <label for="leaderPoint_pc">인솔자 포인트</label>
+                            <input type="text" id="leaderPoint_pc" class="sync-point" />
                         </div>
                     </div>
-                    <div class="mobile">
+                    <div class="form-row mobile">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="leader">인솔자 선택</label>
-                                <select id="leader" name="leader" onchange="inputLeaderPhoneNumber(this.value)" th:field="*{campaignSelect.leaderCode}" >
-                                    <option value="">-- 선택하세요 --</option>
-                                    <option th:each="leader, stat : ${leaderList}" th:value="${leader.id}" th:selected="${leader.id == campaignSelect.leaderCode}" th:text="${leader.userNm}"></option>
-                                </select>
-                                <input type="hidden" id="leaderCode" name="leaderCode" />
-                                <input type="hidden" id="leaderNo" name="leaderNo" />
+                                <label for="leaderPay_mo">인솔자 급여</label>
+                                <input type="number" id="leaderPay_mo" class="sync-pay" />
                             </div>
                             <div class="form-group">
-                                <label>인솔자 연락처</label>
-                                <input type="text" name="leader_contact" id="leader_contact" readonly />
-                            </div>
-                        </div>
-                        <div class="form-row mrg16">
-                            <div class="form-group">
-                                <label for="leaderPay">인솔자 급여</label>
-                                <input type="number" name="leaderPay" id="leaderPay" th:value="${campaignSelect.leaderPay}" />
-                                <!-- th:value="${campaignSelect.leaderPay}" -->
-                            </div>
-                            <div class="form-group">
-                                <label for="leaderPay">인솔자 포인트</label>
-                                <input type="text" id="leaderPoint" name="leaderPoint" th:value="${campaignSelect.leaderPoint}" />
+                                <label for="leaderPoint_mo">인솔자 포인트</label>
+                                <input type="text" id="leaderPoint_mo" class="sync-point" />
                             </div>
                         </div>
                     </div>
@@ -332,75 +344,54 @@
                             <label for="placeAddr">주소</label>
                             <input type="text" name="placeAddr" id="placeAddr" th:value="${campaignSelect.placeAddr}" />
                         </div>
-                        <!-- <div class="form-group">
-                            <label>인솔자 선택</label>
-                            <select name="userGuideList" id="userGuideList">
-                                <option value="">선택하세요</option>
-                                <option value="김인솔">김인솔</option>
-                                <option value="박리더">박리더</option>
-                            </select>
-                        </div> -->
                     </div>
                     
                     <div class="form-group">
                         <label>안내사항</label>
                         <textarea class="memo" name="mission" id="mission" rows="4" th:text="${campaignSelect.mission}"></textarea>
                     </div>
-                    <div class="pc">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>신청기간</label>
-                                <div class="form-row">
-                                    <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" th:value="${campaignSelect.AppPeriodStr}" />
-                                    <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" th:value="${campaignSelect.AppPeriodEnd}" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>행사기간</label>
-                                <div class="form-row">
-                                    <input class="dateInsert" type="date" name="eventPeriodStr" id="eventPeriodStr" th:value="${campaignSelect.eventPeriodStr}" />
-                                    <input class="dateInsert" type="date" name="eventPeriodEnd" id="eventPeriodEnd" th:value="${campaignSelect.eventPeriodEnd}" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>명단발표기간</label>
-                                <div class="form-row">
-                                    <input class="dateInsert" type="date" name="resultDate" id="resultDate" th:value="${campaignSelect.resultDate}" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mobile">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>신청기간</label>
-                                <div class="form-row">
-                                    <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" th:value="${campaignSelect.AppPeriodStr}" />
-                                    <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" th:value="${campaignSelect.AppPeriodEnd}" />
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="form-row mrg16">
-                            <div class="form-group">
-                                <label>행사기간</label>
-                                <div class="form-row">
-                                    <input class="dateInsert" type="date" name="eventPeriodStr" id="eventPeriodStr" th:value="${campaignSelect.eventPeriodStr}" />
-                                    <input class="dateInsert" type="date" name="eventPeriodEnd" id="eventPeriodEnd" th:value="${campaignSelect.eventPeriodEnd}" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row mrg16">
-                            <div class="form-group">
-                                <label>명단발표기간</label>
-                                <input class="dateInsert" type="date" name="resultDate" id="resultDate" th:value="${campaignSelect.resultDate}" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        
-                    </div>
+                    
+                    <input type="hidden" name="eventPeriodStr" id="eventPeriodStr" />
+                    <input type="hidden" name="eventPeriodEnd" id="eventPeriodEnd" />
+                    <input type="hidden" name="resultDate" id="resultDate" />
 
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>신청기간</label>
+                            <div class="form-row">
+                                <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" th:value="${campaignSelect.AppPeriodStr}" />
+                                <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" th:value="${campaignSelect.AppPeriodEnd}" />
+                            </div>
+                        </div>
+                        <div class="form-group pc">
+                            <label>행사기간</label>
+                            <div class="form-row">
+                                <input class="dateInsert sync-event-str" type="date" id="eventPeriodStr_pc" />
+                                <input class="dateInsert sync-event-end" type="date" id="eventPeriodStr_pc" />
+                            </div>
+                        </div>
+                        <div class="form-group pc">
+                            <label>명단발표기간</label>
+                            <div class="form-row">
+                                <input class="dateInsert sync-event-rst" type="date" id="resultDate_pc" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row mobile">
+                        <div class="form-group">
+                            <label>행사기간</label>
+                            <div class="form-row">
+                                <input class="dateInsert sync-event-str" type="date" id="eventPeriodStr_mo" />
+                                <input class="dateInsert sync-event-end" type="date" id="eventPeriodEnd_mo" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row mobile">
+                        <div class="form-group">
+                            <label>명단발표기간</label>
+                            <input class="dateInsert sync-event-rst" type="date" name="resultDate_mo" id="resultDate_mo" />
+                        </div>
+                    </div>
                     <button type="submit">캠페인 수정</button>
                     <button type="button" class="delete-btn" onclick="campaignRemove()">캠페인 삭제</button>
                 </form>
@@ -492,6 +483,44 @@
             });
         }
     });
+
+    
+            document.addEventListener("input", function(e) {
+                // 급여(Pay) 입력 시 동기화
+
+                if (e.target.classList.contains('sync-pay')) {
+                    const val = e.target.value;
+                    document.getElementById("leaderPay").value = val;
+                    document.querySelectorAll(".sync-pay").forEach(el => el.value = val);
+                }
+
+                // 포인트(Point) 입력 시 동기화
+                if (e.target.classList.contains('sync-point')) {
+                    const val = e.target.value;
+                    document.getElementById("leaderPoint").value = val;
+                    document.querySelectorAll(".sync-point").forEach(el => el.value = val);
+                }
+
+                if (e.target.classList.contains('sync-event-str')) {
+                    const val = e.target.value;
+                    document.getElementById("eventPeriodStr").value = val;
+                    document.querySelectorAll(".sync-event-str").forEach(el => el.value = val);
+                }
+
+                // 포인트(Point) 입력 시 동기화
+                if (e.target.classList.contains('sync-event-end')) {
+                    const val = e.target.value;
+                    document.getElementById("eventPeriodEnd").value = val;
+                    document.querySelectorAll(".sync-event-end").forEach(el => el.value = val);
+                }
+
+                // 포인트(Point) 입력 시 동기화
+                if (e.target.classList.contains('sync-event-rst')) {
+                    const val = e.target.value;
+                    document.getElementById("resultDate").value = val;
+                    document.querySelectorAll(".sync-event-rst").forEach(el => el.value = val);
+                }
+            });
         </script>
     </body>
 </html>

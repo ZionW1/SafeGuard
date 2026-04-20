@@ -322,6 +322,7 @@ public class AligoSmsService {
     @Async("taskExecutor")
     public CompletableFuture<Boolean> rosterCheckAsync(
             String receiver, String type, String eventName, int count, String appPeriod, String eventPeriod, String link, String companyPh) {
+        log.info("rosterCheckAsync");
         try {
             // 실제 알림톡 발송 로직 호출
             boolean result = rosterChecktalk(receiver, type, eventName, count, appPeriod, eventPeriod, link, companyPh);

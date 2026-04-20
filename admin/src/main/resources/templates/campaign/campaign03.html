@@ -20,21 +20,14 @@
             }
 
             function inputLeaderPhoneNumber(idx) {
-                console.log("선택된 인솔자 ID: " + idx);
                 const leaderList = /*[[${leaderList}]]*/ [];
-                console.log(leaderList[idx].phoneNum);
-
+                
                 const selectPhoneNumber = leaderList[idx].phoneNum;
                 const selectNo = leaderList[idx].id;
-                console.log("selectPhoneNumber " + selectPhoneNumber);
-                console.log("selectNo " + selectNo);
-                console.log("userId " + leaderList[idx].userId);
 
                 document.getElementById("leaderPhone").value = selectPhoneNumber;
                 document.getElementById("leaderNo").value = selectNo;
-                document.getElementById("leaderCode").value = leaderList[idx].userId;
-                console.log("a" + selectPhoneNumber);
-                
+                document.getElementById("leaderCode").value = leaderList[idx].id;
             }
         </script>
     </head>
@@ -66,36 +59,46 @@
                 </div>
                 <input type="hidden" id="leaderCode" name="leaderCode" />
                 <input type="hidden" id="leaderNo" name="leaderNo" />
-
-                <div class="pc">
+                
+                <input type="hidden" name="leaderPay" id="leaderPay" />
+                <input type="hidden" name="leaderPoint" id="leaderPoint" />
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="leaderNm_pc">인솔자 선택</label>
+                        <select id="leaderNm_pc" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)" class="sync-nm" >
+                            <option value="">-- 선택하세요 --</option>
+                            <option th:each="leader, stat : ${leaderList}" 
+                                    th:value="${stat.index}" 
+                                    th:text="${leader.userNm}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="leaderPhone">인솔자 연락처</label>
+                        <input type="text" id="leaderPhone" name="leaderPhone" class="sync-phone" readonly/>
+                    </div>
+                    <div class="form-group pc">
+                        <label for="leaderPay_pc">인솔자 급여</label>
+                        <input type="text" id="leaderPay_pc" class="sync-pay" />
+                    </div>
+                    <div class="form-group pc">
+                        <label for="leaderPoint_pc">인솔자 포인트</label>
+                        <input type="text" id="leaderPoint_pc" class="sync-point" />
+                    </div>
+                </div>
+                <div class="form-row mobile">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="leaderNm">인솔자 선택</label>
-                            <select id="leaderNm" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)">
-                                <option value="">-- 선택하세요 --</option>
-                                <option th:each="leader, stat : ${leaderList}" 
-                                        th:value="${stat.index}" 
-                                        th:text="${leader.userNm}">
-                                </option>
-                            </select>
+                            <label for="leaderPay_mo">인솔자 급여</label>
+                            <input type="number" id="leaderPay_mo" class="sync-pay" />
                         </div>
                         <div class="form-group">
-                            <label for="phone">인솔자 연락처</label>
-                            <input type="text" id="leaderPhone" name="leaderPhone" />
-                        </div>
-                        <div class="form-group">
-                            <label for="leaderPay">인솔자 급여</label>
-                            <input type="text" id="leaderPay" name="leaderPay" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="leaderPay">인솔자 포인트</label>
-                            <input type="text" id="leaderPoint" name="leaderPoint" />
+                            <label for="leaderPoint_mo">인솔자 포인트</label>
+                            <input type="text" id="leaderPoint_mo" class="sync-point" />
                         </div>
                     </div>
                 </div>
-                
-
                 <!-- 캠페인 정보 -->
                 <div class="form-group">
                     <label>캠페인명</label>
@@ -152,32 +155,48 @@
                     <textarea class="memo" id="mission" name="mission" rows="4"></textarea>
                 </div>
 
+                <input type="hidden" name="eventPeriodStr" id="eventPeriodStr" />
+                <input type="hidden" name="eventPeriodEnd" id="eventPeriodEnd" />
+                <input type="hidden" name="resultDate" id="resultDate" />
+
                 <!-- 일정 -->
-                <div class="pc">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>신청기간</label>
-                            <div class="form-row">
-                                <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" />
-                                <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" />
-                            </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>신청기간</label>
+                        <div class="form-row">
+                            <input class="dateInsert" type="date" name="AppPeriodStr" id="AppPeriodStr" />
+                            <input class="dateInsert" type="date" name="AppPeriodEnd" id="AppPeriodEnd" />
                         </div>
-                        <div class="form-group">
-                            <label>행사기간</label>
-                            <div class="form-row">
-                                <input class="dateInsert" type="date" name="eventPeriodStr" id="eventPeriodStr" />
-                                <input class="dateInsert" type="date" name="eventPeriodEnd" id="eventPeriodEnd" />
-                            </div>
+                    </div>
+                    <div class="form-group pc">
+                        <label>행사기간</label>
+                        <div class="form-row">
+                            <input class="dateInsert sync-event-str" type="date" id="eventPeriodStr_pc" />
+                            <input class="dateInsert sync-event-end" type="date" id="eventPeriodStr_pc" />
                         </div>
-                        <div class="form-group">
-                            <label>명단발표기간</label>
-                            <div class="form-row">
-                                <input class="dateInsert" type="date" name="resultDate" id="resultDate" />
-                            </div>
+                    </div>
+                    <div class="form-group pc">
+                        <label>명단발표기간</label>
+                        <div class="form-row">
+                            <input class="dateInsert sync-event-rst" type="date" id="resultDate_pc" />
                         </div>
                     </div>
                 </div>
-                
+                <div class="form-row mobile">
+                    <div class="form-group">
+                        <label>행사기간</label>
+                        <div class="form-row">
+                            <input class="dateInsert sync-event-str" type="date" id="eventPeriodStr_mo" />
+                            <input class="dateInsert sync-event-end" type="date" id="eventPeriodEnd_mo" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row mobile">
+                    <div class="form-group">
+                        <label>명단발표기간</label>
+                        <input class="dateInsert sync-event-rst" type="date" name="resultDate_mo" id="resultDate_mo" />
+                    </div>
+                </div>
                 <button type="submit">캠페인 등록</button>
             </form>
         </div>
@@ -224,6 +243,43 @@
                 };
                 reader.readAsDataURL(file);
             }
+
+            document.addEventListener("input", function(e) {
+                // 급여(Pay) 입력 시 동기화
+
+                if (e.target.classList.contains('sync-pay')) {
+                    const val = e.target.value;
+                    document.getElementById("leaderPay").value = val;
+                    document.querySelectorAll(".sync-pay").forEach(el => el.value = val);
+                }
+
+                // 포인트(Point) 입력 시 동기화
+                if (e.target.classList.contains('sync-point')) {
+                    const val = e.target.value;
+                    document.getElementById("leaderPoint").value = val;
+                    document.querySelectorAll(".sync-point").forEach(el => el.value = val);
+                }
+
+                if (e.target.classList.contains('sync-event-str')) {
+                    const val = e.target.value;
+                    document.getElementById("eventPeriodStr").value = val;
+                    document.querySelectorAll(".sync-event-str").forEach(el => el.value = val);
+                }
+
+                // 포인트(Point) 입력 시 동기화
+                if (e.target.classList.contains('sync-event-end')) {
+                    const val = e.target.value;
+                    document.getElementById("eventPeriodEnd").value = val;
+                    document.querySelectorAll(".sync-event-end").forEach(el => el.value = val);
+                }
+
+                // 포인트(Point) 입력 시 동기화
+                if (e.target.classList.contains('sync-event-rst')) {
+                    const val = e.target.value;
+                    document.getElementById("resultDate").value = val;
+                    document.querySelectorAll(".sync-event-rst").forEach(el => el.value = val);
+                }
+            });
         </script>
     </body>
 </html>

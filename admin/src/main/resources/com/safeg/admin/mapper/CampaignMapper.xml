@@ -375,6 +375,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             company_ph,
             DATE_FORMAT(c.created_at, '%Y.%m.%d') created_at,
             type_code,
+            (CASE
+                WHEN type_code = '01' THEN '경호'
+                WHEN type_code = '02' THEN '진행'
+                WHEN type_code = '03' THEN '수행'
+                ELSE ''
+            END) as type_nm,
             applicants_Num,
             recruitment_Num,
             result_date,

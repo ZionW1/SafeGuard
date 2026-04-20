@@ -74,6 +74,7 @@ public class CampaignVO {
     private String codeName;
     private String description;
     private int sortOrder;
+    private String leaderNm;
     //private List<CampaignFilesVO> campaignFilesList; //첨부 파일 정보
     
 }

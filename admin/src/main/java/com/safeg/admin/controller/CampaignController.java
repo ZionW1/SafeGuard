@@ -121,7 +121,7 @@ public class CampaignController {
     public String campaign04(CampaignVO campaignVO) throws Exception {
         log.info("campaignVO.toString : " + campaignVO.toString());
 
-        campaignVO.setLeaderPhone(campaignVO.getLeaderPhone().replace(",", ""));
+        // campaignVO.setLeaderPhone(campaignVO.getLeaderPhone().replace(",", ""));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
@@ -142,6 +142,7 @@ public class CampaignController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         String username = customUser.getUsername(); // 로그인 아이디 (userId)
+        log.info("수정 campaign05.toString : " + campaign.toString());
 
         try {
             int result = campaignsService.campaignUpdate(campaign);

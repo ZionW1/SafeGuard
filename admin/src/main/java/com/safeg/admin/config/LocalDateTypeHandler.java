@@ -30,10 +30,19 @@ public class LocalDateTypeHandler extends BaseTypeHandler<LocalDate> {
     public LocalDate getNullableResult(ResultSet rs, String columnName) throws SQLException {
         // DB 컬럼 이름으로 결과셋에서 읽어올 때
         String dateString = rs.getString(columnName);
-        if (dateString != null) {
-            return LocalDate.parse(dateString, FORMATTER); // ⭐ 여기에 `YYYY-MM-DD` 패턴 사용 ⭐
+
+        if (dateString == null || dateString.trim().isEmpty()) 
+            return null;
+        try {
+            // 이 부분을 substring으로 수정!
+            return LocalDate.parse(dateString.substring(0, 10)); 
+        } catch (Exception e) {
+            return null;
         }
-        return null;
+        // if (dateString != null) {
+        //     return LocalDate.parse(dateString, FORMATTER); // ⭐ 여기에 `YYYY-MM-DD` 패턴 사용 ⭐
+        // }
+        // return null;
     }
 
     @Override

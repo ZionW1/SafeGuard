@@ -32,7 +32,7 @@ public class StringToLocalDateTypeHandler extends BaseTypeHandler<LocalDate> {
         }
         try {
             // ⭐⭐⭐ 시간 정보를 포함한 문자열이므로 LocalDateTime으로 먼저 파싱 후, toLocalDate()로 변환! ⭐⭐⭐
-            return LocalDateTime.parse(s, FORMATTER).toLocalDate();
+            return LocalDate.parse(s.substring(0, 10));
         } catch (java.time.format.DateTimeParseException e) {
             // 어떤 문자열이 넘어오는지, 어떤 패턴을 썼는지 정확히 로그에 남겨 디버깅에 도움
             throw new SQLException(

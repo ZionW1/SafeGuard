@@ -50,7 +50,7 @@ public class Scheduler {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");         
         // 포맷 적용        
         String formatedNow = now.format(formatter);
-        
+
         try {
             List<CampaignVO> closedCampaign = campaignService.closedCampaign();
             log.info("대상 캠페인 수: {}", (closedCampaign != null ? closedCampaign.size() : 0));
@@ -62,9 +62,9 @@ public class Scheduler {
                     // 안전한 문자열 조립 (String.valueOf는 null일 경우 "null" 문자열을 반환하여 에러를 막음)
                     String appPeriod = String.valueOf(campaignsVO.getAppPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getAppPeriodEnd());
                     String eventPeriod = String.valueOf(campaignsVO.getEventPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getEventPeriodEnd());
-                    String resultDateStr = String.valueOf(campaignsVO.getResultDate());
+                    LocalDate resultDate = campaignsVO.getResultDate();
 
-                    if (formatedNow.equals(resultDateStr)) {
+                    if (now.isEqual(campaignsVO.getResultDate())) {
                         aligoSmsService.rosterCheckAsync(campaignsVO.getLeaderPhone(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), appPeriod, eventPeriod, "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(), campaignsVO.getCompanyPh());
                     }
                 } catch (Exception e) {

@@ -704,12 +704,19 @@ margin: 5px 0 0;
     vertical-align: middle;
     margin: 0; /* 기본 마진 제거 */
 }
-
+/* 
 .mobile {
     display: none;
 }
 .pc {
     display: block;
+} */
+
+.mobile {
+    display: none !important;
+}
+.pc {
+    display: flex !important; /* block 대신 부모의 flex 속성 유지 */
 }
 
 input[type=checkbox] {
@@ -744,6 +751,13 @@ input[type=checkbox] {
         height: 60px;
         z-index: 1000;
         box-sizing: border-box;
+    }
+
+    .pc {
+        display: none !important;
+    }
+    .mobile {
+        display: flex !important; /* form-row가 flex이므로 유지 */
     }
 
     .mobile-header.open {

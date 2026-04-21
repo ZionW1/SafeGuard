@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>광고문의 | 행집(Hangjip)</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link rel="stylesheet" th:href="@{/css/business.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <style>
+        .swiper {
+            padding: 60px 60px 60px 0px;
+        }
+        .swiper-slide {
+            width: 250px; /* 기본 가로 크기 지정 (적절히 조절) */
+            /* transition: all 0.4s ease; */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 0px;
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            object-fit: cover;
+        }
+
+        /* ⭐️ 활성화된 슬라이드: 너비를 더 넓게 설정 */
+        .swiper-slide-active {
+            vertical-align: middle;
+            margin: -60px 0;
+            width: 360px !important; /* 가운데 이미지만 이 너비만큼 커짐 */
+            opacity: 1;
+        }
+
+        /* 활성화된 이미지에만 광채 효과 */
+        .swiper-slide-active img {
+            height: auto;
+            box-shadow: 0 0 30px 30px rgba(255, 108, 38, 0.4);
+            /* margin-right: 20px; */
+        }
+    </style>
+</head>
+<body>
+<section class="img-section">
+    <div class="w100vh h100vh">
+        <img class="guard_img" src="/images/1681333062142-171456d92167.jpeg" alt="Ask Image" />
+    </div>
+</section>
+<section class="stats-section">
+    <div class="spacer">
+        <div class="">수치가 말해주는 1등 체험단</div>
+        <div><span class="highlight">행집</span>의 차별성, 실시간 숫자로 확인하세요</div>
+    </div>
+    <div class="card-grid-container four-cols container grid-4">
+        <div class="card-box">
+                <div class="card-box-no" th:text="${totalUsers} + ' +'"+></div>
+            <h3 class="card-box-text">
+                누적 유저<br>
+            </h3>
+            <div>
+                <img src="/images/business_icon_04.png" alt="통계 분석 아이콘" class="card-icon" />
+            </div>
+        </div>
+        <div class="card-box">
+            <div class="card-box-no" th:text="${totalGuard} + ' +'"+></div>
+            <h3 class="card-box-text">
+                누적 유저<br>
+            </h3>
+            <div>
+                <img src="/images/business_icon_04.png" alt="통계 분석 아이콘" class="card-icon" />
+            </div>
+        </div>
+        <div class="card-box">
+            <div class="card-box-no" th:text="${totalGuard} + ' +'"+></div>
+            <h3 class="card-box-text">
+                누적 유저<br>
+            </h3>
+            <div>
+                <img src="/images/business_icon_04.png" alt="통계 분석 아이콘" class="card-icon" />
+            </div>
+        </div>
+        <div class="card-box">
+            <div class="card-box-no" th:text="${totalCampaign} + ' +'"+></div>
+            <h3 class="card-box-text">
+                누적 유저<br>
+            </h3>
+            <div>
+                <img src="/images/business_icon_04.png" alt="통계 분석 아이콘" class="card-icon" />
+            </div>
+        </div>
+
+        <!-- <div class="stat-item">
+            <span class="label">누적 리뷰어</span>
+            <h2 class="counter">679,303+</h2>
+        </div>
+        <div class="stat-item">
+            <span class="label">누적 광고주</span>
+            <h2 class="counter">97,273+</h2>
+        </div>
+        <div class="stat-item">
+            <span class="label">누적 캠페인</span>
+            <h2 class="counter">3,234,591+</h2>
+        </div>
+        <div class="stat-item">
+            <span class="label">누적 리뷰</span>
+            <h2 class="counter">22,317,460+</h2>
+        </div> -->
+    </div>
+</section>
+
+<section class="campaign-img">
+    <div class="spacer">
+        <div class="">하나부터 열까지</div>
+        <div><span class="highlight">행집</span>의 기술력 기반 리뷰</div>
+    </div>
+
+    <div id="swiperReview" class="swiperReview">
+        <div class="swiper mySwiper"> 
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 1"></div>
+                <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 2"></div>
+                <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 3"></div>
+                <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 4"></div>
+                <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 5"></div>
+                <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 6"></div>
+                <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 7"></div>
+                <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 8"></div>
+                <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 9"></div>
+                <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 10"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const $slider = $("#swiperReview");
+        let slideInx = 0; // 현재 슬라이드 인덱스
+        
+// 클래스 구조에 맞춰서 선택자 수정
+        const swiperReview = new Swiper("#swiperReview .swiper", { 
+            // ... 설정값
+            // speed: 1000,
+            // autoplay: {
+            //     delay: 2000,
+            //     disableOnInteraction: false,
+            // },
+            loop: true,
+            slidesPerView: 'auto',
+            spaceBetween: 30,
+            loopAdditionalSlides: -1,
+            centeredSlides: true,
+            // allowTouchMove: false,
+            breakpoints: {
+                // 1920px 이하 (일반 PC 및 노트북)
+                0: {
+                    slidesPerView: 6,
+                    spaceBetween: 30,
+                    allowTouchMove: false,
+
+                    // 여기서 슬라이드 너비를 조절하고 싶다면 slidesPerView를 숫자로 고정해도 됩니다.
+                },
+                // 1921px 이상 (울트라 와이드, 대형 모니터)
+                1921: {
+                    slidesPerView: 6,
+                    spaceBetween: 50, // 간격을 더 넓게
+                    allowTouchMove: false,
+                },
+                1080: {
+                    slidesPerView: 6,
+                    spaceBetween: 30,
+                    allowTouchMove: false,
+                },
+                768: {
+                    slidesPerView: 4,
+                    spaceBetween: 0,
+                    allowTouchMove: false,
+                },
+                480: {
+                    slidesPerView: 1.5,
+                    spaceBetween: 25,
+                },
+            },
+            on: {
+                slideChangeTransitionStart: function () {
+                    slideInx = this.realIndex; // 현재 슬라이드 인덱스 갱신
+                    updateClass();
+                },
+                init: function () {
+                    updateClass();
+                },
+            },
+            pagination: {
+                el: "#swiperReview .swiper-pagination",
+                clickable: true,
+            },
+        });
+        function updateClass() {
+            // 화면상 첫 번째 및 마지막 슬라이드에 클래스 추가 및 제거
+            $slider.find(".swiper-slide-prev").prev().addClass("first").siblings().removeClass("first");
+            $slider.find(".swiper-slide-next").next().addClass("last").siblings().removeClass("last");
+            $slider.find(".first").prev().addClass("first2").siblings().removeClass("first2");
+            $slider.find(".last").next().addClass("last2").siblings().removeClass("last2");
+        }
+    </script>
+</section>
+
+<section class="feature-section">
+    <div class="spacer mrg10p">
+        <div class="">하나부터 열까지</div>
+        <div><span class="highlight">행집</span>의 기술력 기반 리뷰</div>
+    </div>
+    <div class="card-grid-container three-cols container grid-4">
+        <div class="feature-card">
+            <div class="three-text">키워드 분석</div>
+            <div class="three-text-sub">전문적인 데이터</div>
+            <div class="three-text-sub">분석을 통한 키워드 제시</div>
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="feature-card">
+            <div class="three-text">리뷰어 선별</div>
+            <div class="three-text-sub">방문자수 프로그램을</div>
+            <div class="three-text-sub">걸러내는 선별 시스템</div>
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="feature-card">
+            <div class="three-text">노출 향상</div>
+            <div class="three-text-sub">독자적인 기술력을</div>
+            <div class="three-text-sub">통한 노출향상 극대화</div>
+            <i class="fas fa-search"></i>
+        </div>
+
+        <!-- <div class="stat-item">
+            <span class="label">누적 리뷰어</span>
+            <h2 class="counter">679,303+</h2>
+        </div>
+        <div class="stat-item">
+            <span class="label">누적 광고주</span>
+            <h2 class="counter">97,273+</h2>
+        </div>
+        <div class="stat-item">
+            <span class="label">누적 캠페인</span>
+            <h2 class="counter">3,234,591+</h2>
+        </div>
+        <div class="stat-item">
+            <span class="label">누적 리뷰</span>
+            <h2 class="counter">22,317,460+</h2>
+        </div> -->
+    </div>
+</section>
+<section class="ads-reason-container">
+    <div class="ads-reason">
+    <!-- 좌측 번호 리스트 -->
+    <div class="spacer mrgT80 pdgT80 mrgB80">
+        <span>하나부터 열까지</span><br />
+        <span class="highlight">행집</span>의 기술력 기반 리뷰
+    </div>
+    <div>
+    <ul class="reason-list">
+        
+        <li class="active" data-index="0">
+            <span class="num-circle active">01</span>
+            <span class="text">맞춤형 리뷰어 선별</span>
+        </li>
+        <li data-index="1">
+            <span class="num-circle">02</span>
+            <span class="text">전략적 키워드 활용</span>
+        </li>
+        <li data-index="2">
+            <span class="num-circle">03</span>
+            <span class="text">고퀄리티 리뷰 제공</span>
+        </li>
+        <li data-index="3">
+            <span class="num-circle">04</span>
+            <span class="text">편리한 마감보고서</span>
+        </li>
+        <li data-index="4">
+            <span class="num-circle">05</span>
+            <span class="text">낮은 비용 높은 효율</span>
+        </li>
+    </ul>
+
+    <!-- 우측 슬라이드 영역 -->
+    <div class="reason-slide">
+        <div class="slide-item active" data-index="0">
+            <span class="tag">No. 1</span>
+            <div class="abs-subtitle">나에게 맞는 리뷰어로 맞춤형 리뷰어 선별</div>
+            <ul class="desc-list">
+                <pre>
+<li>광고주 업종과 지역에 딱 맞는 리뷰어를 선별해
+타깃 고객층의 마음을 사로잡습니다.</li>
+<li>업종과 지역에 최적화된 인플루언서 매칭으로 
+고객과 광고주 모두의 신뢰를 확보합니다.</li>
+                </pre>
+            </ul>
+            <div class="slide-img">
+                <img src="/images/tablet_review.png" alt="맞춤형 리뷰어 이미지" />
+            </div>
+        </div>
+
+        <div class="slide-item" data-index="1">
+            <span class="tag">No. 2</span>
+            <h3>전략적 키워드로<br>효과적 마케팅</h3>
+            <ul class="desc-list">
+                <li>타깃 키워드 분석을 통해 최적화된 마케팅 전략을 수립합니다.</li>
+                <li>효율적인 광고 집행으로 최상의 투자 대비 효과를 제공합니다.</li>
+            </ul>
+            <div class="slide-img">
+                <img src="/images/keyword_marketing.png" alt="키워드 마케팅 이미지" />
+            </div>
+        </div>
+
+        <div class="slide-item" data-index="2">
+            <span class="tag">No. 3</span>
+            <h3>고퀄리티 리뷰<br>제공 및 관리</h3>
+            <ul class="desc-list">
+                <li>전문가가 리뷰 품질을 관리하여 신뢰도 높은 콘텐츠를 생산합니다.</li>
+                <li>리뷰의 지속적인 모니터링으로 품질을 유지합니다.</li>
+            </ul>
+            <div class="slide-img">
+                <img src="/images/high_quality_review.png" alt="고퀄리티 리뷰 이미지" />
+            </div>
+        </div>
+
+        <div class="slide-item" data-index="3">
+            <span class="tag">No. 4</span>
+            <h3>편리한 마감보고서<br>제공</h3>
+            <ul class="desc-list">
+                <li>캠페인 종료 후 상세한 리포트를 제공해 효율적인 성과 관리가 가능합니다.</li>
+                <li>사용자 친화적 UI로 데이터를 쉽게 확인할 수 있습니다.</li>
+            </ul>
+            <div class="slide-img">
+                <img src="/images/report.svg" alt="마감보고서 이미지" />
+            </div>
+        </div>
+
+        <div class="slide-item" data-index="4">
+            <h3>낮은 비용으로<br>높은 효율 달성</h3>
+            <ul class="desc-list">
+                <li>경쟁력 있는 가격으로 최대의 광고 효과를 실현합니다.</li>
+                <li>효율성 중심의 광고 시스템을 제공합니다.</li>
+            </ul>
+            <div class="slide-img">
+                <img src="/images/efficiency.svg" alt="낮은 비용 높은 효율 이미지" />
+            </div>
+        </div>
+
+        <!-- 이전 버튼-->
+        <button type="button" class="slide-prev" aria-label="이전 슬라이드">
+            &lt;
+        </button>
+        <!-- 다음 버튼 -->
+        <button type="button" class="slide-next" aria-label="다음 슬라이드">
+            &gt;
+        </button>
+    </div>
+</div>
+</div>
+</section>
+
+<section class="contact-section">
+    <div class="container-ask">
+
+        <div class="text-area">
+            <h1>지금 상담을 예약하고<br /><span class="highlight">행집</span> 솔루션을 받아보세요!</h1>
+        
+            <form class="askForm" id="contactForm" action="#" method="post" novalidate>
+                <label for="companyName">업체명</label>
+                <input type="text" id="companyName" name="companyName" placeholder="업체명을 입력해 주세요" required autocomplete="organization" />
+        
+                <label for="phoneNumber">전화번호</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="전화번호를 입력해 주세요" required autocomplete="tel" pattern="[\d\s\-\+\(\)]+" />
+        
+                <label for="region">지역</label>
+                <input type="text" id="region" name="region" placeholder="지역을 입력해 주세요" required autocomplete="address-level1" />
+        
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" placeholder="이메일을 입력해 주세요" required autocomplete="email" />
+        
+                <!-- <label>자동등록방지</label>
+                <div class="captcha-wrapper">
+                    <img src="/captcha-image-path" alt="보안문자 이미지" class="captcha-img" />
+                    <input type="text" name="captcha" placeholder="보안문자를 입력해 주세요" class="captcha-input" required />
+                    <button type="button" class="captcha-refresh" aria-label="보안문자 새로고침">⟳</button>
+                </div> -->
+                <div class="privacy-consent">
+                    <input type="checkbox" id="privacyAgree" name="privacyAgree" required />
+                    <label for="privacyAgree">개인정보 수집동의 <a href="#" class="privacy-link" target="_blank" rel="noopener">약관보기</a></label>
+                </div>
+                <p class="note">24시간 이내에 상담원이 빠르게 연락드리겠습니다.</p>
+                <button type="submit" class="submit-button">전문 상담 예약하기</button>
+            </form>
+        </div>
+        
+        <div class="image-area">
+            <img src="/images/mobile_preview.png" alt="행집 모바일 화면 이미지" />
+        </div>
+    </div>
+</section>
+<!-- 
+<section class="contact-section">
+    <div class="container">
+        <h3 class="section-title">지금 상담을 예약하세요!</h3>
+        <form th:action="@{/business/inquiry}" method="post" class="inquiry-form">
+            <div class="form-group">
+                <input type="text" name="companyName" placeholder="업체명" required>
+                <input type="tel" name="phone" placeholder="전화번호" required>
+            </div>
+            <div class="form-group">
+                <input type="text" name="region" placeholder="지역">
+                <input type="email" name="email" placeholder="이메일">
+            </div>
+            <textarea name="message" placeholder="문의내용을 입력해주세요."></textarea>
+            <button type="submit" class="btn-submit">전문 상담 예약하기</button>
+        </form>
+    </div>
+</section> -->
+
+</body>
+</html>

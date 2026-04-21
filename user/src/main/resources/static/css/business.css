@@ -1,0 +1,506 @@
+/* 공통 설정 */
+body { margin: 0; font-family: 'Pretendard', sans-serif; color: #333; line-height: 1.2; overflow-x: hidden;}
+.container { max-width: 90%; margin: 0 auto; padding: 0 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+
+.img-section {
+    width: 100%;
+    height: auto;
+    object-fit: scale-down;
+}
+
+.img-section img {
+    object-fit: cover;
+    width: 100%;
+    height: 100vh;
+}
+
+/* Hero 섹션 */
+.hero-section {
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/images/hero-bg.jpg');
+    background-size: cover;
+    height: 400px; /* 고정 대신 min-height 사용 가능 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */}
+
+/* 통계 섹션 (유동적 높이) */
+.stats-section {
+    padding: 80px 0;
+    background: #f8f9fa;
+    text-align: center;
+    height: 80vh; /* 고정 대신 min-height 사용 가능 */
+}
+
+.card-grid-container {
+    width: 90%;
+    display: grid;                   /* Grid 컨테이너로 만듦 */
+    grid-template-columns: repeat(auto-fit, minmax(0px, 1fr)); /* ⭐ 핵심! ⭐ */
+    gap: 50px;                       /* Grid 아이템들 사이의 간격 */
+    justify-content: center;         /* 컨테이너 내 Grid 트랙들을 중앙 정렬 */
+    /* padding: 20px; */
+    max-width: 80%;
+    margin: 100px auto;
+    align-items: stretch; /* ⭐ Grid 아이템들의 높이를 동일하게 맞춤 (기본값) ⭐ */
+}
+
+.four-cols {
+    grid-template-columns: repeat(4, 1fr); /* 4개의 동일한 너비의 칼럼 */
+}
+
+.card-box-text {
+    text-align: left;
+    font-size: 3em;
+    font-weight: 500;
+    width: 100%;
+    margin: 0px 0 0 80px;
+}
+
+.card-box-no {
+    text-align: left;
+    font-size: 4em;
+    font-weight: 900;
+    width: 100%;
+    margin: 30px 0 0 80px;
+}
+
+.spacer {
+    width: 100%;
+    height: auto;
+    margin: 0px 0 0 0;
+
+    font-weight: bold;
+    font-size: 48px
+}
+
+.card-box {
+    background-color: #ffffff; /* 하얀 배경 */
+    border: 1px solid #e0e0e0;
+    border-radius: 12px; /* 둥근 모서리 */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* 부드러운 그림자 */
+    padding: 10px 10px 20px; /* 카드 내부 패딩 */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 호버 효과 */
+    width: 100%;
+    height: auto;
+    /* ⭐ 카드 내부 콘텐츠 정렬 (아이콘, 제목, 설명) ⭐ */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* 상단 정렬 (아이콘-제목-설명 순서) */
+    align-items: center; /* 수평 중앙 정렬 */
+}
+.card-icon {
+    width: 30%; /* 아이콘 크기 */
+    height: auto;
+    justify-content: right;
+    margin: 25% 0 0 60%;
+    align-items: right;
+}
+
+.stat-item .label { font-size: 10em; color: #666; }
+.stat-item h2 { color: #ff4d4d; font-size: 10em; margin-top: 10px; }
+
+/* 캠페인 이미지 */
+.campaign-img {
+    background-color: #333;
+    color: white;
+    padding-bottom: 40px;
+    text-align: center;
+    padding: 80px 0 45px;
+}
+
+.swiperReview {
+    margin: 100px 0;
+}
+
+/* 차별성 카드 */
+.feature-section {
+    width: 80%;
+    height: 70vh;
+    margin: auto;
+}
+
+.feature-card {
+    background: white;
+    padding: 40px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    text-align: center;
+    transition: transform 0.3s;
+    margin: 0 0 0;
+}
+
+.three-cols {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.three-text {
+    text-align: center;
+    font-size: 3em;
+    font-weight: 700;
+    width: 100%;
+    margin: 50px 0 40px;
+}
+
+.three-text-sub {
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: 400;
+    width: 100%;
+    /* margin: 40px 0 0; */
+}
+
+.feature-card:hover { transform: translateY(-10px); }
+.feature-card i { font-size: 7em; color: #ff4d4d; margin-bottom: 20px; display: flex;
+    justify-content: center;
+    margin: 20px 0px 40px 0px;}
+
+
+    .ads-reason-container {
+        background-color: #333;
+        height: 90vh;
+        display: block;
+        max-width: 100%;
+        margin: 0 auto;
+        gap: 40px;
+        font-family: '맑은 고딕', sans-serif;
+    }
+
+    .ads-reason {
+        background-color: #333;
+        height: 90vh;
+        display: block;
+        max-width: 80%;
+        margin: 80px auto;
+        color: #eee;
+    }
+
+.reason-list {
+    list-style: none;
+    padding: 0;
+    margin-left: 135px;
+    /* width: 23%; */
+    border-right: 1px solid #eee;
+}
+
+.reason-list li {
+    cursor: pointer;
+    padding: 20px;
+    border-left: 4px solid transparent;
+    color: #eee;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.reason-list li span.num-circle {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    line-height: 54px;
+    border-radius: 50%;
+    text-align: center;
+    margin-right: 30px;
+    font-size: 1.1em;
+    font-weight: 700;
+    border: 2px solid #ff7448;
+    color: #ff7448;
+    background-color: transparent;
+    
+    transition: all 0.3s;
+}
+
+.reason-list li.active {
+    border-left-color: #ff7448;
+    color: #ff7448;
+}
+
+.reason-list li.active span.num-circle {
+    background-color: #ff7448;
+    color: white;
+    border-color: #ff7448;
+}
+
+/* 우측 슬라이드 영역 */
+.reason-slide {
+    height: 500px;
+    flex-grow: 1;
+    position: relative;
+    background: #fff;
+    padding: 70px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+    margin-top: -500px;
+    margin-left: 32%;
+    /* padding: 80px 300px 80px 30px; */
+}
+
+/* 개별 슬라이드 숨기기/보이기 */
+.slide-item {
+    display: none;
+    animation: fadeInSlide 0.5s ease forwards;
+}
+
+.slide-item.active {
+    display: block;
+}
+
+.slide-item h3 {
+    font-weight: 700;
+    font-size: 2.0em;
+    margin-bottom: 20px;
+    line-height: 1.8;
+    color: #000;
+}
+
+.desc-list {
+    /* margin-top: -250px; */
+    width: 700px;
+    list-style: none;
+    padding-left: 0;
+    color: #555;
+    font-size: 1.8em;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.desc-list li {
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 22px;
+}
+
+.desc-list li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: #ff7448;
+}
+
+.tag {
+    display: inline-block;
+    padding: 4px 10px;
+    /* border: 1px solid #ff7448; */
+    border-radius: 12px;
+    color: #ff7448;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.abs-subtitle {
+    color: #000;
+    font-size: 2em;
+    font-weight: 500;
+    margin: 30px 0;
+}
+
+.slide-img {
+    text-align: right;
+}
+
+.slide-img img {
+    margin: 0 auto;
+    width: 250px;
+    height: auto;
+    position: absolute;
+    top: 310px;
+    left: 69.7%;
+}
+
+
+/* 다음 버튼 스타일 */
+.slide-next {
+    position: absolute;
+    top: 30%;
+    right: 7%;
+    transform: translateY(-50%);
+    border: none;
+    background: #ff7448;
+    color: white;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: background 0.3s ease;
+}
+
+.slide-prev {
+    position: absolute;
+    top: 30%;
+    right: 12%;
+    transform: translateY(-50%);
+    border: none;
+    background: #ff7448;
+    color: white;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: background 0.3s ease;
+}
+
+.slide-next:hover {
+    background: #e05a2f;
+}
+
+/* 상담 폼 */
+.contact-section { padding: 80px 0; background: #fff; }
+.inquiry-form { max-width: 800px; margin: 0 auto; }
+.form-group { display: flex; gap: 15px; margin-bottom: 15px; }
+.inquiry-form input, .inquiry-form textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.btn-submit {
+    width: 100%;
+    padding: 18px;
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.container-ask {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    display: flex;
+    gap: 60px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+.text-area {
+    flex: 1 1 400px;
+    min-width: 60%;
+}
+
+.text-area h1 {
+    font-size: 2.4rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.text-area h1 .highlight {
+    color: #ff6c26;
+}
+
+.askForm{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.askForm label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0px;
+    display: block;
+}
+
+.askForm input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="password"] {
+    width: 70%;
+    padding: 15px 16px;
+    border: 1px solid #ff6c26;
+    border-radius: 6px;
+    background: transparent;
+    color: black;
+    font-size: 1rem;
+    outline-offset: 2px;
+}
+
+.privacy-consent {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    gap: 8px;
+}
+
+.submit-button {
+    margin-top: 24px;
+    padding: 14px;
+    background-color: #ff6c26;
+    border: none;
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 75%;
+}
+
+.submit-button:hover {
+    background-color: #e95815;
+}
+
+a.privacy-link {
+    color: #ff6c26;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.image-area {
+    flex: 1 1 300px;
+    min-width: 280px;
+    text-align: center;
+}
+
+.image-area img {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    border-radius: 30px;
+    box-shadow: 0 0 20px rgba(255, 108, 38, 0.6);
+}
+
+.h80vh {
+    height: 80vh;
+}
+
+.mlr-auto {
+    margin: 0 auto;
+}
+
+.mrg-t50 {
+    margin: 50px 0;
+}
+
+.mrg10p {
+    margin: 80px 0 0 0;
+}
+
+.mrgT80 {
+    margin: 80px 0 0 0%;
+}
+
+.mrgB80 {
+    margin: 0px 0 80px 0%;
+}
+
+.pdgT80 {
+    padding: 80px 0 0;
+}

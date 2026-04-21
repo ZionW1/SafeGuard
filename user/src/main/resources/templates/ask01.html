@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/style_ask.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
         body {
@@ -25,44 +25,72 @@
             margin-lift: 50px;
             font-size: 40px;
         }
+/* 기본 슬라이드: 너비를 좁게 설정 */
 
-        .swiper-container {
-            width: 100%;
-            padding: 50px 0; /* 커지는 이미지가 잘리지 않도록 여백 설정 */
-            overflow: hidden;
-        }
+.swiper-wrapper {
+    margin: 0 1% !important;
 
-        .swiper-slide {
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.3s ease; /* 부드러운 확대 효과 */
-            opacity: 0.5; /* 주변 이미지들은 약간 흐리게 */
+}
+.swiper-slide {
+    width: 250px; /* 기본 가로 크기 지정 (적절히 조절) */
+    transition: all 0.4s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 0px;
+}
 
-        }
+.swiper-slide img {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    object-fit: cover;
+}
 
-        .swiper-slide img {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-            
-        }
+/* ⭐️ 활성화된 슬라이드: 너비를 더 넓게 설정 */
+.swiper-slide-active {
+    vertical-align: middle;
 
-        .swiper-slide-active {
-            z-index: 10;
-            opacity: 1; /* 밝게 표시 */
-        }
+    margin: 0 40px;
+    width: 320px !important; /* 가운데 이미지만 이 너비만큼 커짐 */
+    opacity: 1;
+    margin-right: 70px !important;
+}
 
-        /* 가운데 있는 4번째 슬라이드 강조 */
-        .swiper-slide-active img{
-            /* transform: scale(1.3); 1.3배 확대 */
-            position: relative;
-            top: -90px;
-            width: 120%;
-            height: auto;
-            
-        }
+/* 활성화된 이미지에만 광채 효과 */
+.swiper-slide-active img {
+    width: 120%;
+    height: auto;
+    box-shadow: 0 0 30px 30px rgba(255, 108, 38, 0.4);
+}
+
+
+/* 1. 기본 스타일 (1920px 이하의 일반적인 상황) */
+.swiper-slide {
+    transition: width 0.4s ease;
+}
+.swiper-slide-active {
+}
+
+.swiper-container {
+    height: 50vh
+}
+
+/* 2. 1920px 보다 큰 고해상도 모니터 대응 */
+@media screen and (min-width: 1921px) {
+    .swiper-slide {
+        width: 400px; /* 고해상도에서는 기본 슬라이드도 크게 */
+    }
+    .swiper-slide-active {
+    }
+    .swiper-container {
+        height: 25vh
+    }
+    /* 광채 효과도 해상도에 맞춰 더 크게 조절 가능 */
+    .swiper-slide-active img {
+        box-shadow: 0 0 60px 20px rgba(255, 108, 38, 0.4);
+    }
+}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
@@ -74,7 +102,7 @@
     <main layout:fragment="content">
 
         <div class="w100vh h100vh">
-                <img src="/images/1681333062142-171456d92167.jpeg" alt="Ask Image" style="width: 100%; height: 100%;" />
+                <img class="guard_img" src="/images/1681333062142-171456d92167.jpeg" alt="Ask Image" />
         </div>
         <div class="h80vh mlr-auto">
             <section class="business-features-section">
@@ -83,7 +111,7 @@
                     <p>비즈니스를 위한 최적의 솔루션을 만나보세요.</p>
                 </div> -->
                 <div class="spacer">
-                    수치가 말해주는 1등 체험단<br />
+                    <div>수치가 말해주는 1등 체험단</div>
                     <span class="highlight">행집</span>의 차별성, 실시간 숫자로 확인하세요
                 </div>
             
@@ -132,35 +160,22 @@
             </section>
         </div>
 
-        <div class="w100vh h100vh" style="background-color: #333; color: white; padding-top: 40px; padding-bottom: 40px; ">
+        <div class="w100vh h100vh_img" style="background-color: #333; color: white; padding-top: 40px; padding-bottom: 40px; ">
             <div class="spacer">
                 하나부터 열까지<br />
                 <span class="highlight">행집</span>의 기술력 기반 리뷰
             </div>
-
-            
-            <!-- <div class="slider-container">
-                <div class="slider-track" id="sliderTrack">
-                    <div class="card"> <div class="number">631,549 +</div> <div class="desc">누적 리뷰어</div> </div>
-                    <div class="card"> <div class="number">3,008,029 +</div> <div class="desc">누적 캠페인</div> </div>
-                    <div class="card"> <div class="number">21,647,961 +</div> <div class="desc">서비스 시작</div> </div>
-                    <div class="card"> <div class="number">21,647,961 +</div> <div class="desc">누적 리뷰</div> </div>
-                    <div class="card"> <div class="number">119-87-00800 +</div> <div class="desc">사업자등록</div> </div>
-                    <div class="card"> <div class="number">1688-2352 +</div> <div class="desc">고객센터</div> </div>
-                    <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
-                </div>
-            </div> -->
             <div id="swiperReview">
                 <div class="swiper-container swiper-initialized swiper-horizontal">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 1"></div>
                         <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 2"></div>
-                        <div class="swiper-slide"><img src="/images/Flower.png" alt="이미지 3"></div>
-                        <div class="swiper-slide"><img src="/images/WelcomeToYeoncheon.png" alt="이미지 4"></div>
+                        <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 3"></div>
+                        <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 4"></div>
                         <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 5"></div>
                         <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 6"></div>
-                        <div class="swiper-slide"><img src="/images/Flower.png" alt="이미지 7"></div>
-                        <div class="swiper-slide"><img src="/images/WelcomeToYeoncheon.png" alt="이미지 8"></div>
+                        <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 7"></div>
+                        <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 8"></div>
                         <div class="swiper-slide"><img src="/images/AwesomeMusicF.png" alt="이미지 9"></div>
                         <div class="swiper-slide"><img src="/images/ArtistF.png" alt="이미지 10"></div>
                     </div>
@@ -179,21 +194,21 @@
                 <div class="card-grid-container three-cols">
                     <div class="card-box1">
                         <!-- 아이콘 이미지 (예시: site에서 사용하는 SVG 아이콘) -->
-                        <img src="/images/business_icon_01.svg" alt="고객 발굴 아이콘" class="card-icon" />
+                        <img src="/images/business_icon_01.png" alt="고객 발굴 아이콘" class="card-icon" />
                         <h3 class="card-title">매출 2배 달성, <br>잠재 고객 발굴</h3>
                         <p class="card-description">
                             정확한 타겟팅과 빅데이터 기반으로 <br>잠재 고객을 발굴하고 브랜드 인지도를 높여보세요.
                         </p>
                     </div>
                     <div class="card-box1">
-                        <img src="/images/business_icon_02.svg" alt="캠페인 세팅 아이콘" class="card-icon" />
+                        <img src="/images/business_icon_02.png" alt="캠페인 세팅 아이콘" class="card-icon" />
                         <h3 class="card-title">원하는 상품군, <br>원하는 키워드</h3>
                         <p class="card-description">
                             자유로운 캠페인 세팅으로 <br>가장 효율적인 광고 진행이 가능합니다.
                         </p>
                     </div>
                     <div class="card-box1">
-                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <img src="/images/business_icon_03.png" alt="통계 분석 아이콘" class="card-icon" />
                         <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
                         <p class="card-description">
                             캠페인 결과 데이터를 제공하여 <br>최적의 광고 집행을 돕습니다.
@@ -204,42 +219,10 @@
                 </div>
             </section>
         </div>
-        <div class="w100vh h80vh" style="background-color: #333; color: white; padding-top: 40px; padding-bottom: 40px; ">
+        <div class="w100vh h80vh">
             <div class="spacer">
                 하나부터 열까지<br />
                 <span class="highlight">행집</span>의 기술력 기반 리뷰
-            </div>
-
-            
-            <!-- <div class="slider-container">
-                <div class="slider-track" id="sliderTrack">
-                    <div class="card"> <div class="number">631,549 +</div> <div class="desc">누적 리뷰어</div> </div>
-                    <div class="card"> <div class="number">3,008,029 +</div> <div class="desc">누적 캠페인</div> </div>
-                    <div class="card"> <div class="number">21,647,961 +</div> <div class="desc">서비스 시작</div> </div>
-                    <div class="card"> <div class="number">21,647,961 +</div> <div class="desc">누적 리뷰</div> </div>
-                    <div class="card"> <div class="number">119-87-00800 +</div> <div class="desc">사업자등록</div> </div>
-                    <div class="card"> <div class="number">1688-2352 +</div> <div class="desc">고객센터</div> </div>
-                    <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
-                    <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
-                    <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
-                    <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
-                    <div class="card"> <div class="number">2012 +</div> <div class="desc">서비스 시작</div> </div>
-                </div>
-            </div> -->
-
-            <div class="swiper-container">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide"><img src="image1.jpg" alt="이미지 1"></div>
-                    <div class="swiper-slide"><img src="image2.jpg" alt="이미지 2"></div>
-                    <div class="swiper-slide"><img src="image3.jpg" alt="이미지 3"></div>
-                    <div class="swiper-slide"><img src="image4.jpg" alt="이미지 4"></div>
-                    <div class="swiper-slide"><img src="image5.jpg" alt="이미지 5"></div>
-                    <div class="swiper-slide"><img src="image6.jpg" alt="이미지 6"></div>
-                    <div class="swiper-slide"><img src="image7.jpg" alt="이미지 7"></div>
-                    <div class="swiper-slide"><img src="image8.jpg" alt="이미지 8"></div>
-                    <div class="swiper-slide"><img src="image9.jpg" alt="이미지 9"></div>
-                    <div class="swiper-slide"><img src="image10.jpg" alt="이미지 10"></div>
-                </div>
             </div>
         </div>
         
@@ -301,7 +284,7 @@
                         <li>효율적인 광고 집행으로 최상의 투자 대비 효과를 제공합니다.</li>
                     </ul>
                     <div class="slide-img">
-                        <img src="/images/keyword_marketing.svg" alt="키워드 마케팅 이미지" />
+                        <img src="/images/keyword_marketing.png" alt="키워드 마케팅 이미지" />
                     </div>
                 </div>
         
@@ -313,7 +296,7 @@
                         <li>리뷰의 지속적인 모니터링으로 품질을 유지합니다.</li>
                     </ul>
                     <div class="slide-img">
-                        <img src="/images/high_quality_review.svg" alt="고퀄리티 리뷰 이미지" />
+                        <img src="/images/high_quality_review.png" alt="고퀄리티 리뷰 이미지" />
                     </div>
                 </div>
         
@@ -364,7 +347,7 @@
                 <div class="card-grid-container six-cols">
                     <div class="card-box2">
                         <!-- 아이콘 이미지 (예시: site에서 사용하는 SVG 아이콘) -->
-                        <img src="/images/business_icon_01.svg" alt="고객 발굴 아이콘" class="card-icon" />
+                        <img src="/images/business_icon_01.png" alt="고객 발굴 아이콘" class="card-icon" />
                         <pre>
                             <h3 class="card-title">매출 2배 달성, <br>잠재 고객 발굴</h3>
                             <p class="card-description">
@@ -373,35 +356,35 @@
                         </pre>
                     </div>
                     <div class="card-box2">
-                        <img src="/images/business_icon_02.svg" alt="캠페인 세팅 아이콘" class="card-icon" />
+                        <img src="/images/business_icon_02.png" alt="캠페인 세팅 아이콘" class="card-icon" />
                         <h3 class="card-title">원하는 상품군, <br>원하는 키워드</h3>
                         <p class="card-description">
                             자유로운 캠페인 세팅으로 <br>가장 효율적인 광고 진행이 가능합니다.
                         </p>
                     </div>
                     <div class="card-box2">
-                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <img src="/images/business_icon_03.png" alt="통계 분석 아이콘" class="card-icon" />
                         <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
                         <p class="card-description">
                             캠페인 결과 데이터를 제공하여 <br>최적의 광고 집행을 돕습니다.
                         </p>
                     </div>
                     <div class="card-box2">
-                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <img src="/images/business_icon_03.png" alt="통계 분석 아이콘" class="card-icon" />
                         <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
                         <p class="card-description">
                             캠페인 결과 데이터를 제공하여 <br>최적의 광고 집행을 돕습니다.
                         </p>
                     </div>
                     <div class="card-box2">
-                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <img src="/images/business_icon_03.png" alt="통계 분석 아이콘" class="card-icon" />
                         <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
                         <p class="card-description">
                             캠페인 결과 데이터를 제공하여 <br>최적의 광고 집행을 돕습니다.
                         </p>
                     </div>
                     <div class="card-box2">
-                        <img src="/images/business_icon_03.svg" alt="통계 분석 아이콘" class="card-icon" />
+                        <img src="/images/business_icon_03.png" alt="통계 분석 아이콘" class="card-icon" />
                         <h3 class="card-title">다양한 통계자료로 <br>광고 효율 분석</h3>
                         <p class="card-description">
                             캠페인 결과 데이터를 제공하여 <br>최적의 광고 집행을 돕습니다.
@@ -507,31 +490,45 @@
                 
                 const $slider = $("#swiperReview");
                 let slideInx = 0; // 현재 슬라이드 인덱스
-
+                
                 const swiperReview = new Swiper("#swiperReview .swiper-container", {
                     speed: 1000,
-                    autoplay: {
-                        delay: 2000,
-                        disableOnInteraction: false,
-                    },
+                    // autoplay: {
+                    //     delay: 2000,
+                    //     disableOnInteraction: false,
+                    // },
                     loop: true,
-                    slidesPerView: 1.5,
-                    spaceBetween: 15,
-                    loopAdditionalSlides: 1,
+                    slidesPerView: 'auto',
+                    spaceBetween: 30,
+                    loopAdditionalSlides: -1,
                     centeredSlides: true,
                     // allowTouchMove: false,
                     breakpoints: {
-                        1501: {
+                        // 1920px 이하 (일반 PC 및 노트북)
+                        0: {
                             slidesPerView: 6,
-                            spaceBetween: 0,
+                            spaceBetween: 30,
+                            allowTouchMove: false,
+
+                            // 여기서 슬라이드 너비를 조절하고 싶다면 slidesPerView를 숫자로 고정해도 됩니다.
+                        },
+                        // 1921px 이상 (울트라 와이드, 대형 모니터)
+                        1921: {
+                            slidesPerView: 6,
+                            spaceBetween: 50, // 간격을 더 넓게
                             allowTouchMove: false,
                         },
-                        770: {
+                        1501: {
+                            slidesPerView: 6,
+                            spaceBetween: 30,
+                            allowTouchMove: false,
+                        },
+                        768: {
                             slidesPerView: 4,
                             spaceBetween: 0,
                             allowTouchMove: false,
                         },
-                        500: {
+                        480: {
                             slidesPerView: 1.5,
                             spaceBetween: 25,
                         },

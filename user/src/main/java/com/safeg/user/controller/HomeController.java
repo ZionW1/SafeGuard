@@ -362,6 +362,31 @@ public class HomeController {
         return "ask01";
     }
 
+    @GetMapping("/business")
+    public String business(@AuthenticationPrincipal CustomUser authUser, Model model) throws Exception { 
+        //, @RequestParam String param
+        log.info(":::::::::: ask 화면 :::::::::: " + authUser + " :::::::::: ");
+        int campaignCount = mainService.campaignCount();
+
+        int totalUsers = userService.totalUser();
+        int totalGuard = userService.totalGuard();
+        int totalCampaign = mainService.totalCampaign();
+
+        log.info("campaignCount : : : : " + campaignCount);
+        List<CampaignVO> campaignDeleted = mainService.campaignDeleted();
+        if(authUser != null){
+            UserVO user = authUser.getUserVo();
+            model.addAttribute("user", user);
+        }
+        model.addAttribute("campaignCount", campaignCount);
+        model.addAttribute("campaignDeleted", campaignDeleted);
+        model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("totalGuard", totalGuard);
+        model.addAttribute("totalCampaign", totalCampaign);
+
+        return "business";
+    }
+
     @GetMapping("/terms")
     public String terms() {
         return "terms";

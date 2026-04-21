@@ -642,7 +642,7 @@ a.privacy-link {
     /* 차별성 카드 */
     .feature-section {
         width: 90%;
-        height: 70vh;
+        height: 85vh;
         margin: auto;
         display: flex;
         justify-content: space-between;

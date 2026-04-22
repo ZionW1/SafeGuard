@@ -42,4 +42,7 @@ public interface ApplyMapper {
 
     public void updateAttendPoint(PointHistoryVO myPoint) throws Exception;
 
+    public int rosterRemove(@Param("userNo") Long userNo, @Param("campaignId") Long campaignId, @Param("applyDate") LocalDate applyDate);
+
+
 }

@@ -78,7 +78,7 @@
                                 <td><span th:text="${campaign.applicantsNum}"></span></td>
                                 <td><span th:text="${campaign.recruitmentNum}"></span></td>
                                 <td class="pointer">
-                                    <a th:href="|/apply/userCampaignApply/${campaign.campaignId}|">명단보기</a>
+                                    <a th:href="|/apply/applyConfirm/${campaign.campaignId}|">명단보기</a>
                                 </td>
                                 <td class="pointer">
                                     <a th:onclick="|location.href='@{/campaign02(id=${campaign.campaignId})}'|">상세보기</a>

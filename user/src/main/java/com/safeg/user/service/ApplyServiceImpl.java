@@ -200,4 +200,12 @@ public class ApplyServiceImpl implements ApplyService {
 
         return getApplyDate;
     }
+
+    @Override
+    public int rosterRemove(Long userNo, Long campaignId, LocalDate applyDate) throws Exception {
+        // TODO Auto-generated method stub
+        int initStatus = applyMapper.rosterRemove(userNo, campaignId, applyDate);
+        
+        return initStatus;
+    }
 }

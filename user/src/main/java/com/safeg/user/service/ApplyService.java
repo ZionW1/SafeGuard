@@ -23,4 +23,6 @@ public interface ApplyService {
 
     public List<UserCampaignVO> getApplyDate(String campaignId) throws Exception;
 
+    public int rosterRemove(Long userNo, Long campaignId, LocalDate applyDate) throws Exception;
+
 }

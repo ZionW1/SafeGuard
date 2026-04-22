@@ -283,4 +283,19 @@
             #{missionDate}
         ) -->
     </update>
+
+    <update id="rosterRemove">
+        UPDATE 
+            user_campaign 
+        SET 
+            is_deleted = 'Y'
+        WHERE 
+            campaign_id = #{campaignId} 
+        AND 
+            user_no = #{userNo}
+        AND
+            apply_date = #{applyDate}
+        AND
+            is_deleted = 'N'
+    </update>
 </mapper>

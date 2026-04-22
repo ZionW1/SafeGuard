@@ -262,15 +262,35 @@ body { margin: 0; font-family: 'Pretendard', sans-serif; color: #333; line-heigh
     /* padding: 80px 300px 80px 30px; */
 }
 
-/* 개별 슬라이드 숨기기/보이기 */
+/* 슬라이드 기본 숨김 */
 .slide-item {
-    display: none;
-    animation: fadeInSlide 0.5s ease forwards;
+    display: none; /* 혹은 opacity: 0; */
+    position: relative;
 }
 
+/* 활성화된 슬라이드만 표시 */
 .slide-item.active {
-    display: block;
+    display: block; /* 혹은 opacity: 1; */
+    animation: fadeIn 0.5s ease;
 }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 버튼 스타일 (이미지에 맞게 위치 조정) */
+.slide-prev, .slide-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    /* ... 기타 스타일 ... */
+    cursor: pointer;
+    z-index: 10;
+}
+
+.slide-prev { right: 80px; } /* 위치는 디자인에 맞게 조정 */
+.slide-next { right: 30px; }
 
 .slide-item h3 {
     font-weight: 700;
@@ -792,17 +812,35 @@ a.privacy-link {
         /* padding: 80px 300px 80px 30px; */
     }
     
+/* 슬라이드 기본 숨김 */
+.slide-item-mo {
+    display: none; /* 혹은 opacity: 0; */
+    position: relative;
+}
+
+/* 활성화된 슬라이드만 표시 */
+.slide-item-mo.active {
+    display: block; /* 혹은 opacity: 1; */
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
     /* 개별 슬라이드 숨기기/보이기 */
-    .slide-item {
+    .slide-item-mo {
         display: none;
         animation: fadeInSlide 0.5s ease forwards;
     }
     
-    .slide-item.active {
+    .slide-item-mo.active {
         display: block;
     }
     
-    .slide-item h3 {
+    .slide-item-mo h3 {
         font-weight: 700;
         font-size: 2.0em;
         margin-bottom: 20px;

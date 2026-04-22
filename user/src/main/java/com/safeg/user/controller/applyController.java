@@ -302,9 +302,18 @@ public class applyController {
 
     @PatchMapping("/initStatus/{userNo}/{campaignId}/{applyDate}")
     // 상태 초기화
-    public ResponseEntity<?> getStatus(@PathVariable("userNo") Long userNo, @PathVariable("campaignId") Long campaignId, @PathVariable("applyDate") LocalDate applyDate, @RequestBody String newStatus) throws Exception {
+    public ResponseEntity<?> setStatus(@PathVariable("userNo") Long userNo, @PathVariable("campaignId") Long campaignId, @PathVariable("applyDate") LocalDate applyDate, @RequestBody String newStatus) throws Exception {
         int initStatus = applyService.initStatus(userNo, campaignId, applyDate);
 
         return ResponseEntity.ok().body("{\"message\": \"초기화 성공.\"}");
+    }
+
+    @PatchMapping("/rosterRemove/{userNo}/{campaignId}/{applyDate}")
+    // 명단 삭제
+    public ResponseEntity<?> rosterRemove(@PathVariable("userNo") Long userNo, @PathVariable("campaignId") Long campaignId, @PathVariable("applyDate") LocalDate applyDate, @RequestBody String newStatus) throws Exception {
+        log.info("userNo : " + userNo + ", campaignId : " + campaignId + ", applyDate : " + applyDate);
+        int initStatus = applyService.rosterRemove(userNo, campaignId, applyDate);
+
+        return ResponseEntity.ok().body("{\"message\": \"명단 삭제 성공.\"}");
     }
 }

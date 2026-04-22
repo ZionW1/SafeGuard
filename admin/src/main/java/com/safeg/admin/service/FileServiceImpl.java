@@ -282,4 +282,12 @@ public class FileServiceImpl implements FileService{
         log.info("file : " + file);
         return file;
     }
+    
+    @Override
+    public int updateFileCampaign() throws Exception {
+        int result = fileMapper.updateFileCampaign();
+
+        return result;
+    }
+
 }

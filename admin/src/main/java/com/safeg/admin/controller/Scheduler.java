@@ -29,7 +29,7 @@ public class Scheduler {
     private final AligoSmsService aligoSmsService; // @Autowired 대신 생성자 주입 권장 (이미 RequiredArgsConstructor가 있음)
 
     // 1. 새벽 2시 스케줄러 (정상)
-    @Scheduled(cron = "0 0 2 * * *")
+    @Scheduled(cron = "0 16 11 * * *")
     public void campaignScheduler() {
         log.info("CampaignScheduler - 만료된 캠페인 처리 시작.");
         try {

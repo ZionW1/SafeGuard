@@ -88,4 +88,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND target_type = #{targetType} 
         AND is_deleted = 'N'
     </update>
+
+    <select id="businessFile" resultType="filesVO">
+        select * from files where target_type='campaign' and is_deleted = 'N';
+    </select>
 </mapper>

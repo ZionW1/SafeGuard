@@ -39,4 +39,5 @@ public interface FileService {
 
     public int deleteImage(UserVO userVO) throws Exception;
 
+    public List<FilesVO> businessFile() throws Exception;
 }

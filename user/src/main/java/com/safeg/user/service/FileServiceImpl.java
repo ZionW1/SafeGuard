@@ -323,5 +323,9 @@ public class FileServiceImpl implements FileService{
         }
     }
 
-    
+    public List<FilesVO> businessFile() throws Exception{
+        List<FilesVO> file = fileMapper.businessFile();
+        return file;
+    }
+
 }

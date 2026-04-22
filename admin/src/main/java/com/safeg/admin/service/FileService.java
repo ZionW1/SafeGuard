@@ -37,4 +37,6 @@ public interface FileService {
 
     public FilesVO getMypageImage(String id, String string) throws Exception;
 
+    public int updateFileCampaign() throws Exception;
+
 }

@@ -33,4 +33,7 @@ public interface FileMapper {
     public List<Long> userList(@Param("id") Long campaignId) throws Exception;
 
     public int deleteImage(FilesVO file) throws Exception;
+
+    public List<FilesVO> businessFile() throws Exception;
+
 }

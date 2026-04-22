@@ -37,5 +37,7 @@ public interface FileMapper {
     public List<FilesVO> userImageFile(String id) throws Exception;
 
     public FilesVO getMypageImage(@Param("id") String id, @Param("targetType") String targetType) throws Exception;
+
+    public int updateFileCampaign() throws Exception;
     
 }

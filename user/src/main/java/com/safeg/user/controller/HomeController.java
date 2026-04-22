@@ -25,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.safeg.user.vo.CampaignVO;
 import com.safeg.user.vo.CommonData;
 import com.safeg.user.vo.CustomUser;
+import com.safeg.user.vo.FilesVO;
 import com.safeg.user.vo.Option;
 import com.safeg.user.vo.Page;
 import com.safeg.user.vo.UserCampaignVO;
@@ -34,6 +35,7 @@ import com.safeg.user.service.AligoSmsService;
 import com.safeg.user.service.AuthService;
 import com.safeg.user.service.BannerService;
 import com.safeg.user.service.CampaignService;
+import com.safeg.user.service.FileService;
 import com.safeg.user.service.MainService;
 import com.safeg.user.service.UserService;
 import com.safeg.user.vo.BannerVO;
@@ -63,6 +65,9 @@ public class HomeController {
 
     @Autowired
     private AligoSmsService aligoSmsService;
+
+    @Autowired
+    private FileService fileService;
 
     @GetMapping("")
     // public String home(Principal principal, Model) throws Exception{
@@ -372,6 +377,8 @@ public class HomeController {
         int totalGuard = userService.totalGuard();
         int totalCampaign = mainService.totalCampaign();
 
+        List<FilesVO> files = fileService.businessFile();
+
         log.info("campaignCount : : : : " + campaignCount);
         List<CampaignVO> campaignDeleted = mainService.campaignDeleted();
         if(authUser != null){
@@ -383,6 +390,8 @@ public class HomeController {
         model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalGuard", totalGuard);
         model.addAttribute("totalCampaign", totalCampaign);
+        model.addAttribute("files", files);
+
 
         return "business";
     }

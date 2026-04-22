@@ -288,9 +288,11 @@
     </select>
 
     <select id="campaignDeleted" resultType="UserCampaignVO">
-        SELECT * 
-        FROM campaign 
-        WHERE is_deleted = 'Y';
+    SELECT c.* FROM campaign c
+    WHERE 
+        c.is_deleted = 'N'
+    AND 
+        EXISTS (SELECT 1 FROM files f WHERE f.target_id = c.campaign_id AND f.is_deleted = 'N');
     </select>
 
     <select id="campaignCount" resultType="int">

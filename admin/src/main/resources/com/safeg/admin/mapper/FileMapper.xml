@@ -143,4 +143,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND 
             is_deleted = 'N';
     </select>
+
+    <update id="updateFileCampaign">
+        <![CDATA[
+        UPDATE
+            files f
+        JOIN
+            campaign c
+        ON f.target_id = c.campaign_id
+        SET
+            f.is_deleted = 'Y',
+            f.updated_at = now()
+        WHERE
+            f.target_type = 'campaign'
+        AND
+            f.is_deleted = 'N'
+        AND
+            c.is_active = 'N'
+        AND 
+            CURDATE() > c.app_period_end
+        ]]>
+    </update>
 </mapper>

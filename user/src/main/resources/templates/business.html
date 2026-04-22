@@ -14,7 +14,8 @@
     <style>
         .swiper {
             /* padding: 120px 75px 120px 0px; */
-            padding: 120px 90px 120px 0px;
+            padding: 130px 80px 130px 0px;
+            color: #fff;
         }
         .swiper-slide {
             width: 250px; /* 기본 가로 크기 지정 (적절히 조절) */
@@ -48,6 +49,10 @@
 
             box-shadow: 0 0 30px 30px rgba(255, 108, 38, 0.4);
             /* margin-right: 20px; */
+        }
+
+        .swiper-slide:hover{
+            cursor: pointer;
         }
 
         @media (max-width: 768px) {
@@ -173,13 +178,14 @@
                 <div class="swiper-wrapper">
                     <div class="swiper-slide" th:each="campaign : ${campaignDeleted}" 
                         th:if="${campaign != null and campaign.campaignId != null}">
-                        <a th:href="|http://행집.com/campaign/${campaign.campaignId}|"></a>
+                        <a th:href="|http://행집.com/campaign/${campaign.campaignId}|">
                             <img th:src="|/img?id=${campaign.campaignId}|" 
                             alt="파일이미지" 
                             class="campaign-image"/>
-                        <div>
-                            <span class="campaign-title" th:text=${campaign.campaignTitle}></span>
-                        </div>
+                            <div>
+                                <span class="campaign-title" th:text=${campaign.campaignTitle}></span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>

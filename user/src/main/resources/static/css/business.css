@@ -548,10 +548,10 @@ a.privacy-link {
     
     /* 통계 섹션 (유동적 높이) */
     .stats-section {
-        padding: 100px 0 100px;
+        padding: 50px 0 100px;
         background: #f8f9fa;
         text-align: center;
-        height: 67vh; /* 고정 대신 min-height 사용 가능 */
+        height: 70vh; /* 고정 대신 min-height 사용 가능 */
     }
     
     .card-grid-container {

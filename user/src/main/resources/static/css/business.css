@@ -696,12 +696,13 @@ a.privacy-link {
             max-width: 100%;
             margin: 0 auto;
             gap: 40px;
+            padding: 0px 0 50px;
             font-family: '맑은 고딕', sans-serif;
         }
     
         .ads-reason {
             background-color: #333;
-            height: 90vh;
+            height: 80vh;
             display: block;
             max-width: 90%;
             margin: 80px auto;

@@ -949,6 +949,7 @@ a.privacy-link {
         font-weight: 900;
         line-height: 1.2;
         margin: 0px;
+        text-align: center;
     }
     
     .text-area h1 .highlight {
@@ -1002,7 +1003,7 @@ a.privacy-link {
         border-radius: 8px;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        width: 75%;
+        width: 100%;
     }
     
     .submit-button:hover {

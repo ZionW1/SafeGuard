@@ -113,6 +113,25 @@ body { margin: 0; font-family: 'Pretendard', sans-serif; color: #333; line-heigh
     padding: 80px 0 45px;
 }
 
+.swiper-slide .campaign-title {
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: 500;
+    position: absolute;
+    top: 475px;
+    right: 0px;
+    width: 100%;
+}
+
+.swiper-slide-active .campaign-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: 700;
+    position: absolute;
+    top: 600px;
+    right: 0px;
+}
+
 .swiperReview {
     margin: 100px 0;
 }

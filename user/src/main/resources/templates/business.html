@@ -170,12 +170,15 @@
         <div id="swiperReview" class="swiperReview">
             <div class="swiper mySwiper"> 
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide" th:each="file : ${campaignDeleted}" 
-                        th:if="${file != null and file.campaignId != null}">
-                        
-                        <img th:src="|/img?id=${file.campaignId}|" 
+                    <div class="swiper-slide" th:each="campaign : ${campaignDeleted}" 
+                        th:if="${campaign != null and campaign.campaignId != null}">
+                        <a th:href="|http://행집.com/campaign/${campaign.campaignId}|"></a>
+                            <img th:src="|/img?id=${campaign.campaignId}|" 
                             alt="파일이미지" 
                             class="campaign-image"/>
+                        <div>
+                            <span class="campaign-title" th:text=${campaign.campaignTitle}></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -696,10 +699,10 @@
     const swiperReview = new Swiper("#swiperReview .swiper", { 
         // ... 설정값
         speed: 1000,
-        autoplay: {
-            delay: 2000,
-            disableOnInteraction: false,
-        },
+        // autoplay: {
+        //     delay: 2000,
+        //     disableOnInteraction: false,
+        // },
         loop: true,
         slidesPerView: 'auto',
         spaceBetween: 30,

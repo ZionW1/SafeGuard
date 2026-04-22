@@ -290,7 +290,7 @@
     <select id="campaignDeleted" resultType="UserCampaignVO">
     SELECT c.* FROM campaign c
     WHERE 
-        c.is_deleted = 'N'
+        c.is_active = 'N'
     AND 
         EXISTS (SELECT 1 FROM files f WHERE f.target_id = c.campaign_id AND f.is_deleted = 'N');
     </select>

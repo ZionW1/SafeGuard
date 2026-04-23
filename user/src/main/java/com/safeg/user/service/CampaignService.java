@@ -1,5 +1,6 @@
 package com.safeg.user.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.safeg.user.vo.CampaignVO;
@@ -33,5 +34,7 @@ public interface CampaignService {
     public List<CampaignVO> campaignGuard() throws Exception;
 
     public List<CampaignVO> campaignFulfill() throws Exception;
+
+    public int applyCancel(Long userNo, Long campaignId, LocalDate eventStr, LocalDate eventEnd) throws Exception;
 
 }

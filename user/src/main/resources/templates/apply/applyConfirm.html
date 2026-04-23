@@ -35,7 +35,7 @@
     </div> -->
     <div class="section">
         <label for="dateSelector">신청 일자 선택 :</label>
-        <select class="date_Select" id="dateSelector" th:onchange="location.href='/apply/userCampaignApply/' + [[${campaignId}]] + '?date=' + this.value">
+        <select class="date_Select" id="dateSelector" th:onchange="location.href='/apply/applyConfirm/' + [[${campaignId}]] + '?date=' + this.value">
             <option value="">날짜를 선택하세요</option>
             <option th:each="item : ${applyDate}" 
                     th:value="${item.applyDate}" 

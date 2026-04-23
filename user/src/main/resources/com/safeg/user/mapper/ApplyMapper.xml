@@ -298,4 +298,39 @@
         AND
             is_deleted = 'N'
     </update>
+
+    <select id="applyList" resultType="int">
+        SELECT 
+            count(*)
+        FROM 
+            user_campaign uc
+        LEFT OUTER JOIN
+            campaign c
+        ON 
+            uc.campaign_id = c.campaign_id
+        WHERE
+            uc.campaign_id = #{campaignId}
+        AND 
+            uc.user_no = #{userNo}
+        AND
+            uc.is_deleted = 'N'
+        AND
+            apply_date BETWEEN c.event_Period_str and c.event_Period_end
+    </select>
+
+    <update id="applicantsMinus">
+        <![CDATA[
+        UPDATE 
+            campaign 
+        SET 
+            applicants_Num = applicants_Num -1
+        WHERE 
+            campaign_id = #{campaignId}
+        AND
+            is_deleted = 'N'
+        AND
+            applicants_Num > 0
+        ]]>
+    </update>
+    
 </mapper>

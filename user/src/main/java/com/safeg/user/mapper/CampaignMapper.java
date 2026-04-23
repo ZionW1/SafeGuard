@@ -1,5 +1,6 @@
 package com.safeg.user.mapper;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -44,5 +45,7 @@ public interface CampaignMapper {
     public List<CampaignVO> campaignFulfill() throws Exception;
 
     public CampaignVO notActiveCampaign(Long campaignId) throws Exception;
+
+    public int applyCancel(@Param("userNo") Long userNo, @Param("campaignId") Long campaignId, @Param("applyDate")LocalDate date) throws Exception;
 
 }

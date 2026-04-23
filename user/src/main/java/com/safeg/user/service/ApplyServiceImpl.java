@@ -1,6 +1,5 @@
 package com.safeg.user.service;
 
-import java.beans.Transient;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -202,9 +201,15 @@ public class ApplyServiceImpl implements ApplyService {
     }
 
     @Override
+    @Transactional
     public int rosterRemove(Long userNo, Long campaignId, LocalDate applyDate) throws Exception {
         // TODO Auto-generated method stub
         int initStatus = applyMapper.rosterRemove(userNo, campaignId, applyDate);
+        int applyList = applyMapper.applyList(userNo, campaignId);
+
+        if(applyList == 0) {
+            applyMapper.applicantsMinus(campaignId);
+        }
         
         return initStatus;
     }

@@ -369,4 +369,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY c.applicants_Num DESC, c.campaign_id desc
         ]]>
     </select>
+
+    <update id="applyCancel">
+        UPDATE 
+            user_campaign 
+        SET 
+            is_deleted = 'Y'
+        WHERE 
+            campaign_id = #{campaignId} 
+        AND 
+            user_no = #{userNo}
+        AND
+            apply_date = #{applyDate}
+        AND
+            is_deleted = 'N'
+    </update>
 </mapper>

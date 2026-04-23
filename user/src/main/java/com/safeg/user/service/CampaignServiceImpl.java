@@ -9,7 +9,9 @@ import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.safeg.user.mapper.ApplyMapper;
 import com.safeg.user.mapper.CampaignMapper;
 import com.safeg.user.vo.CampaignVO;
 import com.safeg.user.vo.Option;
@@ -23,6 +25,9 @@ public class CampaignServiceImpl implements CampaignService{
 
     @Autowired
     CampaignMapper campaignMapper;
+
+    @Autowired
+    ApplyMapper applyMapper;
 
     @Autowired
     private AligoSmsService aligoSmsService;
@@ -204,5 +209,36 @@ public class CampaignServiceImpl implements CampaignService{
         List<CampaignVO> campaignFulfill = campaignMapper.campaignFulfill();
 
         return campaignFulfill;    
+    }
+
+    @Override
+    @Transactional
+    public int applyCancel(Long userNo, Long campaignId, LocalDate eventStr, LocalDate eventEnd) throws Exception {
+        // TODO Auto-generated method stub
+
+        List<LocalDate> datesInRange = Stream.iterate(eventStr, date -> date.plusDays(1))
+                                            // startDate와 endDate 모두 포함
+                                            .limit(eventEnd.toEpochDay() - eventStr.toEpochDay() + 1)
+                                            .collect(Collectors.toList());
+        log.info("applyCancel - datesInRange : " + datesInRange);
+        int initStatus = 0;
+        for (LocalDate date : datesInRange) {
+            log.info("applyCancel - initStatus for date {}", date);
+            initStatus = initStatus + campaignMapper.applyCancel(userNo, campaignId, date);
+            log.info("applyCancel - initStatus for date {}: {}", date, initStatus);            
+        }
+
+        if(initStatus >= 1) {
+            int applyList = applyMapper.applyList(userNo, campaignId);
+            log.info("applyCancel - applyList after cancel: " + applyList);
+            if(applyList == 0) {
+                applyMapper.applicantsMinus(campaignId);
+            }
+        }
+
+        // int initStatus = applyMapper.rosterRemove(userNo, campaignId, eventStr, eventEnd);
+        // applyMapper.applicantsMinus(campaignId);
+        
+        return initStatus;
     }
 }

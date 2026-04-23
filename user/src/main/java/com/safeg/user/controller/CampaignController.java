@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -323,6 +325,20 @@ public class CampaignController {
         model.addAttribute("campaignFulfill", campaignFulfill);
 
         return "campaign/campaign06";
+    }
+
+    @PatchMapping("/applyCancel/{userNo}/{campaignId}/{eventStr}/{eventEnd}")
+    // 명단 삭제
+    public ResponseEntity<?> applyCancel(@PathVariable("userNo") Long userNo, @PathVariable("campaignId") Long campaignId, @PathVariable("eventStr") LocalDate eventStr, @PathVariable("eventEnd") LocalDate eventEnd) throws Exception {
+        log.info("userNo : " + userNo + ", campaignId : " + campaignId + ", eventStr : " + eventStr + ", eventEnd : " + eventEnd);
+        int initStatus = campaignsService.applyCancel(userNo, campaignId, eventStr, eventEnd);
+        if(initStatus > 0) {
+            log.info("명단 삭제 성공");
+            return ResponseEntity.ok().body("{\"message\": \"명단 삭제 성공.\"}");
+        } else {
+            log.error("명단 삭제 실패");
+            return ResponseEntity.status(500).body("{\"message\": \"명단 삭제 실패.\"}");
+        }
     }
 
 }

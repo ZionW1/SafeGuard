@@ -181,9 +181,9 @@
             user u
         LEFT OUTER JOIN
             point_history ph
-            and ph.is_deleted = 'N'
         ON
             u.id = ph.user_id
+        and ph.is_deleted = 'N'
         WHERE
             u.role in ('USER', 'LEADER')
         GROUP BY

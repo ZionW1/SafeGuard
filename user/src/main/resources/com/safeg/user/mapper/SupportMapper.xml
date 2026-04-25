@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.safeg.user.mapper.SupportMapper">
+    <select id="supportList" resultType="SupportVO">
+        <![CDATA[
+        SELECT 
+            support_id,
+            campaign_title,
+            title,
+            content,
+            user_id,
+            user_nm,
+            phone_num,
+            support_type,
+            event_date,
+            created_at,
+            updated_at
+        FROM 
+            support
+        where
+            is_deleted = 'N'
+        ]]>
+        <if test="option.code == 0">
+        AND (
+            title LIKE CONCAT('%', #{option.keyword}, '%')
+            OR campaign_title LIKE CONCAT('%', #{option.keyword}, '%')
+            OR content LIKE CONCAT('%', #{option.keyword}, '%')
+        )
+        </if>
+        AND support_type='01'
+        order by support_id desc
+    </select>
+
+    <insert id="insertSupport" parameterType="SupportVO">
+        INSERT INTO support (
+            company_nm,
+            user_id,
+            user_nm,
+            phone_num,
+            title,
+            content,
+            salary,
+            event_date,
+            memo,
+            gathering_time,
+            support_type,
+            campaign_title,
+            agree
+        )
+        VALUES (
+            #{companyNm}, 
+            #{userId},
+            #{userNm}, 
+            #{phoneNum}, 
+            #{title}, 
+            #{content}, 
+            #{salary}, 
+            #{eventDate},
+            #{memo}, 
+            #{gatheringTime}, 
+            '01', 
+            #{campaignTitle}, 
+            #{agree}
+        )
+    </insert>
+
+    <!-- 
+    
+    support_id bigint auto_increment primary key COMMENT '서포트 Id',
+    company_nm varchar(255) null COMMENT '업체명',
+    user_id VARCHAR(50) null COMMENT '작성자Id',
+    user_nm VARCHAR(50) null COMMENT '작성자',
+    phone_num varchar(255) null COMMENT '폰넘버',
+    title varchar(255) not null COMMENT '제목',
+    content	LONGTEXT not null COMMENT '내용',
+   	salary int null COMMENT '단가',
+   	salary_date datetime COMMENT '결제일',
+   	memo varchar(255) null COMMENT '메모',
+   	gathering_time varchar(20) null COMMENT '집결시간',
+    support_type varchar(30) null COMMENT '타입',
+    campaign_title varchar(50) null COMMENT '캠페인제목',
+    agree varchar(2) null COMMENT '동의유무',
+    created_at datetime DEFAULT CURRENT_TIMESTAMP COMMENT '등록일',
+    updated_at datetime DEFAULT CURRENT_TIMESTAMP COMMENT '수정일'
+
+    -->
+
+</mapper>

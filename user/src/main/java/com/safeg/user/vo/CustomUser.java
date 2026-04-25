@@ -18,10 +18,12 @@ public class CustomUser implements UserDetails {
     private UserVO userVo;
     private Long id;
     private String userId;
+    private String userNm;
     public CustomUser(UserVO userVo) {
         this.userVo = userVo;
         this.id = userVo.getId(); // ⭐ userVo에서 id 값을 받아 CustomUser의 id 초기화 ⭐
         this.userId = userVo.getUserId(); // ⭐ userVo에서 id 값을 받아 CustomUser의 id 초기화 ⭐
+        this.userNm = userVo.getUserNm(); // ⭐ 생성자에서 값 초기화
     }
 
     // ⭐ id 값을 가져올 게터 메서드 추가 ⭐
@@ -84,7 +86,8 @@ public class CustomUser implements UserDetails {
     public String toString() {
         return "CustomUser{" +
             "id=" + id +
-            ", username='" + getUsername() + '\'' +
+            ", userId='" + getUsername() + '\'' +
+            ", userName='" + getUserNm() + '\'' +
             ", authorities=" + getAuthorities() +
             '}';
     }
@@ -122,5 +125,10 @@ public class CustomUser implements UserDetails {
     @ToString.Include
     public String getSavedName() {
         return userVo.getSavedName();
+    }
+
+    @ToString.Include
+    public String getUserNm() {
+        return userVo.getUserNm();
     }
 }

@@ -279,8 +279,8 @@ public class CampaignServiceImpl implements CampaignService{
         // 2. 관련 파일 상태 변경 (is_deleted = 'Y')
         // 주의: 변경된 캠페인이 0건이라도 기한 지난 파일이 있을 수 있으므로 항상 실행하거나,
         // 로직에 따라 updatedCampaignCount > 0 일 때만 실행하도록 분기할 수 있습니다.
-        int updatedFileCount = fileService.updateFileCampaign();
-        log.info("삭제 처리된 관련 파일 수: {}건", updatedFileCount);
+        // int updatedFileCount = fileService.updateFileCampaign();
+        // log.info("삭제 처리된 관련 파일 수: {}건", updatedFileCount);
 
         log.info("--- 만료 처리 프로세스 완료 ---");
         return updatedCampaignCount;

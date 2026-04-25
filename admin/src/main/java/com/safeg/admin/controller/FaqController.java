@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.safeg.admin.service.FaqService;
-import com.safeg.admin.service.NoticeService;
 import com.safeg.admin.vo.AdminContentVO;
 import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;

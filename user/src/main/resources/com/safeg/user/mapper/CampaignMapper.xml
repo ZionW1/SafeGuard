@@ -145,7 +145,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             campaign_pay,
             t.user_nm,
             t.phone_num as leader_phone
-            FROM campaign c 
+            FROM campaign c
         LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN user t

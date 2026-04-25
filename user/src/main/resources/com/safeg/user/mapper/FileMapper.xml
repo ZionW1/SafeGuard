@@ -84,8 +84,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="deleteImage">
         UPDATE files 
         SET is_deleted = 'Y' 
-        WHERE target_id = #{targetId} 
-        AND target_type = #{targetType} 
+        WHERE target_id = #{targetId}
+        AND target_type = #{targetType}
         AND is_deleted = 'N'
     </update>
 

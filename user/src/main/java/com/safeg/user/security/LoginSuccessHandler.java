@@ -33,15 +33,9 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
     public void onAuthenticationSuccess(HttpServletRequest request
                                 , HttpServletResponse response
                                 , Authentication authentication) throws ServletException, IOException {
-
-
-        log.info("로그인 성공...");
-
         // 아이디 저장
         String rememberId = request.getParameter("remember-id"); // ✅ 아이디 저장 여부
         String username = request.getParameter("userId");            // 👩‍💼 아이디
-        log.info("rememberId  : " + rememberId);
-        log.info("username  : " + username);
 
         // 아이디 저장 체크 ✅
         if( rememberId != null && rememberId.equals("on") ) {
@@ -57,20 +51,10 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
             cookie.setPath("/");
             response.addCookie(cookie);
         }
-        
-
-
         // 인증된 사용자 정보
 
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
-        log.info("customUser : " + customUser);
         UserVO user = customUser.getUserVo();
-        log.info("user : " + user);
-
-        log.info("아이디 : " + user.getUserId());
-        log.info("비밀번호 : " + user.getPassword());
-        log.info("권한 : " + user.getAuthList().get(0).getAuth());
-        log.info("폰 번호 : " + user.getPhoneNum());
 
         // response.sendRedirect("/"); // 로그인 후 경로
         super.onAuthenticationSuccess(request, response, authentication);

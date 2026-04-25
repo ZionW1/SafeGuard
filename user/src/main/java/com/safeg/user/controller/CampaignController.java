@@ -340,5 +340,4 @@ public class CampaignController {
             return ResponseEntity.status(500).body("{\"message\": \"명단 삭제 실패.\"}");
         }
     }
-
 }

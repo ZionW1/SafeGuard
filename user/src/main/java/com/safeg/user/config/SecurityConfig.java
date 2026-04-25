@@ -52,12 +52,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // ✅ 인가 설정
-        http.authorizeHttpRequests(auth -> auth
-                                // .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/mypage", "/mypage/**").hasAnyRole("USER", "LEADER", "ADMIN")
-                                // .requestMatchers("/apply", "/apply/**").hasAnyRole( "LEADER", "ADMIN")
-                                .requestMatchers("/**").permitAll()
-                                .anyRequest().permitAll());
+        http
+        // 1. CSRF 설정: /support04 경로는 토큰 검사를 하지 않음
+        .csrf(csrf -> csrf
+            .ignoringRequestMatchers("/support03", "/support04") 
+        )
+        // 2. 권한 설정
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/mypage", "/mypage/**").hasAnyRole("USER", "LEADER", "ADMIN")
+            .requestMatchers("/**").permitAll() // 나머지는 모두 허용
+            .anyRequest().permitAll()
+        );
+        // http.authorizeHttpRequests(auth -> auth
+        //                         // .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+        //                         .requestMatchers("/mypage", "/mypage/**").hasAnyRole("USER", "LEADER", "ADMIN")
+        //                         // .requestMatchers("/apply", "/apply/**").hasAnyRole( "LEADER", "ADMIN")
+        //                         .requestMatchers("/**").permitAll()
+        //                         .anyRequest().permitAll());
         // 폼 로그인 설정
         http.formLogin(login -> login.loginPage("/user01") // 로그인 페이지 경로
             .loginProcessingUrl("/login")  // 로그인 요청 경로

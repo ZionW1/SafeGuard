@@ -192,7 +192,7 @@
             u.user_nm,
             u.id
         ORDER BY amount DESC, u.id asc
-        LIMIT 10;
+        LIMIT 10
     </select>
     
     <select id="getReferrerNo" resultType="Long">

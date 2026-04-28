@@ -29,7 +29,7 @@
             <table class="data-grid" border="1">
                 <thead>
                     <th style="width: 50px; text-align: center;">No</th>
-                    <th style="text-align: center;">제목</th>
+                    <th style="text-align: center;">행사명</th>
                     <th style="text-align: center;">컴퍼니</th>
                     <th style="text-align: center;">폰넘버</th>
                     <th style="text-align: center;">타입</th>
@@ -38,7 +38,7 @@
                 <tbody>
                     <th:block th:if="${inquiryList.isEmpty()}">
                         <tr>
-                            <td colspan="3" align="center">조회된 데이터가 없습니다.</td>
+                            <td colspan="6" align="center">조회된 데이터가 없습니다.</td>
                         </tr>
                     </th:block>
                     <th:block th:each="inquiry, stat : ${inquiryList}">

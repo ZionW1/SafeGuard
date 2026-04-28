@@ -8,13 +8,10 @@ import org.apache.ibatis.annotations.Param;
 import com.safeg.user.vo.AdminContentVO;
 import com.safeg.user.vo.Option;
 import com.safeg.user.vo.Page;
-import com.safeg.user.vo.SupportVO;
+import com.safeg.user.vo.InquiryVO;
 
 @Mapper
-public interface SupportMapper {
-
-    public List<AdminContentVO> supportList(@Param("option") Option option, @Param("page") Page page) throws Exception;
-
-    public int insertSupport(SupportVO supportVO) throws Exception;
+public interface InquiryMapper {
+    public int inquiryInsert(InquiryVO inquiryVO) throws Exception;
     
 }

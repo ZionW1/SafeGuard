@@ -115,8 +115,14 @@ public class ApplyServiceImpl implements ApplyService {
             // 3. 팀장 보너스 (지급 대상: 팀장)
             if ("9".equals(statusInfoAfter)) { // 혹은 statusInfo 확인
                 // 1. 인솔자 기본 포인트 적립
-                saveLeaderPoint(userNo, campaignId, applyDate, "WORK", applyMapper.leaderAmount(campaignId));
+                int leaderAmount = applyMapper.leaderAmount(campaignId);
 
+                if (leaderAmount > 0) {
+                    saveLeaderPoint(userNo, campaignId, applyDate, "WORK", leaderAmount);
+                } else {
+                    log.warn("인솔자 기본 포인트가 0이하입니다. 캠페인 ID: {}", campaignId);
+                }
+                
                 // 2. 인솔자 추가 포인트 적립
                 saveLeaderPoint(userNo, campaignId, applyDate, "LEADER_EXTRA", 5000);
 

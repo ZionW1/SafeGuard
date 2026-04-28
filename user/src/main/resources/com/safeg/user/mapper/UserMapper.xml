@@ -173,21 +173,21 @@
 
     <select id="bestPayList" resultType="PointHistoryVO">
         SELECT
-    u.id AS user_id,
-    u.user_nm,
-    u.user_id AS id,
-    COALESCE(SUM(ph.amount), 0) AS amount
-FROM
-    user u
-LEFT OUTER JOIN
-    point_history ph ON u.id = ph.user_id AND ph.is_deleted = 'N'
-WHERE
-    u.role IN ('USER', 'LEADER')
-GROUP BY
-    u.id, u.user_nm, u.user_id  -- ph.user_id를 빼고 u.id 위주로 묶으세요.
-ORDER BY 
-    amount DESC, u.id ASC
-LIMIT 10;
+            u.id AS user_id,
+            u.user_nm,
+            u.user_id AS id,
+            COALESCE(SUM(ph.amount), 0) AS amount
+        FROM
+            user u
+        LEFT OUTER JOIN
+            point_history ph ON u.id = ph.user_id AND ph.is_deleted = 'N'
+        WHERE
+            u.role IN ('USER', 'LEADER')
+        GROUP BY
+            u.id, u.user_nm, u.user_id  -- ph.user_id를 빼고 u.id 위주로 묶으세요.
+        ORDER BY 
+            amount DESC, u.id ASC
+        LIMIT 10
     </select>
     
     <select id="getReferrerNo" resultType="Long">

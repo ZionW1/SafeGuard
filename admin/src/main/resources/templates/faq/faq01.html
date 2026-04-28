@@ -13,7 +13,7 @@
         <div class="main-content">
             <h1><a th:href="@{/faq01}">FAQ</a></h1>
             <form class="optionForm" th:action="@{/faq01}" method="get" id="form">
-                <th:block th:replace="fragments/csrfFragments :: inputCsrf"></th:block>
+                <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block>
                 <select name="code" class="wdt160">
                     <option value="0" th:selected="${option.code==0}">전체</option>
                     <option value="1" th:selected="${option.code==1}">제목</option>
@@ -74,7 +74,7 @@
             <a th:href="@{/faq03}" class="insert">등록</a>
         </div>
     </div>
-    <div th:replace="fragments/footer :: mainFooter"></div>
+    <th:block th:replace="~{fragments/footer :: mainFooter}"></th:block>
     <script th:src="@{/js/common.js}"></script>
 </body>
 </html>

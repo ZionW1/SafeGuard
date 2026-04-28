@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SupportVO {
-    private Long supportId;
+public class InquiryVO {
+    private Long inquiryId;
     private String companyNm;
     private String userNm;
     private String userId;
@@ -29,13 +29,16 @@ public class SupportVO {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate eventDate;
+    private String payDate;
     private String memo;
     private String gatheringTime;
     private String supportType;
     private String status;
     private String agree;
     private String campaignTitle;
-
+    private String costume;
+    private String address;
+    
     private String answer;
     private String answerYn;
     private String answerAdmin;

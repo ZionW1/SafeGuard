@@ -4,38 +4,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- namespace="매퍼 인터페이스 경로" --> 
-<mapper namespace="com.safeg.user.mapper.SupportMapper">
-    <select id="supportList" resultType="SupportVO">
-        <![CDATA[
-        SELECT 
-            support_id,
-            campaign_title,
-            title,
-            content,
-            user_id,
-            user_nm,
-            phone_num,
-            support_type,
-            event_date,
-            created_at,
-            updated_at
-        FROM 
-            support
-        where
-            is_deleted = 'N'
-        ]]>
-        <if test="option.code == 0">
-        AND (
-            title LIKE CONCAT('%', #{option.keyword}, '%')
-            OR campaign_title LIKE CONCAT('%', #{option.keyword}, '%')
-            OR content LIKE CONCAT('%', #{option.keyword}, '%')
-        )
-        </if>
-        AND support_type='01'
-        order by support_id desc
-    </select>
-
-    <insert id="insertSupport" parameterType="SupportVO">
+<mapper namespace="com.safeg.user.mapper.InquiryMapper">
+    <insert id="inquiryInsert" parameterType="InquiryVO">
         INSERT INTO support (
             company_nm,
             user_id,
@@ -44,26 +14,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             title,
             content,
             salary,
-            event_date,
-            memo,
+            pay_date,
+            costume,
+            address
             gathering_time,
             support_type,
             campaign_title,
             agree
         )
         VALUES (
-            #{companyNm}, 
+            #{companyNm},
             #{userId},
-            #{userNm}, 
-            #{phoneNum}, 
-            #{title}, 
-            #{content}, 
-            #{salary}, 
-            #{eventDate},
-            #{memo}, 
-            #{gatheringTime}, 
-            '01', 
-            #{campaignTitle}, 
+            #{userNm},
+            #{phoneNum},
+            #{title},
+            #{content},
+            #{salary},
+            #{payDate},
+            {#costume},
+            {address},
+            #{gatheringTime},
+            #{supportType},
+            #{campaignTitle},
             #{agree}
         )
     </insert>

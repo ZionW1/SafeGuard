@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.safeg.admin.mapper.InquiryMapper">
+
+    <select id="inquiryList" resultType="InquiryVO">
+        <![CDATA[
+        SELECT 
+            inquiry_id,
+            campaign_title,
+            company_nm,
+            title,
+            content,
+            user_id,
+            user_nm,
+            phone_num,
+            address,
+            gathering_time,
+            (CASE
+                WHEN inquiry_type = '01' THEN '경호'
+                WHEN inquiry_type = '02' THEN '진행'
+                WHEN inquiry_type = '03' THEN '수행'
+                ELSE ''
+            END) as inquiry_type,
+            pay_date,
+            created_at,
+            updated_at
+        FROM 
+            inquiry
+        where
+        ]]>
+        <if test="option.code == 0">
+            (campaign_title like CONCAT('%', #{option.keyword}, '%')
+            or content like CONCAT('%', #{option.keyword}, '%')
+            or user_nm  like CONCAT('%', #{option.keyword}, '%'))
+        </if>
+        <if test="option.code == 1">
+            campaign_title like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 2">
+            content like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 3">
+            user_nm like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.orderCode == 0">
+            order by inquiry_id desc
+        </if>
+    </select>
+
+    <select id="inquirySelect" resultType="InquiryVO">
+        <![CDATA[
+        SELECT 
+            inquiry_id,
+            campaign_title,
+            company_nm,
+            title,
+            content,
+            user_id,
+            user_nm,
+            phone_num,
+            created_at,
+            salary,
+            pay_date,
+            memo,
+            gathering_time,
+            (CASE
+                WHEN inquiry_type = '01' THEN '경호'
+                WHEN inquiry_type = '02' THEN '진행'
+                WHEN inquiry_type = '03' THEN '수행'
+                ELSE ''
+            END) as inquiry_type
+        FROM 
+            inquiry
+        where
+            inquiry_id = #{inquiryId}
+        ]]>
+    </select>
+</mapper>

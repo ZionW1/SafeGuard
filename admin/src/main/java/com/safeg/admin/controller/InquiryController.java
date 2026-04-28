@@ -4,28 +4,34 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.safeg.admin.service.FaqService;
-import com.safeg.admin.service.SupportService;
+import com.safeg.admin.service.InquiryService;
 import com.safeg.admin.vo.AdminContentVO;
+import com.safeg.admin.vo.Option;
+import com.safeg.admin.vo.Page;
+import com.safeg.admin.vo.InquiryVO;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-public class SupportController {
+public class InquiryController {
 
     @Autowired
-    SupportService supportService;
+    InquiryService inquiryService;
     
     // 1:1 문의사항 리스트
-    @GetMapping("/support01")
-    public String supportList() {
-        List<AdminContentVO> supportList = supportService.supportList(option, page);
+    @GetMapping("/inquiry01")
+    public String supportList(Option option, Page page, Model model, HttpServletRequest request) throws Exception{
+        List<InquiryVO> inquiryList = inquiryService.inquiryList(option, page);
 
-        String pageUrl = UriComponentsBuilder.fromPath("/support01")
+        String pageUrl = UriComponentsBuilder.fromPath("/inquiry01")
                         //.queryParam("page", page.getPage())
                         .queryParam("keyword", option.getKeyword())
                         .queryParam("code", option.getCode())
@@ -35,12 +41,24 @@ public class SupportController {
                         .toUriString();
         log.info("pageRows : " + page.getRows());
 
-        model.addAttribute("supportList", supportList);
+        model.addAttribute("supportList", inquiryList);
         model.addAttribute("currentURI", request.getRequestURI());
         model.addAttribute("pageUrl", pageUrl);
-        return "support/support01";
+        return "inquiry/inquiry01";
     }
     // 1:1 문의사항 상세보기
+    @GetMapping("/support02")
+    public String supportSelect(@RequestParam("inquiryId") String inquiryId, Model model, HttpServletRequest request) throws Exception{
+        log.info("Admin SupportController supportSelect() 호출 : supportId = " + inquiryId);
+
+        InquiryVO inquirySelect = inquiryService.inquirySelect(inquiryId);
+        log.info("Admin SupportController supportList() 호출 : "  + inquirySelect.toString());
+
+        model.addAttribute("inquirySelect", inquirySelect);
+        model.addAttribute("currentURI", request.getRequestURI());
+
+        return "support/support02";
+    }
     // 1:1 문의사항 등록
     // 1:1 문의사항 답변 작성
     // 1:1 문의사항 답변 수정

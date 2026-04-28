@@ -31,8 +31,7 @@
     }
     .image-row img {
         width: 100%;
-    max-width: 450px;      /* 정방형보다 너비를 조금 줄임 */
-    height: 600px;         /* 세로로 더 길게 설정 (4:5 비율 느낌) */
+    height: auto;         /* 세로로 더 길게 설정 (4:5 비율 느낌) */
     object-fit: contain;   /* 중요: 이미지가 잘리지 않고 전체가 다 보이도록 안쪽에 맞춤 */
     background-color: #f9f9f9; /* 여백이 생길 경우를 대비한 배경색 */
     border-radius: 15px;
@@ -229,22 +228,11 @@
     .fc-icon-chevron-right::before {
         font-size: 1.2rem;
     }
-    .campaign-info-section img, 
-.poster-image {
-    width: 100%;
-    max-width: 450px;      /* 정방형보다 너비를 조금 줄임 */
-    height: 600px;         /* 세로로 더 길게 설정 (4:5 비율 느낌) */
-    object-fit: contain;   /* 중요: 이미지가 잘리지 않고 전체가 다 보이도록 안쪽에 맞춤 */
-    background-color: #f9f9f9; /* 여백이 생길 경우를 대비한 배경색 */
-    border-radius: 15px;
-    display: block;
-    margin: 0 auto;
-}
 
 /* 모바일 대응 */
 @media (max-width: 768px) {
     .image-row img {
-        max-width: 100% !important;
+        max-width: 0% !important;
         height: auto !important;
         aspect-ratio: 4 / 5;
     }

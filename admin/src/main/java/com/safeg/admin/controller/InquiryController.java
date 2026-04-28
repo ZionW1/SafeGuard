@@ -28,7 +28,7 @@ public class InquiryController {
     
     // 1:1 문의사항 리스트
     @GetMapping("/inquiry01")
-    public String supportList(Option option, Page page, Model model, HttpServletRequest request) throws Exception{
+    public String inquiryList(Option option, Page page, Model model, HttpServletRequest request) throws Exception{
         List<InquiryVO> inquiryList = inquiryService.inquiryList(option, page);
 
         String pageUrl = UriComponentsBuilder.fromPath("/inquiry01")
@@ -41,13 +41,13 @@ public class InquiryController {
                         .toUriString();
         log.info("pageRows : " + page.getRows());
 
-        model.addAttribute("supportList", inquiryList);
+        model.addAttribute("inquiryList", inquiryList);
         model.addAttribute("currentURI", request.getRequestURI());
         model.addAttribute("pageUrl", pageUrl);
         return "inquiry/inquiry01";
     }
     // 1:1 문의사항 상세보기
-    @GetMapping("/support02")
+    @GetMapping("/inquiry02")
     public String supportSelect(@RequestParam("inquiryId") String inquiryId, Model model, HttpServletRequest request) throws Exception{
         log.info("Admin SupportController supportSelect() 호출 : supportId = " + inquiryId);
 
@@ -57,7 +57,7 @@ public class InquiryController {
         model.addAttribute("inquirySelect", inquirySelect);
         model.addAttribute("currentURI", request.getRequestURI());
 
-        return "support/support02";
+        return "inquiry/inquiry02";
     }
     // 1:1 문의사항 등록
     // 1:1 문의사항 답변 작성

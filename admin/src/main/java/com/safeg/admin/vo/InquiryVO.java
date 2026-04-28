@@ -24,6 +24,7 @@ public class InquiryVO {
     private String title;
     private String content;
     private String type;
+    private String inquiryType;
     private String costume;
     private String address;
     private Integer salary;
@@ -33,7 +34,6 @@ public class InquiryVO {
     private LocalDate payDate;
     private String memo;
     private String gatheringTime;
-    private String supportType;
     private String status;
     private String agree;
     private String campaignTitle;

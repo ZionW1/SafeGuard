@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!-- namespace="매퍼 인터페이스 경로" --> 
 <mapper namespace="com.safeg.user.mapper.InquiryMapper">
     <insert id="inquiryInsert" parameterType="InquiryVO">
-        INSERT INTO support (
+        INSERT INTO inquiry (
             company_nm,
             user_id,
             user_nm,
@@ -16,9 +16,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             salary,
             pay_date,
             costume,
-            address
+            address,
             gathering_time,
-            support_type,
+            inquiry_type,
             campaign_title,
             agree
         )
@@ -31,10 +31,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{content},
             #{salary},
             #{payDate},
-            {#costume},
-            {address},
+            #{costume},
+            #{address},
             #{gatheringTime},
-            #{supportType},
+            #{inquiryType},
             #{campaignTitle},
             #{agree}
         )

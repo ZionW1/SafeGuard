@@ -64,7 +64,8 @@
             created_at,
             salary,
             pay_date,
-            memo,
+            address,
+            costume,
             gathering_time,
             (CASE
                 WHEN inquiry_type = '01' THEN '경호'

@@ -12,7 +12,7 @@
         <th:block th:replace="~{fragments/sidebar :: sidebarFragment}"></th:block>
         <div class="main-content">
             <h1><a th:href="@{/faq01}">FAQ</a></h1>
-            <form class="optionForm" th:action="@{/faq01}" method="get" id="form">
+            <form class="optionForm" th:action="@{/inquiry01}" method="get" id="form">
                 <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block>
                 <select name="code" class="wdt160">
                     <option value="0" th:selected="${option.code==0}">전체</option>
@@ -36,20 +36,20 @@
                     <th style="width: 100px; text-align: center;">생성일</th>
                 </thead>
                 <tbody>
-                    <th:block th:if="${supportList.isEmpty()}">
+                    <th:block th:if="${inquiryList.isEmpty()}">
                         <tr>
                             <td colspan="3" align="center">조회된 데이터가 없습니다.</td>
                         </tr>
                     </th:block>
-                    <th:block th:each="support, stat : ${supportList}">
+                    <th:block th:each="inquiry, stat : ${inquiryList}">
                         <!-- <a th:href="|/admin/campaign/select?id=${campaign.id}|"> -->
-                        <tr th:onclick="|location.href='@{/support02(inquiryId=${support.inquiryId})}'|">
+                        <tr th:onclick="|location.href='@{/inquiry02(inquiryId=${inquiry.inquiryId})}'|">
                             <td style="text-align: center;" ><span th:text="${stat.size - stat.index}"></span></td>
-                            <td><span th:text="${support.campaignTitle}"></span></td>
-                            <td><span th:text="${support.companyNm}"></span></td>
-                            <td><span th:text="${support.phoneNum}"></span></td>
-                            <td><span th:text="${support.supportType}"></span></td>
-                            <td style="text-align: center;" ><span th:text="${#temporals.format(support.createdAt, 'yyyy-MM-dd')}"></span></td>
+                            <td><span th:text="${inquiry.campaignTitle}"></span></td>
+                            <td><span th:text="${inquiry.companyNm}"></span></td>
+                            <td><span th:text="${inquiry.phoneNum}"></span></td>
+                            <td><span th:text="${inquiry.inquiryType}"></span></td>
+                            <td style="text-align: center;" ><span th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd')}"></span></td>
                         </tr>
                     </th:block>
                 </tbody>

@@ -55,7 +55,7 @@ public class SecurityConfig {
         http
         // 1. CSRF 설정: /support04 경로는 토큰 검사를 하지 않음
         .csrf(csrf -> csrf
-            .ignoringRequestMatchers("/support03", "/support04") 
+            .ignoringRequestMatchers("/inquiry01", "/inquiry02") 
         )
         // 2. 권한 설정
         .authorizeHttpRequests(auth -> auth

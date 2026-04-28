@@ -15,43 +15,43 @@
         <!-- 본문 영역 -->
         <div class="main-content">
             <h1>행사문의 상세 페이지</h1>
-            <h5><span>생성일 : </span><span th:text="${supportSelect.createdAt}">캠페인 수정</span></h5>
+            <h5><span>생성일 : </span><span th:text="${inquirySelect.createdAt}">캠페인 수정</span></h5>
             <form class="normalForm" th:action="@{/user03}" method="post" id="form" enctype="multipart/form-data">
                 <!-- <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block> -->
                 <!-- <div th:insert="~{fragments/csrfFragments :: inputCsrf}"></div> -->
                 <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block>
 
-                <input type="hidden" name="id" id="id" th:value="${supportSelect.supportId}" />
+                <input type="hidden" name="id" id="id" th:value="${inquirySelect.inquiryId}" />
                 <div class="form-row">
                     <div class="form-group">
                         <label for="campaignTitle">캠페인 명</label>
-                        <input type="text" name="campaignTitle" id="campaignTitle" th:value="${supportSelect.campaignTitle}" disabled required />
+                        <input type="text" name="campaignTitle" id="campaignTitle" th:value="${inquirySelect.campaignTitle}" disabled required />
                     </div>
                     <div class="form-group">
                         <label for="companyNm">업체명</label>
-                        <input type="text" name="userNm" id="companyNm" th:value="${supportSelect.companyNm}" disabled required />
+                        <input type="text" name="userNm" id="companyNm" th:value="${inquirySelect.companyNm}" disabled required />
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="userNm">주소</label>
-                        <input type="text" name="userNm" id="userNm" th:value="${supportSelect.address}" disabled required />
+                        <input type="text" name="userNm" id="userNm" th:value="${inquirySelect.address}" disabled required />
                     </div>
                     <div class="form-group">
                         <label for="userId">아이디</label>
-                        <input type="text" name="userId" id="userId" th:value="${supportSelect.userId}" disabled required />
+                        <input type="text" name="userId" id="userId" th:value="${inquirySelect.userId}" disabled required />
                     </div>
                     <div class="form-group">
                         <label for="userNm">이름</label>
-                        <input type="text" name="userNm" id="userNm" th:value="${supportSelect.userNm}" disabled required />
+                        <input type="text" name="userNm" id="userNm" th:value="${inquirySelect.userNm}" disabled required />
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="userId">폰넘버</label>
-                        <input type="text" name="userId" id="userId" th:value="${supportSelect.phoneNum}" disabled required />
+                        <input type="text" name="userId" id="userId" th:value="${inquirySelect.phoneNum}" disabled required />
                     </div>
                     
                 </div>
@@ -59,29 +59,29 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="userId">결제일</label>
-                        <input type="text" name="payDate" id="payDate" th:value="${supportSelect.payDate}" disabled required />
+                        <input type="text" name="payDate" id="payDate" th:value="${inquirySelect.payDate}" disabled required />
                     </div>
                     <div class="form-group">
                         <label for="userNm">집결시간</label>
-                        <input type="text" name="gatheringTime" id="gatheringTime" th:value="${supportSelect.gatheringTime}" disabled required />
+                        <input type="text" name="gatheringTime" id="gatheringTime" th:value="${inquirySelect.gatheringTime}" disabled required />
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="userId">단가</label>
-                        <input type="text" name="salary" id="salary" th:value="${supportSelect.salary}" disabled required />
+                        <input type="text" name="salary" id="salary" th:value="${inquirySelect.salary}" disabled required />
                     </div>
                     <div class="form-group">
                         <label for="userNm">타입</label>
-                        <input type="text" name="memo" id="memo" th:value="${supportSelect.memo}" disabled required />
+                        <input type="text" name="memo" id="memo" th:value="${inquirySelect.inquiryType}" disabled required />
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="userId">내용</label>
-                        <!-- <input type="texta" name="salary" id="salary" th:value="${supportSelect.content}" disabled required /> -->
-                        <textarea name="content" id="content" class="form-textarea" cols="" rows="10" disabled th:text="${supportSelect.content}"></textarea>
+                        <!-- <input type="texta" name="salary" id="salary" th:value="${inquirySelect.content}" disabled required /> -->
+                        <textarea name="content" id="content" class="form-textarea" cols="" rows="10" disabled th:text="${inquirySelect.content}"></textarea>
                     </div>
                 </div>
             </form>

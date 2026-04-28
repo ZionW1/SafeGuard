@@ -32,7 +32,7 @@ public class InquiryVO {
     private String payDate;
     private String memo;
     private String gatheringTime;
-    private String supportType;
+    private String inquiryType;
     private String status;
     private String agree;
     private String campaignTitle;

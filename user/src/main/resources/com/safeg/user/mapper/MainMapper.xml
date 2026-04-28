@@ -226,8 +226,7 @@
         and f.target_type = 'campaign'
         and c.is_deleted = 'N'
         Where f.is_deleted = 'N'
-        and c.app_Period_End > CURDATE()
-        and t.id is not null 
+        and c.app_Period_End >= CURDATE()
         and is_active = 'Y'
         ]]>
         <if test="option.orderCode == 0"> <!-- 최신 순 -->

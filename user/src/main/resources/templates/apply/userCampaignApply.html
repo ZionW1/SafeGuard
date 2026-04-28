@@ -21,8 +21,8 @@
                 <div id="campaignTitleDown" th:data-campaign-title="${userCampaignApply[0].campaignTitle}">
                     <div class="notice-box">
                         <h2 th:if="${userCampaignApply != null}" th:text="${userCampaignApply[0].campaignTitle}"></h2>
-                        <strong>당첨자</strong> <strong th:text="${userCampaignApply[0].applicantsNum}"></strong> / <strong th:text="${userCampaignApply[0].recruitmentNum}"></strong><br />
-                        <strong>담당자이름 : </strong><strong th:text="${userCampaignApply[0].companyNm}"></strong><br><strong> 담당자번호 : </strong><strong th:text="${userCampaignApply[0].companyPh}"></strong></p>
+                        <strong>인원수</strong> <strong th:text="${userCampaignApply[0].applicantsNum}"></strong> / <strong th:text="${userCampaignApply[0].recruitmentNum}"></strong><br />
+                        <strong>업체명 : </strong><strong th:text="${userCampaignApply[0].companyNm}"></strong><br><strong> 인솔자번호 : </strong><strong th:text="${userCampaignApply[0].companyPh}"></strong></p>
                         <p><strong>기간</strong><br />
                         <strong th:text="${userCampaignApply[0].eventPeriodStr}"></strong> ~ <strong th:text="${userCampaignApply[0].eventPeriodEnd}"></strong></p>
                     </div>

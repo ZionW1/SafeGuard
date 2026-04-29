@@ -313,6 +313,15 @@ button[type="submit"]:hover {
     margin-top: -12px;
     margin-bottom: 15px;
 }
+
+.point-reset {
+    width: 100px;
+    background-color: #d9b8ff;
+    color: white;
+    margin-top: -12px;
+    margin-bottom: 15px;
+}
+
 .stop-btn {
     width: 110px;
     background-color: #ffb74b;

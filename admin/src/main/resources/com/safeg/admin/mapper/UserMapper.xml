@@ -275,20 +275,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="resetAllUserPay">
-        <!-- UPDATE 
-            USER 
-        SET pay = 0,
-        point_full = 0
-        WHERE 
-            CURRENT_DATE() = LAST_DAY(CURRENT_DATE()) -->
-
         UPDATE
             point_history ph
         SET
             settlement_status = 'COMPLETED',
+            updated_at = NOW(),
             is_deleted = 'Y'
         WHERE 
             is_deleted = 'N'
+    </update>
+
+    <update id="resetAllUserApply">
+        UPDATE
+            user_campaign
+        SET
+            is_deleted = 'Y',
+            updated_at = NOW()
+        WHERE
+            is_deleted = 'N'
+        AND 
+            apply_date LIKE CONCAT(DATE_FORMAT(now(), '%Y-%m'), '%')
     </update>
 
     <update id="resetPointHistory">
@@ -299,17 +305,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             is_deleted = 'Y'
         WHERE 
             is_deleted = 'N'
-    </update>
-
-    <update id="resetAllUserApply">
-        UPDATE
-            user_campaign
-        SET
-            is_deleted = 'Y'
-        WHERE
-            is_deleted = 'N'
-        AND 
-            apply_date LIKE CONCAT(DATE_FORMAT(now(), '%Y-%m'), '%')
     </update>
 
     <select id="userAddressList" resultType="userVO">

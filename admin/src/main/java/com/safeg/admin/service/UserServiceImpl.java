@@ -214,7 +214,6 @@ public class UserServiceImpl implements UserService{
         if (insertedCount > 0) {
             // 2. 정산에 포함된 history 내역들을 'Y'로 변경 (중복 정산 방지)
             userMapper.resetAllUserPay();
-            userMapper.resetAllUserApply();
         }
 
         return insertedCount;

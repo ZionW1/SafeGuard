@@ -20,7 +20,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             gathering_time,
             inquiry_type,
             campaign_title,
-            agree
+            agree,
+            agree_opt
         )
         VALUES (
             #{companyNm},
@@ -36,7 +37,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{gatheringTime},
             #{inquiryType},
             #{campaignTitle},
-            #{agree}
+            #{agree},
+            #{agreeOpt}
         )
     </insert>
 

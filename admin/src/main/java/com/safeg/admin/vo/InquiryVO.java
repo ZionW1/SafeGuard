@@ -36,6 +36,7 @@ public class InquiryVO {
     private String gatheringTime;
     private String status;
     private String agree;
+    private String agreeOpt;
     private String campaignTitle;
 
     private String answer;

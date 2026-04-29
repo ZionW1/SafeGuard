@@ -72,7 +72,15 @@
                 WHEN inquiry_type = '02' THEN '진행'
                 WHEN inquiry_type = '03' THEN '수행'
                 ELSE ''
-            END) as inquiry_type
+            END) as inquiry_type,
+            (CASE
+                WHEN agree = 'on' THEN '동의'
+                ELSE '미동의'
+            END) as agree,
+            (CASE
+                WHEN agree_opt = 'on' THEN '동의'
+                ELSE '미동의'
+            END) as agree_opt
         FROM 
             inquiry
         where

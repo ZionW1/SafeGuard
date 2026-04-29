@@ -84,72 +84,71 @@
     
 
     .agreement-wrapper {
-    max-width: 100%;
-    margin-top: 0;
-}
+        max-width: 100%;
+    }
 
-/* 제목 부분 스타일 */
-.accordion-header {
-  display: flex;
-  align-items: center;
-  padding: 15px 0;
-  cursor: pointer;
-  font-size: 16px;
-  color: #333;
-}
+    /* 제목 부분 스타일 */
+    .accordion-header {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
+        cursor: pointer;
+        font-size: 16px;
+        color: #333;
+    }
 
-.arrow {
-  margin-right: 10px;
-  transition: transform 0.3s;
-  font-size: 12px;
-}
+    .arrow {
+        margin-left: 10px;
+        transition: transform 0.3s;
+        font-size: 12px;
+    }
 
-/* 아코디언 열렸을 때 화살표 회전 */
-.agreement-wrapper.active .arrow {
-  transform: rotate(180deg);
-}
+    /* 아코디언 열렸을 때 화살표 회전 */
+    .agreement-wrapper.active .arrow {
+        transform: rotate(180deg);
+    }
 
-/* 내용 숨기기 및 애니메이션 */
-.accordion-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
+    /* 내용 숨기기 및 애니메이션 */
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
 
-.agreement-wrapper.active .accordion-content {
-  max-height: 500px; /* 내용이 다 보일 정도로 충분한 높이 */
-}
+    .agreement-wrapper.active .accordion-content {
+        max-height: 500px; /* 내용이 다 보일 정도로 충분한 높이 */
+    }
 
-/* 동의 항목 내부 스타일 */
-.agreement-container {
-  padding: 10px 0 20px 20px;
-}
+    /* 동의 항목 내부 스타일 */
+    .agreement-container {
+        padding: 10px 0 20px 20px;
+    }
 
-.check-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px;
-}
+    .check-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+    }
 
-.main-check {
-    display: block;
-}
+    .main-check {
+        display: block;
+    }
 
-.check-row input {
-  width: 18px;
-  height: 18px;
-  margin-right: 10px;
-}
+    .check-row input {
+        width: 18px;
+        height: 18px;
+        margin-right: 10px;
+    }
 
-.terms-summary {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  font-size: 13px;
-  color: #666;
-  margin: 10px 0 20px 28px;
-}
+    .terms-summary {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        font-size: 13px;
+        color: #666;
+        margin: 10px 0 20px 28px;
+    }
 
 hr { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
     </style>
@@ -224,10 +223,18 @@ hr { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
                 </div>
 
                 <div class="agreement-section">
+                    <!-- <label class="agree-item">
+                        <input type="checkbox" name="agree" required>
+                        <span class="agree-link">개인정보 수집·이용 및 광고성 정보 수신 전체 동의</span>
+                    </label> -->
+
+                    
+
+
                     <div class="agreement-wrapper">
                         <div class="accordion-header" id="main-accordion-btn">
-                            <span class="arrow">∨</span>
                             <strong>개인정보 수집 및 이용 동의</strong>
+                            <span class="arrow">∨</span>
                         </div>
                         <div class="" id="main-accordion-content">
                             <div class="agreement-container">
@@ -240,7 +247,7 @@ hr { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
                         <div class="accordion-content" id="main-accordion-content">
                             <div class="agreement-container">
                                 <div class="check-row">
-                                    <input type="checkbox" id="check-required" class="sub-check">
+                                    <input type="checkbox" id="check-required" class="sub-check" name="agree" required>
                                     <label for="check-required">[필수] 개인정보보호정책에 동의합니다.</label>
                                 </div>
                                 <div class="terms-summary">
@@ -249,7 +256,7 @@ hr { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
                                     <p><strong>(보유 및 이용기간)</strong> 상담 완료 후 1년 보관</p>
                                 </div>
                                 <div class="check-row">
-                                    <input type="checkbox" id="check-optional" class="sub-check">
+                                    <input type="checkbox" id="check-optional" class="sub-check" name="agreeOpt">
                                     <label for="check-optional">[선택] 광고성 정보 수신 동의: 이벤트 소식 받기</label>
                                 </div>
                             </div>

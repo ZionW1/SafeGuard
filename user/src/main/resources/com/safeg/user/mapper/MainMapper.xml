@@ -223,11 +223,11 @@
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN user t
         on c.leader_code = t.id
-        and f.target_type = 'campaign'
         and c.is_deleted = 'N'
         Where f.is_deleted = 'N'
         and c.app_Period_End >= CURDATE()
         and is_active = 'Y'
+        and f.target_type = 'campaign'
         ]]>
         <if test="option.orderCode == 0"> <!-- 최신 순 -->
             ORDER BY c.created_At DESC, c.campaign_id desc

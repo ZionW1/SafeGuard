@@ -30,8 +30,8 @@
         margin: 20px 0px;
     }
     .image-row img {
-        width: 100%;
-    height: auto;         /* 세로로 더 길게 설정 (4:5 비율 느낌) */
+        width: 450px;
+    height: 600px;         /* 세로로 더 길게 설정 (4:5 비율 느낌) */
     object-fit: contain;   /* 중요: 이미지가 잘리지 않고 전체가 다 보이도록 안쪽에 맞춤 */
     background-color: #f9f9f9; /* 여백이 생길 경우를 대비한 배경색 */
     border-radius: 15px;
@@ -232,7 +232,7 @@
 /* 모바일 대응 */
 @media (max-width: 768px) {
     .image-row img {
-        max-width: 0% !important;
+        max-width: 100% !important;
         height: auto !important;
         aspect-ratio: 4 / 5;
     }

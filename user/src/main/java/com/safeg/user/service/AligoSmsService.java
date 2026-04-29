@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.safeg.user.vo.InquiryVO;
 import com.safeg.user.vo.UserCampaignVO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -253,10 +254,28 @@ public class AligoSmsService {
         }
     }
 
+    @Async("taskExecutor")
+    public CompletableFuture<Boolean> inquiryAsync(InquiryVO inquiryVO) {
+        try {
+            // 실제 알림톡 발송 로직 호출
+            boolean result = inquiryTalk(inquiryVO);
+            return CompletableFuture.completedFuture(result);
+        } catch (Exception e) {
+            log.error("비동기 알림톡 전송 중 에러 발생: ", e);
+            return CompletableFuture.completedFuture(false);
+        }
+    }
+
+    private boolean inquiryTalk(InquiryVO inquiryVO) {
+        // TODO Auto-generated method stub
+
+        String message = String.format(inquiryVO);
+
+        return false;
+    }
+
     private boolean rosterChecktalk(String receiver, String type, String eventName, int count, String appPeriod, String eventPeriod, String link, String companyPh) {
-        log.info("sendAlimtalk : receiver : " + receiver + " type : " + type + " eventName : " + eventName + " appPeriod : " + appPeriod + " eventPeriod : " + eventPeriod + " link : " + link + " leaderPhone : " + companyPh);
         String url = "https://kakaoapi.aligo.in/akv10/alimtalk/send/";
-    
 
         // 예시: 템플릿을 통째로 복사해서 가져온 경우
         String template = "[%s] 운영 인솔자 지정 및 업무 안내\n" +

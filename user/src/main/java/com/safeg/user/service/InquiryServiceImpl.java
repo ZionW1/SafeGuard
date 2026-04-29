@@ -11,6 +11,7 @@ import com.safeg.user.vo.InquiryVO;
 import com.safeg.user.vo.Option;
 import com.safeg.user.vo.Page;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -20,13 +21,20 @@ public class InquiryServiceImpl implements InquiryService {
     @Autowired
     private InquiryMapper supportMapper;
 
+    @Autowired
+    private AligoSmsService aligoSmsService;
+
     @Override
+    @Transactional
     public int inquiryInsert(InquiryVO inquiryVO) throws Exception {
         log.info("SupportServiceImpl.insertSupport called with: {}", inquiryVO);
         // TODO Auto-generated method stub
             // DB 저장 로직 구현 (예: supportMapper.insertSupport(supportVO))
             // 예시로 로그 출력
             int result = supportMapper.inquiryInsert(inquiryVO);
+            aligoSmsService.inquiryAsync(inquiryVO.getPhoneNum(), inquiryVO.getInquiryType(), inquiryVO.getCampaignTitle(), 
+            inquiryVO.getUserNm(), inquiryVO.getCompanyNm(), inquiryVO.getPayDate(), inquiryVO.getMemo(), inquiryVO.getGatheringTime(), 
+            inquiryVO.getSalary(), inquiryVO.getEventDate(), inquiryVO.getAddress(), inquiryVO.getCostume());  
 
             return result;
     }

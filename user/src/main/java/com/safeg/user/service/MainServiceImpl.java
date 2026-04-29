@@ -125,5 +125,13 @@ public class MainServiceImpl implements MainService{
 
         return applyDate;
     }
+
+    @Override
+    public List<BannerVO> bannerList() throws Exception {
+        // TODO Auto-generated method stub
+        List<BannerVO> bannerList = mainMapper.bannerList();
+        
+        return bannerList;
+    }
     
 }

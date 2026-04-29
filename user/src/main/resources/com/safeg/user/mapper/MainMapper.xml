@@ -329,5 +329,13 @@
                 campaign_id = #{campaignId}
         ]]>
     </update>
-
+    <select id="bannerList" resultType="BannerVO">
+        SELECT 
+            banner_id,
+            url,
+            title
+        FROM banner
+        WHERE is_deleted = 'N'
+        ORDER BY banner_id
+    </select>
 </mapper>

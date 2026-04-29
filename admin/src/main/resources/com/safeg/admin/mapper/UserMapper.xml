@@ -279,7 +279,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             point_history ph
         SET
             settlement_status = 'COMPLETED',
-            updated_at = NOW(),
             is_deleted = 'Y'
         WHERE 
             is_deleted = 'N'

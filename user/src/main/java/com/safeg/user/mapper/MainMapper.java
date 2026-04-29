@@ -44,4 +44,6 @@ public interface MainMapper {
 
     public void updateIsActive(Long campaignId) throws Exception;
 
+    public List<BannerVO> bannerList() throws Exception;
+
 }

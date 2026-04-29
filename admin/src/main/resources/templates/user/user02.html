@@ -15,7 +15,7 @@
         <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
         <div class="main-content">
             <h1>유저 수정</h1>
-            <h5><span>생성일 : </span><span th:text="${userSelect.createdAt}">캠페인 수정</span></h5>
+            <h4><span>생성일 : </span><span th:text="${userSelect.createdAt}">캠페인 수정</span></h4>
             <form class="normalForm" th:action="@{/user03}" method="post" id="form" enctype="multipart/form-data">
                 <!-- <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block> -->
                 <!-- <div th:insert="~{fragments/csrfFragments :: inputCsrf}"></div> -->

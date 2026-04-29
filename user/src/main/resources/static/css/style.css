@@ -2386,11 +2386,11 @@ table.bestPayList {
 }
 
 .footer_mobile{
-        display: block;
-        text-align: center;
-        margin-top: 0px;
-        padding-bottom: 55px;
-    }
+    display: block;
+    text-align: center;
+    margin-top: 0px;
+    padding-bottom: 55px;
+}
 
 .logo_image{
     margin-top: 10px;

@@ -36,4 +36,6 @@ public interface MainService {
 
     public List<UserCampaignVO> applyDate(Long campaignId) throws Exception;
 
+    public List<BannerVO> bannerList() throws Exception;
+
 }

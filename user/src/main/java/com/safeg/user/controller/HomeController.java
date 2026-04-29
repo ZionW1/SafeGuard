@@ -33,7 +33,6 @@ import com.safeg.user.vo.UserVO;
 import com.safeg.user.vo.Users;
 import com.safeg.user.service.AligoSmsService;
 import com.safeg.user.service.AuthService;
-import com.safeg.user.service.BannerService;
 import com.safeg.user.service.CampaignService;
 import com.safeg.user.service.FileService;
 import com.safeg.user.service.MainService;
@@ -53,9 +52,6 @@ public class HomeController {
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    BannerService bannerService;
 
     @Autowired
     AuthService authService;
@@ -79,7 +75,7 @@ public class HomeController {
         List<CampaignVO> campaignFavorite = mainService.campaignFavorite();
         List<CampaignVO> campaignWorkable = mainService.campaignWorkable();
         List<CampaignVO> campaignNew = mainService.campaignNew();
-        List<BannerVO> bannerList = bannerService.bannerList();
+        List<BannerVO> bannerList = mainService.bannerList();
 
         if (campaignFavorite != null && !campaignFavorite.isEmpty()) { // 리스트가 null이 아니고 비어있지 않을 때만!
             for (int i = 0; i < campaignFavorite.size(); i++) {

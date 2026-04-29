@@ -204,8 +204,6 @@ public class applyController {
     //         @PathVariable("userNo") Long userNo, @RequestBody UserCampaignVO request) throws Exception {
     // 상태 업데이트
     public ResponseEntity<?> updateAttendanceStatus(@RequestBody UserCampaignVO request) throws Exception {
-        log.info("근태 상태 업데이트 요청: UserNo={}, CampaignId={}, ApplyDate={}, NewStatus={}",
-                request.getUserNo(), request.getCampaignId(), request.getApplyDate(), request.getStatus());
         Long userNo = request.getUserNo();
         Long campaignId = request.getCampaignId();
         LocalDate applyDate = request.getApplyDate();
@@ -311,7 +309,6 @@ public class applyController {
     @PatchMapping("/rosterRemove/{userNo}/{campaignId}/{applyDate}")
     // 명단 삭제
     public ResponseEntity<?> rosterRemove(@PathVariable("userNo") Long userNo, @PathVariable("campaignId") Long campaignId, @PathVariable("applyDate") LocalDate applyDate, @RequestBody String newStatus) throws Exception {
-        log.info("userNo : " + userNo + ", campaignId : " + campaignId + ", applyDate : " + applyDate);
         int initStatus = applyService.rosterRemove(userNo, campaignId, applyDate);
 
         return ResponseEntity.ok().body("{\"message\": \"명단 삭제 성공.\"}");

@@ -37,7 +37,6 @@ public class AuthController {
 
     @PostMapping("/sendCode")
     public CompletableFuture<ResponseEntity<String>> sendCode(@RequestParam("phoneNumber") String phoneNumber) throws Exception {
-        log.info("send Phone Number " + phoneNumber);
         String hashedPhone = EncryptionUtil.hash(phoneNumber);
 
         boolean phoneDuplicate = userService.phoneDuplicate(hashedPhone, null);

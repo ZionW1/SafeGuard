@@ -38,10 +38,9 @@
             DATE_FORMAT(apply_date + INTERVAL 1 DAY, '%Y-%m-%d') apply_date
         FROM 
             user_campaign
-        WHERE 
-            user_id = #{userId}
-        AND event_str_date BETWEEN #{startDate} AND #{endDate}
-        AND event_end_date BETWEEN #{startDate} AND #{endDate}
+        WHERE user_id = #{userId}
+        AND event_str_date <= #{endDate}
+        AND event_end_date >= #{startDate}
     </select>
 
     <select id="getAddress" resultMap="UserAddressMap">

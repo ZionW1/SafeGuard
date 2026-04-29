@@ -39,8 +39,10 @@
         FROM 
             user_campaign
         WHERE user_id = #{userId}
-        AND event_str_date <= #{endDate}
-        AND event_end_date >= #{startDate}
+        <![CDATA[
+            AND event_str_date <= #{endDate}
+            AND event_end_date >= #{startDate}
+        ]]>
     </select>
 
     <select id="getAddress" resultMap="UserAddressMap">

@@ -2559,7 +2559,7 @@ table.bestPayList {
         z-index: 1000;
         padding: 0px 0;
         margin-top: 0px;
-        box-shadow: 0 -5px 10px rgba(0,0,0,0.05); /* 경계선이 살짝 보이게 (선택사항) */
+        width: 100%;
     }
 
     .image-area {

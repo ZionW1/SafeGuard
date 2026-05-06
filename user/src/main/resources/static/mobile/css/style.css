@@ -112,15 +112,22 @@ body {
 
 /* 마우스 오버 시 스타일 (선택 사항) */
 .statusInfoChange:hover {
-    background-color: #340781; /* 배경색 살짝 어둡게 */
+    background-color: white; /* 배경색 살짝 어둡게 */
+    color: black;
+    border: 1px solid #6b27e0;
 }
 
 /* 클릭 시 스타일 (선택 사항) */
 .statusInfoChange:active {
-    background-color: #340781; /* 배경색 더 어둡게 */
+    background-color: white; /* 배경색 더 어둡게 */
+    color: black;
+    border: 1px solid #6b27e0;
+
 }
 .statusInfoChange.choice_status {
-    background-color: #340781; /* 배경색 더 어둡게 */
+    background-color: white; /* 배경색 더 어둡게 */
+    color: black;
+    border: 1px solid #6b27e0;
 }
 
 .date_Select{
@@ -130,6 +137,12 @@ body {
     font-size: 14px;
     outline: none;
     cursor: pointer;
+}
+
+.statusInfoChange.active-status {
+    background-color: white; /* 배경색 더 어둡게 */
+    color: black;
+    border: 1px solid #6b27e0;
 }
 
 .btn-area {
@@ -334,19 +347,6 @@ body {
 
     .statusInfoChangeConfirm {
         padding: 14px 18px; /* 상하좌우 여백 */
-    }
-
-    /* 마우스 오버 시 스타일 (선택 사항) */
-    .statusInfoChange:hover {
-        background-color: #340781; /* 배경색 살짝 어둡게 */
-    }
-
-    /* 클릭 시 스타일 (선택 사항) */
-    .statusInfoChange:active {
-        background-color: #340781; /* 배경색 더 어둡게 */
-    }
-    .statusInfoChange.choice_status {
-        background-color: #340781; /* 배경색 더 어둡게 */
     }
 
     .date_Select{

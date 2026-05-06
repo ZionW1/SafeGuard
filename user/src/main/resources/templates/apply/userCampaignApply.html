@@ -10,12 +10,6 @@
 </head>
 <body class="bodyApply">
     <div th:if="${not #lists.isEmpty(userCampaignApply)}">
-        <!-- <div class="notice-box">
-            확인 한번 해주세요!<br />
-            예비자 목록 우측 버튼이 <span style="color:#3a00b4; font-weight:bold;">[선정]</span> 상태이면 선정된 
-            상태이며, 누르게 되면 <span style="color:#3a00b4; font-weight:bold;">[미선정]</span>으로 변경되고, 미선정 상태가 됩니다.<br />
-            * 반대의 경우도 동일
-        </div> -->
         <div id="campaignFileDownloadArea" th:data-campaign-id="${userCampaignApply[0].campaignId}">
             <div id="campaignIdDown" th:data-campaign-id="${userCampaignApply[0].campaignId}">
                 <div id="campaignTitleDown" th:data-campaign-title="${userCampaignApply[0].campaignTitle}">
@@ -30,14 +24,9 @@
             </div>
         </div>
     </div>
-    <!-- <div th:if="${#lists.isEmpty(userCampaignApply)}" class="section">
-        <p>해당 날짜에는 신청자가 없습니다.</p>
-    </div> -->
     <div class="section">
         <label for="dateSelector">신청 일자 선택 :</label>
         <select class="date_Select" id="dateSelector" th:onchange="location.href='/apply/userCampaignApply/' + [[${campaignId}]] + '?date=' + this.value">
-        <!-- <select class="date_Select" id="dateSelector" th:onchange="|location.href='/apply/userCampaignApply/[[${campaignId}]]?date=' + this.value + '&userNo=[[${uesrNo}]]'|"> -->
-
             <option value="">날짜를 선택하세요</option>
             <option th:each="item : ${applyDate}" 
                     th:value="${item.applyDate}" 
@@ -54,13 +43,10 @@
         <div class="applicant-item3">
             <div class="applicant-info">
                 <div class="width100 mrg-b5 applicant-item" th:each="userCampaign, stat: ${userCampaignApply}" th:data-applicant-user-no="${userCampaign.userNo}"
-                th:data-choose-status="${userCampaign.status}"> <!-- ⭐ userCampaign의 현재 status 값을 데이터 속성으로 추가 ⭐ -->
+                th:data-choose-status="${userCampaign.status}">
                     <div class="applyInfo" th:with="index=${stat.index}, currentUserNo=${userCampaign.userNo}, campaignId=${userCampaign.campaignId}, applyDate=${userCampaign.applyDate}">
-                        <!-- <div th:if="${userCampaign.status=='8'} || ${userCampaign.status=='9'}"> 인솔자 status -->
                         <div th:if="${userCampaign.status=='8' || userCampaign.status=='9'}">
-
                         </div>
-                        <!-- <div th:unless="${userCampaign.status=='8'} || ${userCampaign.status=='9'}"> -->
                         <div th:unless="${userCampaign.status=='8' || userCampaign.status=='9'}">
                             <div th:if="${userCampaign.filePath == null}">
                                 <img id="imgFile" src="/images/not-image.png" alt="파일이미지" width="50" height="50" />
@@ -71,9 +57,7 @@
                             <div style="margin-left: 55px; margin-top: -60px;">
                                 <span class="userInfofont" th:text="${userCampaign.userNm}"></span>/
                                 <span th:text="${userCampaign.hyphenPhone}">010-0000-0000</span>
-
                                 <button th:onclick="initStatus([[${index}]], [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]])" class="btn-state mrg5">초기화</button>
-                                <!-- <button class="btn-state"><span th:text="${userCampaign.statusNm}"></span></button> -->
                             </div>
                             <div class="btn-area">
                                 <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="1" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">출근</a>
@@ -87,13 +71,10 @@
                 </div>
             </div>
         </div>
-        
     </div>
-
     <div id="fileDownloadListSection" style="margin-top: 30px; padding: 15px; border-top: 1px solid #eee; display: none;">
         <h4><i class="fa fa-download" aria-hidden="true"></i> 다운로드 가능한 파일 목록</h4>
         <ul id="downloadLinksContainer" style="list-style: none; padding: 0;">
-            <!-- JavaScript로 다운로드 링크들이 여기에 추가될 예정 -->
         </ul>
         <p id="noFilesMessage" style="color: #999; display: none;">다운로드할 파일이 없습니다.</p>
     </div>
@@ -107,9 +88,8 @@
             </button>
         </th:block>
         <th:block th:unless="${userCampaignApply != null and not #lists.isEmpty(userCampaignApply) and userCampaignApply[0].campaignId != null}">
-            <!-- 엑셀 다운로드 불가 메시지 등을 표시할 수 있어 -->
             <p>엑셀 다운로드 불가 (캠페인 정보 없음)</p>
-        </th:block>        <!-- <a th:href="@{/download/campaign/applications/excel/{campaignId}(campaignId=${userCampaignApply[0].campaignId})}"> 다운 </a> -->
+        </th:block>
     </div>
     <div class="btn-area">
         <button class="btn_leader" th:if="${leaderUserNo}" th:data-user-no="${leaderUserNo}" th:data-status="${leaderStatus}" th:data-campaign-id="${leaderCampaignId}" th:data-apply-date="${leaderApplyDate}" th:onclick="leaveWork(this)">인솔자 퇴근</button>
@@ -121,32 +101,19 @@
         const userCampaignApply = /*[[${userCampaignApply}]]*/ null;
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log("userCampaignApply : "  +JSON.stringify(userCampaignApply));
             var statusButtons ;
-            // 모든 지원자 항목을 가져옴
             const applicantItems = document.querySelectorAll('.applicant-item');
             for(var i = 0; i < userCampaignApply.length; i++) {
-                console.log("a")
                 applicantItems.forEach(item => {
-                // 현재 userCampaign의 상태 값을 가져옴
-                const chooseStatus = item.dataset.chooseStatus; // data-current-campaign-status="[status]"
-                // 이 applicant-item 내의 모든 status 관련 버튼을 가져옴
+                const chooseStatus = item.dataset.chooseStatus;
                 statusButtons = item.querySelectorAll('.button_status'+i);
-                console.log(statusButtons)
 
                 statusButtons.forEach(button => {
-                    const targetStatus = button.dataset.status; // 이 버튼이 나타내는/변경하는 상태 값
-                    console.log("targetStatus : " + targetStatus)
-
-                    // 현재 캠페인 상태와 버튼의 목표 상태가 일치하면 활성화 스타일 적용
+                    const targetStatus = button.dataset.status;
                     if (chooseStatus === targetStatus) {
                         button.classList.add('choice_status');
-
                     } else {
-                        // 현재 상태가 아닌 버튼들은 기본 색상을 유지하거나,
-                        // 다른 비활성 상태의 색상으로 설정할 수 있음.
-                        // 예를 들어, 다른 모든 버튼은 회색으로:
-                        // button.classList.add('status-inactive');
+                        button.classList.remove('choice_status');
                     }
                 });
             });
@@ -155,20 +122,17 @@
 
         });
         async function requestAllCampaignFilesDownload(code) {
-            // ⭐ 1. 화면에서 단일 캠페인 ID를 가져옴 ⭐
             const campaignFileDownloadArea = document.getElementById('campaignFileDownloadArea');
             const campaignIdDown = document.getElementById('campaignIdDown');
             const campaignTitleDown = document.getElementById('campaignTitleDown');
+            const campaignIdToDownload = Number(campaignFileDownloadArea.dataset.campaignId);
+            const campaignId = Number(campaignIdDown.dataset.campaignId);
+            const campaignTitle = String(campaignTitleDown.dataset.campaignTitle);
 
             if (!campaignFileDownloadArea) {
                 alert('다운로드할 캠페인 정보를 찾을 수 없습니다.');
                 return;
             }
-            const campaignIdToDownload = Number(campaignFileDownloadArea.dataset.campaignId);
-            const campaignId = Number(campaignIdDown.dataset.campaignId);
-            const campaignTitle = String(campaignTitleDown.dataset.campaignTitle);
-            
-            console.log("서버로 보낼 캠페인 ID: ", campaignIdToDownload);
 
             if (isNaN(campaignIdToDownload) || campaignIdToDownload <= 0) {
                 alert('유효한 캠페인 ID를 찾을 수 없습니다.');
@@ -176,19 +140,18 @@
             }
 
             try {
-                // ⭐ 2. 단일 캠페인 ID를 POST 요청으로 전송 ⭐
                 const requestData = {
                     campaignId: campaignId,
                     campaignTitle: campaignTitle,
                     code: code
                 };
-                const response = await fetch('/file/imgDownload', { // 새로운 엔드포인트 이름!
+                const response = await fetch('/file/imgDownload', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         [csrfHeader]: csrfToken
                     },
-                    body: JSON.stringify(requestData) // 단일 ID를 JSON으로 보냄
+                    body: JSON.stringify(requestData)
                 });
 
                 if (!response.ok) {
@@ -202,7 +165,7 @@
 
                 const blob = await response.blob();
                 const contentDisposition = response.headers.get('Content-Disposition');
-                let filename = `campaign_${campaignIdToDownload}_files.zip`; // 기본 파일명
+                let filename = `campaign_${campaignIdToDownload}_files.zip`;
 
                 if (contentDisposition && contentDisposition.indexOf('filename=') !== -1) {
                     filename = contentDisposition.split('filename=')[1].split(';')[0].replace(/"/g, '');
@@ -226,88 +189,62 @@
             }
         }
         function downloadExcel(campaignId, applyDate) {
-            if (!campaignId) { // campaignId가 null이거나 정의되지 않았을 경우를 대비한 방어 코드
+            if (!campaignId) {
                 console.error("캠페인 ID가 유효하지 않습니다.");
                 alert("다운로드할 캠페인 ID가 올바르지 않습니다.");
                 return;
             }
-            
-            // Thymeleaf 문법을 사용하지 않고 직접 JS에서 URL을 만드는 경우:
             const downloadUrl = `/file/excelDownload/${campaignId}/${applyDate}`;
             
-            // 이 URL로 브라우저를 이동시키면, 서버가 엑셀 파일을 반환하고 브라우저는 그 파일을 다운로드하게 돼.
             window.location.href = downloadUrl;
         }
         
         function updateAttendanceStatus(status, userNo, campaignId, applyDate, index) {
-            console.log("updateAttendanceStatus called with - status: " + status + ", userNo: " + userNo + ", campaignId: " + campaignId + ", applyDate: " + applyDate + ", index: " + index);
-            const clickedButton = event.target; // ⭐ 1. 클릭된 버튼을 먼저 변수에 저장! ⭐
+            const clickedButton = event.target;
             const applicantItems = document.querySelectorAll('.applicant-item');
             const requestBody = {
                 userNo: userNo,
                 campaignId: campaignId,
-                applyDate: applyDate, // 날짜는 String 형태로 보내도 무방하나, 백엔드에서 LocalDate 등으로 파싱 가능해야 함.
-                status: status // 변경할 상태 값
+                applyDate: applyDate,
+                status: status
             };
             applicantItems.forEach(item => {
-                // 현재 userCampaign의 상태 값을 가져옴
-                const chooseStatus = item.dataset.chooseStatus; // data-current-campaign-status="[status]"
-                console.log("chooseStatus : " + chooseStatus)
-                // 이 applicant-item 내의 모든 status 관련 버튼을 가져옴
+                const chooseStatus = item.dataset.chooseStatus;
                 const statusButtons = item.querySelectorAll('.button_status'+index);
-                // console.log(statusButtons)
 
                 statusButtons.forEach(button => {
-                    const targetStatus = button.dataset.status; // 이 버튼이 나타내는/변경하는 상태 값
-                    console.log("targetStatus : " + targetStatus)
+                    const targetStatus = button.dataset.status;
 
-                    // 현재 캠페인 상태와 버튼의 목표 상태가 일치하면 활성화 스타일 적용
                     if (chooseStatus === targetStatus) {
                         button.classList.remove('choice_status');
 
                     } 
                 });
             });
-
-            console.log("index : " + userCampaignApply[index].status);
-            console.log("requestBody : " + JSON.stringify(requestBody));
-
             if (!userNo || !campaignId || !applyDate) {
                 console.error("상태 또는 사용자 정보가 올바르지 않습니다.", {status: status, userNo: userNo});
                 alert("상태 변경에 필요한 정보가 부족합니다. 다시 시도해 주세요.");
                 return;
             }
-
-            // 서버로 요청을 보낼 URL. Spring Controller의 엔드포인트에 맞춰줘!
-            // 예시: /api/attendance/123/status
-            // const url = `/apply/attendance/${userNo}/${campaignId}/${applyDate}`;
-            
             const url = `/apply/attendance/updateStatus`; 
-            console.log(status + " JSON : " + JSON.stringify(status)); 
-            console.log("requestBody : " + JSON.stringify(requestBody));
 
             fetch(url, {
-                method: 'PATCH', // 또는 'POST' / 'PUT'
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken // CSRF 토큰은 여기에 그대로!
+                    [csrfHeader]: csrfToken
                 },
-                body: JSON.stringify(requestBody) // ⭐⭐ requestBody 객체를 JSON 문자열로 변환하여 전송! ⭐⭐
+                body: JSON.stringify(requestBody)
             })
             .then(response => {
-                // HTTP 응답 코드가 200번대(성공)가 아니면 에러로 처리
                 if (!response.ok) { 
-                    // 서버에서 보낸 에러 메시지를 JSON 형태로 파싱하여 처리
                     return response.json().then(errorData => {
                         throw new Error(errorData.message || '상태 변경 중 알 수 없는 오류가 발생했습니다.');
                     });
                 }
-                return response.json(); // 성공 응답을 JSON 형태로 파싱
+                return response.json();
             })
             .then(data => {
-                // 서버에서 응답받은 데이터 처리
-                console.log("data : " + JSON.stringify(data))
-                console.log("data : " + JSON.stringify(data.message))
                 if(status == "0"){
                     if("${status}" == 2){
                         alert("출근 or 지각 터치 후 퇴근 버튼 터치 하세요.");
@@ -315,26 +252,16 @@
                     }
                 } else{
                     if(status == "1" || status == "3"){
-                    if("${status}" == 2){
-                        alert("출결 확인");
-                        return ;
+                        if("${status}" == 2){
+                            alert("출결 확인");
+                            return ;
+                        }
                     }
                 }
-                }
-                console.log('상태 변경 성공:', data);
                 alert(data.message);
-                
-                // ✨ 여기서 화면 업데이트 로직을 추가해 줘! ✨
-                // 예시: 해당 사용자 행의 상태를 변경하거나, 색깔을 바꾸거나, 페이지 새로고침 등
-                // window.location.reload(); // 페이지 전체 새로고침
-                
-                // 예를 들어, 상태 변경된 <a> 태그에 스타일을 적용하는 경우:
-                // 이 예시에서는 모든 버튼의 스타일을 초기화하고 현재 클릭된 버튼만 활성화
-                const buttons = document.querySelectorAll(`a[th-onclick$=", [[${userNo}]])"]`); // 동일 userNo의 버튼 찾기
+                const buttons = document.querySelectorAll(`a[th-onclick$=", [[${userNo}]])"]`);
                 buttons.forEach(btn => btn.classList.remove('active-status'));
-                // event.target.classList.add('active-status'); // 클릭된 버튼에 'active-status' 클래스 추가
-                clickedButton.classList.add('active-status'); // ⭐ 이제 event.target 대신 clickedButton 사용! ⭐
-
+                clickedButton.classList.add('active-status');
             })
             .catch(error => {
                 console.error('상태 변경 중 오류 발생:', error);
@@ -352,17 +279,12 @@
             const applyDate = buttonElement.dataset.applyDate; // ⭐ data-status 속성 값 읽기 ⭐
             const campaignId = buttonElement.dataset.campaignId; // ⭐ data-status 속성 값 읽기 ⭐
 
-            console.log("인솔자 퇴근 요청 - User No:", userNo);
-            console.log("인솔자 퇴근 요청 - Status:", status);
-            console.log("인솔자 퇴근 요청 - apply Date:", applyDate);
-            console.log("인솔자 퇴근 요청 - campaign Id:", campaignId);
             const requestBody = {
                 userNo: userNo,
                 campaignId: campaignId,
-                applyDate: applyDate, // 날짜는 String 형태로 보내도 무방하나, 백엔드에서 LocalDate 등으로 파싱 가능해야 함.
-                status: "9" // 변경할 상태 값
+                applyDate: applyDate,
+                status: "9"
             };
-            console.log("requestBody : " + JSON.stringify(requestBody));
 
             if (!status && !userNo) {
                 console.error("상태 또는 사용자 정보가 올바르지 않습니다.", {status: status, userNo: userNo});
@@ -370,34 +292,25 @@
                 return;
             }
 
-            // 서버로 요청을 보낼 URL. Spring Controller의 엔드포인트에 맞춰줘!
-            // 예시: /api/attendance/123/status
             const url = `/apply/attendance/updateStatus`; 
-            console.log(status + " JSON : " + JSON.stringify(status)); 
-            console.log("requestBody : " + JSON.stringify(requestBody));
 
             fetch(url, {
-                method: 'PATCH', // 또는 'POST' / 'PUT'
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken // CSRF 토큰은 여기에 그대로!
+                    [csrfHeader]: csrfToken
                 },
-                body: JSON.stringify(requestBody) // ⭐⭐ requestBody 객체를 JSON 문자열로 변환하여 전송! ⭐⭐
+                body: JSON.stringify(requestBody)
             })
             .then(response => {
-                // HTTP 응답 코드가 200번대(성공)가 아니면 에러로 처리
                 if (!response.ok) { 
-                    // 서버에서 보낸 에러 메시지를 JSON 형태로 파싱하여 처리
                     return response.json().then(errorData => {
                         throw new Error(errorData.message || '상태 변경 중 알 수 없는 오류가 발생했습니다.');
                     });
                 }
-                return response.json(); // 성공 응답을 JSON 형태로 파싱
+                return response.json();
             })
             .then(data => {
-                // 서버에서 응답받은 데이터 처리
-                console.log("data : " + JSON.stringify(data))
-                console.log("data : " + JSON.stringify(data.message))
                 if(status == "0"){
                     if("${status}" == 2){
                         alert("출근 or 지각 터치 후 퇴근 버튼 터치 하세요.");
@@ -405,26 +318,17 @@
                     }
                 } else{
                     if(status == "1" || status == "3"){
-                    if("${status}" == 2){
-                        alert("출결 확인");
-                        return ;
+                        if("${status}" == 2){
+                            alert("출결 확인");
+                            return ;
+                        }
                     }
                 }
-                }
-                console.log('상태 변경 성공:', data);
                 alert(data.message);
                 
-                // ✨ 여기서 화면 업데이트 로직을 추가해 줘! ✨
-                // 예시: 해당 사용자 행의 상태를 변경하거나, 색깔을 바꾸거나, 페이지 새로고침 등
-                // window.location.reload(); // 페이지 전체 새로고침
-                
-                // 예를 들어, 상태 변경된 <a> 태그에 스타일을 적용하는 경우:
-                // 이 예시에서는 모든 버튼의 스타일을 초기화하고 현재 클릭된 버튼만 활성화
-                const buttons = document.querySelectorAll(`a[th-onclick$=", [[${userNo}]])"]`); // 동일 userNo의 버튼 찾기
+                const buttons = document.querySelectorAll(`a[th-onclick$=", [[${userNo}]])"]`);
                 buttons.forEach(btn => btn.classList.remove('active-status'));
-                // event.target.classList.add('active-status'); // 클릭된 버튼에 'active-status' 클래스 추가
-                clickedButton.classList.add('active-status'); // ⭐ 이제 event.target 대신 clickedButton 사용! ⭐
-
+                clickedButton.classList.add('active-status');
             })
             .catch(error => {
                 console.error('상태 변경 중 오류 발생:', error);
@@ -433,61 +337,36 @@
         }
 
         function initStatus(index, userNo, campaignId, applyDate){
-            const clickedButton = event.target; // ⭐ 1. 클릭된 버튼을 먼저 변수에 저장! ⭐
+            const clickedButton = event.target;
             const url = `/apply/initStatus/${userNo}/${campaignId}/${applyDate}`;
             fetch(url, {
-                method: 'PATCH', // 상태 업데이트는 PATCH가 시맨틱적으로 더 적합하지만, PUT이나 POST를 써도 무방해.
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     [csrfHeader]: csrfToken
-                    // 만약 스프링 시큐리티를 사용하고 있다면 CSRF 토큰도 헤더에 추가해야 할 수 있어.
-                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
                 },
-                body: JSON.stringify({ newStatus: "0" }) // 보낼 데이터 (새로운 상태 값)
+                body: JSON.stringify({ newStatus: "0" })
             })
             .then(response => {
-                // HTTP 응답 코드가 200번대(성공)가 아니면 에러로 처리
                 if (!response.ok) { 
-                    // 서버에서 보낸 에러 메시지를 JSON 형태로 파싱하여 처리
                     return response.json().then(errorData => {
                         throw new Error(errorData.message || '상태 변경 중 알 수 없는 오류가 발생했습니다.');
                     });
                 }
-                return response.json(); // 성공 응답을 JSON 형태로 파싱
+                return response.json();
             })
             .then(data => {
-                // 서버에서 응답받은 데이터 처리
-                console.log("data : " + JSON.stringify(data))
-                console.log("data : " + JSON.stringify(data.message))
-                
-                console.log('상태 초기화 성공: ', data);
-                alert(data.message);
-                
-                // ✨ 여기서 화면 업데이트 로직을 추가해 줘! ✨
-                // 예시: 해당 사용자 행의 상태를 변경하거나, 색깔을 바꾸거나, 페이지 새로고침 등
-                // window.location.reload(); // 페이지 전체 새로고침
-                
-                // 예를 들어, 상태 변경된 <a> 태그에 스타일을 적용하는 경우:
-                // 이 예시에서는 모든 버튼의 스타일을 초기화하고 현재 클릭된 버튼만 활성화
-                const buttons = document.querySelectorAll(`a[th-onclick$=", [[${userNo}]])"]`); // 동일 userNo의 버튼 찾기
+                const buttons = document.querySelectorAll(`a[th-onclick$=", [[${userNo}]])"]`);
                 buttons.forEach(btn => btn.classList.remove('active-status'));
-                // event.target.classList.add('active-status'); // 클릭된 버튼에 'active-status' 클래스 추가
-                clickedButton.classList.add('active-status'); // ⭐ 이제 event.target 대신 clickedButton 사용! ⭐
+                clickedButton.classList.add('active-status');
                 const applicantItems = document.querySelectorAll('.applicant-item');
 
                 applicantItems.forEach(item => {
-                    // 현재 userCampaign의 상태 값을 가져옴
-                    const chooseStatus = item.dataset.chooseStatus; // data-current-campaign-status="[status]"
-                    console.log("chooseStatus : " + chooseStatus)
-                    // 이 applicant-item 내의 모든 status 관련 버튼을 가져옴
+                    const chooseStatus = item.dataset.chooseStatus;
                     const statusButtons = item.querySelectorAll('.button_status'+index);
-                    // console.log(statusButtons)
 
                     statusButtons.forEach(button => {
-                        const targetStatus = button.dataset.status; // 이 버튼이 나타내는/변경하는 상태 값
-                        console.log("targetStatus : " + targetStatus)
-
-                        // 현재 캠페인 상태와 버튼의 목표 상태가 일치하면 활성화 스타일 적용
+                        const targetStatus = button.dataset.status;
                         if (chooseStatus === targetStatus) {
                             button.classList.remove('choice_status');
 
@@ -500,31 +379,12 @@
                 alert('상태 변경에 실패했습니다: ' + error.message);
             });
         }
-        
-        
-
-
-
-
-
-
-
 
         function changeDate(selectedDate) {
             if(!selectedDate) return;
 
-            const campaignId = "${campaignId}"; // 서버에서 받아온 ID
-            
-            // Ajax 또는 페이지 이동
+            const campaignId = "${campaignId}";
             location.href = `/apply/userCampaignApply/${campaignId}?date=${selectedDate}`;
-            /* 만약 Ajax를 쓰신다면 */
-            /*
-            fetch(`/api/applicants?campaignId=${campaignId}&date=${selectedDate}`)
-                .then(res => res.json())
-                .then(data => {
-                    // 명단 업데이트 로직
-                });
-            */
         }
     </script>
 </body>

@@ -6,7 +6,7 @@
     <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
 
     <link rel="stylesheet" th:href="@{/css/style.css}" />
-  <title>전체 배너 목록</title>
+    <title>전체 배너 목록</title>
     <style>
         .container {
             max-width: 1200px;
@@ -118,28 +118,11 @@
                         <p>이미지를 여기에 끌어다 놓거나 클릭하여 업로드하세요</p>
                         <div>
                             <input type="file" name="file" id="file" accept="image/*"style="display: none;">
-                            <!-- <img id="preview-image" class="preview-image" alt="배너 이미지 미리보기"> -->
                             <img id="preview-image" class="preview-image" th:src="@{|/banner/img?id=${bannerSelect.bannerId}|}" alt="파일이미지" width="720" height="405" />
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- <div class="form-item">
-                <label class="field-label">배너 사진*</label>
-            
-
-                <div class="upload-container">
-                    <div class="upload-box" id="upload-box">
-                        <p>이미지를 여기에 끌어다 놓거나 클릭하여 업로드하세요</p>
-                        <input type="file" name="file" id="file" accept="image/*" width="720" height="405" style="display: none;">
-                        <img id="preview-image" class="preview-image" alt="배너 이미지 미리보기">
-                        <img id="imgFile" th:src="@{|/banner/img?id=${bannerSelect.bannerId}|}" alt="파일이미지" width="720" height="405" />
-
-                    </div>
-                    <p class="help-text">배너 이미지를 업로드해 주세요</p>
-                </div>
-            </div> -->
 
             <div class="button-container">
                 <button type="submit" class="submit-button">수정</button>
@@ -177,7 +160,6 @@
     
     // 파일 선택 시 처리
     fileInput.addEventListener('change', (e) => {
-        console.log(e.target.files.length);
         if (e.target.files.length) {
             handleFile(e.target.files[0]);
         }
@@ -200,37 +182,23 @@
     }
 
     function bannerRemoveFile(element, id){
-        console.log("campaign: " + id);
         let request = new XMLHttpRequest();
-
-        // ⭐️ CSRF 토큰 가져오기 시작 ⭐️
-        // hidden input 태그에서 name과 value를 가져와.
         const csrfToken = document.querySelector('input[name="_csrf"]').value;
-        // const csrfHeader = document.querySelector('input[name="_csrf"]').name; // 스프링 기본은 "_csrf"야
-        const csrfHeaderToSend = "X-CSRF-TOKEN"; // 👈 Spring Security가 기본으로 기대하는 헤더 이름!
-        // 만약 parameterName이 다르게 설정되어 있다면, 다음과 같이도 가능해:
-        // const csrfHeader = document.querySelector('input[name="_csrf"]').getAttribute('name');
-
-        // meta 태그로 CSRF 토큰을 저장했다면 이렇게 가져올 수도 있어:
-        // const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
-        // const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
-        // ⭐️ CSRF 토큰 가져오기 끝 ⭐️
+        const csrfHeaderToSend = "X-CSRF-TOKEN";
         request.onreadystatechange = function(){
             if(request.readyState == request.DONE && request.status == 200) {
                 let response = request.responseText;
                 if(response == 'SUCCESS'){
                     alert('파일 삭제(상태 변경) 성공');
+                    // ⭐️ 클래스를 사용하여 섹션 숨기기/보이기 ⭐️
+                    document.getElementById("existing-file-section").classList.add('hidden');    // 기존 파일 섹션 숨기기
+                    document.getElementById("upload-box").classList.remove('hidden');             // 드롭 영역 보이기
 
-                            // ⭐️ 클래스를 사용하여 섹션 숨기기/보이기 ⭐️
-                            document.getElementById("existing-file-section").classList.add('hidden');    // 기존 파일 섹션 숨기기
-                            document.getElementById("upload-box").classList.remove('hidden');             // 드롭 영역 보이기
-
-                            // 이미지 업로드 <input> 태그의 값을 비워서 파일 선택 상태 초기화
-                            document.getElementById("file").value = '';
-                            // 미리보기 이미지도 초기 상태로 (src 비우고 hidden 클래스 추가하여 숨김)
-                            document.getElementById("preview").classList.add('hidden'); // 미리보기 img 태그 숨기기
-                            document.getElementById("preview").src = ""; // 미리보기 이미지 src 비우기
-
+                    // 이미지 업로드 <input> 태그의 값을 비워서 파일 선택 상태 초기화
+                    document.getElementById("file").value = '';
+                    // 미리보기 이미지도 초기 상태로 (src 비우고 hidden 클래스 추가하여 숨김)
+                    document.getElementById("preview").classList.add('hidden'); // 미리보기 img 태그 숨기기
+                    document.getElementById("preview").src = ""; // 미리보기 이미지 src 비우기
                 }else{
                     alert('파일 삭제(상태 변경) 실패');
                 }
@@ -240,7 +208,6 @@
         }
 
         const url = `/admin/bannerRemoveFile?id=${id}`;
-        console.log("mark deleted url : " + url);
         request.open('POST', url, true);
         request.setRequestHeader(csrfHeaderToSend, csrfToken);
         request.send();

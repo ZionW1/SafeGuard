@@ -188,8 +188,6 @@ public class AligoSmsService {
         String url = "https://kakaoapi.aligo.in/akv10/alimtalk/send/";
         String buttonJson = "{\"button\": [{\"name\": \"채널 추가\", \"linkType\": \"AC\"}]}";
 
-    
-        String conutString = String.valueOf(count);
         // 2. 새로운 템플릿 문구 구성
         String template = "[%s] %s 모집 공고 등록 안내\n" +
                 "\n" +

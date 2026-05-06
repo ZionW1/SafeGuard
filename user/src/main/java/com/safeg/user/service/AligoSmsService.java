@@ -41,59 +41,6 @@ public class AligoSmsService {
 
     RestTemplate restTemplate = new RestTemplate();
 
-
-    // public boolean sendAuthSms(String phoneNumber, String authCode) throws JsonMappingException, JsonProcessingException {
-    //     log.info("AligoSmsService sendAuthSms + " + phoneNumber + ", " + authCode);
-    //     RestTemplate restTemplate = new RestTemplate();
-
-    //     Map<String, String> params = new HashMap<>();
-    //     params.put("user_id", userId);
-    //     params.put("key", apiKey);
-    //     params.put("sender", sender);
-    //     params.put("receiver", phoneNumber);
-    //     params.put("msg", "인증번호는 [" + authCode + "] 입니다. 안전하게 사용하세요.");
-    //     params.put("testmode_yn", "Y");  // "Y"로 하면 테스트 모드 (문자 전송 안됨)
-
-    //     // HttpHeaders headers = new HttpHeaders();
-    //     // headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-    //     // HttpEntity<Map<String, String>> request = new HttpEntity<>(params, headers);
-
-    //     // try {
-    //     //     ResponseEntity<String> response = restTemplate.postForEntity(ALIGO_URL, request, String.class);
-    //     //     String body = response.getBody();
-
-    //     //     // "result_code":1 이면 성공 (응답은 JSON 형태)
-    //     //     return body != null && body.contains("\"result_code\":\"1\"");
-    //     // } catch (Exception e) {
-    //     //     e.printStackTrace();
-    //     //     return false;
-    //     // }
-
-    //     MultiValueMap<String, String> params1 = new LinkedMultiValueMap<>();
-    //     params1.add("user_id", "your_id");
-    //     params1.add("key", "your_key");
-
-    //     HttpHeaders headers = new HttpHeaders();
-    //     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-    //     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params1, headers);
-
-    //     ResponseEntity<String> response = restTemplate.postForEntity(ALIGO_URL, request, String.class);
-
-    //     if (response.getStatusCode() == HttpStatus.OK) {
-    //         ObjectMapper objectMapper = new ObjectMapper();
-    //         JsonNode root = objectMapper.readTree(response.getBody());
-    //         String resultCode = root.path("result_code").asText();
-    //         String message = root.path("message").asText();
-    //         // result_code가 "1"이면 성공, 아니면 실패 처리
-    //     }
-    //     log.info("알리고 전체 응답: " + response.getBody());
-    //     String body = response.getBody();
-        
-    //     return body != null && body.contains("\"result_code\":\"1\"");
-    // }
-
     public boolean sendAuthSms(String phoneNumber, String authCode) throws JsonMappingException, JsonProcessingException {
         log.info("AligoSmsService 전송 시도: {} , 코드: {}", phoneNumber, authCode);
         
@@ -269,14 +216,73 @@ public class AligoSmsService {
     private boolean inquiryTalk(InquiryVO inquiryVO) {
         // TODO Auto-generated method stub
 
-        String message = String.format(inquiryVO);
+        
+        String template = "[%s] 문의 접수 안내\n\n" +
+        "안녕하세요. [%s]님, 문의가 접수되었습니다.\n\n" +
+        "문의 유형: %s\n" +
+        "캠페인명: %s\n" +
+        "문의 내용: %s\n\n" +
+        "담당자가 확인 후 빠르게 답변드리겠습니다. 감사합니다.";    
 
+        
+        String template1 =
+        "관리자님, 새로운 광고 문의가 들어왔습니다.\n"+
+        "내용을 확인하고 빠르게 연락해 주세요.\n\n"+
+        "■ 문의 상세\n"+
+        "캠페인 명: [%s]\n"+
+        "업체명: [%s]\n"+
+        "타입 : [%s]\n"+
+        "연락처: [%s]\n"+
+        "지역: [%s]\n"+
+        "결제일 : [%s]\n"+
+        "집결시간 : [%s]\n"+
+        "단가 : [%s]\n"+
+        "집결 날짜 및 시간: [%s]\n"+
+        "[관리자 페이지 바로가기]";
+        // "http://행집.com/admin/";
+        
+        
+        String message = String.format(template1, inquiryVO.getCampaignTitle(), inquiryVO.getCompanyNm(), inquiryVO.getInquiryType(), inquiryVO.getPhoneNum(), inquiryVO.getAddress(), inquiryVO.getPayDate(), inquiryVO.getGatheringTime(), inquiryVO.getSalary(), inquiryVO.getEventDate());
+        String buttonJson = "{\"button\": [{\"name\": \"관리자 페이지\", \"linkType\": \"WL\", \"linkMo\": \"http://행집.com/admin/\", \"linkPc\": \"http://행집.com/admin/\"}]}";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("apikey", apiKey);
+        params.add("userid", userId);
+        params.add("senderkey", "ff7f69c328188f85aa26867582ce55a57358b4a3");
+        params.add("tpl_code", "UH_5351"); // 예: TF_0001
+        params.add("sender", sender); 
+        params.add("receiver_1", "01045558079");
+        params.add("subject_1", "행사 문의");
+        params.add("message_1", message);
+        // params.add("button_1", buttonJson);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(KAKAO_URL, request, String.class);
+            log.info("알리고 전체 응답: " + response.getBody());
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode root = objectMapper.readTree(response.getBody());
+                
+                // 알리고는 성공 시 result_code가 정수 1 또는 문자열 "1"로 옵니다.
+                String resultCode = root.path("result_code").asText();
+                return "1".equals(resultCode);
+            }
+            
+            // return "1".equals(resultCode);
+        } catch (Exception e) {
+            log.error("알림톡 API 통신 실패", e);
+            return false;
+        }
         return false;
     }
 
     private boolean rosterChecktalk(String receiver, String type, String eventName, int count, String appPeriod, String eventPeriod, String link, String companyPh) {
-        String url = "https://kakaoapi.aligo.in/akv10/alimtalk/send/";
-
         // 예시: 템플릿을 통째로 복사해서 가져온 경우
         String template = "[%s] 운영 인솔자 지정 및 업무 안내\n" +
         "\n" +
@@ -324,11 +330,7 @@ public class AligoSmsService {
 
 
         try {
-            // RestTemplate 등을 이용해 POST 요청 (이미 bean 등록되어 있다고 가정)
-            // ResponseEntity<Map> response = restTemplate.postForEntity(url, params, Map.class);
-            // String resultCode = String.valueOf(response.getBody().get("result_code"));
-            
-            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(KAKAO_URL, request, String.class);
             log.info("알리고 전체 응답: " + response.getBody());
 
             if (response.getStatusCode() == HttpStatus.OK) {

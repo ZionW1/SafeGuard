@@ -161,7 +161,7 @@ public class CampaignServiceImpl implements CampaignService{
 
         String AppPeriod = campaignsVO.getAppPeriodStr().toString() + " ~ "+ campaignsVO.getAppPeriodEnd().toString();
         String EventPeriod = campaignsVO.getEventPeriodStr().toString() + " ~ "+ campaignsVO.getEventPeriodEnd().toString();
-        aligoSmsService.registrationAsync(campaignsVO.getCompanyPh(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), AppPeriod, EventPeriod, "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(), campaignsVO.getLeaderPhone());
+        aligoSmsService.registrationAsync(campaignsVO.getCompanyPh(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), AppPeriod, EventPeriod, "https://행집.com/campaign/" + campaignsVO.getCampaignId(), campaignsVO.getLeaderPhone());
 
         return result;
     }

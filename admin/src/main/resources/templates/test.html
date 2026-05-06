@@ -29,8 +29,8 @@
         const form = document.getElementById('smsForm');
         const resultMessage = document.getElementById('resultMessage');
 
-        const csrfHeader = /*[[${_csrf.headerName}]]*/ ''; // 예: 'X-CSRF-TOKEN' 또는 빈 문자열
-        const csrfToken = /*[[${_csrf.token}]]*/ '';       // 실제 토큰 값 또는 빈 문자열
+        const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+        const csrfToken = /*[[${_csrf.token}]]*/ '';
 
         const requestHeaders = {};
 
@@ -54,9 +54,7 @@
                 body: new URLSearchParams({ phoneNumber: phoneNumber })
             })
             .then(response => response.text()) // json() 대신 text()로 받기
-            .then(data => {
-                console.log("서버 응답 데이터:", data);
-                
+            .then(data => {                
                 // 서버에서 리턴한 문자열에 '성공'이라는 글자가 포함되어 있는지 확인
                 if (data.includes("성공") || data === "Test OK") {
                     resultMessage.style.color = 'blue';
@@ -79,7 +77,7 @@
         let timerInterval;
 
         function startTimer() {
-            document.getElementById('authSection').style.display = 'block'; // 입력창 보이기
+            document.getElementById('authSection').style.display = 'block';
             clearInterval(timerInterval);
             
             timerInterval = setInterval(() => {
@@ -118,8 +116,6 @@
                     document.getElementById('sendCode').disabled = true;
                     document.getElementById('authCode').disabled = true;
                     document.getElementById('verifyBtn').disabled = true;
-
-                    // 다음 단계(회원가입 완료 등)로 진행
                 } else {
                     alert(data);
                 }

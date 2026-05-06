@@ -6,8 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>캠페인 신청 안내</title>
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
-<!-- <link href='/css/style.css' rel='stylesheet' /> -->
-<!-- FullCalendar JS -->
 <style>
     
     .container {
@@ -238,41 +236,28 @@
     }
 }
 </style>
-    <link rel="stylesheet" href="/css/style.css" />
-
-
+<link rel="stylesheet" href="/css/style.css" />
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js'></script> <!-- 한글 지원을 위해 -->
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=1e252ff5c2580391cd0d99d3ab30d182&libraries=services&autoload=false"></script>
-<!-- <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=인증키&libraries=services,clusterer,drawing"></script> -->
-<script>
-    // 카카오 맵 API 로드가 완료되면 지도를 초기화하는 함수
-    
-</script>
 <script th:inline="javascript">
     let campaign = /*[[${campaignSelect}]]*/ null;
     let user = /*[[${user}]]*/ null;
-    console.log("campaign : " + JSON.stringify(campaign))
     document.addEventListener('DOMContentLoaded', function() {
         kakao.maps.load(function() {
-            console.log("지도")
             var xx = "";
             var yy = "";
             
             // 주소-좌표 변환 객체를 생성합니다
             var geocoder = new kakao.maps.services.Geocoder();
 
-        // 주소로 좌표를 검색합니다
+            // 주소로 좌표를 검색합니다
             geocoder.addressSearch(campaign.placeAddr, function(result, status) {
                 // 정상적으로 검색이 완료됐으면 
                 if (status === kakao.maps.services.Status.OK) {
 
-                        xx = result[0].x;
-                        yy = result[0].y;
-                        
-                        console.log("yyyyyy : " + yy);
-                        console.log("xxxxxx : " + xx);
-                        
+                    xx = result[0].x;
+                    yy = result[0].y;
                         
                     var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
@@ -301,10 +286,8 @@
             var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
         });
 
-        // campaignSelect.eventPeriodStr
         var calendarEl = document.getElementById('calendar');
         var calendar_month = campaign.eventPeriodStr;
-        console.log("calendar_month" + calendar_month);
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth', // 월별 보기
             initialDate: calendar_month,   // ← 원하는 날짜
@@ -315,84 +298,78 @@
             width: '100%',
             height: 600,
             events: function(fetchInfo, successCallback, failureCallback) {
-                console.log("cmpaign.apapPeriodStr + "  + campaign.campaignId);
                 // Spring Boot 백엔드 API 호출
                 fetch("/campaign07?id=" + campaign.campaignId)
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
                         // 데이터베이스에서 가져온 JSON 데이터를 FullCalendar 이벤트 형식으로 변환하여 전달
                         // (백엔드에서 이미 변환했다면 바로 successCallback(data) 호출)그리고 event날짜랑 event 없는 날짜랑 크기를 똑같이 하고 싶어
                         let events = [];
-                // data가 유효한 객체인지 확인
-                if (data && typeof data === 'object') { 
-                    // data가 배열이 아닌 단일 객체인 경우
-                    // FullCalendar는 이벤트를 배열 형태로 기대하므로, 단일 객체를 배열에 담아서 전달
-                    // events.push({
-                    //     // campaignTitle 또는 원하는 다른 필드를 title로 사용
-                    //     title: '신청일', // 달력에 표시될 제목
-                    //     start: data.appPeriodStr,
-                    //     end: data.appPeriodEnd,
-                    //     // 다른 필요한 정보들을 추가할 수 있어 (예: url, description 등)
-                    // });
-                    // 1. 신청 기간 (appPeriodStr ~ appPeriodEnd)
-                    if (data.appPeriodStr && data.appPeriodEnd) {
-                        let appEndDate = new Date(data.appPeriodEnd); // 'YYYY-MM-DD' 문자열을 Date 객체로 변환
-                        appEndDate.setDate(appEndDate.getDate() + 1); // 현재 Date 객체에 하루를 더해줘
-                        let formattedAppEndDate = appEndDate.toISOString().slice(0, 10); 
+                        // data가 유효한 객체인지 확인
+                        if (data && typeof data === 'object') {
+                        // data가 배열이 아닌 단일 객체인 경우
+                        // FullCalendar는 이벤트를 배열 형태로 기대하므로, 단일 객체를 배열에 담아서 전달
+                        // events.push({
+                        //     // campaignTitle 또는 원하는 다른 필드를 title로 사용
+                        //     title: '신청일', // 달력에 표시될 제목
+                        //     start: data.appPeriodStr,
+                        //     end: data.appPeriodEnd,
+                        //     // 다른 필요한 정보들을 추가할 수 있어 (예: url, description 등)
+                        // });
+                        // 1. 신청 기간 (appPeriodStr ~ appPeriodEnd)
+                        if (data.appPeriodStr && data.appPeriodEnd) {
+                            let appEndDate = new Date(data.appPeriodEnd); // 'YYYY-MM-DD' 문자열을 Date 객체로 변환
+                            appEndDate.setDate(appEndDate.getDate() + 1); // 현재 Date 객체에 하루를 더해줘
+                            let formattedAppEndDate = appEndDate.toISOString().slice(0, 10); 
 
-                        events.push({
-                            title: '신청 기간', // 이 기간의 제목
-                            start: data.appPeriodStr,
-                            end: formattedAppEndDate,
-                            color: '#4285F4', // 파란색 (구분하기 위해)
-                            extendedProps: { // 추가 정보를 여기에 넣을 수 있어
-                                type: '신청'
-                            }
-                        });
+                            events.push({
+                                title: '신청 기간', // 이 기간의 제목
+                                start: data.appPeriodStr,
+                                end: formattedAppEndDate,
+                                color: '#4285F4', // 파란색 (구분하기 위해)
+                                extendedProps: { // 추가 정보를 여기에 넣을 수 있어
+                                    type: '신청'
+                                }
+                            });
+                        }
+
+                        // 2. 이벤트 진행 기간 (eventPeriodStr ~ eventPeriodEnd)
+                        // campaignVO에 eventPeriodStr, eventPeriodEnd 필드가 있다면 활용
+                        if (data.eventPeriodStr && data.eventPeriodEnd) {
+                            let appEndDate = new Date(data.eventPeriodEnd); // 'YYYY-MM-DD' 문자열을 Date 객체로 변환
+                            appEndDate.setDate(appEndDate.getDate() + 1); // 현재 Date 객체에 하루를 더해줘
+                            let formattedAppEndDate = appEndDate.toISOString().slice(0, 10); 
+
+                            events.push({
+                                title: '이벤트 진행', // 이 기간의 제목
+                                start: data.eventPeriodStr,
+                                end: formattedAppEndDate,
+                                color: '#DB4437', // 빨간색 (구분하기 위해)
+                                extendedProps: {
+                                    type: '진행'
+                                }
+                            });
+                        }
+                    } else {
+                        console.warn('Server response for /campaignSelect was not a valid object:', data);
                     }
-
-                    // 2. 이벤트 진행 기간 (eventPeriodStr ~ eventPeriodEnd)
-                    // campaignVO에 eventPeriodStr, eventPeriodEnd 필드가 있다면 활용
-                    if (data.eventPeriodStr && data.eventPeriodEnd) {
-                        let appEndDate = new Date(data.eventPeriodEnd); // 'YYYY-MM-DD' 문자열을 Date 객체로 변환
-                        appEndDate.setDate(appEndDate.getDate() + 1); // 현재 Date 객체에 하루를 더해줘
-                        let formattedAppEndDate = appEndDate.toISOString().slice(0, 10); 
-
-                        events.push({
-                            title: '이벤트 진행', // 이 기간의 제목
-                            start: data.eventPeriodStr,
-                            end: formattedAppEndDate,
-                            color: '#DB4437', // 빨간색 (구분하기 위해)
-                            extendedProps: {
-                                type: '진행'
-                            }
-                        });
-                    }
-                } else {
-                    console.warn('Server response for /campaignSelect was not a valid object:', data);
-                }
                         successCallback(events);
-                    })
-                    .catch(error => {
-                        console.log('Error fetching events:' + error);
-                        failureCallback(error);
-                    });
+                })
+                .catch(error => {
+                    console.log('Error fetching events:' + error);
+                    failureCallback(error);
+                });
             }
-            // 다른 FullCalendar 옵션들 (예: 클릭 이벤트, 드래그앤드롭 등)
         });
         calendar.render();
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        console.log(today)
-        const badge = document.querySelector('.d-Day'); // 요소가 하나일 때
+        const badge = document.querySelector('.d-Day');
         document.querySelectorAll('.d-Day').forEach(function(badge) {
 
-            console.log("badge + " + badge);
             if (badge) {
                 const dateStr = badge.dataset.eventEndDateStr;
-                console.log("dataStr : " + dateStr)
 
                 if (!dateStr) {
                     badge.textContent = '기간 미정';
@@ -421,9 +398,7 @@
         if (!applyButtons) return;
         applyButtons.forEach(btn => {
             btn.addEventListener('click', function() {
-                const currentBtn = this; // 클릭된 바로 그 버튼
-                console.log("campaign : " + JSON.stringify(user))
-                console.log("dataset : " + JSON.stringify(currentBtn.dataset));
+                const currentBtn = this;
                 const csrfTokenTag = document.querySelector('meta[name="_csrf"]');
                 const csrfHeaderTag = document.querySelector('meta[name="_csrf_header"]');
                 
@@ -432,7 +407,7 @@
                     return;
                 }
                 const csrfToken = csrfTokenTag.getAttribute('content');
-                const csrfHeader = csrfHeaderTag.getAttribute('content'); // 에러 해결 지점
+                const csrfHeader = csrfHeaderTag.getAttribute('content');
                 const applyData = {
                     userNo: currentBtn.dataset.userNo,
                     userId: currentBtn.dataset.userId,
@@ -444,7 +419,6 @@
                 };
                 
                 if(campaign.typeCode == "02"){
-                    // 1. 체크할 항목들을 '변수명: 표시이름' 형태로 정의합니다.
                     if(currentBtn.dataset.guardType == "00" || currentBtn.dataset.guardType == "01") {
                         const requiredFields = {
                             bankNm: "은행명",
@@ -521,19 +495,10 @@
     });
 
     function applyCancel() {
-        // const clickedButton = event.target; // ⭐ 1. 클릭된 버튼을 먼저 변수에 저장! ⭐
         const clickedButton = event.currentTarget || event.target;
         const url = `/applyCancel/${user.id}/${campaign.campaignId}/${campaign.eventPeriodStr}/${campaign.eventPeriodEnd}`; // RESTful한 URL로 변경
-        console.log("applyRemove called with userNo : " + user.id + ", campaignId : " + campaign.campaignId + ", campaign.eventPeriodStr : " + campaign.eventPeriodStr + ", campaign.eventPeriodEnd : " + campaign.eventPeriodEnd + ", url : " + url);
-
-            // CSRF 토큰 정보 (Spring Security 사용 시 필수)
         const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
-
-        console.log("campaign : " + JSON.stringify(campaign));
-        console.log("user : " + JSON.stringify(user));
-        console.log("clickedButton : " + JSON.stringify(clickedButton));
-
         const targetContainer = clickedButton.closest('.applyInfo');
 
         fetch(url, {
@@ -764,7 +729,6 @@
 
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    console.log("탭 클릭됨: " + tab.id);
                     // 모든 탭 비활성화
                     tabs.forEach(t => {
                         t.classList.remove('active');

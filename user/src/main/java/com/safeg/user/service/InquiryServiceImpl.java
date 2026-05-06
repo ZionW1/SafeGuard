@@ -32,9 +32,16 @@ public class InquiryServiceImpl implements InquiryService {
             // DB 저장 로직 구현 (예: supportMapper.insertSupport(supportVO))
             // 예시로 로그 출력
             int result = supportMapper.inquiryInsert(inquiryVO);
-            aligoSmsService.inquiryAsync(inquiryVO.getPhoneNum(), inquiryVO.getInquiryType(), inquiryVO.getCampaignTitle(), 
-            inquiryVO.getUserNm(), inquiryVO.getCompanyNm(), inquiryVO.getPayDate(), inquiryVO.getMemo(), inquiryVO.getGatheringTime(), 
-            inquiryVO.getSalary(), inquiryVO.getEventDate(), inquiryVO.getAddress(), inquiryVO.getCostume());  
+
+            if("01".equals(inquiryVO.getInquiryType())) {
+                inquiryVO.setInquiryType("진행");
+            } else if("02".equals(inquiryVO.getInquiryType())) {
+                inquiryVO.setInquiryType("경호");
+            } else {
+                inquiryVO.setInquiryType("수행");
+            }
+                
+            aligoSmsService.inquiryAsync(inquiryVO);  
 
             return result;
     }

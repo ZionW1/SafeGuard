@@ -266,7 +266,7 @@
     <select id="referrerList" resultType="PointHistoryVO">
         SELECT 
             u.user_nm,
-            SUM(ph.amount) AS total_amount,
+            SUM(ph.amount) AS amount,
             #{targetMonth} AS mission_month
         FROM 
             point_history ph

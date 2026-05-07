@@ -109,11 +109,8 @@
                     <!-- <th:block th:if="${leaderList != null and !leaderList.isEmpty()}"> -->
                         <div class="tableTitle">
                             인솔자 포인트 : 
-                            <!-- <span th:if="${leaderAmount != 0}" th:text="${leaderAmount}">0</span>
-                            <span th:unless="${leaderAmount != 0}">0</span> -->
-                            <span th:each="giver, stat : ${leaderList}">
-                                <span th:text="${giver.amount}"></span>
-                            </span>
+                            <span th:if="${leaderAmount != 0}" th:text="${leaderAmount}">0</span>
+                            <span th:unless="${leaderAmount != 0}">0</span>
                         </div>
                     
                         <table class="point_List" style="border:1px solid #000; border-collapse: collapse;">

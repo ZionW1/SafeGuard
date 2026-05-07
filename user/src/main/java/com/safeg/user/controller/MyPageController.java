@@ -718,10 +718,10 @@ public class MyPageController {
     
                 int totalAmount = leaderList.stream().mapToInt(PointHistoryVO::getAmount).sum();
                 log.info("totalAmount : " + totalAmount);
-                model.addAttribute("leaderAmount", totalAmount);
 
                 model.addAttribute("leaderList", leaderList != null ? leaderList : Collections.emptyList());
-                model.addAttribute("leaderAmount", lAmt);
+                model.addAttribute("leaderAmount", totalAmount);
+                // model.addAttribute("leaderAmount", lAmt);
             }
         }
     

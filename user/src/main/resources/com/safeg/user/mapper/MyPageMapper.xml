@@ -266,18 +266,20 @@
     <select id="referrerList" resultType="PointHistoryVO">
         SELECT 
             u.user_nm,
-            amount,
-            mission_date
+            SUM(ph.amount) AS total_amount,
+            #{targetMonth} AS mission_month
         FROM 
             point_history ph
         LEFT OUTER JOIN user u
-            on u.id = ph.source_id
+            ON u.id = ph.source_id
         WHERE 
-            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            ph.mission_date LIKE CONCAT(#{targetMonth}, '%')
             AND ph.is_deleted = 'N'
-            AND settlement_status = 'READY'
-            and ph.user_id = #{userNo}
-            and category = 'REFERRAL'
+            AND ph.settlement_status = 'READY'
+            AND ph.user_id = #{userNo}
+            AND ph.category = 'REFERRAL'
+        GROUP BY 
+            u.user_nm
     </select>
 
     <select id="attendList" resultType="PointHistoryVO">

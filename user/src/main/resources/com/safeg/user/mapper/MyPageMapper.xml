@@ -302,6 +302,7 @@
     <select id="leaderList" resultType="PointHistoryVO">
         SELECT
             c.campaign_title,
+            c.APPLICANTS_NUM,
             amount * c.APPLICANTS_NUM amount,
             mission_date
         FROM 

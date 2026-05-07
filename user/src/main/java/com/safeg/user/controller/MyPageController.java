@@ -716,6 +716,10 @@ public class MyPageController {
                 List<PointHistoryVO> leaderList = myPageService.leaderList(userNo, targetMonth);
                 lAmt = parseAmount(myPageService.leaderAmount(userNo, targetMonth));
     
+                int totalAmount = leaderList.stream().mapToInt(PointHistoryVO::getAmount).sum();
+                log.info("totalAmount : " + totalAmount);
+                model.addAttribute("leaderAmount", totalAmount);
+
                 model.addAttribute("leaderList", leaderList != null ? leaderList : Collections.emptyList());
                 model.addAttribute("leaderAmount", lAmt);
             }

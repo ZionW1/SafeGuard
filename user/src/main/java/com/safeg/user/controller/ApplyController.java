@@ -95,6 +95,7 @@ public class applyController {
             model.addAttribute("leaderUserNo", leaderCampaign.getUserNo()); // 인솔자의 고유 번호
             model.addAttribute("leaderStatus", leaderCampaign.getStatus()); // 인솔자의 상태 (이 경우는 "9"일 것임)
             model.addAttribute("leaderApplyDate", leaderCampaign.getApplyDate()); // 인솔자 날짜
+            model.addAttribute("leaderPay", leaderCampaign.getLeaderPay()); // 인솔자 날짜
             model.addAttribute("leaderCampaignId", leaderCampaign.getCampaignId()); // 인솔자의 캠페인 번호
         }
         return "apply/userCampaignApply";
@@ -167,6 +168,7 @@ public class applyController {
             model.addAttribute("leaderUserNo", leaderCampaign.getUserNo()); // 인솔자의 고유 번호
             model.addAttribute("leaderStatus", leaderCampaign.getStatus()); // 인솔자의 상태 (이 경우는 "9"일 것임)
             model.addAttribute("leaderApplyDate", leaderCampaign.getApplyDate()); // 인솔자 날짜
+            model.addAttribute("leaderPay", leaderCampaign.getLeaderPay()); // 인솔자 날짜
             model.addAttribute("leaderCampaignId", leaderCampaign.getCampaignId()); // 인솔자의 캠페인 번호
         }
         return "apply/applyConfirm";

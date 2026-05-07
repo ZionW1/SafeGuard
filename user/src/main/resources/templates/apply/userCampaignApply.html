@@ -91,9 +91,10 @@
             <p>엑셀 다운로드 불가 (캠페인 정보 없음)</p>
         </th:block>
     </div>
-    <div class="btn-area">
+    <div th:if="${leaderPay != 0}" class="btn-area">
         <button class="btn_leader" th:if="${leaderUserNo}" th:data-user-no="${leaderUserNo}" th:data-status="${leaderStatus}" th:data-campaign-id="${leaderCampaignId}" th:data-apply-date="${leaderApplyDate}" th:onclick="leaveWork(this)">인솔자 퇴근</button>
     </div>
+    
 
     <script th:inline="javascript">
         const csrfToken = /*[[${_csrf.token}]]*/ '';

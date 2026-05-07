@@ -71,7 +71,7 @@ public class UserCampaignVO {
     private int referrerCount;
     private int leaderPointCount;
 
-
+    private int leaderPay;
     private int campaignPayTotal;
 
     private int pointFull;

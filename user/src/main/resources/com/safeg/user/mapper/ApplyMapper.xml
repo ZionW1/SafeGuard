@@ -41,6 +41,7 @@
             c.company_ph,
             c.applicants_Num,
             c.recruitment_Num,
+            c.leader_pay,
             uc.status,
             (CASE
                 WHEN c.type_code = '01' THEN '경호'

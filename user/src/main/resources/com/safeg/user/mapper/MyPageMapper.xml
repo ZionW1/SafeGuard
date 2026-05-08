@@ -33,9 +33,9 @@
             user_id,
             DATE_FORMAT(event_str_date, '%Y-%m-%d') start,
             <!-- DATE_FORMAT(event_end_date, '%Y-%m-%d') end, -->
-            DATE_FORMAT(event_end_date + INTERVAL 1 DAY, '%Y-%m-%d') end,
+            DATE_FORMAT(event_end_date, '%Y-%m-%d') end,
             status,
-            DATE_FORMAT(apply_date + INTERVAL 1 DAY, '%Y-%m-%d') apply_date
+            DATE_FORMAT(apply_date, '%Y-%m-%d') apply_date
         FROM 
             user_campaign
         WHERE user_id = #{userId}

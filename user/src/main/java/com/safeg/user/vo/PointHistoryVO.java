@@ -27,7 +27,7 @@ public class PointHistoryVO {
 
     private int totalAmount;
     private int referrerCount;
-    
+    private int applicantsNum;
     private int leaderPointCount;
 
     private String userNm;

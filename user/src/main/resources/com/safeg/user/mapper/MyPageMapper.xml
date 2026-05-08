@@ -38,7 +38,7 @@
             DATE_FORMAT(apply_date, '%Y-%m-%d') apply_date
         FROM 
             user_campaign
-        WHERE user_id = #{userId}
+        WHERE user_no = #{userId}
         <![CDATA[
             AND event_str_date <= #{endDate}
             AND event_end_date >= #{startDate}

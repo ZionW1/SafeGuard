@@ -318,6 +318,7 @@ public class MyPageController {
         log.info(":::::::::: getCalendarEvents 호출 :::::::::: + ");
 
         String userId = principal.getName(); 
+        Long userNo = principal instanceof CustomUser ? ((CustomUser) principal).getId() : null; // ⭐ CustomUser에서 userNo 가져오기
         log.info("현재 로그인한 사용자 ID: " + userId);
         log.info(userId + "님의 " + start + " 부터 " + end + " 까지의 캘린더 이벤트를 조회합니다.");
         log.info(":::::::::: getCalendarEvents 호출 - userId: {}, start: {}, end: {} ::::::::::", userId, start, end);
@@ -325,7 +326,7 @@ public class MyPageController {
         // 지금은 예시니까 임시 데이터로 보여줄게.
         // 마이클의 서비스에서 DB에서 "신청 날짜"와 "신청 완료 날짜"를 가져오는 로직이 필요해.
 
-        List<CalendarEventVO> getEventStatus = myPageService.getCompletedDatesForUser(userId, start, end);
+        List<CalendarEventVO> getEventStatus = myPageService.getCompletedDatesForUser(userNo, start, end);
 
         log.info("getEventStatus : " + getEventStatus);
         // DB에서 가져온 신청 날짜 (예시)

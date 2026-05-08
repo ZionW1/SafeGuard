@@ -58,7 +58,7 @@
                 WHEN type_code = '02' THEN '진행'
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
-            END) as typeNm,
+            END) as type_Nm,
             campaign_pay,
             c.app_period_str,
             c.app_period_end,
@@ -215,6 +215,12 @@
             c.app_period_end,
             c.event_Period_str,
             c.event_Period_End,
+            (CASE
+                WHEN type_code = '01' THEN '경호'
+                WHEN type_code = '02' THEN '진행'
+                WHEN type_code = '03' THEN '수행'
+                ELSE ''
+            END) as type_nm,
             t.user_nm,
             c.campaign_pay,
             DATE_FORMAT(c.created_at, '%Y.%m.%d') as created_at

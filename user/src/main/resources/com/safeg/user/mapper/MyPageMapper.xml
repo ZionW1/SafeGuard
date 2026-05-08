@@ -29,7 +29,6 @@
 
     <select id="getCompletedDatesForUser" resultType="CalendarEventVO">
         SELECT
-            <!-- title, -->
             user_id,
             DATE_FORMAT(event_str_date, '%Y-%m-%d') start,
             <!-- DATE_FORMAT(event_end_date, '%Y-%m-%d') end, -->
@@ -38,10 +37,13 @@
             DATE_FORMAT(apply_date, '%Y-%m-%d') apply_date
         FROM 
             user_campaign
+        LEFT OUTER JOIN campaign c 
+        ON c.campaign_id = uc.campaign_id
         WHERE user_no = #{userId}
         <![CDATA[
             AND event_str_date <= #{endDate}
             AND event_end_date >= #{startDate}
+            AND c.LEADER_PAY != 0
         ]]>
     </select>
 

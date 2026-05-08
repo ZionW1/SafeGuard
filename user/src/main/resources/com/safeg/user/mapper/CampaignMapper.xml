@@ -14,6 +14,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="savedName" column="saved_name" />
         <result property="filePath" column="file_path" />
         <result property="typeCode" column="type_code" />
+        <result property="typeNm" column="type_nm" />
+    
         <result property="appPeriodStr" column="app_period_str" />
         <result property="appPeriodEnd" column="app_period_end" />
         <result property="eventPeriodStr" column="event_Period_str" />
@@ -42,7 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 WHEN type_code = '02' THEN '진행'
                 WHEN type_code = '03' THEN '수행'
                 ELSE 'X'
-            END) AS typeNm,
+            END) AS type_nm,
             leader_code,
             u.user_nm,
             app_period_str,
@@ -137,7 +139,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 WHEN type_code = '02' THEN '진행'
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
-            END) as type_code,
+            END) as type_nm,
             c.app_period_str,
             c.app_period_end,
             event_Period_str,
@@ -172,7 +174,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 WHEN type_code = '02' THEN '진행'
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
-            END) as type_code,
+            END) as type_nm,
             c.app_period_str,
             c.app_period_end,
             event_Period_str,
@@ -207,7 +209,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 WHEN type_code = '02' THEN '진행'
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
-            END) as typeNm,
+            END) as type_nm,
             campaign_pay,
             c.app_period_str,
             c.app_period_end,
@@ -273,7 +275,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 WHEN type_code = '02' THEN '진행'
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
-            END) as typeNm,
+            END) as type_nm,
             campaign_pay,
             c.app_period_str,
             c.app_period_end,
@@ -310,7 +312,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 WHEN type_code = '02' THEN '진행'
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
-            END) as typeNm,
+            END) as type_nm,
             campaign_pay,
             c.app_period_str,
             c.app_period_end,
@@ -347,7 +349,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 WHEN type_code = '02' THEN '진행'
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
-            END) as typeNm,
+            END) as type_nm,
             campaign_pay,
             c.app_period_str,
             c.app_period_end,

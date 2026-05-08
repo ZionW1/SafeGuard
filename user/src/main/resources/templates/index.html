@@ -15,7 +15,7 @@
         .modal-popup {
             position: fixed;
             top: 100px;
-            width: 600px;
+            width: 350px;
             background: white;
             border: 2px solid #222;
             z-index: 9999;
@@ -57,7 +57,9 @@
                 left: 5% !important;
                 top: 50px !important;
             }
-            #popup2 { display: none; } /* 모바일에서 2개는 너무 많으면 하나 숨김 */
+            #popup2 { width: 90%;
+                left: 5% !important;
+                top: 50px !important; } /* 모바일에서 2개는 너무 많으면 하나 숨김 */
         }
     </style>
 </head>
@@ -345,7 +347,7 @@
     </div>
 
     <!-- 두 번째 팝업 -->
-    <div id="popup2" class="modal-popup" style="left: 670px;">
+    <div id="popup2" class="modal-popup" style="left: 450px;">
         <!-- <div class="modal-header">
             <span>공지사항 2</span>
         </div>

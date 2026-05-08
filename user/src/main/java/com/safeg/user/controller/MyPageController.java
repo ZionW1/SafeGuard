@@ -314,12 +314,22 @@ public class MyPageController {
             // FullCalendar는 보통 LocalDateTime 형식의 문자열을 보내므로 LocalDateTime으로 받으면 편리해
             @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start, // <-- 여기에 추가
             @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end,
-            Principal principal) throws Exception { // ⭐ 이렇게 Principal 객체를 받아서 userId를 가져올 수 있어
+            Principal principal,
+            @AuthenticationPrincipal CustomUser authUser) throws Exception { // ⭐ 이렇게 Principal 객체를 받아서 userId를 가져올 수 있어
         log.info(":::::::::: getCalendarEvents 호출 :::::::::: + ");
 
         String userId = principal.getName(); 
-        String userNo = principal instanceof CustomUser ? String.valueOf(((CustomUser) principal).getId()) : null; // ⭐ CustomUser에서 userNo 가져오기
+        String userNo = "";
         log.info("현재 로그인한 사용자 ID: " + userId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        int result = 0;
+
+        if(authentication.getPrincipal() instanceof CustomUser){
+            CustomUser customUser = (CustomUser) authentication.getPrincipal();
+            Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
+            userNo = String.valueOf(userIdFromDb);
+        }
         log.info("현재 로그인한 사용자 No: " + userNo);
 
         log.info(userId + "님의 " + start + " 부터 " + end + " 까지의 캘린더 이벤트를 조회합니다.");

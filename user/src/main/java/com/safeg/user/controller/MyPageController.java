@@ -318,7 +318,7 @@ public class MyPageController {
         log.info(":::::::::: getCalendarEvents 호출 :::::::::: + ");
 
         String userId = principal.getName(); 
-        Long userNo = principal instanceof CustomUser ? ((CustomUser) principal).getId() : null; // ⭐ CustomUser에서 userNo 가져오기
+        String userNo = principal instanceof CustomUser ? String.valueOf(((CustomUser) principal).getId()) : null; // ⭐ CustomUser에서 userNo 가져오기
         log.info("현재 로그인한 사용자 ID: " + userId);
         log.info(userId + "님의 " + start + " 부터 " + end + " 까지의 캘린더 이벤트를 조회합니다.");
         log.info(":::::::::: getCalendarEvents 호출 - userId: {}, start: {}, end: {} ::::::::::", userId, start, end);

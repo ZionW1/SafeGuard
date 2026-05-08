@@ -714,13 +714,13 @@ public class MyPageController {
     
             if ("03".equals(userAuth)) {
                 List<PointHistoryVO> leaderList = myPageService.leaderList(userNo, targetMonth);
-                lAmt = parseAmount(myPageService.leaderAmount(userNo, targetMonth));
+                // lAmt = parseAmount(myPageService.leaderAmount(userNo, targetMonth));
     
-                int totalAmount = leaderList.stream().mapToInt(PointHistoryVO::getAmount).sum();
-                log.info("totalAmount : " + totalAmount);
+                lAmt = leaderList.stream().mapToInt(PointHistoryVO::getAmount).sum();
+                log.info("totalAmount : " + lAmt);
 
                 model.addAttribute("leaderList", leaderList != null ? leaderList : Collections.emptyList());
-                model.addAttribute("leaderAmount", totalAmount);
+                model.addAttribute("leaderAmount", lAmt);
                 // model.addAttribute("leaderAmount", lAmt);
             }
         }

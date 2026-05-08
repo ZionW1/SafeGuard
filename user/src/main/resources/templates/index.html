@@ -10,6 +10,56 @@
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <style>
+        /* CSS도 여기에 함께 적어주면 관리가 편해요 */
+        .modal-popup {
+            position: fixed;
+            top: 100px;
+            width: 600px;
+            background: white;
+            border: 2px solid #222;
+            z-index: 9999;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #222;
+            color: white;
+            padding: 10px 15px;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .modal-body {
+            padding: 20px;
+            min-height: 150px;
+            line-height: 1.6;
+        }
+        .modal-footer {
+            background: #fff;
+            padding: 10px;
+            text-align: right;
+            /* border-top: 1px solid #ddd; */
+        }
+        .btn-close {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        /* 모바일 대응: 화면이 작아지면 팝업을 숨기거나 크기 조절 */
+        @media (max-width: 768px) {
+            .modal-popup {
+                width: 90%;
+                left: 5% !important;
+                top: 50px !important;
+            }
+            #popup2 { display: none; } /* 모바일에서 2개는 너무 많으면 하나 숨김 */
+        }
+    </style>
 </head>
 <body>
     <main layout:fragment="content">
@@ -276,6 +326,40 @@
             </div>
         </section>
     </div>
+    <!-- 첫 번째 팝업 -->
+    <div id="popup1" class="modal-popup" style="left: 50px;">
+        <!-- <div class="modal-header">
+            <span>공지사항 1</span>
+        </div>
+        <div class="modal-body">
+            <p>행사 집합소(행집) 서비스 <br>신규 런칭 안내드립니다.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-close" onclick="closePop('popup1')">닫기</button>
+        </div> -->
+
+        <img src="/images/popup_img1.png" alt="공지사항 이미지" style="width: 100%; height: auto;" />
+        <div class="modal-footer">
+            <button class="btn-close" onclick="closePop('popup1')">닫기</button>
+        </div>
+    </div>
+
+    <!-- 두 번째 팝업 -->
+    <div id="popup2" class="modal-popup" style="left: 670px;">
+        <!-- <div class="modal-header">
+            <span>공지사항 2</span>
+        </div>
+        <div class="modal-body">
+            <p>경호원 지원 및 인솔자 등록 <br>문의는 공지사항을 확인하세요.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-close" onclick="closePop('popup2')">닫기</button>
+        </div> -->
+        <img src="/images/popup_img2.png" alt="공지사항 이미지" style="width: 100%; height: auto;" />
+        <div class="modal-footer">
+            <button class="btn-close" onclick="closePop('popup2')">닫기</button>
+        </div>
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date();
@@ -364,6 +448,12 @@
             // 확인용: 콘솔에 이게 찍히면 호출 성공입니다.
             console.log("Swiper가 성공적으로 초기화되었습니다:", mainBannerSwiper);
         });
+
+        function closePop(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+        
+        // 추가: 나중에 '오늘 하루 보지 않기' 기능을 넣으려면 여기에 로직을 추가하면 됩니다.
     </script>
     </main>
     

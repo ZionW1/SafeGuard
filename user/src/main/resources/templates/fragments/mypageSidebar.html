@@ -6,7 +6,7 @@
                     <div class="imageDisplayArea">
                         <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin: 0px auto; display: none;" />
                         <div>
-                            <img th:if="${file != null}" id="imgFile" th:src="|/selectProfile?id=${userId}&args=1|" alt="파일이미지" width="80%" height="200" style="max-width: 100%; margin: 0px auto;" />
+                            <img th:if="${file != null}" id="imgFile" th:src="|/selectProfile?id=${userId}&args=1|" alt="파일이미지" width="80%" height="auto" style="max-width: 100%; margin: 0px auto;" />
                         </div>
                         <img th:if="${file == null}" id="defaultImage" src="/images/not-image.png" alt="기본 이미지" style="max-width: 100%; margin: 0px auto;" />
                     </div>

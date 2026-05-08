@@ -320,6 +320,8 @@ public class MyPageController {
         String userId = principal.getName(); 
         String userNo = principal instanceof CustomUser ? String.valueOf(((CustomUser) principal).getId()) : null; // ⭐ CustomUser에서 userNo 가져오기
         log.info("현재 로그인한 사용자 ID: " + userId);
+        log.info("현재 로그인한 사용자 No: " + userNo);
+
         log.info(userId + "님의 " + start + " 부터 " + end + " 까지의 캘린더 이벤트를 조회합니다.");
         log.info(":::::::::: getCalendarEvents 호출 - userId: {}, start: {}, end: {} ::::::::::", userId, start, end);
         // 실제로는 로그인된 사용자 정보를 기반으로 DB에서 날짜를 가져와야 해

@@ -14,9 +14,6 @@
                 // 여기에 실행하고 싶은 코드 작성
                 const campaignSelect = /*[[${campaignSelect}]]*/ [];
                 const leaderList = /*[[${leaderList}]]*/ [];
-                console.log(JSON.stringify(leaderList));
-                console.log("campaignSelect : " + JSON.stringify(campaignSelect));
-
     // 1. 인솔자 선택 초기화
     const selectElement = document.getElementById('leaderNm_pc');
     if (campaignSelect.leaderNo) {
@@ -29,12 +26,14 @@
             document.getElementById("leaderCode").value = campaignSelect.leaderCode;
         }
     }
-
     // 2. 인솔자 급여 및 포인트 초기값 세팅 (가장 중요!)
     // 서버에서 받은 값을 화면용(sync-pay, sync-point) input들에 넣어줍니다.
-    const initialPay = campaignSelect.leaderPay || "";
-    const initialPoint = campaignSelect.leaderPoint || "";
+    let initialPay = campaignSelect.leaderPay || "";
+    let initialPoint = campaignSelect.leaderPoint || "";
 
+    if(initialPay == 0) {
+        initialPay = 0;
+    }
     // 화면용 input 채우기
     document.querySelectorAll(".sync-pay").forEach(el => el.value = initialPay);
     document.querySelectorAll(".sync-point").forEach(el => el.value = initialPoint);

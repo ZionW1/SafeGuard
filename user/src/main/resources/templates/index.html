@@ -29,7 +29,7 @@
             padding: 10px 15px;
             font-size: 16px;
             display: flex;
-            justify-content: space-between;
+            justify-content: right;
         }
         .modal-body {
             padding: 20px;
@@ -50,17 +50,65 @@
             cursor: pointer;
             border-radius: 4px;
         }
+
+        .modal-body {
+    /* ❗ position: relative 추가 (X 버튼 배치의 기준점) */
+    position: relative; 
+    padding: 0; /* 이미지가 팝업 가득 차게 패딩 제거 */
+    border-radius: 8px 8px 0 0; /* 팝업 윗부분 라운드 처리 */
+    overflow: hidden; /* 이미지 라운드 처리 */
+}
+
+.modal-body img { 
+    width: 100%; 
+    display: block; 
+}
+
+/* ❗ [핵심] 이미지 위에 겹쳐지는 X 버튼 스타일 */
+.btn-close-on-image {
+    position: absolute; /* modal-body 기준 절대 좌표 배치 */
+    top: 15px;      /* 이미지 위쪽 모서리에서 15px */
+    right: 15px;    /* 이미지 오른쪽 모서리에서 15px */
+    z-index: 10;     /* 이미지보다 위에 오도록 */
+    
+    background: rgba(0, 0, 0, 0.5); /* 반투명 검은 배경 (이미지 위에서 잘 보이게) */
+    color: white;               /* 글자색 흰색 */
+    border: none;               /* 테두리 제거 */
+    width: 30px;                /* 너비 */
+    height: 30px;               /* 높이 */
+    border-radius: 50%;         /* 동그란 버튼 */
+    
+    font-size: 18px;            /* 글자 크기 */
+    font-family: Arial, sans-serif; /* 글자체 */
+    font-weight: bold;          /* 글자 굵기 */
+    cursor: pointer;            /* 마우스 포인터 표시 */
+    
+    display: flex;              /* 글자 중앙 정렬 */
+    align-items: center;        /* 세로 중앙 */
+    justify-content: center;    /* 가로 중앙 */
+    
+    transition: background 0.3s; /* 마우스 오버 시 효과 */
+}
+
+.btn-close-on-image:hover {
+    background: rgba(0, 0, 0, 0.8); /* 마우스 오버 시 더 진하게 */
+}
         /* 모바일 대응: 화면이 작아지면 팝업을 숨기거나 크기 조절 */
         @media (max-width: 768px) {
-            .modal-popup {
-                width: 90%;
-                left: 5% !important;
-                top: 50px !important;
-            }
-            #popup2 { width: 90%;
-                left: 5% !important;
-                top: 50px !important; } /* 모바일에서 2개는 너무 많으면 하나 숨김 */
-        }
+    .modal-popup {
+        width: 85% !important; /* 너비를 살짝 줄여서 여유 공간 확보 */
+        left: 5% !important;
+        top: 80px !important;
+        z-index: 9998; /* 첫 번째 팝업은 아래에 */
+    }
+
+    #popup2 { 
+        width: 85% !important;
+        left: 10% !important; /* 첫 번째보다 오른쪽으로 5% 이동 */
+        top: 110px !important; /* 첫 번째보다 아래로 30px 이동 */
+        z-index: 9999; /* 두 번째 팝업이 위로 오도록 */
+    }
+}
     </style>
 </head>
 <body>
@@ -342,12 +390,13 @@
 
         <a href="https://open.kakao.com/o/gypM8Zni"><img src="/images/popup_img1.png" alt="공지사항 이미지" style="width: 100%; height: auto;" /></a>
         <div class="modal-footer">
+            <button onclick="closeToday('popup1')">24시간 동안 보지 않기</button>
             <button class="btn-close" onclick="closePop('popup1')">닫기</button>
         </div>
     </div>
 
     <!-- 두 번째 팝업 -->
-    <div id="popup2" class="modal-popup" style="left: 450px;">
+    <div id="popup2" class="modal-popup" style="left: 420px;">
         <!-- <div class="modal-header">
             <span>공지사항 2</span>
         </div>
@@ -357,8 +406,16 @@
         <div class="modal-footer">
             <button class="btn-close" onclick="closePop('popup2')">닫기</button>
         </div> -->
-        <a href="https://open.kakao.com/o/gcfNk0ni"><img src="/images/popup_img2.png" alt="공지사항 이미지" style="width: 100%; height: auto;" /></a>
+        <div class="modal-body">
+            <!-- ❗여기에 이미지와 X 버튼을 함께 넣습니다. -->
+            <img src="/images/popup_img2.png" alt="경호 팝업">
+            
+            <!-- X 버튼 (이미지 위에 겹쳐짐) -->
+            <button type="button" class="btn-close-on-image" onclick="closePop('popup1')">X</button>
+        </div>
+        <!-- <a href="https://open.kakao.com/o/gcfNk0ni"><img src="/images/popup_img2.png" alt="공지사항 이미지" style="width: 100%; height: auto;" /></a> -->
         <div class="modal-footer">
+            <button onclick="closeToday('popup2')">24시간 동안 보지 않기</button>
             <button class="btn-close" onclick="closePop('popup2')">닫기</button>
         </div>
     </div>
@@ -454,7 +511,42 @@
         function closePop(id) {
             document.getElementById(id).style.display = 'none';
         }
-        
+        document.addEventListener("DOMContentLoaded", function() {
+        // 페이지 로드 시 각 팝업의 노출 여부 확인
+        handlePopupDisplay('popup1');
+        handlePopupDisplay('popup2');
+    });
+
+    // 팝업 노출 여부 결정 함수
+    function handlePopupDisplay(id) {
+        const expiryDate = localStorage.getItem(id);
+        const popupElement = document.getElementById(id);
+        if (expiryDate) {
+            const now = new Date().getTime();
+            // 저장된 만료 시간과 현재 시간을 비교
+            if (now < parseInt(expiryDate)) {
+                popupElement.style.display = 'none'; // 아직 24시간 안 지남
+            } else {
+                localStorage.removeItem(id); // 시간 지났으면 데이터 삭제
+                popupElement.style.display = 'block';
+            }
+        } else {
+            popupElement.style.display = 'block';
+        }
+    }
+
+    // 단순 닫기
+    function closePop(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    // 24시간 동안 보지 않기 클릭 시
+    function closeToday(id) {
+        // 현재 시간 + 24시간(밀리초: 24 * 60 * 60 * 1000)
+        const expiryTime = new Date().getTime() + (24 * 60 * 60 * 1000);
+        localStorage.setItem(id, expiryTime); // 만료 시간을 저장
+        document.getElementById(id).style.display = 'none';
+    }
         // 추가: 나중에 '오늘 하루 보지 않기' 기능을 넣으려면 여기에 로직을 추가하면 됩니다.
     </script>
     </main>

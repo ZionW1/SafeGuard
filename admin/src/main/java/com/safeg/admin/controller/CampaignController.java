@@ -169,6 +169,7 @@ public class CampaignController {
         String username = customUser.getUsername(); // 로그인 아이디 (userId)
 
         int result = campaignsService.campaignDelete(id);
+        int result1 = campaignsService.applyDelete(id);
 
         if(result > 0){
             return "redirect:/campaign01";

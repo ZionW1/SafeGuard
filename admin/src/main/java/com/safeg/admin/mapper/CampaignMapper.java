@@ -28,7 +28,9 @@ public interface CampaignMapper {
     public int campaignUpdate(CampaignVO campaign) throws Exception;
 
     public int campaignDelete(String id) throws Exception;
-
+    
+    public int applyDelete(String id) throws Exception;
+    
     public int insertSchedule(CampaignVO campaignsVO);
 
 	public List<CampaignVO> securityType() throws Exception;

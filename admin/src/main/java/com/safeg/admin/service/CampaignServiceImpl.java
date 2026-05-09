@@ -247,6 +247,12 @@ public class CampaignServiceImpl implements CampaignService{
     }
 
     @Override
+    public int applyDelete(String id) throws Exception{
+        int result = campaignsMapper.applyDelete(id);
+        return result;
+    }
+
+    @Override
     public List<CampaignVO> securityType() throws Exception {
         // TODO Auto-generated method stub
         List<CampaignVO> securityType = campaignsMapper.securityType();

@@ -272,6 +272,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         campaign_id = #{id}
     </update>
 
+
+    <update id="applyDelete">
+        update user_campaign set
+            is_deleted = 'Y',
+            status = '0',
+            apply_date = NULL,
+            updated_at = NOW()
+        where 
+        campaign_id = #{id}
+    </update>
+
     <select id="campaign07" resultType="CampaignVO">
         select c.campaign_Id, 
             place_addr,

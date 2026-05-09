@@ -584,11 +584,13 @@ a {
     
     word-break: break-all; 
     white-space: normal;  /* 중요: white-space가 nowrap이면 한 줄로만 나옵니다 */
+    display: inline;
+    vertical-align: baseline;
 }
 
 /* 내부 span들은 한 줄로 흐르게 처리 */
 .campaign-title-text span {
-    display: inline;
+    display: contents;
     vertical-align: baseline;
 }
 

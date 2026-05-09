@@ -253,6 +253,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             campaign_pay = #{campaignPay},
             place_addr = #{placeAddr},
             mission = #{mission},
+            is_active = 'Y',
             App_period_str = #{appPeriodStr},
             App_period_end = #{appPeriodEnd},
             event_Period_str = #{eventPeriodStr},

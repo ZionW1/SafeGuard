@@ -309,38 +309,40 @@
     </select>
 
     <select id="leaderList" resultType="PointHistoryVO">
-    SELECT
-        ph.user_id, -- u.id 대신 ph.user_id 사용 (혹은 user 테이블 조인)
-        c.CAMPAIGN_ID,
-        c.campaign_title,
-        MAX(uc_count.active_applicants) AS applicants_num, -- 그룹화 시 인원수는 동일하므로 MAX나 MIN 사용
-        SUM(ph.amount * COALESCE(uc_count.active_applicants, 0)) AS total_amount, -- SUM으로 합산
-        MAX(ph.mission_date) AS mission_date -- 날짜는 가장 최근 날짜 혹은 대표 날짜
-    FROM 
-        point_history ph
-    LEFT OUTER JOIN campaign c
-        ON c.campaign_id = ph.campaign_id
-    LEFT OUTER JOIN (
-        SELECT 
-            campaign_id, 
-            COUNT(*) AS active_applicants
+        SELECT
+            ph.user_id,
+            c.CAMPAIGN_ID,
+            c.campaign_title,
+            MAX(uc_count.active_applicants) AS applicants_num,
+            SUM(ph.amount * COALESCE(uc_count.active_applicants, 0)) AS total_amount,
+            MAX(ph.mission_date) AS mission_date
         FROM 
-            user_campaign
+            point_history ph
+        LEFT OUTER JOIN campaign c
+            ON c.campaign_id = ph.campaign_id
+        LEFT OUTER JOIN (
+            SELECT 
+                campaign_id, 
+                COUNT(*) AS active_applicants
+            FROM 
+                user_campaign
+            WHERE 
+                status IN ('2')
+                --  수정됨: 따옴표 위치 확인
+                AND apply_date LIKE CONCAT(#{targetMonth}, '%')
+                AND is_deleted = 'N'
+            GROUP BY 
+                campaign_id
+        ) uc_count ON ph.campaign_id = uc_count.campaign_id
         WHERE 
-            status in ('2')
-            AND apply_date LIKE CONCAT(#{targetMonth}, '%')
-            AND is_deleted = 'N'
+            ph.mission_date LIKE CONCAT(#{targetMonth}, '%')
+            AND ph.is_deleted = 'N'
+            AND ph.settlement_status = 'READY'
+            --  권장: $ 대신 # 사용
+            AND ph.user_id = #{userNo}
+            AND ph.category = 'leader_extra'
         GROUP BY 
-            campaign_id
-    ) uc_count ON ph.campaign_id = uc_count.campaign_id
-    WHERE 
-        ph.mission_date LIKE CONCAT(#{targetMonth}, '%')
-        AND ph.is_deleted = 'N'
-        AND ph.settlement_status = 'READY'
-        AND ph.user_id = ${userNo}
-        AND ph.category = 'leader_extra'
-    GROUP BY 
-        ph.user_id, c.CAMPAIGN_ID, c.campaign_title -- 핵심: 유저와 캠페인으로 묶기
+            ph.user_id, c.CAMPAIGN_ID, c.campaign_title
     </select>
 
     <select id="workList" resultType="PointHistoryVO">

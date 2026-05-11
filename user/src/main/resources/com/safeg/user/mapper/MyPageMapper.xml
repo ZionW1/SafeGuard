@@ -314,7 +314,7 @@
             c.CAMPAIGN_ID,
             c.campaign_title,
             MAX(uc_count.active_applicants) AS applicants_num,
-            SUM(ph.amount * COALESCE(uc_count.active_applicants, 0)) AS total_amount,
+            SUM(ph.amount * COALESCE(uc_count.active_applicants, 0)) AS amount,
             MAX(ph.mission_date) AS mission_date
         FROM 
             point_history ph

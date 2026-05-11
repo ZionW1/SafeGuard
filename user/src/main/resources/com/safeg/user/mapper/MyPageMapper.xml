@@ -328,16 +328,16 @@
             user_campaign
         WHERE 
             status in ('2')
-            AND apply_date LIKE CONCAT('2026-05', '%')
+            AND apply_date LIKE CONCAT('#{targetMonth}, '%')
             AND is_deleted = 'N'
         GROUP BY 
             campaign_id
     ) uc_count ON ph.campaign_id = uc_count.campaign_id
     WHERE 
-        ph.mission_date LIKE CONCAT('2026-05', '%')
+        ph.mission_date LIKE CONCAT(#{targetMonth}, '%')
         AND ph.is_deleted = 'N'
         AND ph.settlement_status = 'READY'
-        AND ph.user_id = 11
+        AND ph.user_id = ${userNo}
         AND ph.category = 'leader_extra'
     GROUP BY 
         ph.user_id, c.CAMPAIGN_ID, c.campaign_title -- 핵심: 유저와 캠페인으로 묶기

@@ -186,8 +186,7 @@
         ) uc_count ON ph.campaign_id = uc_count.campaign_id
         WHERE
             u.role IN ('USER', 'LEADER')
-            AND ph.user_id = 11
-            AND c.EVENT_PERIOD_END LIKE CONCAT('2026-05', '%')
+            AND c.EVENT_PERIOD_END LIKE CONCAT(#{}, '%')
         GROUP BY
             u.id, u.user_nm, u.user_id, u.role
         ORDER BY 

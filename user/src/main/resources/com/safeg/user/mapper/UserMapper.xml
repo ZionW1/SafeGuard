@@ -148,27 +148,51 @@
 
     <select id="bestAgentList" resultType="UserVO">
         SELECT
-            u.user_id,
+            u.id AS user_id,
             u.user_nm,
-            COALESCE(COUNT(uc.campaign_id), 0) AS count
+            u.user_id AS id,
+            SUM(
+                CASE 
+                    -- 카테고리가 'LEADER_EXTRA'일 때만 서브쿼리에서 가져온 실시간 인원수(active_applicants)를 곱함
+                    WHEN ph.category = 'LEADER_EXTRA' THEN COALESCE(ph.amount, 0) * COALESCE(uc_count.active_applicants, 0)
+                    ELSE COALESCE(ph.amount, 0)
+                END
+            ) AS amount,
+            SUM(
+                CASE 
+                    WHEN ph.category = 'LEADER_EXTRA' THEN COALESCE(ph.amount, 0) * COALESCE(uc_count.active_applicants, 0)
+                    ELSE 0 
+                END
+            ) AS leader,
+            u.role
         FROM
-            user u
+            point_history ph
         LEFT OUTER JOIN
-            user_campaign uc 
-        ON 
-            u.user_id = uc.user_id
-        AND
-            uc.status in ('2','9')
+            user u ON ph.user_id = u.id AND ph.is_deleted = 'N'
+        LEFT OUTER JOIN
+            campaign c ON ph.campaign_id = c.CAMPAIGN_ID    
+        /* ❗ 실시간 인원수를 계산하는 서브쿼리 추가 */
+        LEFT OUTER JOIN (
+            SELECT 
+                campaign_id, 
+                COUNT(*) AS active_applicants
+            FROM 
+                user_campaign
+            WHERE 
+                status = '2' -- 상태가 '2'인 인원만 카운트
+                AND is_deleted = 'N'
+            GROUP BY 
+                campaign_id
+        ) uc_count ON ph.campaign_id = uc_count.campaign_id
         WHERE
-            u.role in ('USER', 'LEADER')
-        AND
-            uc.is_deleted = 'N'
+            u.role IN ('USER', 'LEADER')
+            AND ph.user_id = 11
+            AND c.EVENT_PERIOD_END LIKE CONCAT('2026-05', '%')
         GROUP BY
-            u.id, u.user_nm, u.email
-        ORDER BY
-            count DESC,
-            u.id ASC
-        LIMIT 10
+            u.id, u.user_nm, u.user_id, u.role
+        ORDER BY 
+            amount DESC, u.id ASC
+        LIMIT 15
     </select>
 
     <select id="bestPayList" resultType="PointHistoryVO">

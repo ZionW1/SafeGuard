@@ -328,7 +328,7 @@
             user_campaign
         WHERE 
             status in ('2')
-            AND apply_date LIKE CONCAT('#{targetMonth}, '%')
+            AND apply_date LIKE CONCAT(#{targetMonth}, '%')
             AND is_deleted = 'N'
         GROUP BY 
             campaign_id

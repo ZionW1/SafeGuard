@@ -13,11 +13,10 @@ public class CommonData {
     public static String getUploadPath() {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("win")) {
-            // 윈도우 경로 (아까 말씀하신 경로로 수정)
             return "C:/SafeGuard_Project/upload/";
         } else if (os.contains("linux")) {
             // AWS EC2 리눅스 경로 추가
-            return "/home/ec2-user/upload/";
+            return "/home/ubuntu/upload/";
         } else {
             // 맥 경로 (개발용)
             return "/Users/pieck/Documents/upload/";

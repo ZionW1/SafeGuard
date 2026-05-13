@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         if (os.contains("win")) {
             return "C:/safe_guard/upload/";
         } else if (os.contains("linux")) {
-            return "/home/ec2-user/upload/"; // EC2 서버 경로 추가
+            return "/home/ubuntu/upload/";
         } else {
             return "/Users/pieck/Documents/upload/";
         }

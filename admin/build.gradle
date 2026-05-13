@@ -13,10 +13,10 @@ group = 'com.safeg'
 version = '0.0.1-SNAPSHOT'
 
 // compileJava 태스크에서 강제로 현재 환경의 자바를 쓰게 함
-tasks.withType(JavaCompile) {
-    options.fork = true
-    options.forkOptions.executable = 'javac'
-}
+// tasks.withType(JavaCompile) {
+//     options.fork = true
+//     options.forkOptions.executable = 'javac'
+// }
 
 configurations {
 	compileOnly {

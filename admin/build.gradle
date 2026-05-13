@@ -18,6 +18,12 @@ version = '0.0.1-SNAPSHOT'
 //     options.forkOptions.executable = 'javac'
 // }
 
+tasks.withType(JavaCompile) {
+    // Ubuntu 환경에서 Lombok 어노테이션 프로세서를 확실히 찾도록 경로 지정
+    options.annotationProcessorPath = configurations.annotationProcessor
+    options.compilerArgs << "-parameters"
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor

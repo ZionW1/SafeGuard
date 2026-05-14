@@ -177,7 +177,7 @@
     </select>
 
     <update id="updatePay">
-        INSERT INTO Pay_History (
+        INSERT INTO pay_history (
             user_Id, 
             amount, 
             pay_Type, 
@@ -220,7 +220,7 @@
     </update>
 
     <insert id="insertPointHistory" parameterType="com.safeg.user.vo.PointHistoryVO">
-        INSERT INTO Point_History (
+        INSERT INTO point_history (
             user_id,
             campaign_id,
             amount,

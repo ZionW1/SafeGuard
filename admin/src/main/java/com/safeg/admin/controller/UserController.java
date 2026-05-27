@@ -312,7 +312,7 @@ public class UserController {
             userService.userUnstop(userVO.getId()); // 또는 userVO를 넘겨서 처리
 
             response.put("success", true);
-            response.put("message", "사용자가 성공적으로 정지 해제 상태로 변경되었습니다.");
+            response.put("message", "사용자가 성공적으로 상태 변경되었습니다.");
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", "사용자 변경 중 오류가 발생했습니다: " + e.getMessage());
@@ -332,7 +332,7 @@ public class UserController {
             userService.guardTypeChange(userVO); // 또는 userVO를 넘겨서 처리
 
             response.put("success", true);
-            response.put("message", "사용자가 성공적으로 정지 해제 상태로 변경되었습니다.");
+            response.put("message", "사용자가 성공적으로 상태 변경되었습니다.");
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", "사용자 변경 중 오류가 발생했습니다: " + e.getMessage());

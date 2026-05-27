@@ -57,6 +57,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             place_addr,
             campaign_title,
             DATE_FORMAT(c.created_at, '%Y.%m.%d') created_at,
+            event_Period_str,
+            event_Period_end,
             type_code,
             applicants_Num,
             recruitment_Num,

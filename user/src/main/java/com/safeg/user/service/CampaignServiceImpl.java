@@ -68,7 +68,7 @@ public class CampaignServiceImpl implements CampaignService{
             // 중복된 일정이 있음
             return "OVERLAP";
         }
-        // 3. 시작 날짜부터 종료 날짜까지의 모든 날짜(LocalDate) 리스트 생성
+        // 3. 시작 날짜부터 종료 날endDate짜까지의 모든 날짜(LocalDate) 리스트 생성
         List<LocalDate> datesInRange = Stream.iterate(startDate, date -> date.plusDays(1))
                                             // startDate와 endDate 모두 포함
                                             .limit(endDate.toEpochDay() - startDate.toEpochDay() + 1)

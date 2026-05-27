@@ -28,6 +28,7 @@ import com.safeg.user.vo.CustomUser;
 import com.safeg.user.vo.FilesVO;
 import com.safeg.user.vo.Option;
 import com.safeg.user.vo.Page;
+import com.safeg.user.vo.ReviewVO;
 import com.safeg.user.vo.UserCampaignVO;
 import com.safeg.user.vo.UserVO;
 import com.safeg.user.vo.Users;
@@ -36,6 +37,7 @@ import com.safeg.user.service.AuthService;
 import com.safeg.user.service.CampaignService;
 import com.safeg.user.service.FileService;
 import com.safeg.user.service.MainService;
+import com.safeg.user.service.ReviewService;
 import com.safeg.user.service.UserService;
 import com.safeg.user.vo.BannerVO;
 
@@ -52,6 +54,9 @@ public class HomeController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ReviewService reviewService;
 
     @Autowired
     AuthService authService;
@@ -75,6 +80,8 @@ public class HomeController {
         List<CampaignVO> campaignFavorite = mainService.campaignFavorite();
         List<CampaignVO> campaignWorkable = mainService.campaignWorkable();
         List<CampaignVO> campaignNew = mainService.campaignNew();
+        List<ReviewVO> reviewList = reviewService.reviewList();
+        log.info("reviewList : "+ reviewList);
         List<BannerVO> bannerList = mainService.bannerList();
 
         if (campaignFavorite != null && !campaignFavorite.isEmpty()) { // 리스트가 null이 아니고 비어있지 않을 때만!
@@ -98,6 +105,7 @@ public class HomeController {
         model.addAttribute("campaignWorkable", campaignWorkable);
         model.addAttribute("campaignNew", campaignNew);
         model.addAttribute("bannerImage", bannerImage);
+        model.addAttribute("reviewList", reviewList);
         model.addAttribute("bannerList", bannerList);
 
         //model.addAttribute("pageUrl", pageUrl);

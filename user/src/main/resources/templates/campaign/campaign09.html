@@ -179,7 +179,7 @@
 }
     </style>
     <script>
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             
@@ -209,10 +209,36 @@ document.addEventListener('DOMContentLoaded', function() {
                     badge.textContent = '마감됨';
                 }
             });
-
             // 예: option 값이 'recent', 'popular' 등
-        
         });
+        async function reviewWrite(campaignId) {
+            try {
+                // 1. 현재 로그인한 유저가 해당 캠페인의 인솔자가 맞는지 백엔드 API 호출
+                // (컨트롤러에 /api/campaign/{id}/check-leader 형태의 검증 API가 준비되어 있어야 합니다)
+                const response = await fetch(`/review03/${campaignId}`);
+                
+                // 시큐리티 세션 만료 등 에러 처리
+                if (!response.ok) {
+                    alert("인증에 실패했거나 권한이 없습니다.");
+                    return;
+                }
+
+                const isLeader = await response.json(); // 백엔드에서 true/false 리턴
+
+                // 2. 인솔자 여부에 따른 분기 처리
+                if (isLeader) {
+                    // 인솔자가 맞다면 원래 가려고 했던 /review03/캠페인ID 주소로 강제 이동!
+                    location.href = `/review03/${campaignId}`;
+                } else {
+                    // 인솔자가 아니라면 차단 후 alert 경고창!
+                    alert("해당 캠페인에 등록된 인솔자가 아닙니다.");
+                }
+
+            } catch (error) {
+                console.error("인솔자 검증 중 오류 발생:", error);
+                alert("시스템 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+            }
+        }
     </script>
 </head>
 <body>
@@ -256,27 +282,31 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
                     <div sec:authorize="isAuthenticated()" class="guest-message">
-                        <div class="campaign-card">
-                            <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
-                            <div class="campaign-info-box">
-                                <div class="campaign-tags">
-                                    <span class="tag leader">
-                                        <span th:text="|${campaign.userNm}|"></span>
-                                        <span class="sub-text">인솔자</span>
-                                    </span> 
-                                    <span class="card-badge" th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}" th:data-campaign-id="${campaign.campaignId}"></span>
-                                </div>
-                                <div class="title-overlay">
-                                    <div class="card-title campaign-title-text">
-                                        <span>[</span>
-                                        <span th:text="${campaign.typeNm}">타입명</span>
-                                        <span>] </span>
-                                            <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
+                        <a th:href="@{/review03/{id}(id=${campaign.campaignId})}" class="btn">리뷰 쓰기
+
+                        <!-- <a href="javascript:void(0);" th:onclick="reviewWrite([[${campaign.campaignId}]])" class="btn">리뷰 쓰기 -->
+                            <div class="campaign-card">
+                                <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
+                                <div class="campaign-info-box">
+                                    <div class="campaign-tags">
+                                        <span class="tag leader">
+                                            <span th:text="|${campaign.userNm}|"></span>
+                                            <span class="sub-text">인솔자</span>
+                                        </span> 
+                                        <span class="card-badge" th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}" th:data-campaign-id="${campaign.campaignId}"></span>
                                     </div>
+                                    <div class="title-overlay">
+                                        <div class="card-title campaign-title-text">
+                                            <span>[</span>
+                                            <span th:text="${campaign.typeNm}">타입명</span>
+                                            <span>] </span>
+                                                <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                 </div>
-                                <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </th:block>
             </th:block>

@@ -40,4 +40,6 @@ public interface FileService {
     public int deleteImage(UserVO userVO) throws Exception;
 
     public List<FilesVO> businessFile() throws Exception;
+
+    public String getFileName(FilesVO uploadFile) throws Exception;
 }

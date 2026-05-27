@@ -5,33 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="naver-site-verification" content="fa5c8913f17dbe1d86afdef8b27353de8e71fc53" />
-    <meta name="naver-site-verification" content="67314fa8548a5bdf42798f73804e02494fa64918" /> <!-- https -->
-
-    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">행집 경호원 사이트</title> <!-- title 태그도 넣는걸 추천해! -->
-    <link rel="icon" href="/images/myfavicon.ico" />
+    <meta name="naver-site-verification" content="67314fa8548a5bdf42798f73804e02494fa64918" /> <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">행집 경호원 사이트</title> <link rel="icon" href="/images/myfavicon.ico" />
     <meta name="description" content="전문적인 행집 경호 서비스, 안전한 동행과 맞춤형 보안 솔루션을 제공합니다.">
     <meta property="og:type" content="website">
     <meta property="og:title" content="행사 집합소">
     <meta property="og:description" content="전문적인 행집 경호 서비스, 안전한 동행과 맞춤형 보안 솔루션을 제공합니다.">
     <meta property="og:image" content="http://xn--rc6b97s.com/images/og-image.png">
     <meta property="og:url" content="http://xn--rc6b97s.com/">
-    <!-- <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="행사 집합소">
-    <meta name="twitter:description" content="전문적인 행집 경호 서비스, 안전한 동행과 맞춤형 보안 솔루션을 제공합니다.">
-    <meta name="twitter:image" content="http://www.mysite.com/article/article1.html">
-    <meta name="twitter:domain" content="http://xn--rc6b97s.com/">
-    여기가 마이클의 common_head 프래그먼트가 들어갈 자리야 -->
     <th:block th:replace="~{fragments/head :: common_head}"></th:block>
 </head>
 <body>
     <header th:replace="~{fragments/header :: common_header}"></header>
 
     <main layout:fragment="content">
-        <!-- 각 페이지의 'main' 내용이 여기에 삽입될 거야. -->
-    </main>
+        </main>
 
     <div th:replace="~{fragments/footer :: common_footer}"></div>
-    <!-- ⭐ 여기에는 layout-dialect의 페이지별 JS 삽그먼트도 넣어두면 좋아! ⭐ -->
 
     <nav class="bottom-nav">
         <a href="/" class="nav-item" th:classappend="${currentURI == '/' ? 'active' : ''}">
@@ -69,21 +58,15 @@
         </th:block>
     </nav>
     <th:block layout:fragment="script"></th:block>
+    
     <script>
-        // function logout() {
-        //     if (confirm("로그아웃 하시겠습니까?")) {
-        //         window.location.href = "/logout";
-        //     }
-        // }
         document.addEventListener("DOMContentLoaded", function() {
+            // 1. 네비게이션 활성화 로직
             const currentPath = window.location.pathname;
-            console.log("Current Path:", currentPath); // 디버깅용 로그
             const navItems = document.querySelectorAll('.nav-item');
 
             navItems.forEach(item => {
                 const itemPath = item.getAttribute('href');
-                
-                // 홈("/")은 정확히 일치할 때만, 나머지는 경로를 포함할 때 active
                 if (itemPath === currentPath || (itemPath !== '/' && currentPath.startsWith(itemPath))) {
                     item.classList.add('active');
                 } else {
@@ -91,33 +74,32 @@
                 }
             });
 
-
-            // --- 4. [핵심] 비동기 폼 제출 로직 (반드시 DOMContentLoaded 안에 위치) ---
+            // 2. 특정 프로필 업데이트 폼 비동기(Fetch) 제출 로직 (기존 코드 유지)
             const formIds = ['updateFormMobile', 'updateForm']; 
             formIds.forEach(id => {
                 const form = document.getElementById(id);
                 if (form) {
-                    console.log(`비동기 리스너 등록 성공: ${id}`);
                     form.addEventListener('submit', function(e) {
                         e.preventDefault(); 
                         
                         const csrfTokenTag = document.querySelector('meta[name="_csrf"]');
                         const csrfHeaderTag = document.querySelector('meta[name="_csrf_header"]');
-                        
                         if (!csrfTokenTag || !csrfHeaderTag) {
                             alert("보안 토큰을 찾을 수 없습니다.");
                             return;
                         }
-    
+
                         const csrfToken = csrfTokenTag.getAttribute('content');
                         const csrfHeader = csrfHeaderTag.getAttribute('content');
-    
                         const formData = new FormData(this);
                         const submitBtn = this.querySelector('.profile_save');
                         
-                        submitBtn.disabled = true;
-                        submitBtn.innerText = "저장 중...";
-    
+                        // 버튼 비활성화
+                        if(submitBtn) {
+                            submitBtn.disabled = true;
+                            submitBtn.innerText = "저장 중...";
+                        }
+
                         fetch(this.action, {
                             method: 'POST',
                             headers: { [csrfHeader]: csrfToken },
@@ -130,18 +112,76 @@
                                 location.reload();
                             } else {
                                 alert("저장 실패: " + data);
+                                if(submitBtn) {
+                                    submitBtn.disabled = false;
+                                    submitBtn.innerText = "프로필 사진 저장하기";
+                                }
                             }
                         })
                         .catch(err => {
                             console.error("전송 에러:", err);
                             alert("서버 전송 중 오류가 발생했습니다.");
-                        })
-                        .finally(() => {
-                            submitBtn.disabled = false;
-                            submitBtn.innerText = "프로필 사진 저장하기";
+                            if(submitBtn) {
+                                submitBtn.disabled = false;
+                                submitBtn.innerText = "프로필 사진 저장하기";
+                            }
                         });
                     });
                 }
+            });
+
+            // 📢 3. [폼 내부 버튼 방어] 경호원신청, 캠페인 신청, 비밀번호 변경 등
+            const allForms = document.querySelectorAll('form');
+            allForms.forEach(form => {
+                if (formIds.includes(form.id)) return;
+
+                form.addEventListener('submit', function(e) {
+                    if (form.getAttribute('data-submitted') === 'true') {
+                        e.preventDefault();
+                        return false;
+                    }
+                    
+                    form.setAttribute('data-submitted', 'true');
+                    
+                    const submitButtons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+                    submitButtons.forEach(btn => {
+                        btn.disabled = true;
+                        if(btn.tagName === 'BUTTON') btn.innerText = "처리 중...";
+                    });
+                });
+            });
+
+            // 📢 4. [수정 완료] 일반 버튼 및 출퇴근 <a> 태그까지 연타 방지 공통 로직
+            // 일반 버튼, .btn-click 클래스를 가진 요소, 그리고 출퇴근용 a 태그(.btn-prevent-double)까지 한 번에 감지합니다.
+            const allButtons = document.querySelectorAll('button[type="button"], .btn-click, a.btn-prevent-double');
+            allButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    // 이미 클릭되어 잠금 상태라면 클릭 이벤트 무시
+                    if (btn.disabled || btn.getAttribute('data-clicked') === 'true') {
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    // 클릭 마킹 및 잠금 처리
+                    btn.setAttribute('data-clicked', 'true');
+                    if (btn.tagName === 'A') {
+                        btn.style.opacity = '0.5';
+                        btn.style.pointerEvents = 'none'; // a 태그 클릭 기능 일시 마비
+                    } else {
+                        btn.disabled = true;
+                    }
+
+                    // 3초 뒤에 원래대로 풀어주기 (안전장치)
+                    setTimeout(function() {
+                        btn.removeAttribute('data-clicked');
+                        if (btn.tagName === 'A') {
+                            btn.style.opacity = '1';
+                            btn.style.pointerEvents = 'auto';
+                        } else {
+                            btn.disabled = false;
+                        }
+                    }, 3000); 
+                });
             });
         });
     </script>

@@ -42,8 +42,7 @@
                         </tr>
                     </th:block>
                     <th:block th:each="inquiry, stat : ${inquiryList}">
-                        <!-- <a th:href="|/admin/campaign/select?id=${campaign.id}|"> -->
-                        <tr th:onclick="|location.href='@{/inquiry02(inquiryId=${inquiry.inquiryId})}'|">
+                        <tr class="pointer" th:onclick="|window.open('@{/inquiry02(inquiryId=${inquiry.inquiryId})}', '_blank')|">
                             <td style="text-align: center;" ><span th:text="${stat.size - stat.index}"></span></td>
                             <td><span th:text="${inquiry.campaignTitle}"></span></td>
                             <td><span th:text="${inquiry.companyNm}"></span></td>

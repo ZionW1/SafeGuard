@@ -60,9 +60,6 @@ public class LeaderController {
 
         int result = 0;
         // 'content'는 HTML form의 textarea name="content"에서 넘어온 값
-        System.out.println("--- CKEditor에서 넘어온 내용 ---");
-        System.out.println(adminContentVO.getContent());
-        System.out.println("----------------------------");
         if(adminContentVO.getAction().equals("I")){
             adminContentVO.setAuthor("Admin");
             result = leaderService.useGuideInsert(adminContentVO);
@@ -71,7 +68,6 @@ public class LeaderController {
             result = leaderService.useGuideUpdate(adminContentVO);
         }
         
-        System.out.println("DB 저장 결과: " + result);
         // ⭐️ 여기서 DB에 저장하는 로직을 구현해야 해. ⭐️
         // 1. Service 레이어를 호출하여 DB 트랜잭션 시작
         // 2. DAO/Repository를 통해 DB의 특정 테이블 컬럼에 `content` 문자열을 저장

@@ -290,6 +290,7 @@
             user_campaign 
         SET 
             is_deleted = 'Y'
+            ㅑ
         WHERE 
             campaign_id = #{campaignId} 
         AND 

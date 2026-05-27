@@ -15,8 +15,51 @@
             });
 
             function securityTypeChange(typeCode) {
+                const wageRadio = document.getElementById("wageRadio");
+                const hourlyPay = document.getElementById("hourlyPay");
+                const dailyPay = document.getElementById("dailyPay");
+                const workHours = document.getElementById("workHours");
+                const timeInput = document.getElementById("timeInput");
+
+                const selectedWage = document.querySelector('input[name="wage"]:checked').value;
                 console.log("선택된 경호/진행/수행 구분: " + typeCode);
+                if (typeCode === "02") {
+                    console.log("02 선택됨 -> 보이기");
+                    wageRadio.classList.remove("hidden"); // hidden 클래스 제거 (화면에 보임)
+                    document.querySelectorAll('input[name="wage"]').forEach((radio) => {
+                        radio.addEventListener('change', function() {
+                            // 현재 선택된 라디오 버튼의 value 출력
+                            if (this.value === "01") {
+                                dailyPay.classList.remove("hidden");
+                                hourlyPay.classList.add("hidden");
+                                timeInput.classList.add("hidden");
+                                workHours.required = false;               // 필수 해제
+                            } else if (this.value === "02") {
+                                dailyPay.classList.add("hidden");
+                                hourlyPay.classList.remove("hidden");
+                                timeInput.classList.remove("hidden");
+                                workHours.required = true;                // 필수 입력으로 변경
+                                workHours.value = "";
+                            }
+                        });
+                    });
+                    // if(selectedWage == '01'){
+                    //     console.log("a " + selectedWage)
+                    //     dailyPay.classList.remove("hidden");
+                    //     hourlyPay.classList.add("hidden");
+                    // } else {
+                    //     console.log("b " + selectedWage)
+                    //     dailyPay.classList.add("hidden");
+                    //     hourlyPay.classList.remove("hidden"); 
+                    // }
+                } else {
+                    console.log("다른 값 선택됨 -> 숨기기");
+                    wageRadio.classList.add("hidden");    // hidden 클래스 추가 (화면에서 숨김)
+                }
+                
                 document.getElementById("typeCode").value = typeCode;
+                
+
             }
 
             function inputLeaderPhoneNumber(idx) {
@@ -106,18 +149,6 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="campaignPay">캠페인 급여</label>
-                        <input type="text" id="campaignPay" name="campaignPay" />
-                    </div>
-                    <!-- <div class="form-group">
-                        <label for="securityType">경호/진행/수행 구분</label>
-                        <select id="securityType" name="securityType" th:field="*{securityType}" onchange="securityTypeChange(this.value)">
-                            <option value="">-- 선택하세요 --</option>
-                            <option name=""th:each="type : ${securityType}" th:value="${type.code}" th:text="${type.codeName}"></option>
-                        </select>
-                        <input type="hidden" id="typeCode" name="typeCode" />
-                    </div> -->
-                    <div class="form-group">
                         <label for="securityType">경호/진행/수행 구분</label>
                         <select id="securityType" name="securityType" onchange="securityTypeChange(this.value)">
                             <option value="">-- 선택하세요 --</option>
@@ -126,6 +157,29 @@
                                     th:text="${type.codeName}"></option>
                         </select>
                         <input type="hidden" id="typeCode" name="typeCode" />
+                    </div>
+                    <div class="form-group hidden" id="wageRadio">
+                        <label for="">시급 일급</label>
+                        <div class="radio-group"> 
+                            <label class="radio-label">
+                                <input type="radio" name="wage" id="dailyWage" value="01" checked>일급
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="wage" id="hourlyWage" value="02">시급
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" id="dailyPay">
+                        <label for="campaignPay">캠페인 급여</label>
+                        <input type="text" id="campaignPay" name="campaignPay" />
+                    </div>
+                    <div class="form-group hidden" id="hourlyPay">
+                        <label for="campaignPay">캠페인 시급여</label>
+                        <input type="text" id="campaignPay" name="campaignPay" />
+                    </div>
+                    <div class="form-group hidden" id="timeInput">
+                        <label for="WorkHours">하루 근무 시간 (시간)</label>
+                        <input type="number" name="workHours" id="workHours" placeholder="예: 8" min="1">
                     </div>
                 </div>
                 <div class="form-group">

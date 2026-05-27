@@ -38,14 +38,11 @@
                             <td colspan="3" align="center">조회된 데이터가 없습니다.</td>
                         </tr>
                     </th:block>
-                    <th:block th:each="faq, stat : ${faqList}">
-                        <!-- <a th:href="|/admin/campaign/select?id=${campaign.id}|"> -->
-                        <tr th:onclick="|location.href='@{/faq02(id=${faq.adminContentId})}'|">
-                            <td style="text-align: center;" ><span th:text="${stat.size - stat.index}"></span></td>
-                            <td><span th:text="${faq.title}"></span></td>
-                            <td style="text-align: center;" ><span th:text="${#temporals.format(faq.createdAt, 'yyyy-MM-dd')}"></span></td>
-                        </tr>
-                    </th:block>
+                    <tr class="pointer" th:onclick="|window.open('@{/faq02(id=${faq.adminContentId})}', '_blank')|">
+                        <td style="text-align: center;"><span th:text="${stat.size - stat.index}"></span></td>
+                        <td><span th:text="${faq.title}"></span></td>
+                        <td style="text-align: center;"><span th:text="${#temporals.format(faq.createdAt, 'yyyy-MM-dd')}"></span></td>
+                    </tr>
                 </tbody>
             </table>
             <div class="parent">

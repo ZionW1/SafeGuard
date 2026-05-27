@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="@{/css/style.css}" />
+    <link rel="stylesheet" href="/css/style.css" />
     <style>
         table {
             width: 45%;
@@ -74,8 +74,9 @@
                         <td th:text="${stat.count}"></td>
                         <td th:text="${userRank.id}"></td>
                         <td th:text="${userRank.userNm}"></td>
-                        <td th:text="${userRank.amount}"></td>
+                        <td th:text="${userRank.amount != null ? #numbers.formatInteger(userRank.amount, 3, 'COMMA') : 0}"></td>
                     </tr>
+                    
                     <tr th:if="${bestPayList.empty}">
                         <td colspan="4">유저가 없습니다.</td>
                     </tr>

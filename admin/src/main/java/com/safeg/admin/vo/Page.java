@@ -61,7 +61,6 @@ public class Page {
         this.rows = rows;
         this.count = count;
         this.total = total;
-        System.out.println("Page.constructor() : "+page+","+rows+","+count+","+total);
 
         calc();
     }
@@ -75,7 +74,6 @@ public class Page {
 
     // 페이징 처리 수식
     public void calc() {
-        System.out.println("Page.constructor() : : : : : : : "+page+","+rows+","+count+","+total);
 
         // 첫 번호
         this.first = 1;

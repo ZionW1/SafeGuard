@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.safeg.user.mapper.ReviewMapper">
+
+    <select id="reviewList" resultType="ReviewVO">
+        <![CDATA[
+        SELECT 
+            review_id,
+            campaign_id,
+            user_id,
+            title,
+            content,
+            thumbnail_name,
+            created_at,
+            updated_at
+        FROM 
+            review
+        ORDER BY 
+            REVIEW_ID
+        ]]>
+    </select>
+
+    <select id="reviewSelect" resultType="ReviewVO">
+        <![CDATA[
+        SELECT 
+            r.review_id,
+            r.campaign_id,
+            r.user_id,
+            u.user_nm,
+            r.title,
+            r.content,
+            r.address,
+            r.thumbnail_name,
+            r.created_at,
+            r.updated_at
+        FROM 
+            review r
+        LEFT OUTER JOIN
+            user u
+        ON 
+            r.user_id = u.user_id
+        Where 
+            review_id = #{reviewId}
+        ]]>
+    </select>
+
+    <insert id="reviewInsert" parameterType="ReviewVO" useGeneratedKeys="true" keyProperty="reviewId">
+        INSERT INTO review ( 
+            campaign_id,
+            user_id,
+            title,
+            content,
+            address,
+            thumbnail_name,
+            created_at,
+            updated_at
+        )
+        values (
+            #{campaignId},
+            #{userId},
+            #{title},
+            #{content},
+            #{address},
+            #{thumbnailName},
+            now(),
+            now()
+        )
+    </insert>
+
+    <select id="reviewInfo" resultType="ReviewVO">
+        SELECT
+            c.campaign_id,
+            c.campaign_title,
+            c.leader_code,
+            c.place_addr,
+            c.campaign_pay,
+            u.user_id as leader_id,
+            u.user_nm as leader_nm,
+            u.id,
+            u.role,
+            (CASE
+                WHEN u.guard_type = '02' THEN '경호'
+                ELSE 'X'
+            END) AS guard_type
+        FROM 
+            campaign c
+        LEFT OUTER JOIN 
+            user u
+        ON 
+            c.LEADER_CODE = u.id
+        WHERE 
+            CAMPAIGN_ID = #{campaignId}
+    </select>
+</mapper>

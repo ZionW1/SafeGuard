@@ -1,4 +1,5 @@
 <header th:fragment="common_header">
+    <th:block th:utext="${logControlScript}"></th:block>
     <nav class="navigator">
         <header class="desktop-header">
             <div class="header-left">
@@ -13,22 +14,6 @@
                 </ul>
                 </div>
                 <div>
-                        <!-- <input type="text" class="desktop_search" id="schCamp" name="schCamp" placeholder="검색어를 입력하세요" />
-                        <input class="optionSubmit" type="submit" id="search_btn" value=""> -->
-                    <!-- <button class="optionSubmit" id="searchOpenBtn">🔍</button>
-                    <form class="search_from desktop_search_form" action="/search" id="searchForm" name="searchForm">
-
-                        <div id="searchOverlay" class="search-modal" style="display: none;">
-                            <div class="search-header">
-                                <input type="text" class="search" id="schCamp" name="schCamp" placeholder="검색어 입력" />
-                                <button class="search_btn" type="submit" id="search_btn" value=""></button>
-                                <a class="close_search" id="searchCloseBtn">✕</a>
-                            </div>
-                            <div class="search-content">
-                            </div>
-                        </div>
-                    </form> -->
-
                     <form class="search_from desktop_search_form" action="/search" id="searchForm" name="searchForm">
                         <input type="text" class="desktop_search" id="schCamp" name="schCamp" placeholder="검색어를 입력하세요" />
                         <input class="optionSubmit" type="submit" id="search_btn" value="">
@@ -59,6 +44,7 @@
                     <li><a href="javascript:certPartner()">인증된 협력업체</a></li>
                     <li><a href="/closedCampaign">마감된 캠페인</a></li>
                     <li><a href="/notice01">공지</a></li>
+                    <li><a href="/review03">리뷰등록</a></li>
                 </ul>
                 <div class="auth-area">
                     <th:block sec:authorize="isAnonymous()">
@@ -98,15 +84,6 @@
                     </div>
                 </div>
             </form>
-            <!--
-            <th:block sec:authorize="!isAuthenticated()">
-                <a href="/user01" class="login_link">로그인</a>
-            </th:block>
-            
-
-            <th:block sec:authorize="isAuthenticated()">
-                <a th:href="@{/mypage/calendarPage(userId=${#authentication.principal.username})}" class="mypage_link">마이페이지</a>
-            </th:block> -->
             <button class="hamburger-btn" id="mMenuOpen">☰</button>
 
         </div>
@@ -144,18 +121,6 @@
     </nav>
 
     <style>
-        /* 기본 CSS: 데스크톱 위주 */
-        
-        /* .desktop-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: #fff; }
-        .logo_image { height: 50px; }
-        .nav-bar { background: #fdfdfd; border-top: 1px solid #eee; border-bottom: 2px solid #333; }
-        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .nav-list { display: flex; list-style: none; margin: 0; padding: 0; }
-        .nav-list li a { display: block; padding: 15px 20px; color: #333; text-decoration: none; font-weight: bold; }
-        .auth-area { font-size: 14px; }
-        .auth-link { margin-left: 15px; text-decoration: none; color: #666; } */
-
-        /* 모바일 대응 (반응형) */
         @media (max-width: 768px) {
             
         }
@@ -237,60 +202,17 @@
         document.querySelectorAll('.search_from').forEach(form => {
             form.addEventListener('submit', function(e) {
                 const resultArea = document.getElementById('resultArea');
-
                 const keyword = "";
-                // for(i=0; i< document.querySelectorAll('.search').length; i++){
-                //     if(document.querySelectorAll('.search')[i].value != null){
-                //         keyword = document.querySelectorAll('.search')[i].value;
-                //     }
-                // }
+                
                 document.querySelectorAll('.search').forEach(input => {
                     console.log(input.value);
                     keyword = input.value;
                     alert("a : " + keyword);
 
                 });
-                
-
-
-                // 1. 현재 페이지에 결과창이 있는 경우 (비동기 fetch 검색)
-            
-                    // fetch(`/search?schCamp=${encodeURIComponent(keyword)}`)
-                    //     .then(response => {
-                    //         if (!response.ok) throw new Error("검색 실패");
-                    //         return response.text();
-                    //     })
-                    //     .then(html => {
-                    //         resultArea.innerHTML = html; // 결과 조각 교체
-                    //     })
-                    //     .catch(error => console.error('Error:', error));
-                
-                // 2. 다른 페이지(메인 등)에 있는 경우 (일반 submit 이동)
-            
             });
         });
 
-
-        // document.getElementById('searchForm').addEventListener('submit', function(e) {
-        //     console.log("search");
-        //     const resultArea = document.getElementById('resultArea');
-        //     const keyword = document.getElementById('schCamp').value;
-
-        //     if (resultArea) {
-        //         alert("a");
-        //         // 1. 현재 목록 페이지에 있다면? fetch로 부분 교체
-        //         e.preventDefault();
-        //         fetch(`/search?schCamp=${encodeURIComponent(keyword)}`)
-        //             .then(res => res.text())
-        //             .then(html => resultArea.innerHTML = html);
-        //     } else {
-        //         alert("b");
-        //         // 2. 다른 페이지라면? 검색어를 들고 목록 페이지로 이동 (일반 submit)
-        //         // e.preventDefault()를 호출하지 않으므로 action 주소로 이동합니다.
-        //         this.action = "/campaign08/"; 
-        //         this.method = "get";
-        //     }
-        // });
         const searchOpenBtn = document.getElementById('searchOpenBtn');
         const searchCloseBtn = document.getElementById('searchCloseBtn');
         const searchOverlay = document.getElementById('searchOverlay');

@@ -22,18 +22,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 등록 -->
     <insert id="insert">
-        <!-- insert into files (id, file_name, file_path, file_size, 
-            type, parent_table, parent_no)
-            values (
-                #{id}, #{fileName}, #{filePath}, #{fileSize},
-                #{type}, #{parentTable}, #{parentNo}
-            ) -->
-        <!-- insert into campaign_image (created_date, last_Modified_Date, image, campaign_id, file_size, image_id, file_path, del_yn
-        )
-        values (
-            now(), now(), #{image}, #{campaignId}, #{fileSize}, #{imageId}, #{filePath}, 'N'
-        ) -->
-
         insert into files (
             file_type, target_id, target_type, original_name, saved_name, 
             file_path, file_size, file_extension, created_by, updated_by
@@ -43,6 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{filePath}, #{fileSize}, #{fileExtension}, #{createdBy}, #{updatedBy}
         )
     </insert>
+
     <!-- 수정 -->
     <update id="update">
         update files

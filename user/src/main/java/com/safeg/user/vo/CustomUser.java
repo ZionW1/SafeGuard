@@ -43,7 +43,6 @@ public class CustomUser implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        System.out.println("CustomUser - getAuthorities() 호출 : " + userVo.getAuthList());
         return userVo.getAuthList().stream()
             .map( (auth) -> new SimpleGrantedAuthority(auth.getAuth()) )
             .collect(Collectors.toList());

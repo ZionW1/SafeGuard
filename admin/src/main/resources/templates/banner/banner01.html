@@ -67,7 +67,7 @@
                     </tr>
                 </th:block>
                 <th:block th:each="banner : ${bannerList}">
-                    <tr th:onclick="|location.href='@{/banner02(id=${banner.bannerId}, targetType='banner')}'|">
+                    <tr class="pointer" th:onclick="|window.open('@{/banner02(id=${banner.bannerId}, targetType='banner')}', '_blank')|">
                         <td><span th:text="${banner.bannerId}"></span></td>
                         <td><span th:text="${banner.title}"></span></td>
                         <td><span th:text="${banner.url}"></span></td>

@@ -32,8 +32,6 @@ public class CommonDataAdvice {
             data.setTotalUser(totalUsers);
             data.setTotalGuard(totalGuard);
             data.setTotalCampaign(totalCampaign);
-            
-            log.info("CommonData successfully prepared: {}", data);
         } catch (Exception e) {
             log.error("Error preparing CommonData. Returning default values: {}", e.getMessage(), e);
             // 에러 발생 시에도 null이 아닌, 기본값을 가진 객체를 반환하여 템플릿 오류 방지

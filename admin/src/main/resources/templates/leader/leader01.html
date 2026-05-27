@@ -74,9 +74,7 @@
                 <tr th:if="${leaderList == null or #lists.isEmpty(leaderList)}">
                     <td colspan="3" align="center">조회된 데이터가 없습니다.</td>
                 </tr>
-                <!-- <button th:onclick="|location.href='@{/leader02(id=${leader.id})}'|"> -->
-
-                <tr class="pointer" th:each="leader : ${leaderList}" th:onclick="|location.href='@{/leader02(id=${leader.id})}'|">
+                <tr class="pointer" th:each="leader : ${leaderList}" th:onclick="|window.open('@{/leader02(id=${leader.id})}', '_blank')|">
                     <td th:text="${leader.userNm}"></td>
                     <td th:text="${leader.phoneNum}"></td>
                     <td th:text="${leader.email}"></td>

@@ -53,16 +53,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // ✅ 인가 설정
         http
-        // 1. CSRF 설정: /support04 경로는 토큰 검사를 하지 않음
+        // 1. CSRF 설정: 파일 업로드 경로도 CSRF 토큰 검사를 하지 않도록 추가합니다!
         .csrf(csrf -> csrf
-            .ignoringRequestMatchers("/inquiry01", "/inquiry02") 
+            .ignoringRequestMatchers("/inquiry01", "/inquiry02", "/review05", "/review04") 
         )
-        // 2. 권한 설정
+        // 2. 권한 설정 (좁은 범위/구체적인 주소부터 위에서 아래로 정렬)
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/mypage", "/mypage/**").hasAnyRole("USER", "LEADER", "ADMIN")
-            .requestMatchers("/**").permitAll() // 나머지는 모두 허용
+            // 💡 특정 API 주소들을 위쪽에 명시해 주는 것이 정석입니다.
+            .requestMatchers("/review05", "/img/**").permitAll() 
+            // 💡 맨 마지막에 전체 허용을 둡니다.
+            .requestMatchers("/**").permitAll() 
             .anyRequest().permitAll()
         );
+
         // http.authorizeHttpRequests(auth -> auth
         //                         // .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
         //                         .requestMatchers("/mypage", "/mypage/**").hasAnyRole("USER", "LEADER", "ADMIN")

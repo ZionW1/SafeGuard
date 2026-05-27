@@ -168,7 +168,7 @@
         ORDER BY
             count DESC,
             u.id ASC
-        LIMIT 15
+        LIMIT 10
     </select>
 
     <select id="bestPayList" resultType="PointHistoryVO">
@@ -217,7 +217,7 @@
             u.id, u.user_nm, u.user_id, u.role
         ORDER BY 
             amount DESC, u.id ASC
-        LIMIT 15
+        LIMIT 10
     </select>
     
     <select id="getReferrerNo" resultType="Long">

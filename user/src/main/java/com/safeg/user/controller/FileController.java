@@ -38,6 +38,7 @@ import com.safeg.user.service.ApplyService;
 import com.safeg.user.service.FileService;
 import com.safeg.user.service.FileServiceImpl;
 import com.safeg.user.vo.CampaignVO;
+import com.safeg.user.vo.CommonData;
 import com.safeg.user.vo.FilesVO;
 import com.safeg.user.vo.UserCampaignVO;
 
@@ -61,19 +62,35 @@ public class FileController {
      * @throws Exception
      */
     @GetMapping("/img")
-    public ResponseEntity<byte[]> thumbnail(@RequestParam("id") String id) throws Exception{
-        FilesVO file = fileService.select(id);
-
-        String filePath = file.getFilePath();
-        // 파일 객체 생성
-        File f = new File(filePath);
-        // 파일 데이터
-        byte[] fileData = FileCopyUtils.copyToByteArray(f);
+    public ResponseEntity<byte[]> getFile(
+            @RequestParam(value = "id", required = false) String id,
+            @RequestParam(value = "fileName", required = false) String fileName) throws Exception {
         
-        // 컨텐츠 파일 지정
-        // 확장자로 컨텐츠 타입 지정
-        // - 확장자 : .jpg, .png ...
-        String ext = filePath.substring(filePath.lastIndexOf(".") + 1); // 확장자
+        String filePath = "";
+        String uploadPath = CommonData.getUploadPath(); // 업로드 베이스 경로
+
+        // 1. 만약 id(PK)가 들어온 경우 ➡️ 기존 썸네일 조회 로직
+        if (id != null && !id.isEmpty()) {
+            FilesVO file = fileService.select(id);
+            if (file != null) {
+                filePath = file.getFilePath();
+            }
+        } 
+        // 2. 만약 fileName(UUID_파일명)이 직접 들어온 경우 ➡️ Quill 에디터 이미지 조회 로직
+        else if (fileName != null && !fileName.isEmpty()) {
+            File f = new File(uploadPath, fileName);
+            filePath = f.getPath();
+        }
+
+        // [방어 코드] 파일 경로를 못 찾았거나 실제 파일이 없으면 404를 내보냅니다.
+        File f = new File(filePath);
+        if (filePath.isEmpty() || !f.exists()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // 3. 파일 데이터 및 컨텐츠 타입 지정 (기존 질문자님 코드 그대로 활용)
+        byte[] fileData = FileCopyUtils.copyToByteArray(f);
+        String ext = filePath.substring(filePath.lastIndexOf(".") + 1);
         MediaType mediaType = MediaUtil.getMediaType(ext);
 
         HttpHeaders headers = new HttpHeaders();

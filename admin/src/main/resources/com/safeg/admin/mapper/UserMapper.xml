@@ -186,7 +186,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="userJoin" parameterType="UserVO" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO 
-            USER (user_id, user_nm, password, email, auth_id, role)
+            user (user_id, user_nm, password, email, auth_id, role)
         VALUES
             (#{userId}, #{userNm}, #{password}, #{email}, '01', 'Admin')
     </insert>
@@ -201,7 +201,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <update id="userInfoUpdate" parameterType="UserVO">
-        UPDATE USER
+        UPDATE user
         SET 
             <!-- user_nm = #{userNm}, -->
             email = #{email},
@@ -221,7 +221,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="userRemove">
-        UPDATE USER
+        UPDATE user
         SET 
             is_deleted = 'Y',
             updated_at = NOW()
@@ -229,7 +229,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="userUpdate">
-        UPDATE USER
+        UPDATE user
         SET
             role = #{authRole},
             auth_id = #{authCode},
@@ -247,7 +247,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="userLeaderUpdate">
-        UPDATE USER
+        UPDATE user
         SET 
             role = 'LEADER',
             auth_id = '03',
@@ -257,7 +257,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="userStop">
-        UPDATE USER
+        UPDATE user
         SET 
             is_stopped = 'Y',
             stop_date = NOW(),
@@ -266,7 +266,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="userUnstop">
-        UPDATE USER
+        UPDATE user
         SET 
             is_stopped = 'N',
             stop_date = null,
@@ -315,7 +315,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <update id="guardTypeChange" parameterType="UserVO">
-        UPDATE USER
+        UPDATE user
         SET 
             guard_type = #{guardType},
             updated_at = NOW()

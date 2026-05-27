@@ -27,7 +27,6 @@ public class EncryptionUtil {
 
     public static String encrypt(String privateData) throws Exception {
 
-        System.out.println("Secret_key : " + SECRET_KEY);
         if (privateData == null) return null;
         
         byte[] iv = new byte[IV_LENGTH_BYTE];

@@ -12,6 +12,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.safeg.admin.mapper.FileMapper;
+import com.safeg.admin.vo.CommonData;
 import com.safeg.admin.vo.FilesVO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +24,10 @@ public class FileServiceImpl implements FileService{
     @Autowired
     private FileMapper fileMapper;
     
-    @Value("${upload.path}") // application.properties 에서 지정한 업로드 경로 가져옴
-    private String uploadPath;
+    // @Value("${upload.path}") // application.properties 에서 지정한 업로드 경로 가져옴
+    // private String uploadPath;
+
+    // String uploadPath = CommonData.getUploadPath();
 
     @Override
     public List<FilesVO> list() throws Exception{
@@ -87,45 +90,52 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public boolean upload(FilesVO file) throws Exception{
+    public boolean upload(FilesVO file) throws Exception {
         log.info("file + " + file);
-
-        // 파일 정보
+    
+        // 파일 정보 추출
         MultipartFile mf = file.getFile();
         String originalName = mf.getOriginalFilename();
         int lastDotIndex = originalName.lastIndexOf('.');
         String extension = originalName.substring(lastDotIndex + 1);
         long fileSize = mf.getSize();
         byte[] fileData = mf.getBytes();
-
+    
         log.info("원본 파일 명 : " + originalName);
         log.info("파일 용량 : " + fileSize);
         log.info("파일 데이터 : " + fileData);
-
+    
+        // [수정 1] 메서드 안에서 OS에 맞는 업로드 베이스 경로를 가져옵니다.
+        String uploadPath = CommonData.getUploadPath();
         log.info("파일 업로드 경로 : " + uploadPath);
-
-        // ⭐️ 파일 업로드
-        // 1. 파일 데이터를 업로드 경로에 복사
-        // 2. 업로드된 파일 정보를 DB에 등록
-
-        // 1. 파일복사
-        // 파일명 중복 방지 : 파일명 뒤에 날짜데이터 또는 UID를 붙여준다.
+    
+        // [수정 2] 업로드할 폴더가 없으면 자동으로 생성하는 로직 추가
+        File targetDir = new File(uploadPath);
+        if (!targetDir.exists()) {
+            log.info("업로드 폴더가 존재하지 않아 새로 생성합니다: " + uploadPath);
+            targetDir.mkdirs(); // 하위 디렉토리까지 한 번에 생성
+        }
+    
+        // 1. 파일 복사
+        // 파일명 중복 방지 : UUID 활용
         String fileName = UUID.randomUUID().toString() + "_" + originalName;
         File uploadFile = new File(uploadPath, fileName);
-        // 파일 경로 : /Users/pieck/Documents/upload/UID_파일명.png
-        // FileCopyUtils.copy(파일데이터, 파일객체)
-        FileCopyUtils.copy(fileData, uploadFile); // 파일 업로드
-
-        // 2. DB 등록
+        
+        // FileCopyUtils.copy(파일데이터, 파일객체) -> 실제 파일 업로드 실행
+        FileCopyUtils.copy(fileData, uploadFile); 
+        log.info("파일 업로드 완료: " + uploadFile.getAbsolutePath());
+    
+        // 2. DB 등록을 위한 데이터 세팅
         file.setImage(fileName);
         file.setFilePath(uploadFile.getPath());
         file.setFileSize(fileSize);
         file.setFileExtension(extension);
         file.setOriginalName(originalName);
         file.setSavedName(fileName);
-
+    
         log.info("insert 전 file + " + file);
-
+    
+        // MyBatis를 통한 DB 인서트
         fileMapper.insert(file);
         
         return true;
@@ -168,6 +178,7 @@ public class FileServiceImpl implements FileService{
         String extension = originalName.substring(lastDotIndex + 1);
         long fileSize = mf.getSize();
         byte[] fileData = mf.getBytes();
+        String uploadPath = CommonData.getUploadPath();
 
         log.info("원본 파일 명 : " + originalName);
         log.info("파일 용량 : " + fileSize);
@@ -224,6 +235,7 @@ public class FileServiceImpl implements FileService{
         String extension = originalName.substring(lastDotIndex + 1);
         long fileSize = mf.getSize();
         byte[] fileData = mf.getBytes();
+        String uploadPath = CommonData.getUploadPath();
 
         log.info("원본 파일 명 : " + originalName);
         log.info("파일 용량 : " + fileSize);

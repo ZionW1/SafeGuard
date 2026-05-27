@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{layouts/base_layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>행집 - 인솔자 리뷰 상세보기</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+        /* 기존 행집 플랫폼과 통일감을 주기 위한 기본 스타일 코드 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border: 1px solid #e1e1e1;
+            border-radius: 4px;
+        }
+        .review-header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .review-title {
+            font-size: 26px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+        }
+        .review-meta {
+            font-size: 14px;
+            color: #777;
+            display: flex;
+            gap: 20px;
+        }
+        .info-section {
+            background-color: #fafafa;
+            border: 1px solid #e9e9e9;
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+        .info-item {
+            margin-bottom: 8px;
+        }
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #555;
+            display: inline-block;
+            width: 150px;
+        }
+        .thumbnail-wrapper {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 10px;
+            border: 1px dashed #ccc;
+            background-color: #fafafa;
+        }
+        .thumbnail-img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        .review-content {
+            font-size: 16px;
+            line-height: 1.8;
+            min-height: 300px;
+            padding: 10px 5px;
+            word-break: break-all;
+        }
+        /* Quill 에디터로 작성된 이미지들이 본문을 빠져나가지 않도록 방어 */
+        .review-content img {
+            max-width: 100%;
+            height: auto;
+        }
+        .btn-area {
+            text-align: right;
+            border-top: 1px solid #e9e9e9;
+            padding-top: 20px;
+            margin-top: 30px;
+        }
+        .btn-list {
+            background-color: #5cb85c; /* 작성화면의 '리뷰 등록하기' 그린 컬러 적용 */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-list:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+    <main layout:fragment="content">
+
+        <div class="container">
+            <div class="review-header">
+                <h1 class="review-title" th:text="${review.title}">고려대 행사</h1>
+                <div class="review-meta">
+                    <span>✍️ 작성자: <strong th:text="${review.userNm}">akql6824</strong></span>
+                    <span>📅 작성일: <span th:text="${review.createdAt != null ? #strings.substring(review.createdAt, 0, 10) : ''}">2026-05-21</span></span>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-item">
+                    <span class="info-label">📍 방문 장소</span>
+                    <span th:text="${review.address ?: '등록된 주소 정보가 없습니다.'}">성북구 안암로 145</span>
+                </div>
+                <!-- <div class="info-item">
+                    <span class="info-label">참조 캠페인 번호</span>
+                    <span th:text="|No. ${review.campaignId}|">35</span>
+                </div> -->
+            </div>
+
+            <div class="thumbnail-wrapper" th:if="${review.thumbnailName != null}">
+                <img th:src="|/img?fileName=${review.thumbnailName}|" class="thumbnail-img" alt="대표 썸ネ일 이미지">
+            </div>
+
+            <div class="review-content" th:utext="${review.content}">
+                <p>여기에 Quill 에디터로 작성했던 본문 내용과 본문 삽입 이미지들이 파싱되어 출력됩니다.</p>
+            </div>
+
+            <div class="btn-area">
+                <a href="/main" th:href="@{/main}" class="btn-list">목록으로</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

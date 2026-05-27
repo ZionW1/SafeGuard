@@ -27,6 +27,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.safeg.user.mapper.FileMapper;
+import com.safeg.user.vo.CommonData;
 import com.safeg.user.vo.FilesVO;
 import com.safeg.user.vo.UserCampaignVO;
 import com.safeg.user.vo.UserVO;
@@ -327,5 +328,58 @@ public class FileServiceImpl implements FileService{
         List<FilesVO> file = fileMapper.businessFile();
         return file;
     }
-
+    
+    @Override
+    public String getFileName(FilesVO file) throws Exception {
+        MultipartFile mf = file.getFile();
+        String originalName = mf.getOriginalFilename();
+        int lastDotIndex = originalName.lastIndexOf('.');
+        String extension = originalName.substring(lastDotIndex + 1);
+        long fileSize = mf.getSize();
+        byte[] fileData = mf.getBytes();
+    
+        log.info("원본 파일 명 : " + originalName);
+        log.info("파일 용량 : " + fileSize);
+        log.info("파일 데이터 : " + fileData);
+    
+        // [수정 1] 메서드 안에서 OS에 맞는 업로드 베이스 경로를 가져옵니다.
+        String uploadPath = CommonData.getUploadPath();
+        log.info("파일 업로드 경로 : " + uploadPath);
+    
+        // [수정 2] 업로드할 폴더가 없으면 자동으로 생성하는 로직 추가
+        File targetDir = new File(uploadPath);
+        if (!targetDir.exists()) {
+            log.info("업로드 폴더가 존재하지 않아 새로 생성합니다: " + uploadPath);
+            targetDir.mkdirs(); // 하위 디렉토리까지 한 번에 생성
+        }
+    
+        // 1. 파일 복사
+        // 파일명 중복 방지 : UUID 활용
+        String fileName = UUID.randomUUID().toString() + "_" + originalName;
+        File uploadFile = new File(uploadPath, fileName);
+        
+        // FileCopyUtils.copy(파일데이터, 파일객체) -> 실제 파일 업로드 실행
+        FileCopyUtils.copy(fileData, uploadFile); 
+        log.info("파일 업로드 완료: " + uploadFile.getAbsolutePath());
+    
+        // 2. DB 등록을 위한 데이터 세팅
+        file.setImage(fileName);
+        file.setFilePath(uploadFile.getPath());
+        file.setFileSize(fileSize);
+        file.setFileExtension(extension);
+        file.setOriginalName(originalName);
+        file.setSavedName(fileName);
+    
+        log.info("insert 전 file + " + file);
+    
+        // MyBatis를 통한 DB 인서트
+        int result = fileMapper.insert(file);
+        
+        if(result >= 0) {
+            return fileName;
+        } else {
+            return "";
+        }
+        
+    }
 }

@@ -39,12 +39,15 @@ body {
     background: white;
     padding: 15px;
     border-radius: 8px;
+    margin: 20px auto;
 }
+
 .section h2 {
     margin: 0 0 10px;
     font-weight: 700;
     font-size: 18px;
 }
+
 .btn-purple {
     background-color: #6b27e0;
     color: white;
@@ -98,7 +101,7 @@ body {
 /* download-button 클래스에 버튼 스타일 적용 */
 .statusInfoChange {
     display: inline-block; /* ✨ 핵심! 블록 요소처럼 너비/높이/패딩/마진 적용 가능하게 */
-    padding: 10px 17px; /* 상하좌우 여백 */
+    padding: 16px 21px; /* 상하좌우 여백 */
     background-color: #6b27e0; /* 버튼 배경색 (예: 녹색) */
     color: white; /* 글자색 */
     text-align: center; /* 텍스트 가운데 정렬 */
@@ -147,7 +150,7 @@ body {
 
 .btn-area {
     display: flex;
-    gap: 1.8%;
+    gap: 3.8%;
     align-items: center;
     flex-wrap: nowrap; /* 줄바꿈 절대 방지 */
     justify-content: center; /* 버튼 사이 간격을 균등하게 */
@@ -162,8 +165,15 @@ body {
 .btn-area-confirm {
     align-items: center;
     width: 100%;
+    margin: 5px auto 15px;
+}
+
+.btn-area-confirmA {
+    align-items: center;
+    width: 100%;
     margin: 20px auto 15px;
 }
+
 
 .btn-purple {
     width: 19.1%;
@@ -179,6 +189,7 @@ body {
     margin-top: 5px;
     font-size: 14px;
     border: 0;
+    text-align: center;
 }
 
 .btn_leader {
@@ -189,6 +200,7 @@ body {
     padding: 12px;
     font-size: 14px;
     border: 0;
+    text-align: center;
 }
 
 .applicant-info {
@@ -229,6 +241,48 @@ body {
     width: 100%;
     display: flex;
     justify-content: center;
+}
+
+.chkAll {
+    /* margin: 10px 23px; */
+    zoom: 1.8;
+}
+
+.chkSelect {
+    position: relative;
+    top: -7px;
+    zoom: 1.8;
+}
+
+.checkAllfont {
+    min-width: 200px;
+    margin: 0 5px;
+    font-size: large;
+    font-weight: 500;
+    position: relative;
+    top: -7px;
+}
+
+.pd-b20 {
+    padding: 0 0 20px;
+}
+
+.status-processing {
+    background-color: #ff9800 !important;
+    color: white !important;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+/* 🟢 2. 전송이 완료된 후, 선택된 상태를 계속 유지하는 색상 (예: 행집 브랜드 컬러 또는 초록/파랑 계열) */
+.active-status {
+    /* background-color: #2b56f5 !important;
+    color: white !important;
+    font-weight: bold;
+    border-color: #2b56f5 !important; */
+    background-color: white; /* 배경색 더 어둡게 */
+    color: black;
+    border: 1px solid #6b27e0;
 }
 
 @media (max-width: 768px) {
@@ -311,7 +365,6 @@ body {
     .applicant-info {
         width: 100%;
         display: flex;
-        align-items: center;
     }
     .applicant-photo {
         width: 30px;
@@ -333,7 +386,7 @@ body {
     /* download-button 클래스에 버튼 스타일 적용 */
     .statusInfoChange {
         display: inline-block; /* ✨ 핵심! 블록 요소처럼 너비/높이/패딩/마진 적용 가능하게 */
-        padding: 10px 12px; /* 상하좌우 여백 */
+        padding: 16px 21px; /* 상하좌우 여백 */
         background-color: #6b27e0; /* 버튼 배경색 (예: 녹색) */
         color: white; /* 글자색 */
         text-align: center; /* 텍스트 가운데 정렬 */
@@ -346,7 +399,11 @@ body {
     }
 
     .statusInfoChangeConfirm {
-        padding: 14px 18px; /* 상하좌우 여백 */
+        padding: 14px 15px; /* 상하좌우 여백 */
+    }
+
+    .applyConfirmButotn {
+        padding: 16px 21px; /* 상하좌우 여백 */
     }
 
     .date_Select{

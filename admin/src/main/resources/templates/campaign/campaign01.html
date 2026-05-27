@@ -39,7 +39,7 @@
                         <col width="*"></col>
                         <col width="20%"></col>
                         <col width="10%"></col>
-                        <col width="10%"></col>
+                        <col width="12%"></col>
                         <col width="10%"></col>
                         <col width="10%"></col>
                         <col width="10%"></col>
@@ -69,14 +69,14 @@
                                 <td><span th:text="${campaign.placeAddr}"></span></td>
                                 <td><span th:text="${campaign.campaignTitle}"></span></td>
                                 <td><span th:text="${campaign.userNm}"></span></td>
-                                <td><span th:text="${campaign.createdAt}"></span></td>
+                                <td><span th:text="${campaign.eventPeriodStr != null ? #temporals.format(campaign.eventPeriodStr, 'yyyy.MM.dd') : ''}"></span>~<span th:text="${campaign.eventPeriodStr != null ? #temporals.format(campaign.eventPeriodEnd, 'yyyy.MM.dd') : ''}"></span></span></td>
                                 <td><span th:text="${campaign.applicantsNum}"></span></td>
                                 <td><span th:text="${campaign.recruitmentNum}"></span></td>
                                 <td class="pointer">
-                                    <a th:href="|/apply/applyConfirm/${campaign.campaignId}|">명단보기</a>
+                                    <a th:href="|/apply/applyConfirm/${campaign.campaignId}|" target="_blank">명단보기</a>
                                 </td>
                                 <td class="pointer">
-                                    <a th:onclick="|location.href='@{/campaign02(id=${campaign.campaignId})}'|">상세보기</a>
+                                    <a th:href="@{/campaign02(id=${campaign.campaignId})}" target="_blank">상세보기</a>
                                 </td>
                             </tr>
                         </th:block>

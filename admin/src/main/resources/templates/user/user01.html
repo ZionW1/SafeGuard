@@ -68,9 +68,7 @@
                         </tr>
                     </th:block>
                     <th:block th:each="user, stat: ${userList}">
-                        <tr class="pointer" th:onclick="|location.href='@{/user02(id=${user.id}, keyword=${option.keyword}, code=${option.code}, orderCode=${option.orderCode}, page=${page.page})}'|">
-                            <!-- <a th:href="@{/user02(id=${user.id}, page=${paging.page})}"></a> -->
-                            <!-- th:onclick="|location.href='@{/user02(id=${user.id})}'|" -->
+                        <tr class="pointer" th:onclick="|window.open('@{/user02(id=${user.id}, keyword=${option.keyword}, code=${option.code}, orderCode=${option.orderCode}, page=${page.page})}', '_blank')|">
                             <td><span th:text="${user.id}"></span></td>
                             <td><span th:text="${user.userId}"></span></td>
                             <td><span th:text="${user.userNm}"></span></td>
@@ -78,17 +76,8 @@
                             <td><span th:text="${user.referrerId}"></span></td>
                             <td><span th:text="${user.phoneNum}"></span></td>
                             <td><span th:text="${user.pendingPoint}"></span></td>
-                            <!-- <td>
-                                <span th:if="${user.fullAddress != null}" th:text="${user.fullAddress}"></span>
-                                <span th:if="${user.fullAddress == null}">- 주소 없음 -</span>
-                            </td> -->
-
-                            
-                            <!-- <td><span th:text="${userAdressList.fullAddress}"></span></td> -->
                             <td><span th:text="${user.guardTypeNm}"></span></td>
                             <td><span th:text="${user.isStopped}"></span></td>
-                            <!-- <td><button type="button" class="" onclick="leaderUpdate()">인솔자 변경</button></td> -->
-
                         </tr>
                     </th:block>
                 </tbody>

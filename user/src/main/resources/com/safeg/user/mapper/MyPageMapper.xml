@@ -231,14 +231,36 @@
     </select>
 
     <select id="pointFull">
-        SELECT 
-            COALESCE(sum(amount), 0)
+        SELECT
+            IFNULL(
+                SUM(
+                    CASE 
+                        WHEN ph.category = 'LEADER_EXTRA' THEN COALESCE(ph.amount, 0) * COALESCE(uc_count.active_applicants, 0)
+                        ELSE COALESCE(ph.amount, 0)
+                    END
+                ), 0
+            ) AS amount
         FROM 
-            point_history 
+            point_history ph
+        LEFT OUTER JOIN
+            campaign c ON ph.campaign_id = c.CAMPAIGN_ID    
+    	/*  실시간 인원수를 계산하는 서브쿼리 추가 */
+            LEFT OUTER JOIN (
+            SELECT 
+                campaign_id, 
+                COUNT(*) AS active_applicants
+            FROM 
+                user_campaign
+            WHERE 
+                status = '2'
+                AND is_deleted = 'N'
+            GROUP BY 
+                campaign_id
+        ) uc_count ON ph.campaign_id = uc_count.campaign_id
         WHERE 
-            user_id = #{userNo}
+            ph.user_id = #{userNo}
         AND
-            is_deleted= 'N'
+            ph.is_deleted= 'N'
     </select>
     
     <select id="insertPointSettlement">

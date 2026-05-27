@@ -33,6 +33,10 @@
                     th:text="${item.applyDate}"
                     th:selected="${item.applyDate == currentDate}"> </option>
         </select>
+        <div class="pd-b20">
+            <button type="button" class="btn-info" onclick="processAttendance('1')" style="background-color: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">체크 출근</button>
+            <button type="button" class="btn-info" onclick="processAttendance('2')" style="background-color: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">체크 퇴근</button>
+        </div>
     </div>
 
     <div class="section applicant-list-area">
@@ -42,6 +46,9 @@
         <p>현재 사용자 ID: <span th:text="${userId}">guest</span></p>
         <div class="applicant-item3">
             <div class="applicant-info">
+                <label>
+                    <input type="checkbox" class="chkAll" id="checkAll" name="checkAll" onclick="toggleAll(this)"><span class="checkAllfont">전체선택</span>
+                </label>
                 <div class="width100 mrg-b5 applicant-item" th:each="userCampaign, stat: ${userCampaignApply}" th:data-applicant-user-no="${userCampaign.userNo}"
                 th:data-choose-status="${userCampaign.status}">
                     <div class="applyInfo" th:with="index=${stat.index}, currentUserNo=${userCampaign.userNo}, campaignId=${userCampaign.campaignId}, applyDate=${userCampaign.applyDate}">
@@ -49,22 +56,28 @@
                         </div>
                         <div th:unless="${userCampaign.status=='8' || userCampaign.status=='9'}">
                             <div th:if="${userCampaign.filePath == null}">
+                                <input type="checkbox" class="chkSelect" name="Attendance">
                                 <img id="imgFile" src="/images/not-image.png" alt="파일이미지" width="50" height="50" />
                             </div>
-                            <div class="" th:unless="${userCampaign.filePath == null}">
+                            <div class="width100" th:unless="${userCampaign.filePath == null}">
+                                <input type="checkbox" class="chkSelect" name="Attendance">
                                 <img id="imgFile" th:src="|/selectProfile?id=${userCampaign.userNo}&args=profile|" alt="파일이미지" width="50" height="50" />
                             </div>
-                            <div style="margin-left: 55px; margin-top: -60px;">
+                            <div style="margin-left: 95px; margin-top: -60px;">
                                 <span class="userInfofont" th:text="${userCampaign.userNm}"></span>/
                                 <span th:text="${userCampaign.hyphenPhone}">010-0000-0000</span>
                                 <button th:onclick="initStatus([[${index}]], [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]])" th:class="|btn-state mrg5 button_status${stat.index}|">초기화</button>
                             </div>
-                            <div class="btn-area">
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="1" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">출근</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="2" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">퇴근</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
+                            <div class="btn-area-confirm">
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="1" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">출근</a>
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="2" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">퇴근</a>
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="4" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">결근</a>
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a>
+                                
+                                <!-- <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
                                 <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="4" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">결근</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a>
+                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a> -->
                             </div>
                         </div>
                     </div>
@@ -79,20 +92,20 @@
         <p id="noFilesMessage" style="color: #999; display: none;">다운로드할 파일이 없습니다.</p>
     </div>
     <div class="btn-area">
-        <button class="btn-info" onclick="requestAllCampaignFilesDownload('1')">신분증 사진<br>다운로드</button>
-        <button class="btn-info" onclick="requestAllCampaignFilesDownload('2')">이수증 사진<br>다운로드</button>
+        <a class="btn-info" onclick="requestAllCampaignFilesDownload('1')">신분증 사진<br>다운로드</a>
+        <a class="btn-info" onclick="requestAllCampaignFilesDownload('2')">이수증 사진<br>다운로드</a>
         <th:block th:if="${userCampaignApply != null and not #lists.isEmpty(userCampaignApply) and userCampaignApply[0].campaignId != null}">
-            <button class="btn-info" type="button" 
+            <a class="btn-info" type="button" 
                     th:onclick="downloadExcel([[${userCampaignApply[0].campaignId}]], [[${userCampaignApply[0].applyDate}]])">
                 엑셀<br>다운로드
-            </button>
+            </a>
         </th:block>
         <th:block th:unless="${userCampaignApply != null and not #lists.isEmpty(userCampaignApply) and userCampaignApply[0].campaignId != null}">
             <p>엑셀 다운로드 불가 (캠페인 정보 없음)</p>
         </th:block>
     </div>
     <div th:if="${leaderPay != 0}" class="btn-area">
-        <button class="btn_leader" th:if="${leaderUserNo}" th:data-user-no="${leaderUserNo}" th:data-status="${leaderStatus}" th:data-campaign-id="${leaderCampaignId}" th:data-apply-date="${leaderApplyDate}" th:onclick="leaveWork(this)">인솔자 퇴근</button>
+        <a class="btn_leader" th:if="${leaderUserNo}" th:data-user-no="${leaderUserNo}" th:data-status="${leaderStatus}" th:data-campaign-id="${leaderCampaignId}" th:data-apply-date="${leaderApplyDate}" th:onclick="leaveWork(this)">인솔자 퇴근</a>
     </div>
     
 
@@ -123,6 +136,9 @@
 
         });
         async function requestAllCampaignFilesDownload(code) {
+            if (window.event) {
+                window.event.preventDefault();
+            }
             const campaignFileDownloadArea = document.getElementById('campaignFileDownloadArea');
             const campaignIdDown = document.getElementById('campaignIdDown');
             const campaignTitleDown = document.getElementById('campaignTitleDown');
@@ -190,6 +206,9 @@
             }
         }
         function downloadExcel(campaignId, applyDate) {
+            if (window.event) {
+                window.event.preventDefault();
+            }
             if (!campaignId) {
                 console.error("캠페인 ID가 유효하지 않습니다.");
                 alert("다운로드할 캠페인 ID가 올바르지 않습니다.");
@@ -201,6 +220,23 @@
         }
         
         function updateAttendanceStatus(status, userNo, campaignId, applyDate, index) {
+            if (window.event) {
+                window.event.preventDefault();
+            }
+            const clickedButtonIndex = document.querySelector(`.button_status` + index);
+    
+            if (clickedButtonIndex) {
+                if (clickedButtonIndex.getAttribute('data-clicked') === 'true') {
+                    console.log("이미 처리 중인 요청입니다. 연타 금지!");
+                    return; 
+                }
+                
+                // 1. [클릭 직후] 잠금 표식을 남기고, '처리 중'을 뜻하는 클래스를 일시적으로 부여합니다.
+                clickedButtonIndex.setAttribute('data-clicked', 'true');
+                clickedButtonIndex.classList.add('status-processing'); // 🟡 처리 중 색상용 클래스 추가
+                clickedButtonIndex.style.pointerEvents = 'none';
+            }
+            
             const clickedButton = event.target;
             const applicantItems = document.querySelectorAll('.applicant-item');
             const requestBody = {
@@ -216,10 +252,10 @@
                 statusButtons.forEach(button => {
                     const targetStatus = button.dataset.status;
 
-                    if (chooseStatus === targetStatus) {
-                        button.classList.remove('choice_status');
+                    // if (chooseStatus === targetStatus) {
+                    //     button.classList.remove('choice_status');
 
-                    } 
+                    // } 
                 });
             });
             if (!userNo || !campaignId || !applyDate) {
@@ -269,10 +305,38 @@
             .catch(error => {
                 console.error('상태 변경 중 오류 발생:', error);
                 alert('상태 변경에 실패했습니다: ' + error.message);
+            })
+            .finally(() => {
+                // 3. [통신 종료] 성공하든 실패하든 3초 뒤에 연타 잠금과 '처리 중' 디자인을 걷어냅니다.
+                // (성공했다면 2번에서 넣은 'active-status' 색상만 남게 됩니다.)
+                setTimeout(function() {
+                    if (clickedButtonIndex) {
+                        clickedButtonIndex.removeAttribute('data-clicked');
+                        clickedButtonIndex.classList.remove('status-processing'); // 🟡 처리 중 클래스 제거
+                        clickedButtonIndex.style.pointerEvents = 'auto';
+                    }
+                }, 3000);
             });
         }
 
         function leaveWork(buttonElement) {
+            if (window.event) {
+                window.event.preventDefault();
+            }
+
+            const btnLeader = document.querySelector(`.btn_leader`);
+            
+            if (btnLeader) {
+                if (btnLeader.getAttribute('data-clicked') === 'true') {
+                    console.log("이미 처리 중인 요청입니다. 연타 금지!");
+                    return; 
+                }
+                
+                // 1. [클릭 직후] 잠금 표식을 남기고, '처리 중'을 뜻하는 클래스를 일시적으로 부여합니다.
+                btnLeader.setAttribute('data-clicked', 'true');
+                btnLeader.classList.add('status-processing'); // 🟡 처리 중 색상용 클래스 추가
+                btnLeader.style.pointerEvents = 'none';
+            }
             const clickedButton = event.target; // ⭐ 1. 클릭된 버튼을 먼저 변수에 저장! ⭐
             const applicantItems = document.querySelectorAll('.applicant-item');
             const userNo = buttonElement.dataset.userNo; // ⭐ data-user-no 속성 값 읽기 ⭐
@@ -339,6 +403,9 @@
         }
 
         function initStatus(index, userNo, campaignId, applyDate){
+            if (window.event) {
+                window.event.preventDefault();
+            }
             const clickedButton = event.target;
             const url = `/apply/initStatus/${userNo}/${campaignId}/${applyDate}`;
             fetch(url, {
@@ -388,6 +455,108 @@
 
             const campaignId = "${campaignId}";
             location.href = `/apply/userCampaignApply/${campaignId}?date=${selectedDate}`;
+        }
+
+
+        function toggleAll(masterCheckbox) {
+            // class가 chkSelect인 모든 체크박스를 가져옴
+            const checkboxes = document.querySelectorAll('.chkSelect');
+            checkboxes.forEach(cb => {
+                cb.checked = masterCheckbox.checked;
+            });
+        }
+
+        function processAttendance(statusValue) {
+            // 체크박스 중 선택된 것들만 수집
+            const checkedBoxes = document.querySelectorAll('.chkSelect:checked');
+            
+            if (checkedBoxes.length === 0) {
+                alert('선택된 사용자가 없습니다.');
+                return;
+            }
+            
+            const statusText = statusValue === '1' ? '출근' : '퇴근';
+            if (!confirm(`선택한 ${checkedBoxes.length}명을 일괄 [${statusText}] 처리하시겠습니까?`)) {
+                return;
+            }
+
+            // 기존 개별 클릭 시 작동하던 타임리프 바인딩 데이터를 엘리먼트에서 동적으로 읽어옴
+            let successCount = 0;
+            
+            // 비동기 처리가 순차적으로 다 끝난 후 새로고침하기 위해 Promise 배열 생성
+            const promises = Array.from(checkedBoxes).map(cb => {
+                // 체크박스와 가장 가까운 상위 .applyInfo 레이아웃을 찾음
+                const applyInfoDiv = cb.closest('.applyInfo');
+                
+                // onclick 문자열에서 인자값들 추출하는 대신, 안전하게 기존 설계된 구조를 활용하거나 
+                // 기존 함수(updateAttendanceStatus)를 트리거 시켜버립니다.
+                const btn = applyInfoDiv.querySelector(`.btn-area-confirm a[data-status="${statusValue}"]`);
+                
+                if (btn) {
+                    // 기존에 정의된 함수를 체크된 유저 수만큼 강제로 호출시킴
+                    return eval(btn.getAttribute('onclick').replace('this.dataset.status', `'${statusValue}'`));
+                }
+            });
+
+            // 일괄 실행 후 완료 메시지 및 새로고침
+            Promise.all(promises).then(() => {
+                // alert(`선택된 인원의 ${statusText} 처리가 요청되었습니다.`);
+                location.reload();
+            }).catch(err => {
+                console.error("일괄 처리 중 에러 발생: ", err);
+                location.reload();
+            });
+        }
+
+
+        function toggleAll(masterCheckbox) {
+            // class가 chkSelect인 모든 체크박스를 가져옴
+            const checkboxes = document.querySelectorAll('.chkSelect');
+            checkboxes.forEach(cb => {
+                cb.checked = masterCheckbox.checked;
+            });
+        }
+
+        function processAttendance(statusValue) {
+            // 체크박스 중 선택된 것들만 수집
+            const checkedBoxes = document.querySelectorAll('.chkSelect:checked');
+            
+            if (checkedBoxes.length === 0) {
+                alert('선택된 사용자가 없습니다.');
+                return;
+            }
+            
+            const statusText = statusValue === '1' ? '출근' : '퇴근';
+            if (!confirm(`선택한 ${checkedBoxes.length}명을 일괄 [${statusText}] 처리하시겠습니까?`)) {
+                return;
+            }
+
+            // 기존 개별 클릭 시 작동하던 타임리프 바인딩 데이터를 엘리먼트에서 동적으로 읽어옴
+            let successCount = 0;
+            
+            // 비동기 처리가 순차적으로 다 끝난 후 새로고침하기 위해 Promise 배열 생성
+            const promises = Array.from(checkedBoxes).map(cb => {
+                // 체크박스와 가장 가까운 상위 .applyInfo 레이아웃을 찾음
+                const applyInfoDiv = cb.closest('.applyInfo');
+                
+                // onclick 문자열에서 인자값들 추출하는 대신, 안전하게 기존 설계된 구조를 활용하거나 
+                // 기존 함수(updateAttendanceStatus)를 트리거 시켜버립니다.
+                const btn = applyInfoDiv.querySelector(`.btn-area-confirm a[data-status="${statusValue}"]`);
+                
+                if (btn) {
+                    // 기존에 정의된 함수를 체크된 유저 수만큼 강제로 호출시킴
+                    return eval(btn.getAttribute('onclick').replace('this.dataset.status', `'${statusValue}'`));
+                }
+            });
+
+            // 일괄 실행 후 완료 메시지 및 새로고침
+            Promise.all(promises).then(() => {
+                alert(`선택된 인원의 ${statusText} 처리가 요청되었습니다.`);
+                location.reload();
+            }).catch(err => {
+                console.error("일괄 처리 중 에러 발생: ", err);
+                location.reload();
+            });
         }
     </script>
 </body>

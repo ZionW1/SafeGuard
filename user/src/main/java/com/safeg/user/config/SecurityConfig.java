@@ -61,9 +61,11 @@ public class SecurityConfig {
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/mypage", "/mypage/**").hasAnyRole("USER", "LEADER", "ADMIN")
             // 💡 특정 API 주소들을 위쪽에 명시해 주는 것이 정석입니다.
-            .requestMatchers("/review05", "/img/**").permitAll() 
+            .requestMatchers("/review05", "/img/**").permitAll()
             // 💡 맨 마지막에 전체 허용을 둡니다.
-            .requestMatchers("/**").permitAll() 
+            .requestMatchers("/**").permitAll()
+            // 💡 리뷰 등록 페이지 주소는 로그인(인증)된 유저만 접근 가능하도록 명시!
+            .requestMatchers("/review03/**").authenticated()
             .anyRequest().permitAll()
         );
 
@@ -82,7 +84,7 @@ public class SecurityConfig {
             .successHandler(loginSuccessHandler) // 로그인 성공 처리자 설정
             // .failureUrl("/login?error") // 로그인 실패 경로
             .failureHandler(loginFailureHandler) // 로그인 실패 처리자 설정
-            );
+        );
 
         // 사용자 정의 인증
         http.userDetailsService(userDetailServiceImpl);

@@ -17,49 +17,51 @@
             function securityTypeChange(typeCode) {
                 const wageRadio = document.getElementById("wageRadio");
                 const hourlyPay = document.getElementById("hourlyPay");
+                const hourlyPayInput = document.getElementById("hourlyPayInput");
                 const dailyPay = document.getElementById("dailyPay");
-                const workHours = document.getElementById("workHours");
+                const dailyPayInput = document.getElementById("dailyPayInput");
+                const workHours = document.getElementById("workHour"); // HTML에 id="workHour"로 되어있어서 수정
                 const timeInput = document.getElementById("timeInput");
 
-                const selectedWage = document.querySelector('input[name="wage"]:checked').value;
                 console.log("선택된 경호/진행/수행 구분: " + typeCode);
+
                 if (typeCode === "02") {
                     console.log("02 선택됨 -> 보이기");
-                    wageRadio.classList.remove("hidden"); // hidden 클래스 제거 (화면에 보임)
+                    wageRadio.classList.remove("hidden"); 
+
+                    // 이벤트 리스너 중복 등록 방지를 위해 기존 이벤트를 한 번 제거하거나 새로 바인딩
                     document.querySelectorAll('input[name="wage"]').forEach((radio) => {
-                        radio.addEventListener('change', function() {
-                            // 현재 선택된 라디오 버튼의 value 출력
-                            if (this.value === "01") {
+                        radio.onchange = function() {
+                            if (this.value === "01") { // 📅 일급 선택 시
                                 dailyPay.classList.remove("hidden");
                                 hourlyPay.classList.add("hidden");
                                 timeInput.classList.add("hidden");
-                                workHours.required = false;               // 필수 해제
-                            } else if (this.value === "02") {
+                                
+                                // 💡 순수 JS 문법으로 정확하게 제어
+                                dailyPayInput.setAttribute("name", "campaignPay"); // 내 name은 살리고
+                                hourlyPayInput.removeAttribute("name");            // 상대 name은 지우고
+                                
+                                workHours.required = false;               
+                            } else if (this.value === "02") { // ⏰ 시급 선택 시
                                 dailyPay.classList.add("hidden");
                                 hourlyPay.classList.remove("hidden");
                                 timeInput.classList.remove("hidden");
-                                workHours.required = true;                // 필수 입력으로 변경
+                                
+                                // 💡 순수 JS 문법으로 정확하게 제어
+                                hourlyPayInput.setAttribute("name", "campaignPay"); // 내 name은 살리고
+                                dailyPayInput.removeAttribute("name");             // 상대 name은 지우고
+                                
+                                workHours.required = true;                
                                 workHours.value = "";
                             }
-                        });
+                        };
                     });
-                    // if(selectedWage == '01'){
-                    //     console.log("a " + selectedWage)
-                    //     dailyPay.classList.remove("hidden");
-                    //     hourlyPay.classList.add("hidden");
-                    // } else {
-                    //     console.log("b " + selectedWage)
-                    //     dailyPay.classList.add("hidden");
-                    //     hourlyPay.classList.remove("hidden"); 
-                    // }
                 } else {
                     console.log("다른 값 선택됨 -> 숨기기");
-                    wageRadio.classList.add("hidden");    // hidden 클래스 추가 (화면에서 숨김)
+                    wageRadio.classList.add("hidden");    
                 }
                 
                 document.getElementById("typeCode").value = typeCode;
-                
-
             }
 
             function inputLeaderPhoneNumber(idx) {
@@ -162,24 +164,24 @@
                         <label for="">시급 일급</label>
                         <div class="radio-group"> 
                             <label class="radio-label">
-                                <input type="radio" name="wage" id="dailyWage" value="01" checked>일급
+                                <input type="radio" name="wageChk" id="dailyWage" value="01" checked>일급
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="wage" id="hourlyWage" value="02">시급
+                                <input type="radio" name="wageChk" id="hourlyWage" value="02">시급
                             </label>
                         </div>
                     </div>
                     <div class="form-group" id="dailyPay">
                         <label for="campaignPay">캠페인 급여</label>
-                        <input type="text" id="campaignPay" name="campaignPay" />
+                        <input type="text" id="dailyPayInput" name="campaignPay" />
                     </div>
                     <div class="form-group hidden" id="hourlyPay">
                         <label for="campaignPay">캠페인 시급여</label>
-                        <input type="text" id="campaignPay" name="campaignPay" />
+                        <input type="text" id="hourlyPayInput"/>
                     </div>
                     <div class="form-group hidden" id="timeInput">
-                        <label for="WorkHours">하루 근무 시간 (시간)</label>
-                        <input type="number" name="workHours" id="workHours" placeholder="예: 8" min="1">
+                        <label for="WorkHour">하루 근무 시간 (시간)</label>
+                        <input type="number" name="workHour" id="workHour" placeholder="예: 8" min="1">
                     </div>
                 </div>
                 <div class="form-group">

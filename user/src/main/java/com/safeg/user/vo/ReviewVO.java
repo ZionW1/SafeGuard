@@ -38,4 +38,5 @@ public class ReviewVO {
     private String id;
     private String role;
     private String guardType;
+    private String typeNm;
 }

@@ -47,11 +47,12 @@
     <select id="campaignFavorite" resultType="CampaignVO">
         <![CDATA[
         SELECT 
-            c.campaign_id, 
-            c.campaign_Title, 
-            c.recruitment_Num, 
-            c.applicants_Num, 
-            f.saved_name, 
+            c.campaign_id,
+            c.campaign_Title,
+            c.recruitment_Num,
+            c.applicants_Num,
+            c.type_code,
+            f.saved_name,
             f.file_path,
             (CASE
                 WHEN type_code = '01' THEN '경호'
@@ -85,10 +86,11 @@
     <select id="campaignWorkable" resultType="CampaignVO">
         <![CDATA[
         SELECT 
-            c.campaign_id, 
-            c.campaign_Title, 
-            c.recruitment_Num, 
-            c.applicants_Num, 
+            c.campaign_id,
+            c.campaign_Title,
+            c.recruitment_Num,
+            c.applicants_Num,
+            c.type_code,
             f.saved_name, 
             f.file_path,
             (CASE
@@ -121,11 +123,12 @@
     <select id="campaignNew" resultType="CampaignVO">
         <![CDATA[
         SELECT 
-            c.campaign_id, 
-            c.campaign_Title, 
-            c.recruitment_Num, 
-            c.applicants_Num, 
-            f.saved_name, 
+            c.campaign_id,
+            c.campaign_Title,
+            c.recruitment_Num,
+            c.applicants_Num,
+            c.type_code,
+            f.saved_name,
             f.file_path,
             (CASE
                 WHEN type_code = '01' THEN '경호'

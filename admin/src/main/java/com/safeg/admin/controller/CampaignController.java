@@ -3,12 +3,16 @@ package com.safeg.admin.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -137,28 +141,49 @@ public class CampaignController {
     }
 
     // 수정 처리
-    @PostMapping("/campaign05")
-    public String campaign05(CampaignVO campaign, RedirectAttributes reAttr) throws Exception{
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUser customUser = (CustomUser) authentication.getPrincipal();
-        String username = customUser.getUsername(); // 로그인 아이디 (userId)
-        log.info("수정 campaign05.toString : " + campaign.toString());
+    // @PostMapping("/campaign05")
+    // public String campaign05(CampaignVO campaign, RedirectAttributes reAttr) throws Exception{
+    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //     CustomUser customUser = (CustomUser) authentication.getPrincipal();
+    //     String username = customUser.getUsername(); // 로그인 아이디 (userId)
+    //     log.info("수정 campaign05.toString : " + campaign.toString());
 
-        try {
-            int result = campaignsService.campaignUpdate(campaign);
-            if(result > 0){
-                reAttr.addFlashAttribute("message", "수정이 완료되었습니다.");
-                return "redirect:/campaign01";
-            } else {
-                // 업데이트된 행이 0개인 경우
-                return "redirect:/campaign02?error&id=" + campaign.getCampaignId();
-            }
-        } catch (Exception e) {
-            log.error("캠페인 수정 중 오류 발생: ", e);
-            // 에러 메시지를 가지고 안전한 페이지로 리다이렉트
-            reAttr.addFlashAttribute("errorMessage", "시스템 오류가 발생했습니다.");
-            return "redirect:/campaign02?id=" + campaign.getCampaignId();
-        }
+    //     try {
+    //         int result = campaignsService.campaignUpdate(campaign);
+    //         if(result > 0){
+    //             reAttr.addFlashAttribute("message", "수정이 완료되었습니다.");
+    //             return "redirect:/campaign01";
+    //         } else {
+    //             // 업데이트된 행이 0개인 경우
+    //             return "redirect:/campaign02?error&id=" + campaign.getCampaignId();
+    //         }
+    //     } catch (Exception e) {
+    //         log.error("캠페인 수정 중 오류 발생: ", e);
+    //         // 에러 메시지를 가지고 안전한 페이지로 리다이렉트
+    //         reAttr.addFlashAttribute("errorMessage", "시스템 오류가 발생했습니다.");
+    //         return "redirect:/campaign02?id=" + campaign.getCampaignId();
+    //     }
+    // }
+    @PostMapping("/campaign05")
+    public ResponseEntity<String> campaign05(@ModelAttribute CampaignVO campaignVO) throws Exception {
+        
+        // 1. 수정 서비스 로직 수행
+        campaignsService.campaignUpdate(campaignVO);
+        
+        // 2. 부모 창을 새로고침하고 현재 팝업창을 닫는 스크립트 작성
+        String script = "<script>" +
+                        "   alert('수정이 완료되었습니다.');" +
+                        "   if (window.opener) { " +
+                        "       window.opener.location.reload(); " + // 부모 창(리스트 화면) 새로고침
+                        "   }" +
+                        "   window.close();" +                       // 현재 팝업창 닫기
+                        "</script>";
+        
+        // 3. 브라우저가 스크립트로 인식할 수 있도록 Content-Type 설정 후 응답
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "text/html; charset=UTF-8");
+        
+        return new ResponseEntity<>(script, headers, HttpStatus.OK);
     }
 
     // 삭제 처리

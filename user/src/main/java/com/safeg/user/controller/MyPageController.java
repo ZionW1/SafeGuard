@@ -691,7 +691,7 @@ public class MyPageController {
     @GetMapping("/pointList")
     public String pointList(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception {
         // 1. 사용자 정보 확인 (SecurityContext 직접 접근 대신 매개변수 활용 권장)
-        if (authUser == null) return "redirect:/login"; 
+        if (authUser == null) return "redirect:/user01"; 
         
         Long userNo = authUser.getId();
         String username = authUser.getUsername();
@@ -713,13 +713,15 @@ public class MyPageController {
         List<PointHistoryVO> referrerList = myPageService.referrerList(userNo, targetMonth);
         List<PointHistoryVO> attendList = myPageService.attendList(userNo, targetMonth);
         List<PointHistoryVO> workList = myPageService.workList(userNo, targetMonth);
-    
+        List<PointHistoryVO> overPayList = myPageService.overPayList(userNo, targetMonth);
+
         // 금액 문자열을 안전하게 정수로 변환 (null이면 0)
         int rAmt = parseAmount(myPageService.referrerAmount(userNo, targetMonth));
         int aAmt = parseAmount(myPageService.attendAmount(userNo, targetMonth));
         int wAmt = parseAmount(myPageService.workAmount(userNo, targetMonth));
         int lAmt = 0; // 리더 금액 초기화
-    
+        int opAmt = parseAmount(myPageService.overPayAmount(userNo, targetMonth));
+        
         // 4. 권한(authId)에 따른 추가 로직 처리
         String userAuth = myPageService.getUserAuth(userNo);
         if (userAuth != null && !userAuth.isEmpty()) {
@@ -742,10 +744,14 @@ public class MyPageController {
         model.addAttribute("referrerList", referrerList != null ? referrerList : Collections.emptyList());
         model.addAttribute("attendList", attendList != null ? attendList : Collections.emptyList());
         model.addAttribute("workList", workList != null ? workList : Collections.emptyList());
-    
+        model.addAttribute("overPayList", overPayList != null ? overPayList : Collections.emptyList());
+
         model.addAttribute("referrerAmount", rAmt);
         model.addAttribute("attendAmount", aAmt);
         model.addAttribute("workAmount", wAmt);
+        model.addAttribute("overPayAmount", opAmt);
+
+        
         
         // 최종 합계 계산 (리더 금액 포함)
         model.addAttribute("totalPoint", rAmt + wAmt + lAmt);

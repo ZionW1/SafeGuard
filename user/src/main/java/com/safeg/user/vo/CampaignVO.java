@@ -80,4 +80,6 @@ public class CampaignVO {
     //private List<CampaignFilesVO> campaignFilesList; //첨부 파일 정보
     private String filePath; //varchar(500) not null comment '파일 저장 경로',
     private String savedName; //varchar(255) not null comment '저장 파일
+    
+    private boolean showPoint;
 }

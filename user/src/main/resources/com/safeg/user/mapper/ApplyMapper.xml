@@ -66,20 +66,29 @@
             result_date,
             apply_date,
             place_addr,
+            r.campaign_id as review_campaign_id,
             file_path
-        FROM user_campaign uc 
+        FROM 
+            user_campaign uc 
         LEFT OUTER JOIN user u 
-        ON uc.user_id = u.user_id
+            ON uc.user_id = u.user_id
         LEFT OUTER JOIN campaign c 
         ON uc.campaign_id = c.campaign_id
         LEFT OUTER JOIN files f
         ON uc.user_no = f.target_id
-        AND f.target_type='profile'
-        AND f.is_deleted = 'N'
-        WHERE uc.campaign_id=#{id}
+        AND 
+            f.target_type='profile'
+        AND 
+            f.is_deleted = 'N'
+        LEFT OUTER JOIN review r
+        ON uc.campaign_id = r.campaign_id
+        WHERE 
+            uc.campaign_id=#{id}
         <!-- AND uc.apply_date = #{applyDate} -->
-        AND DATE(apply_date) = #{applyDate}
-        AND uc.is_deleted = 'N'
+        AND 
+            DATE(apply_date) = #{applyDate}
+        AND 
+            uc.is_deleted = 'N'
     </select>
 
     <select id="getApplyDate" resultType="UserCampaignVO">
@@ -226,6 +235,7 @@
             amount,
             point_type,
             category,
+            reason_info,
             source_id,
             mission_date,
             settlement_status,
@@ -236,6 +246,7 @@
             #{amount},
             'EARN',
             #{category},
+            #{reasonInfo},
             #{sourceId},
             #{missionDate},
             'READY',

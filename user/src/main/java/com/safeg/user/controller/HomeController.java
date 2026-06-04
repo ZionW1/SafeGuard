@@ -75,7 +75,9 @@ public class HomeController {
     // public Stirng home(Authentication authentication, Model model) throws Exception{
     // public String home(@AuthenticationPrincipal User authUser, Model model) throws Exception{
     public String home(@AuthenticationPrincipal CustomUser authUser, Model model) throws Exception{
-        log.info(":::::::::: 메인 화면 :::::::::: + " + authUser);
+        // log.info(":::::::::: 메인 화면 :::::::::: + " + authUser);
+        // log.info(":::::::::: 메인 화면 :::::::::: + " + authUser.getGuardType());
+
         List<BannerVO> bannerImage = mainService.bannerImage();
         List<CampaignVO> campaignFavorite = mainService.campaignFavorite();
         List<CampaignVO> campaignWorkable = mainService.campaignWorkable();
@@ -112,6 +114,25 @@ public class HomeController {
         if(authUser != null){
             UserVO user = authUser.getUserVo();
             model.addAttribute("user", user);
+            // 💡 UserVO가 아니라 canShowPoint 메서드를 가지고 있는 authUser(CustomUser)를 직접 담아줍니다.
+            model.addAttribute("authUser", authUser); 
+
+            // model.addAttribute("guardType", authUser.getGuardType());
+            // String guardType = authUser.getGuardType();
+            // for (CampaignVO campaign : campaignFavorite) {
+            //     String typeCode = campaign.getTypeCode();
+            //     boolean showPoint = false;
+                
+            //     if (("00".equals(guardType) || "01".equals(guardType)) && "02".equals(typeCode)) {
+            //         showPoint = true;
+            //     } else if ("02".equals(guardType) && ("01".equals(typeCode) || "02".equals(typeCode))) {
+            //         showPoint = true;
+            //     } else if (("03".equals(guardType) || "04".equals(guardType)) && ("01".equals(typeCode) || "02".equals(typeCode) || "03".equals(typeCode))) {
+            //         showPoint = true;
+            //     }
+                
+            //     campaign.setShowPoint(showPoint); // VO에 boolean 필드를 추가해 저장
+            // }
         }
         
         return "index";

@@ -77,6 +77,13 @@ body {
     flex-direction: column;
     align-items: flex-start;
 }
+
+.applicant-item-title {
+    font-size: 2.3em;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
 .applicant-info {
     display: flex;
     align-items: center;
@@ -100,6 +107,7 @@ body {
 
 /* download-button 클래스에 버튼 스타일 적용 */
 .statusInfoChange {
+    width: 22.566%;
     display: inline-block; /* ✨ 핵심! 블록 요소처럼 너비/높이/패딩/마진 적용 가능하게 */
     padding: 16px 21px; /* 상하좌우 여백 */
     background-color: #6b27e0; /* 버튼 배경색 (예: 녹색) */
@@ -166,12 +174,24 @@ body {
     align-items: center;
     width: 100%;
     margin: 5px auto 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-area-significant {
+    align-items: center;
+    width: 100%;
+    margin: 5px auto 15px;
 }
 
 .btn-area-confirmA {
     align-items: center;
     width: 100%;
     margin: 20px auto 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
 
@@ -184,12 +204,28 @@ body {
     background-color: rgb(101, 35, 245);
     color: #fff;
     font-weight: 700;
-    width: 49%;
+    width: 100%;
+    /* width: 49.8883686%; */
     padding: 12px;
     margin-top: 5px;
     font-size: 14px;
     border: 0;
     text-align: center;
+}
+
+.review_btn {
+    display: block;
+    border-radius: 5px;
+    background-color: rgb(101, 35, 245);
+    color: #fff;
+    font-weight: 700;
+
+    margin-bottom: 5px;
+    padding: 12px;
+    font-size: 14px;
+    border: 0;
+    text-align: center;
+    text-decoration: none;
 }
 
 .btn_leader {
@@ -201,6 +237,7 @@ body {
     font-size: 14px;
     border: 0;
     text-align: center;
+    text-decoration: none;
 }
 
 .applicant-info {
@@ -264,7 +301,10 @@ body {
 }
 
 .pd-b20 {
-    padding: 0 0 20px;
+    padding: 0px 0 20px;
+    display: flex; 
+    gap: 10px; 
+    width: 100%;
 }
 
 .status-processing {
@@ -283,6 +323,26 @@ body {
     background-color: white; /* 배경색 더 어둡게 */
     color: black;
     border: 1px solid #6b27e0;
+}
+
+.input-significant {
+    width: 100%;
+    padding: 15px 16px;
+    border: 1px solid #ff6c26;
+    margin: 0 0 10px 0;
+    border-radius: 6px;
+    background: transparent;
+    color: black;
+    font-size: 1rem;
+    outline-offset: 2px;
+    box-sizing: border-box;
+}
+
+.significant_btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {

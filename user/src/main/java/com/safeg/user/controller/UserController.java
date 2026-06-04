@@ -35,6 +35,7 @@ import com.safeg.user.vo.Users;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import com.safeg.user.service.UserService;
@@ -73,24 +74,30 @@ public class UserController {
     * @return
     */
     @GetMapping("/user01")
-    public String login(@CookieValue(value="remember-id", required = false) Cookie cookie, Model model ) {
-        // @CookieValue(value="쿠키이름", required = 필수여부)
-        // - required=true (default)  : 쿠키를 필수로 가져와서 없으면 에러
-        // - required=false           : 쿠키 필수 ❌ ➡ 쿠키가 없으면 null, 에러❌
-        log.info(":::::::::: 로그인 페이지 :::::::::: " + cookie);
+public String login(HttpServletRequest request, 
+                    @RequestParam(value = "target", required = false) String target, // 💡 주소창에서 target 받아오기
+                    @CookieValue(value="remember-id", required = false) Cookie cookie, 
+                    Model model ) {
+    
+    log.info(":::::::::: 로그인 페이지 :::::::::: " + cookie);
 
-        String username = "";
-        boolean rememberId = false;
-        if( cookie != null ) {
-            log.info("CookieName : " + cookie.getName());
-            log.info("CookieValue : " + cookie.getValue());
-            username = cookie.getValue();
-            rememberId = true;
-        }
-        model.addAttribute("username", username);
-        model.addAttribute("rememberId", rememberId);
-        return "user/user01";
+    String username = "";
+    boolean rememberId = false;
+    if( cookie != null ) {
+        username = cookie.getValue();
+        rememberId = true;
     }
+
+    // 💡 [핵심] 주소창에 target(?target=/review03/54)이 실려왔다면 세션 대기실에 넣어둡니다.
+    if (target != null && !target.isEmpty()) {
+        request.getSession().setAttribute("prevPage", target);
+        log.info("🎯 로그인 완료 후 갈 목적지 세션 저장: {}", target);
+    }
+
+    model.addAttribute("username", username);
+    model.addAttribute("rememberId", rememberId);
+    return "user/user01"; // 로그인 화면 열기
+}
 
     @GetMapping("/user02")
     public String join(Model model) {

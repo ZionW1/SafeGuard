@@ -13,4 +13,8 @@ public interface ReviewService {
     public int reviewInsert(ReviewVO reviewVO) throws Exception;
 
 	public ReviewVO reviewInfo(Long campaignId) throws Exception;
+
+    public int reviewUpdate(ReviewVO reviewVO) throws Exception;
+
+    public String reviewSelectConfirm(String campaignId) throws Exception;
 }

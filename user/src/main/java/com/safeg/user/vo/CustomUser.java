@@ -19,11 +19,13 @@ public class CustomUser implements UserDetails {
     private Long id;
     private String userId;
     private String userNm;
+    private String guardType;
     public CustomUser(UserVO userVo) {
         this.userVo = userVo;
         this.id = userVo.getId(); // ⭐ userVo에서 id 값을 받아 CustomUser의 id 초기화 ⭐
         this.userId = userVo.getUserId(); // ⭐ userVo에서 id 값을 받아 CustomUser의 id 초기화 ⭐
         this.userNm = userVo.getUserNm(); // ⭐ 생성자에서 값 초기화
+        this.guardType = userVo.getGuardType(); // ⭐ 생성자에서 값 초기화
     }
 
     // ⭐ id 값을 가져올 게터 메서드 추가 ⭐
@@ -87,8 +89,15 @@ public class CustomUser implements UserDetails {
             "id=" + id +
             ", userId='" + getUsername() + '\'' +
             ", userName='" + getUserNm() + '\'' +
+            ", userGuardType='" + getGuardType() + '\'' +
             ", authorities=" + getAuthorities() +
             '}';
+    }
+
+    @ToString.Include
+    public String getGuardType() {
+        guardType = userVo.getGuardType();
+        return userVo.getGuardType();
     }
 
     @ToString.Include
@@ -129,5 +138,28 @@ public class CustomUser implements UserDetails {
     @ToString.Include
     public String getUserNm() {
         return userVo.getUserNm();
+    }
+
+    // 💡 자바 코드로 조건을 깔끔하게 판별하는 메서드 추가
+    public boolean canShowPoint(String typeCode) {
+        System.out.println(":::::::::: canShowPoint() ::::::::::");
+        System.out.println("- guardType : " + this.guardType);
+        System.out.println("- typeCode : " + typeCode);
+        if (this.guardType == null || typeCode == null) {
+            return false;
+        }
+
+        switch (this.guardType) {
+            case "00":
+            case "01":
+                return "02".equals(typeCode);
+            case "02":
+                return "01".equals(typeCode) || "02".equals(typeCode);
+            case "03":
+            case "04":
+                return "01".equals(typeCode) || "02".equals(typeCode) || "03".equals(typeCode);
+            default:
+                return false;
+        }
     }
 }

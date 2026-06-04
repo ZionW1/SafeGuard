@@ -8,18 +8,29 @@
     <select id="reviewList" resultType="ReviewVO">
         <![CDATA[
         SELECT 
-            review_id,
-            campaign_id,
-            user_id,
-            title,
-            content,
-            thumbnail_name,
-            created_at,
-            updated_at
+            r.review_id,
+            r.campaign_id,
+            r.user_id,
+            r.title,
+            r.content,
+            r.thumbnail_name,
+            (CASE
+                WHEN c.type_code = '01' THEN '경호'
+                WHEN c.type_code = '02' THEN '진행'
+                WHEN c.type_code = '03' THEN '수행'
+                ELSE ''
+            END) as type_Nm,
+            r.created_at,
+            r.updated_at
         FROM 
-            review
+            review r
+        LEFT OUTER JOIN
+            campaign c
+        ON 
+            r.campaign_id = c.campaign_id
         ORDER BY 
-            REVIEW_ID
+            review_id desc
+        LIMIT 30
         ]]>
     </select>
 
@@ -52,7 +63,7 @@
             campaign_id,
             user_id,
             title,
-            content,
+            <!-- content, -->
             address,
             thumbnail_name,
             created_at,
@@ -62,7 +73,7 @@
             #{campaignId},
             #{userId},
             #{title},
-            #{content},
+            <!-- #{content}, -->
             #{address},
             #{thumbnailName},
             now(),
@@ -93,5 +104,16 @@
             c.LEADER_CODE = u.id
         WHERE 
             CAMPAIGN_ID = #{campaignId}
+    </select>
+
+    <select id="reviewSelectConfirm" resultType="String">
+        <![CDATA[
+        SELECT 
+            r.review_id
+        FROM 
+            review r
+        Where 
+            campaign_id = #{campaignId}
+        ]]>
     </select>
 </mapper>

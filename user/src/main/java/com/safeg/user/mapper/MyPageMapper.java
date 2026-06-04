@@ -54,6 +54,8 @@ public interface MyPageMapper {
 
     public List<PointHistoryVO> workList(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
 
+    public List<PointHistoryVO> overPayList(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
+
     public String referrerAmount(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
 
     public String attendAmount(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
@@ -62,6 +64,9 @@ public interface MyPageMapper {
 
     public String workAmount(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
 
+    public String overPayAmount(@Param("userNo") Long userNo, @Param("targetMonth") String targetMonth) throws Exception;
+
     public String getUserAuth(Long userNo) throws Exception;
+
 
 }

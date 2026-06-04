@@ -36,6 +36,17 @@
                     th:text="${item.applyDate}"
                     th:selected="${item.applyDate == currentDate}"> </option>
         </select>
+        <div th:if="${reviewId == null}">
+            <!-- <a class="review_btn" th:href="@{/review03/{id}(id=${campaignId})}">리뷰 등록</a> -->
+            <a th:if="${#authorization.expression('isAuthenticated()')}" 
+            class="review_btn" 
+            th:href="@{/review03/{id}(id=${campaignId})}">리뷰 등록</a>
+
+            <a th:if="${!#authorization.expression('isAuthenticated()')}" 
+            class="review_btn" 
+            th:href="@{/user01(target='/review03/' + ${campaignId})}">리뷰 등록</a>
+            <!-- <a th:href="@{/user01(target=${#request.requestURI})}">로그인하기</a> -->
+        </div>
         <div class="pd-b20">
             <button type="button" class="btn-info" onclick="processAttendance('1')" style="background-color: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">체크 출근</button>
             <button type="button" class="btn-info" onclick="processAttendance('2')" style="background-color: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">체크 퇴근</button>
@@ -68,15 +79,29 @@
                                 <img id="imgFile" th:src="|/selectProfile?id=${userCampaign.userNo}&args=profile|" alt="파일이미지" width="50" height="50" />
                             </div>
                             <div style="margin-left: 95px; margin-top: -60px;">
-                                <span class="userInfofont" th:text="${userCampaign.userNm}"></span>/<span class="userInfofont" th:text="${userCampaign.phoneNum}"></span><button th:onclick="rosterRemove([[${index}]], [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]])" th:class="|btn-state mrg5 button_status${stat.index}|">명단 삭제</button>
+                                <span class="userInfofont" th:text="${userCampaign.userNm}"></span>/
+                                <!-- <span class="userInfofont" th:text="${userCampaign.phoneNum}"></span> -->
+                                <span th:text="${userCampaign.hyphenPhone}">010-0000-0000</span>
+                                <button th:onclick="rosterRemove([[${index}]], [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]])" th:class="|btn-state mrg5 button_status${stat.index}|">명단 삭제</button>
                             </div>
                             <div class="btn-area-confirmA">
                                 <a th:class="|statusInfoChange applyConfirmButotn button_status${stat.index}|" href="#" data-status="1" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">출근</a>
                                 <a th:class="|statusInfoChange applyConfirmButotn button_status${stat.index}|" href="#" data-status="2" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">퇴근</a>
-                                <a th:class="|statusInfoChange applyConfirmButotn button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
+                                <!-- <a th:class="|statusInfoChange applyConfirmButotn button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
                                 <a th:class="|statusInfoChange applyConfirmButotn button_status${stat.index}|" href="#" data-status="4" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">결근</a>
-                                <a th:class="|statusInfoChange applyConfirmButotn button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a>
-                                <!-- <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" th:href="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${currentUserNo}, campaignId=${campaignId}, applyDate=${applyDate})}" data-status="2">특이사항</a> -->
+                                <a th:class="|statusInfoChange applyConfirmButotn button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a> -->
+                                <!-- <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" th:href="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${currentUserNo}, campaignId=${campaignId}, applyDate=${applyDate})}" data-status="">특이사항</a> -->
+                                <a th:class="|statusInfoChange applyConfirmButotn button_status${stat.index}|" 
+                                    href="#" 
+                                    th:data-url="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${currentUserNo}, campaignId=${campaignId}, applyDate=${applyDate})}" 
+                                    onclick="openSignificantModal(this.dataset.url); return false;">특이사항</a>
+
+                                <div id="significantModal" onclick="closeModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+                                    <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
+                                        <span onclick="closeSignificantModal();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
+                                        <div id="modalContent"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -107,6 +132,7 @@
     </div>
     <div th:if="${leaderPay != 0}" class="btn-area">
         <a class="btn_leader" th:if="${leaderUserNo}" th:data-user-no="${leaderUserNo}" th:data-status="${leaderStatus}" th:data-campaign-id="${leaderCampaignId}" th:data-apply-date="${leaderApplyDate}" th:onclick="leaveWork(this)">인솔자 퇴근</a>
+        <a th:class="|btn_leader|" th:href="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${leaderUserNo}, campaignId=${campaignId}, applyDate=${leaderApplyDate})}" data-status="">인솔자 특이사항</a>
     </div>
 
     <script th:inline="javascript">
@@ -134,6 +160,39 @@
             
 
         });
+
+        function openSignificantModal(url) {
+            // 1. 서버에 해당 url의 HTML 내용을 요청
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error('네트워크 응답 실패');
+                    return response.text(); // 페이지를 텍스트(HTML)로 읽어옴
+                })
+                .then(html => {
+                    // 2. 모달 컨텐츠 영역에 서버에서 가져온 HTML 주입
+                    document.getElementById('modalContent').innerHTML = html;
+                    // 3. 모달 display를 flex로 바꿔서 화면에 노출
+                    document.getElementById('significantModal').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('모달 로드 중 에러 발생:', error);
+                    alert('페이지를 불러오는 중 오류가 발생했습니다.');
+                });
+        }
+
+        function closeSignificantModal() {
+            // 모달 닫기 및 컨텐츠 초기화
+            document.getElementById('significantModal').style.display = 'none';
+            document.getElementById('modalContent').innerHTML = '';
+        }
+
+        function closeModal(event) {
+            // 이벤트가 발생한 지점(event.target)이 'significantModal'(어두운 배경)일 때만 닫기 실행
+            if (event.target === document.getElementById('significantModal')) {
+                closeSignificantModal();
+            }
+        }
+
         async function imgDownload(code) {
             if (window.event) {
                 window.event.preventDefault();
@@ -532,6 +591,114 @@
             }).catch(err => {
                 console.error("일괄 처리 중 에러 발생: ", err);
                 location.reload();
+            });
+        }
+
+        function updateSignificantStatus(status, userNo, campaignId, applyDate) {
+            console.log("updateAttendanceStatus called with:", {status, userNo, campaignId, applyDate});
+            const clickedButton = event.target;
+            const applicantItems = document.querySelectorAll('.applicant-item');
+            const requestBody = {
+                userNo: userNo,
+                campaignId: campaignId,
+                applyDate: applyDate,
+                status: status
+            };
+            
+            if (!userNo || !campaignId || !applyDate) {
+                console.error("상태 또는 사용자 정보가 올바르지 않습니다.", {status: status, userNo: userNo});
+                alert("상태 변경에 필요한 정보가 부족합니다. 다시 시도해 주세요.");
+                return;
+            }
+            const url = `/apply/attendance/updateStatus`; 
+
+            fetch(url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) { 
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || '상태 변경 중 알 수 없는 오류가 발생했습니다.');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(status == "0"){
+                    if("${status}" == 2){
+                        alert("출근 or 지각 터치 후 퇴근 버튼 터치 하세요.");
+                        return ;
+                    }
+                } else{
+                    if(status == "1" || status == "3"){
+                        if("${status}" == 2){
+                            alert("출결 확인");
+                            return ;
+                        }
+                    }
+                }
+                alert(data.message);
+
+                const buttons = document.querySelectorAll(`a[th-onclick$=", [[${userNo}]])"]`);
+                console.log(buttons.forEach(btn => console.log(btn)));
+                buttons.forEach(btn => btn.classList.remove('active-status'));
+                clickedButton.classList.add('active-status');
+            })
+            .catch(error => {
+                console.error('상태 변경 중 오류 발생:', error);
+                alert('상태 변경에 실패했습니다: ' + error.message);
+            });
+        }
+
+        function significantInsert() {
+            const campaignId = document.getElementById('campaignId').dataset.campaignId;
+            const userNo = document.getElementById('userNo').dataset.campaignTitle;
+            const applyDate = document.getElementById('applyDate').dataset.campaignId;
+            const amountInput = document.querySelector('.input-significant');
+            const amount = amountInput.value.trim();
+
+            console.log("significantInsert called with:", {campaignId, userNo, applyDate, amount});
+            if (!amount) {
+                alert('특이사항 내용을 입력해 주세요.');
+                return;
+            }
+
+            const requestBody = {
+                campaignId: campaignId,
+                userId: userNo,
+                missionDate: applyDate,
+                amount: amount,
+                category: "OVERPAY"
+            };
+
+            fetch('/apply/significantInsert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) { 
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || '특이사항 등록 중 알 수 없는 오류가 발생했습니다.');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                amountInput.value = '';
+            })
+            .catch(error => {
+                console.error('특이사항 등록 중 오류 발생:', error);
+                alert('특이사항 등록에 실패했습니다: ' + error.message);
             });
         }
     </script>

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,11 +22,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.safeg.user.service.ApplyService;
+import com.safeg.user.service.ReviewService;
 import com.safeg.user.vo.CustomUser;
+import com.safeg.user.vo.PointHistoryVO;
+import com.safeg.user.vo.ReviewVO;
 import com.safeg.user.vo.UserCampaignVO;
 import com.safeg.user.vo.UserVO;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
+
 
 @Controller
 @Slf4j
@@ -34,6 +40,9 @@ public class ApplyController {
     
     @Autowired
     ApplyService applyService;
+
+    @Autowired
+    ReviewService reviewService;
 
     @GetMapping("/userCampaignApply/{campaignId}")
     public String userCampaignApply(@AuthenticationPrincipal CustomUser authUser, Model model, @PathVariable("campaignId") String campaignId, 
@@ -78,9 +87,11 @@ public class ApplyController {
         //     // String originalPhone = user.getPhoneNum();
         //     userCampaignApply.get(i).setPhoneNum(userCampaignApply.get(i).getPhoneNum().replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3"));
         // }
-        
+        String reviewId = reviewService.reviewSelectConfirm(campaignId);
         model.addAttribute("userCampaignApply", userCampaignApply);
         model.addAttribute("applicantsNum", userCampaignApply.size()-1); // 신청 수 추가
+        model.addAttribute("reviewId", reviewId); // 신청 수 추가
+
         UserCampaignVO leaderCampaign = null; // 인솔자를 찾아서 저장할 변수
 
         for (int i = 0; i < userCampaignApply.size(); i++) {
@@ -151,8 +162,12 @@ public class ApplyController {
         //     model.addAttribute("leaderStatus", leaderCampaign.getStatus());
         //     // ... 필요한 정보 추가
         // }
+
+        String reviewId = reviewService.reviewSelectConfirm(campaignId);
         model.addAttribute("userCampaignApply", userCampaignApply);
         model.addAttribute("applicantsNum", userCampaignApply.size()-1); // 신청 수 추가
+        model.addAttribute("reviewId", reviewId); // 신청 수 추가
+
 
         UserCampaignVO leaderCampaign = null; // 인솔자를 찾아서 저장할 변수
 
@@ -217,7 +232,7 @@ public class ApplyController {
             String updateStatus = applyService.updateStatus(userNo, campaignId, applyDate, status);
             if(statusInfo.equals("0")){
                 if(updateStatus.equals("2")){
-                    String status0 = applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
                     return ResponseEntity.ok().body("{\"message\": \"출근 or 지각 터치 후 퇴근 버튼 터치 하세요.\"}");
                 } else if (updateStatus.equals("3")) {
                     applyService.lateYn(userNo, campaignId, applyDate);
@@ -231,11 +246,11 @@ public class ApplyController {
                     applyService.pointFull(userNo, campaignId, applyDate);
                     return ResponseEntity.ok().body("{\"message\": \"퇴근으로 성공적으로 업데이트되었습니다.\"}");
                 } else if(updateStatus.equals("4") || updateStatus.equals("5")) {
-                    String status0 = applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
                     return ResponseEntity.ok().body("{\"message\": \"출근 or 지각 상태에서는 결근, 무단결근은 터치가 안됩니다.\"}");
                 } else{
                     if(updateStatus.equals("3")){
-                        String status0 = applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                        applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
                         return ResponseEntity.ok().body("{\"message\": \"출근 상태 입니다.\"}");
                     }else{
                         return ResponseEntity.ok().body("{\"message\": \"출근 상태 입니다.\"}");
@@ -245,7 +260,7 @@ public class ApplyController {
                 if (updateStatus.equals("2")){
                     return ResponseEntity.ok().body("{\"message\": \"출결 상태가 성공적으로 업데이트되었습니다.\"}");
                 } else {
-                    String status0 = applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
                     return ResponseEntity.ok().body("{\"message\": \"퇴근 터치 하셨으므로, 변경 불가 합니다.\"}");
                 }
             } else if(statusInfo.equals("3")){
@@ -253,11 +268,11 @@ public class ApplyController {
                     applyService.pointFull(userNo, campaignId, applyDate);
                     return ResponseEntity.ok().body("{\"message\": \"퇴근으로 성공적으로 업데이트되었습니다.\"}");
                 }else if(updateStatus.equals("4") || updateStatus.equals("5")) {
-                    String status0 = applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
                     return ResponseEntity.ok().body("{\"message\": \"출근 or 지각 상태에서는 결근, 무단결근은 터치가 안됩니다.\"}");
                 }else{
                     if(updateStatus.equals("1")){
-                        String status0 = applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                        applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
                         return ResponseEntity.ok().body("{\"message\": \"지각 상태 입니다.\"}");
                     }else{
                         return ResponseEntity.ok().body("{\"message\": \"지각 상태 입니다.\"}");
@@ -267,7 +282,7 @@ public class ApplyController {
             
             else if(statusInfo.equals("4")){
                 if(updateStatus.equals("1") || updateStatus.equals("2") || updateStatus.equals("3") || updateStatus.equals("5")){
-                    String status0 = applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
                     return ResponseEntity.ok().body("{\"message\": \"결근 상태 입니다.\"}");
                 }else{
                     return ResponseEntity.ok().body("{\"message\": \"결근 상태 입니다.\"}");
@@ -305,14 +320,51 @@ public class ApplyController {
     public ResponseEntity<?> setStatus(@PathVariable("userNo") Long userNo, @PathVariable("campaignId") Long campaignId, @PathVariable("applyDate") LocalDate applyDate, @RequestBody String newStatus) throws Exception {
         int initStatus = applyService.initStatus(userNo, campaignId, applyDate);
 
-        return ResponseEntity.ok().body("{\"message\": \"초기화 성공.\"}");
+        // return ResponseEntity.ok().body("{\"message\": \"초기화 성공.\"}");
+        if(initStatus > 0){
+            return ResponseEntity.ok().body("{\"message\": \"초기화 성공.\"}");
+        } else {
+            return ResponseEntity.ok().body("{\"message\": \"초기화 실패.\"}");
+        }
     }
 
     @PatchMapping("/rosterRemove/{userNo}/{campaignId}/{applyDate}")
     // 명단 삭제
     public ResponseEntity<?> rosterRemove(@PathVariable("userNo") Long userNo, @PathVariable("campaignId") Long campaignId, @PathVariable("applyDate") LocalDate applyDate, @RequestBody String newStatus) throws Exception {
         int initStatus = applyService.rosterRemove(userNo, campaignId, applyDate);
-
-        return ResponseEntity.ok().body("{\"message\": \"명단 삭제 성공.\"}");
+        if(initStatus > 0){
+            return ResponseEntity.ok().body("{\"message\": \"명단 삭제 성공.\"}");
+        } else {
+            return ResponseEntity.ok().body("{\"message\": \"명단 삭제 실패.\"}");
+        }
     }
+
+    // @GetMapping("/significant/{userNo}/{campaignId}/{applyDate}")
+    @GetMapping("/significant/{userNo}/{campaignId}/{applyDate}")
+    public String showSignificantPage(
+        @PathVariable("userNo") int userNo,
+        @PathVariable("campaignId") int campaignId,
+        @PathVariable("applyDate") String applyDate, 
+        // @PathVariable("status") String status, 
+        Model model) throws Exception{
+    // public String significant(@AuthenticationPrincipal CustomUser authUser, Model model, @PathVariable("userNo") Long userNo, @PathVariable("campaignId") Long campaignId, @PathVariable("applyDate") LocalDate applyDate, @RequestBody String newStatus ) throws Exception{
+        log.info("significant : " + userNo + " " + campaignId + " " + applyDate);
+        
+        model.addAttribute("userNo", userNo);
+        model.addAttribute("campaignId", campaignId);
+        model.addAttribute("applyDate", applyDate);
+        
+        return "apply/significant";
+    }
+
+    @PostMapping("/significantInsert")
+    public ResponseEntity<?> significantInsert(@RequestBody PointHistoryVO pointHistoryVO) throws Exception {
+        //TODO: process POST request
+        log.info("significantInsert");
+        log.info("pointHistoryVO: {}", pointHistoryVO);
+
+        int result = applyService.pointInsert(pointHistoryVO);
+        return ResponseEntity.ok().body("{\"message\": \"특이사항 정보가 업데이트 되었습니다.\"}");
+    }
+    
 }

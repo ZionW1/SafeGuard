@@ -283,6 +283,15 @@ public class MyPageServiceImpl implements MyPageService {
 
         return workList;
     }
+
+    @Override
+    public List<PointHistoryVO> overPayList(Long userNo, String targetMonth) throws Exception {
+        // TODO Auto-generated method stub
+        List<PointHistoryVO> overPayList = myPageMapper.overPayList(userNo, targetMonth);
+
+        return overPayList;
+    }
+
     @Override
     public String referrerAmount(Long userNo, String targetMonth) throws Exception {
         // TODO Auto-generated method stub
@@ -290,6 +299,7 @@ public class MyPageServiceImpl implements MyPageService {
 
         return referrerAmount;
     }
+    
     @Override
     public String attendAmount(Long userNo, String targetMonth) throws Exception {
         // TODO Auto-generated method stub
@@ -297,6 +307,7 @@ public class MyPageServiceImpl implements MyPageService {
 
         return attendAmount;
     }
+
     @Override
     public String leaderAmount(Long userNo, String targetMonth) throws Exception {
         // TODO Auto-generated method stub
@@ -304,6 +315,7 @@ public class MyPageServiceImpl implements MyPageService {
 
         return leaderAmount;
     }
+
     @Override
     public String workAmount(Long userNo, String targetMonth) throws Exception {
         // TODO Auto-generated method stub
@@ -311,6 +323,15 @@ public class MyPageServiceImpl implements MyPageService {
 
         return workAmount;
     }
+
+    @Override
+    public String overPayAmount(Long userNo, String targetMonth) throws Exception {
+        // TODO Auto-generated method stub
+        String overPayAmount = myPageMapper.overPayAmount(userNo, targetMonth);
+
+        return overPayAmount;
+    }
+
     @Override
     public String getUserAuth(Long userNo) throws Exception {
         // TODO Auto-generated method stub

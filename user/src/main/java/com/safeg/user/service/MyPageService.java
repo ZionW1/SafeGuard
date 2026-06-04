@@ -44,6 +44,8 @@ public interface MyPageService {
 
     public List<PointHistoryVO> workList(Long userNo, String targetMonth) throws Exception;
 
+    public List<PointHistoryVO> overPayList(Long userNo, String targetMonth) throws Exception;
+
     public String referrerAmount(Long userNo, String targetMonth) throws Exception;
 
     public String attendAmount(Long userNo, String targetMonth) throws Exception;
@@ -52,5 +54,8 @@ public interface MyPageService {
 
     public String workAmount(Long userNo, String targetMonth) throws Exception;
 
+    public String overPayAmount(Long userNo, String targetMonth) throws Exception;
+
     public String getUserAuth(Long userNo) throws Exception;
+
 }

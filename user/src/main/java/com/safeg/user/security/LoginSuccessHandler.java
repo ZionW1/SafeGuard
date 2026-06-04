@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import com.safeg.user.vo.CustomUser;
 import com.safeg.user.vo.UserVO;
-import com.safeg.user.vo.Users;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -18,46 +18,52 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 로그인 성공 처리 이벤트 핸들러
- * 
  */
 @Slf4j
 @Component
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     
-    /**
-     * 로그인 성공 시 호출되는 메소드
-     * 🍪 아이디 저장 쿠키 생성
-     * 🔐 로그인 후 이전 페이지로 리다이렉트
-     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request
                                 , HttpServletResponse response
                                 , Authentication authentication) throws ServletException, IOException {
-        // 아이디 저장
-        String rememberId = request.getParameter("remember-id"); // ✅ 아이디 저장 여부
-        String username = request.getParameter("userId");            // 👩‍💼 아이디
+        
+        // 1. 아이디 저장 기능 (쿠키)
+        String rememberId = request.getParameter("remember-id"); // 아이디 저장 여부
+        String username = request.getParameter("userId");        // 아이디
 
-        // 아이디 저장 체크 ✅
         if( rememberId != null && rememberId.equals("on") ) {
-            Cookie cookie = new Cookie("remember-id", username);  // 쿠키에 아이디 등록
-            cookie.setMaxAge(60 * 60 * 24 * 7);                        // 유효기간 : 7일
+            Cookie cookie = new Cookie("remember-id", username);
+            cookie.setMaxAge(60 * 60 * 24 * 7); // 7일 유효
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        } else {
+            Cookie cookie = new Cookie("remember-id", username);
+            cookie.setMaxAge(0); // 즉시 삭제
             cookie.setPath("/");
             response.addCookie(cookie);
         }
-        // 아이디 저장 체크 ❌
-        else {
-            Cookie cookie = new Cookie("remember-id", username);  // 쿠키에 아이디 등록
-            cookie.setMaxAge(0);                                // 유효기간 : 0 (삭제)
-            cookie.setPath("/");
-            response.addCookie(cookie);
-        }
-        // 인증된 사용자 정보
 
+        // 2. 인증된 사용자 정보 활용 (로그 찍기용 등으로 활용 가능)
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         UserVO user = customUser.getUserVo();
+        log.info("로그인 성공 유저: {}", user.getUserId());
 
-        // response.sendRedirect("/"); // 로그인 후 경로
-        super.onAuthenticationSuccess(request, response, authentication);
+        // 3. 페이지 리다이렉트 처리 (중복 방지)
+        setDefaultTargetUrl("/"); // 기본 이동 페이지 지정
+        
+        // 💡 세션 대기실에서 아까 컨트롤러가 넣어둔 목적지 주소를 꺼냅니다.
+    String redirectUrl = (String) request.getSession().getAttribute("prevPage");
+    log.info("🔓 로그인 성공! 세션에서 꺼낸 목적지 주소: {}", redirectUrl);
+
+    if (redirectUrl != null && !redirectUrl.isEmpty()) {
+        // 사용한 세션 주소는 깔끔하게 지워주고
+        request.getSession().removeAttribute("prevPage");
+        // 💡 에러 없이 정상적으로 리뷰 등록 페이지로 리다이렉트 시킵니다!
+        getRedirectStrategy().sendRedirect(request, response, redirectUrl);
+    } else {
+        // 목적지가 없었다면 안전하게 메인 페이지로 이동
+        getRedirectStrategy().sendRedirect(request, response, "/");
     }
-
+    }
 }

@@ -219,4 +219,24 @@ public class ApplyServiceImpl implements ApplyService {
         
         return initStatus;
     }
+
+    @Override
+    public int pointInsert(PointHistoryVO pointHistoryVO) throws Exception {
+        log.info("pointInsert called with userId: {}, campaignId: {}, localDate: {}", pointHistoryVO.getUserId(), pointHistoryVO.getCampaignId(), pointHistoryVO.getMissionDate());
+        // String dateString = localDate.toString();
+        // 
+
+        PointHistoryVO vo = new PointHistoryVO();
+        vo.setUserId(pointHistoryVO.getUserId());
+        vo.setAmount(pointHistoryVO.getAmount()); // 예시로 5000 포인트 지급
+        // vo.setPointType("EARN"); // 포인트 유형 (예: EARN, DEDUCT)
+        vo.setCategory("OVERPAY");
+        vo.setSourceId(pointHistoryVO.getUserId());
+        vo.setCampaignId(pointHistoryVO.getCampaignId());
+        vo.setMissionDate(pointHistoryVO.getMissionDate());
+        // vo.setSettlementStatus("READY");
+
+        applyMapper.insertPointHistory(vo);
+        return 1; // 성공적으로 처리되었음을 나타내는 예시 반환값
+    }
 }

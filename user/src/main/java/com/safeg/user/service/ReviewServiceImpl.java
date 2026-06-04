@@ -44,4 +44,17 @@ public class ReviewServiceImpl implements ReviewService {
         return result;
     }
 
+    @Override
+    public int reviewUpdate(ReviewVO reviewVO) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'reviewUpdate'");
+    }
+
+    @Override
+    public String reviewSelectConfirm(String campaignId) throws Exception {
+        // TODO Auto-generated method stub
+        String reviewSelect = reviewMapper.reviewSelectConfirm(campaignId);
+        return reviewSelect;
+    }
+
 }

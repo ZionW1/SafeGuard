@@ -153,7 +153,6 @@
     <div class="campaignContainer" id="campaignContainer">
         <section id="popularSection">
             <h2 class="campaign-title" >인기 있는 캠페인<span class="allView"><a href="/campaign08?orderCode=1">전체보기</a></span></h2>
-                
             <div class="campaign-list" id="popularList">
                 <th:block th:each="campaign : ${campaignFavorite}">
                     <div sec:authorize="!isAuthenticated()" class="guest-message">
@@ -178,12 +177,12 @@
                                             <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
                                         </div>
                                     </div>
-                                    <div class="title-overlay">
+                                    <!-- <div class="title-overlay">
                                         <div class="card-point">
                                             <span>포인트 : </span>
                                             <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                 </div>
                             </div>
@@ -211,13 +210,54 @@
                                             <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
                                         </div>
                                     </div>
-                                    <div class="title-overlay">
+                                    <!-- <div class="title-overlay">
+                                        <div class="card-point">
+                                            <span>포인트 : </span>
+                                            <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
+                                        </div>
+                                    </div> -->
+                                    <!-- <span th:text="${guardType}"></span> -->
+                                    <!-- <div th:if="${(guardType == '00' or guardType == '01') and campaign?.typeCode == '02'}" class="title-overlay">
                                         <div class="card-point">
                                             <span>포인트 : </span>
                                             <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
                                         </div>
                                     </div>
-                                    <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
+                                    <div th:if="${(guardType == '02') and (campaign?.typeCode == '02' or campaign?.typeCode == '01')}" class="title-overlay">
+                                        <div class="card-point">
+                                            <span>포인트 : </span>
+                                            <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
+                                        </div>
+                                    </div>
+                                    <div th:if="${(guardType == '03') and (campaign?.typeCode == '02' or campaign?.typeCode == '01' or campaign?.typeCode == '03')}" class="title-overlay">
+                                        <div class="card-point">
+                                            <span>포인트 : </span>
+                                            <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
+                                        </div>
+                                    </div>
+                                    <div th:if="${(guardType == '04') and (campaign?.typeCode == '02' or campaign?.typeCode == '01' or campaign?.typeCode == '03')}" class="title-overlay">
+                                    <div class="card-point">
+                                        <span>포인트 : </span>
+                                        <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
+                                    </div> -->
+
+                                    <!-- <div th:each="campaign : ${campaignList}">
+                                        <div th:if="${campaign.showPoint}" class="title-overlay">
+                                            <div class="card-point">
+                                                <span>포인트 : </span>
+                                                <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <div th:if="${authUser.canShowPoint(campaign.typeCode)}" class="title-overlay">
+                                        <div class="card-point">
+                                            <span>포인트 : </span>
+                                            <span th:text="${#numbers.formatInteger((campaign.campaignPay ?: 0) + 10000, 3, 'COMMA')}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="campaign-stats">
+                                    신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span>
                                 </div>
                             </div>
                         </a>
@@ -253,12 +293,13 @@
                                                 <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
                                             </div>
                                         </div>
-                                        <div class="title-overlay">
+                                        <!-- <div class="title-overlay">
                                             <div class="card-point">
                                                 <span>포인트 : </span>
                                                 <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
                                             </div>
-                                        </div>
+                                        </div> -->
+                                        
                                         <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                     </div>
                                 </div>
@@ -286,10 +327,10 @@
                                                 <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
                                             </div>
                                         </div>
-                                        <div class="title-overlay">
+                                        <div th:if="${authUser.canShowPoint(campaign.typeCode)}" class="title-overlay">
                                             <div class="card-point">
                                                 <span>포인트 : </span>
-                                                <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
+                                                <span th:text="${#numbers.formatInteger((campaign.campaignPay ?: 0) + 10000, 3, 'COMMA')}"></span>
                                             </div>
                                         </div>
                                         <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
@@ -328,12 +369,12 @@
                                             <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
                                         </div>
                                     </div>
-                                    <div class="title-overlay">
+                                    <!-- <div class="title-overlay">
                                         <div class="card-point">
                                             <span>포인트 : </span>
                                             <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                 </div>
                             </div>
@@ -361,10 +402,10 @@
                                             <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
                                         </div>
                                     </div>
-                                    <div class="title-overlay">
+                                    <div th:if="${authUser.canShowPoint(campaign.typeCode)}" class="title-overlay">
                                         <div class="card-point">
                                             <span>포인트 : </span>
-                                            <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
+                                            <span th:text="${#numbers.formatInteger((campaign.campaignPay ?: 0) + 10000, 3, 'COMMA')}"></span>
                                         </div>
                                     </div>
                                     <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
@@ -398,7 +439,7 @@
                                 <div class="title-overlay">
                                     <div class="card-title campaign-title-text">
                                         <span>[</span>
-                                        <!-- <span th:text="${campaign.typeNm}">타입명</span> -->
+                                        <span th:text="${review.typeNm}">타입명</span>
                                         <span>] </span>
                                         <span th:text="${review.title}">캠페인 제목이 여기에 들어갑니다.</span>
                                     </div>
@@ -434,7 +475,7 @@
         </div> -->
         <div class="modal-body">
             <a href="https://open.kakao.com/o/gypM8Zni"><img src="/images/popup_img1.png" alt="공지사항 이미지" style="width: 100%; height: auto;" /></a>
-            <button type="button" class="btn-close-on-image" onclick="closePop('popup1')">X</button>    
+            <button type="button" class="btn-close-on-image" onclick="closePop('popup1')">X</button>
         </div>
         <div class="modal-footer">
             <button onclick="closeToday('popup1')">24시간 동안 보지 않기</button>

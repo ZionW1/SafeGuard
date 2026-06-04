@@ -91,7 +91,18 @@
                     selectElement.selectedIndex = campaignSelect.typeCode;
                 }
                 
-                
+                const securityTypeSelect = document.getElementById("securityType");
+    
+    if (securityTypeSelect) {
+        // 1. 기존 함수 그대로 호출해서 라디오 버튼 보이기 + 이벤트 바인딩하기
+        securityTypeChange(securityTypeSelect.value);
+        
+        // 2. 💡 [핵심] 현재 체크되어 있는 라디오 버튼을 찾아서 강제로 'change' 이벤트 실행시키기
+        const checkedRadio = document.querySelector('input[name="wageChk"]:checked');
+        if (checkedRadio) {
+            checkedRadio.dispatchEvent(new Event('change'));
+        }
+    }
 
             });
             function deleteCampaign() {
@@ -204,6 +215,56 @@
                 request.setRequestHeader(csrfHeaderToSend, csrfToken);
                 request.send();
             }
+
+            function securityTypeChange(typeCode) {
+                const wageRadio = document.getElementById("wageRadio");
+                const hourlyPay = document.getElementById("hourlyPay");
+                const hourlyPayInput = document.getElementById("hourlyPayInput");
+                const dailyPay = document.getElementById("dailyPay");
+                const dailyPayInput = document.getElementById("dailyPayInput");
+                const workHours = document.getElementById("workHour"); // HTML에 id="workHour"로 되어있어서 수정
+                const timeInput = document.getElementById("timeInput");
+
+                console.log("선택된 경호/진행/수행 구분: " + typeCode);
+
+                if (typeCode === "02") {
+                    console.log("02 선택됨 -> 보이기");
+                    wageRadio.classList.remove("hidden"); 
+
+                    // 이벤트 리스너 중복 등록 방지를 위해 기존 이벤트를 한 번 제거하거나 새로 바인딩
+                    document.querySelectorAll('input[name="wageChk"]').forEach((radio) => {
+                        radio.onchange = function() {
+                            if (this.value === "01") { // 📅 일급 선택 시
+                                dailyPay.classList.remove("hidden");
+                                hourlyPay.classList.add("hidden");
+                                timeInput.classList.add("hidden");
+                                
+                                // 💡 순수 JS 문법으로 정확하게 제어
+                                dailyPayInput.setAttribute("name", "campaignPay"); // 내 name은 살리고
+                                hourlyPayInput.removeAttribute("name");            // 상대 name은 지우고
+                                workHour.value = ""; // 근무 시간 초기화
+                                workHours.required = false;               
+                            } else if (this.value === "02") { // ⏰ 시급 선택 시
+                                dailyPay.classList.add("hidden");
+                                hourlyPay.classList.remove("hidden");
+                                timeInput.classList.remove("hidden");
+                                
+                                // 💡 순수 JS 문법으로 정확하게 제어
+                                hourlyPayInput.setAttribute("name", "campaignPay"); // 내 name은 살리고
+                                dailyPayInput.removeAttribute("name");             // 상대 name은 지우고
+                                
+                                workHours.required = true;                
+                                // workHours.value = "";
+                            }
+                        };
+                    });
+                } else {
+                    console.log("다른 값 선택됨 -> 숨기기");
+                    wageRadio.classList.add("hidden");    
+                }
+                
+                document.getElementById("typeCode").value = typeCode;
+            }
         </script>
     </head>
     <body>
@@ -276,11 +337,10 @@
                         <label>캠페인명</label>
                         <input type="text" name="campaignTitle" id="campaignTitle" th:value="${campaignSelect.campaignTitle}" />
                     </div>
-                    <div class="form-row">
+                    <!-- <div class="form-row">
                         <div class="form-group">
                             <label for="campaignPay">캡페인 급여</label>
                             <input type="number" name="campaignPay" id="campaignPay" th:value="${campaignSelect.campaignPay}" />
-                            <!-- th:value="${campaignSelect.leaderPay}" -->
                         </div>
                         <div class="form-group">
                             <label for="securityType">경호/진행/수행 구분</label>
@@ -289,6 +349,46 @@
                                 <option name="" th:each="type : ${securityType}" th:value="${type.code}" th:text="${type.codeName}"></option>
                             </select>
                             <input type="hidden" id="typeCode" name="typeCode" />
+                        </div>
+                    </div> -->
+                    <div class="form-row">
+                        <!-- <div style="color: red; font-size: 0.9em;">* 경호/진행/수행 구분이 '경호'인 경우에만 시급/일급 선택과 급여 입력이 가능합니다.</div>
+                        <span style="color: red; font-size: 0.9em;">* '시급' 선택 시 하루 근무 시간 입력이 필수입니다.</span> -->
+                        <!-- <span th:text="${campaignSelect.workHour}"></span> -->
+                        <div class="form-group">
+                            <label for="securityType">경호/진행/수행 구분</label>
+                            <select id="securityType" name="securityType" onchange="securityTypeChange(this.value)">
+                                <option value="">-- 선택하세요 --</option>
+                                <option th:each="type : ${securityType}" 
+                                        th:value="${type.code}" 
+                                        th:text="${type.codeName}"></option>
+                            </select>
+                            <input type="hidden" id="typeCode" name="typeCode" />
+                        </div>
+                        <div class="form-group hidden" id="wageRadio">
+                            <label for="">시급 일급</label>
+                            <div class="radio-group"> 
+                                <label class="radio-label">
+                                    <input type="radio" name="wageChk" id="dailyWage" value="01" 
+                                        th:checked="${campaignSelect?.wageChk == '01'}">일급
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="wageChk" id="hourlyWage" value="02" 
+                                        th:checked="${campaignSelect?.wageChk == '02'}">시급
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group" id="dailyPay">
+                            <label for="campaignPay">캠페인 급여</label>
+                            <input type="text" id="dailyPayInput" name="campaignPay" th:value="${campaignSelect.campaignPay}" />
+                        </div>
+                        <div class="form-group hidden" id="hourlyPay">
+                            <label for="campaignPay">캠페인 시급여</label>
+                            <input type="text" id="hourlyPayInput" th:value="${campaignSelect.campaignPay}"/>
+                        </div>
+                        <div class="form-group hidden" id="timeInput">
+                            <label for="WorkHour">하루 근무 시간 (시간)</label>
+                            <input type="number" name="workHour" id="workHour" placeholder="예: 8" min="1" th:value="${campaignSelect.workHour}">
                         </div>
                     </div>
                     <div class="form-group">

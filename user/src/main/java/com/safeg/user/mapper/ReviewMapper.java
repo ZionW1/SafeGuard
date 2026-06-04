@@ -17,4 +17,6 @@ public interface ReviewMapper {
 
     public ReviewVO reviewInfo(Long campaignId) throws Exception;
 
+    public String reviewSelectConfirm(String campaignId) throws Exception;
+
 }

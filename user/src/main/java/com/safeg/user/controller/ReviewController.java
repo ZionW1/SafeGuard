@@ -99,12 +99,13 @@ public class ReviewController {
     public ResponseEntity<?> reviewInsert(@AuthenticationPrincipal CustomUser authUser, ReviewVO reviewVO, BindingResult bindingResult, Model model) throws Exception {
         log.info("리뷰 등록 처리 : " + reviewVO.toString());
         MultipartFile file = reviewVO.getThumbnail();
-        if (file == null || file.isEmpty()) {
-            return ResponseEntity.badRequest().body("파일이 존재하지 않습니다.");
-        }
+        String savedFileName = "";
+        // if (file == null || file.isEmpty()) {
+        //     return ResponseEntity.badRequest().body("파일이 존재하지 않습니다.");
+        // }
 
         FilesVO uploadFile = new FilesVO();
-        if(file != null){
+        if (file != null && !file.isEmpty()) {
             // FilesVO uploadFile = new FilesVO();
             uploadFile.setFile(file);
             uploadFile.setFileSize(file.getSize());
@@ -112,14 +113,23 @@ public class ReviewController {
             uploadFile.setTargetType("review_thumbnail");
             uploadFile.setTargetId(reviewVO.getCampaignId());
             uploadFile.setMimeType(file.getContentType());
+            savedFileName = fileService.getFileName(uploadFile);
+
+        } else {
+            log.info("업로드된 파일이 없습니다. reviewVO.getCampaignId() : " + reviewVO.getCampaignId());
+            uploadFile = fileService.select(String.valueOf(reviewVO.getCampaignId())); // DB에서 해당 캠페인 ID로 이미 업로드된 파일이 있는지 조회 (중복 방지용)
+            log.info("uploadFile.toString : " + uploadFile.toString());
+            savedFileName = uploadFile.getSavedName();
         }
         // 1. 파일 서비스에서 디스크 저장 및 DB 인서트를 처리합니다.
         // 💡 [팁] 파일 서비스 안에서 고유한 파일명(예: UUID)을 리턴하도록 구현하는 것이 좋습니다.
-        String savedFileName = fileService.getFileName(uploadFile);
+        // String savedFileName = fileService.getFileName(uploadFile);
         // String imageUrl = "/img?fileName=" + savedFileName;
         reviewVO.setThumbnailName(savedFileName);
         int result = reviewService.reviewInsert(reviewVO);
-
+        if(result == 0){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 등록에 실패했습니다.");
+        }
         return ResponseEntity.ok("Success");
     }
 

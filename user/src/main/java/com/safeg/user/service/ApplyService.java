@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.safeg.user.vo.PointHistoryVO;
 import com.safeg.user.vo.UserCampaignVO;
 
 public interface ApplyService {
@@ -24,5 +25,7 @@ public interface ApplyService {
     public List<UserCampaignVO> getApplyDate(String campaignId) throws Exception;
 
     public int rosterRemove(Long userNo, Long campaignId, LocalDate applyDate) throws Exception;
+
+    public int pointInsert(PointHistoryVO pointHistoryVO) throws Exception;
 
 }

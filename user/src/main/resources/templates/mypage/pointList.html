@@ -169,6 +169,49 @@
                         </table>
                     </th:block> -->
                 </th:block>
+
+                <!-- <th:block th:if="${overPayList != null and !overPayList.isEmpty()}"> -->
+                    <div class="tableTitle">
+                        추가 지출 포인트 : 
+                        <span th:if="${overPayAmount != 0}" th:text="${overPayAmount != null ? #numbers.formatInteger(overPayAmount, 3, 'COMMA') : 0}">0</span>
+                        <span th:unless="${overPayAmount != 0}">0</span>
+                    </div>
+                    <table class="point_List" style="border: 1px;">
+                        <thead>
+                            <tr>
+                                <th>번호</th>
+                                <th>캠페인 명</th>
+                                <th>날짜</th>
+                                <th>상태</th>
+                                <th>포인트</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <th:block th:if="${overPayList != null and !overPayList.isEmpty()}">
+                                <tr th:each="giver, stat : ${overPayList}">
+                                    <td th:text="${stat.index + 1}"></td>
+                                    <Td th:text="${giver.missionDate}"></td>
+                                    <td th:text="${giver.campaignTitle}"></td>
+                                    <td th:text="${giver.applicantsNum}"></td>
+                                    <td th:text="${giver.amount != null ? #numbers.formatInteger(giver.amount, 3, 'COMMA') : 0}"></td>
+                                </tr>
+                                </th:block>
+                                <th:block th:unless="${overPayList != null and !overPayList.isEmpty()}">
+                                    <tr>
+                                        <td colspan="5" style="text-align:center;">추천인 포인트가 없습니다.</td>
+                                    </tr>
+                                </th:block>
+                            <!-- <tr th:each="point, stat : ${overPayList}">
+                                <td th:text="${stat.index + 1}"></td>
+                                <td th:text="${point.campaignTitle}"></td>
+                                <td th:text="${point.missionDate}"></td>
+                                <td th:text="${point.statusNm}"></td>
+                                <td th:text="${point.amount != null ? #numbers.formatInteger(point.amount, 3, 'COMMA') : 0}">0</td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                <!-- </th:block> -->
             </div>
         </div>
     </main>

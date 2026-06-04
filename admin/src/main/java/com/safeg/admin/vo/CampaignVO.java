@@ -75,6 +75,8 @@ public class CampaignVO {
     private String description;
     private int sortOrder;
     private String leaderNm;
+    private String workHour;
+    private String wageChk;
     //private List<CampaignFilesVO> campaignFilesList; //첨부 파일 정보
     
 }

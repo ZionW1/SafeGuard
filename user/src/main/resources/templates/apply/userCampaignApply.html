@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>모바일 최적화 예시</title>
+    <title>행집 명단 확인</title>
     <link rel="stylesheet" href="/mobile/css/style.css" />
 </head>
 <body class="bodyApply">
@@ -33,6 +33,9 @@
                     th:text="${item.applyDate}"
                     th:selected="${item.applyDate == currentDate}"> </option>
         </select>
+        <div th:if="${reviewId == null}">
+            <a class="review_btn" th:href="@{/review03/{id}(id=${campaignId})}" target="_blank">리뷰 등록</a>
+        </div>
         <div class="pd-b20">
             <button type="button" class="btn-info" onclick="processAttendance('1')" style="background-color: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">체크 출근</button>
             <button type="button" class="btn-info" onclick="processAttendance('2')" style="background-color: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">체크 퇴근</button>
@@ -71,13 +74,22 @@
                             <div class="btn-area-confirm">
                                 <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="1" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">출근</a>
                                 <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="2" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">퇴근</a>
-                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
+                                <!-- <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
                                 <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="4" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">결근</a>
-                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a>
-                                
-                                <!-- <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="3" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">지각</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="4" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">결근</a>
-                                <a th:class="|statusInfoChange button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${userCampaign.userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a> -->
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" data-status="5" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">무단</a> -->
+                                <!-- <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" th:href="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${currentUserNo}, campaignId=${campaignId}, applyDate=${applyDate})}" data-status="">특이사항</a> -->
+
+                                <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" 
+                                    href="#" 
+                                    th:data-url="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${currentUserNo}, campaignId=${campaignId}, applyDate=${applyDate})}" 
+                                    onclick="openSignificantModal(this.dataset.url); return false;">특이사항</a>
+
+                                <div id="significantModal" onclick="closeModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+                                    <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
+                                        <span onclick="closeSignificantModal();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
+                                        <div id="modalContent"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -106,6 +118,7 @@
     </div>
     <div th:if="${leaderPay != 0}" class="btn-area">
         <a class="btn_leader" th:if="${leaderUserNo}" th:data-user-no="${leaderUserNo}" th:data-status="${leaderStatus}" th:data-campaign-id="${leaderCampaignId}" th:data-apply-date="${leaderApplyDate}" th:onclick="leaveWork(this)">인솔자 퇴근</a>
+        <a th:class="|btn_leader|" th:href="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${leaderUserNo}, campaignId=${campaignId}, applyDate=${leaderApplyDate})}" data-status="">인솔자 특이사항</a>
     </div>
     
 
@@ -119,22 +132,53 @@
             const applicantItems = document.querySelectorAll('.applicant-item');
             for(var i = 0; i < userCampaignApply.length; i++) {
                 applicantItems.forEach(item => {
-                const chooseStatus = item.dataset.chooseStatus;
-                statusButtons = item.querySelectorAll('.button_status'+i);
+                    const chooseStatus = item.dataset.chooseStatus;
+                    statusButtons = item.querySelectorAll('.button_status'+i);
 
-                statusButtons.forEach(button => {
-                    const targetStatus = button.dataset.status;
-                    if (chooseStatus === targetStatus) {
-                        button.classList.add('choice_status');
-                    } else {
-                        button.classList.remove('choice_status');
-                    }
+                    statusButtons.forEach(button => {
+                        const targetStatus = button.dataset.status;
+                        if (chooseStatus === targetStatus) {
+                            button.classList.add('choice_status');
+                        } else {
+                            button.classList.remove('choice_status');
+                        }
+                    });
                 });
-            });
             }
-            
-
         });
+
+        function openSignificantModal(url) {
+            // 1. 서버에 해당 url의 HTML 내용을 요청
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error('네트워크 응답 실패');
+                    return response.text(); // 페이지를 텍스트(HTML)로 읽어옴
+                })
+                .then(html => {
+                    // 2. 모달 컨텐츠 영역에 서버에서 가져온 HTML 주입
+                    document.getElementById('modalContent').innerHTML = html;
+                    // 3. 모달 display를 flex로 바꿔서 화면에 노출
+                    document.getElementById('significantModal').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('모달 로드 중 에러 발생:', error);
+                    alert('페이지를 불러오는 중 오류가 발생했습니다.');
+                });
+        }
+
+        function closeSignificantModal() {
+            // 모달 닫기 및 컨텐츠 초기화
+            document.getElementById('significantModal').style.display = 'none';
+            document.getElementById('modalContent').innerHTML = '';
+        }
+
+        function closeModal(event) {
+            // 이벤트가 발생한 지점(event.target)이 'significantModal'(어두운 배경)일 때만 닫기 실행
+            if (event.target === document.getElementById('significantModal')) {
+                closeSignificantModal();
+            }
+        }
+
         async function requestAllCampaignFilesDownload(code) {
             if (window.event) {
                 window.event.preventDefault();
@@ -466,49 +510,6 @@
             });
         }
 
-        function processAttendance(statusValue) {
-            // 체크박스 중 선택된 것들만 수집
-            const checkedBoxes = document.querySelectorAll('.chkSelect:checked');
-            
-            if (checkedBoxes.length === 0) {
-                alert('선택된 사용자가 없습니다.');
-                return;
-            }
-            
-            const statusText = statusValue === '1' ? '출근' : '퇴근';
-            if (!confirm(`선택한 ${checkedBoxes.length}명을 일괄 [${statusText}] 처리하시겠습니까?`)) {
-                return;
-            }
-
-            // 기존 개별 클릭 시 작동하던 타임리프 바인딩 데이터를 엘리먼트에서 동적으로 읽어옴
-            let successCount = 0;
-            
-            // 비동기 처리가 순차적으로 다 끝난 후 새로고침하기 위해 Promise 배열 생성
-            const promises = Array.from(checkedBoxes).map(cb => {
-                // 체크박스와 가장 가까운 상위 .applyInfo 레이아웃을 찾음
-                const applyInfoDiv = cb.closest('.applyInfo');
-                
-                // onclick 문자열에서 인자값들 추출하는 대신, 안전하게 기존 설계된 구조를 활용하거나 
-                // 기존 함수(updateAttendanceStatus)를 트리거 시켜버립니다.
-                const btn = applyInfoDiv.querySelector(`.btn-area-confirm a[data-status="${statusValue}"]`);
-                
-                if (btn) {
-                    // 기존에 정의된 함수를 체크된 유저 수만큼 강제로 호출시킴
-                    return eval(btn.getAttribute('onclick').replace('this.dataset.status', `'${statusValue}'`));
-                }
-            });
-
-            // 일괄 실행 후 완료 메시지 및 새로고침
-            Promise.all(promises).then(() => {
-                // alert(`선택된 인원의 ${statusText} 처리가 요청되었습니다.`);
-                location.reload();
-            }).catch(err => {
-                console.error("일괄 처리 중 에러 발생: ", err);
-                location.reload();
-            });
-        }
-
-
         function toggleAll(masterCheckbox) {
             // class가 chkSelect인 모든 체크박스를 가져옴
             const checkboxes = document.querySelectorAll('.chkSelect');
@@ -556,6 +557,114 @@
             }).catch(err => {
                 console.error("일괄 처리 중 에러 발생: ", err);
                 location.reload();
+            });
+        }
+
+        function updateSignificantStatus(status, userNo, campaignId, applyDate) {
+            console.log("updateAttendanceStatus called with:", {status, userNo, campaignId, applyDate});
+            const clickedButton = event.target;
+            const applicantItems = document.querySelectorAll('.applicant-item');
+            const requestBody = {
+                userNo: userNo,
+                campaignId: campaignId,
+                applyDate: applyDate,
+                status: status
+            };
+            
+            if (!userNo || !campaignId || !applyDate) {
+                console.error("상태 또는 사용자 정보가 올바르지 않습니다.", {status: status, userNo: userNo});
+                alert("상태 변경에 필요한 정보가 부족합니다. 다시 시도해 주세요.");
+                return;
+            }
+            const url = `/apply/attendance/updateStatus`; 
+
+            fetch(url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) { 
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || '상태 변경 중 알 수 없는 오류가 발생했습니다.');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(status == "0"){
+                    if("${status}" == 2){
+                        alert("출근 or 지각 터치 후 퇴근 버튼 터치 하세요.");
+                        return ;
+                    }
+                } else{
+                    if(status == "1" || status == "3"){
+                        if("${status}" == 2){
+                            alert("출결 확인");
+                            return ;
+                        }
+                    }
+                }
+                alert(data.message);
+
+                const buttons = document.querySelectorAll(`a[th-onclick$=", [[${userNo}]])"]`);
+                console.log(buttons.forEach(btn => console.log(btn)));
+                buttons.forEach(btn => btn.classList.remove('active-status'));
+                clickedButton.classList.add('active-status');
+            })
+            .catch(error => {
+                console.error('상태 변경 중 오류 발생:', error);
+                alert('상태 변경에 실패했습니다: ' + error.message);
+            });
+        }
+
+        function significantInsert() {
+            const campaignId = document.getElementById('campaignId').dataset.campaignId;
+            const userNo = document.getElementById('userNo').dataset.campaignTitle;
+            const applyDate = document.getElementById('applyDate').dataset.campaignId;
+            const amountInput = document.querySelector('.input-significant');
+            const amount = amountInput.value.trim();
+
+            console.log("significantInsert called with:", {campaignId, userNo, applyDate, amount});
+            if (!amount) {
+                alert('특이사항 내용을 입력해 주세요.');
+                return;
+            }
+
+            const requestBody = {
+                campaignId: campaignId,
+                userId: userNo,
+                missionDate: applyDate,
+                amount: amount,
+                category: "OVERPAY"
+            };
+
+            fetch('/apply/significantInsert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) { 
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || '특이사항 등록 중 알 수 없는 오류가 발생했습니다.');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                amountInput.value = '';
+            })
+            .catch(error => {
+                console.error('특이사항 등록 중 오류 발생:', error);
+                alert('특이사항 등록에 실패했습니다: ' + error.message);
             });
         }
     </script>

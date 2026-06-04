@@ -68,6 +68,7 @@ public class CampaignController {
         if (authUser != null) {
             UserVO user = authUser.getUserVo();
             model.addAttribute("user", user);
+            model.addAttribute("authUser", authUser); 
 
             // 현재 조회하는 캠페인에 대한 사용자의 신청 내역이 있는지 확인
             log.info(":::::::::: campaignApply 전 :::::::::: " + user);

@@ -77,6 +77,7 @@ public class CampaignVO {
     private String leaderNm;
     private String workHour;
     private String wageChk;
+    private String timeSegment;
     //private List<CampaignFilesVO> campaignFilesList; //첨부 파일 정보
     
 }

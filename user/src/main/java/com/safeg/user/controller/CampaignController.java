@@ -52,6 +52,7 @@ public class CampaignController {
 
        // 캠페인 상세 정보 조회
         CampaignVO campaignSelect = campaignsService.campaignSelect(campaignId);
+
         if (campaignSelect == null) {
             log.error("ID가 {}인 캠페인을 찾을 수 없습니다.", campaignId);
             // 에러 페이지로 바로 보내거나 리다이렉트
@@ -71,11 +72,9 @@ public class CampaignController {
             model.addAttribute("authUser", authUser); 
 
             // 현재 조회하는 캠페인에 대한 사용자의 신청 내역이 있는지 확인
-            log.info(":::::::::: campaignApply 전 :::::::::: " + user);
 
             List<UserCampaignVO> campaignApply = campaignsService.campaignApplied(user.getUserId(), campaignSelect.getCampaignId());
             UserVO userSelect = userService.select(user.getUserId());
-            log.info(":::::::::: userSelect :::::::::: " + userSelect);
             if (userSelect != null) {
                 // [갱신] 세션 객체(authUser) 내의 UserVO를 최신 데이터로 교체
                 // 이렇게 하면 이후 호출되는 자바스크립트나 JSP에서 최신 값을 읽을 수 있습니다.
@@ -89,7 +88,6 @@ public class CampaignController {
                 model.addAttribute("user", userSelect); 
                 model.addAttribute("guardType", userSelect.getGuardType());
             }
-            log.info(":::::::::: campaignApply 후 :::::::::: " + campaignApply);
 
             // 2. 리스트 데이터 접근 시 안전하게 처리
             if (campaignApply != null && !campaignApply.isEmpty()) {
@@ -144,6 +142,7 @@ public class CampaignController {
                 campaignSelect.setApplyPossible(canApply);
             }
         }
+
         return "campaign/campaign01";
     }
 

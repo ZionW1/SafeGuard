@@ -302,6 +302,7 @@ public class HomeController {
 
         // 2. [저장] 검증을 통과했을 때만 실제로 저장 로직 실행
         String result = campaignService.campaignApply(userCampaign);
+        // String result = "SUCCESS"; // 중복 체크 통과 후 저장 로직이 성공적으로 실행되었다고 가정
         
         log.info("신청 결과 : " + result);
 

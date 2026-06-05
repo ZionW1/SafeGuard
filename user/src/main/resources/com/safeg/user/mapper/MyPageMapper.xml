@@ -52,6 +52,7 @@
             AND uc.event_str_date <= #{endDate}
             AND uc.event_end_date >= #{startDate}
         ]]>
+        AND uc.is_deleted = 'N'
     </select>
 
     <select id="getAddress" resultMap="UserAddressMap">
@@ -129,6 +130,7 @@
             c.campaign_pay,
             apply_date,
             c.campaign_title,
+            c.time_segment,
             u.pay,
             c.leader_code,
             u.auth_id
@@ -170,6 +172,7 @@
     <select id="leaderPayList" parameterType="map" resultType="UserCampaignVO">
         SELECT
             c.campaign_title,
+            c.time_segment,
             COUNT(uc.id) AS countUser,
             COUNT(*) * c.leader_point AS leader_point
         FROM user_campaign uc
@@ -183,7 +186,7 @@
         AND uc.status = '2'
         AND uc.is_leader = 'N'
         AND c.leader_code = #{params.id}
-        GROUP BY c.campaign_title, c.leader_point;
+        GROUP BY c.campaign_title, c.leader_point, c.time_segment, c.campaign_id;
     </select>
 
     <update id="applyBodyguard">
@@ -335,6 +338,7 @@
             ph.user_id,
             c.CAMPAIGN_ID,
             c.campaign_title,
+            c.time_segment,
             MAX(uc_count.active_applicants) AS applicants_num,
             SUM(ph.amount * COALESCE(uc_count.active_applicants, 0)) AS amount,
             MAX(ph.mission_date) AS mission_date
@@ -364,12 +368,13 @@
             AND ph.user_id = #{userNo}
             AND ph.category = 'leader_extra'
         GROUP BY 
-            ph.user_id, c.CAMPAIGN_ID, c.campaign_title
+            ph.user_id, c.CAMPAIGN_ID, c.campaign_title, c.time_segment,
     </select>
 
     <select id="workList" resultType="PointHistoryVO">
         SELECT
-            c.campaign_title as campaign_title,
+            c.campaign_title,
+            c.time_segment as timeSegment,
             (CASE
                 WHEN uc.status = '0' THEN '대기'
                 WHEN uc.status = '1' THEN '출근'
@@ -403,6 +408,7 @@
     <select id="overPayList" resultType="PointHistoryVO">
         SELECT
             c.campaign_title as campaign_title,
+            c.time_segment,
             (CASE
                 WHEN uc.status = '0' THEN '대기'
                 WHEN uc.status = '1' THEN '출근'

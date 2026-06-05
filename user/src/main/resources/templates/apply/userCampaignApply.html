@@ -625,6 +625,7 @@
             const campaignId = document.getElementById('campaignId').dataset.campaignId;
             const userNo = document.getElementById('userNo').dataset.campaignTitle;
             const applyDate = document.getElementById('applyDate').dataset.campaignId;
+            const reasonInfo = document.getElementById('reasonInfo').value.trim();
             const amountInput = document.querySelector('.input-significant');
             const amount = amountInput.value.trim();
 
@@ -639,6 +640,7 @@
                 userId: userNo,
                 missionDate: applyDate,
                 amount: amount,
+                reasonInfo : reasonInfo,
                 category: "OVERPAY"
             };
 

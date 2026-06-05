@@ -36,6 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             recruitment_Num,
             applicants_Num,
             campaign_pay,
+            time_segment,
             place_Addr,
             mission,
             type_code,
@@ -97,6 +98,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             applied_end_date,
             event_str_date,
             event_end_date,
+            time_segment,
             apply_date
         ) values 
         <foreach collection="dailyEntries" item="entry" separator=",">
@@ -108,6 +110,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{entry.appliedEndDate},
             #{entry.eventPeriodStr},
             #{entry.eventPeriodEnd},
+            #{entry.timeSegment},
             #{entry.applyDate}
         )
         </foreach>
@@ -237,29 +240,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="scheduleOverlap" resultType="int">
         <![CDATA[
             SELECT COUNT(*)
-            FROM user_campaign
-            WHERE user_no = #{userNo}
-            AND is_deleted = 'N'
+            FROM user_campaign uc
+            WHERE uc.user_no = #{userNo}
+            AND uc.is_deleted = 'N'
             AND (
-                event_str_date <= #{eventPeriodEnd} 
-                AND event_end_date >= #{eventPeriodStr}
+                uc.event_str_date <= #{eventPeriodEnd} 
+                AND uc.event_end_date >= #{eventPeriodStr}
             )
+            AND uc.time_segment = #{timeSegment}
         ]]>
     </select>
 
     <select id="overlapTitle" resultType="String">
         <![CDATA[
-            SELECT c.campaign_title
+            SELECT 
+                c.campaign_title
             FROM user_campaign uc
-            LEFT OUTER JOIN campaign c
-            ON uc.campaign_id = c.campaign_id
+            LEFT OUTER JOIN campaign c ON uc.campaign_id = c.campaign_id
             WHERE uc.user_no = #{userNo}
             AND uc.is_deleted = 'N'
+            -- 1. 날짜 기간이 겹치는지 확인
             AND (
                 uc.event_str_date <= #{eventPeriodEnd}
                 AND uc.event_end_date >= #{eventPeriodStr}
             )
-            LIMIT 1 -- 여러 개가 겹칠 수 있으니 가장 먼저 걸리는 것 하나만 가져옵니다
+            -- 2. 🔥 [추가] 시간대(주야간)까지 겹치는지 확인
+            AND c.time_segment = #{timeSegment}
+            LIMIT 1
         ]]>
     </select>
 
@@ -272,6 +279,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.applicants_Num, 
             f.saved_name, 
             f.file_path,
+            time_segment,
             (CASE
                 WHEN type_code = '01' THEN '경호'
                 WHEN type_code = '02' THEN '진행'
@@ -303,12 +311,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="campaignGuard" resultType="CampaignVO">
         <![CDATA[
         SELECT 
-            c.campaign_id, 
-            c.campaign_Title, 
-            c.recruitment_Num, 
-            c.applicants_Num, 
-            f.saved_name, 
+            c.campaign_id,
+            c.campaign_Title,
+            c.recruitment_Num,
+            c.applicants_Num,
+            f.saved_name,
             f.file_path,
+            time_segment,
             (CASE
                 WHEN type_code = '01' THEN '경호'
                 WHEN type_code = '02' THEN '진행'
@@ -340,12 +349,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="campaignFulfill" resultType="CampaignVO">
         <![CDATA[
         SELECT 
-            c.campaign_id, 
-            c.campaign_Title, 
-            c.recruitment_Num, 
-            c.applicants_Num, 
-            f.saved_name, 
+            c.campaign_id,
+            c.campaign_Title,
+            c.recruitment_Num,
+            c.applicants_Num,
+            f.saved_name,
             f.file_path,
+            time_segment,
             (CASE
                 WHEN type_code = '01' THEN '경호'
                 WHEN type_code = '02' THEN '진행'

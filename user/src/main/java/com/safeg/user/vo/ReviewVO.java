@@ -39,4 +39,5 @@ public class ReviewVO {
     private String role;
     private String guardType;
     private String typeNm;
+    private String timeSegment;
 }

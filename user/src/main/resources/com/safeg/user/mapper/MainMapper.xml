@@ -65,6 +65,7 @@
             c.app_period_end,
             event_Period_str,
             event_Period_End,
+            time_segment,
             t.user_nm
             FROM campaign c 
         LEFT OUTER JOIN files f 
@@ -104,6 +105,7 @@
             c.app_period_end,
             event_Period_str,
             event_Period_End,
+            time_segment,
             t.user_nm
             FROM campaign c 
         LEFT OUTER JOIN files f 
@@ -141,6 +143,7 @@
             c.app_period_end,
             event_Period_str,
             event_Period_End,
+            time_segment,
             t.user_nm
             FROM campaign c 
         LEFT OUTER JOIN files f 
@@ -179,6 +182,7 @@
             app_period_end,
             event_period_str,
             event_period_end,
+            time_segment,
             result_date
             <!-- DATE_FORMAT(event_Period_str,'%Y-%m-%d') AS event_Period_str,
             DATE_FORMAT(event_Period_end,'%Y-%m-%d') AS event_Period_end -->
@@ -218,6 +222,7 @@
             c.app_period_end,
             c.event_Period_str,
             c.event_Period_End,
+            time_segment,
             (CASE
                 WHEN type_code = '01' THEN '경호'
                 WHEN type_code = '02' THEN '진행'
@@ -285,6 +290,7 @@
             c.app_period_end,
             c.event_Period_str,
             c.event_Period_End,
+            time_segment,
             result_date,
             place_addr
         from user_campaign uc 

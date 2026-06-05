@@ -335,9 +335,11 @@ public class FileController {
     @GetMapping("/file/excelDownload/{id}/{applyDate}")
     public ResponseEntity<byte[]> downloadCampaignApplicationsExcel(@PathVariable("id") String campaignId, @PathVariable("applyDate") LocalDate applyDate) throws Exception {
         log.info("downloadCampaignApplicationsExcel " + campaignId);
+        String timeSegment = "";
+        
         // 1. DB에서 해당 캠페인의 모든 신청 정보 조회
         // List<UserCampaignVO> applications = userCampaignApplyService.getAllApplicationsForCampaign(campaignId);
-        List<UserCampaignVO> applications = applyService.userCampaignApply(campaignId, applyDate);
+        List<UserCampaignVO> applications = applyService.userCampaignApply(campaignId, applyDate, timeSegment);
 
 
         if (applications.isEmpty()) {

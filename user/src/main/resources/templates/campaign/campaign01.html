@@ -415,7 +415,8 @@
                     eventPeriodStr: currentBtn.dataset.periodStr,
                     eventPeriodEnd: currentBtn.dataset.periodEnd,
                     guardType: currentBtn.dataset.guardType,
-                    applicantsNum: currentBtn.dataset.applicantsNum
+                    applicantsNum: currentBtn.dataset.applicantsNum,
+                    timeSegment: currentBtn.dataset.timeSegment
                 };
                 
                 if(campaign.typeCode == "02"){
@@ -545,8 +546,7 @@
     <div class="container_campaign">
     <section aria-labelledby="campaign-title" class="campaign-info">
         <div class="mrg75-top mrg25-bottom">
-            <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
-            <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span>
+            <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span> <span class="campaign_tile"  th:text="${campaignSelect.timeSegment == 'DAY' || campaignSelect.timeSegment == null ? '(주간)' : '(야간)'}"></span>
         </div>
         <div class="info-section">
             <div class="info-text">
@@ -576,7 +576,6 @@
     <section class="left-view">
         <div class="campaignTitle">
             <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
-            <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span>
         </div>
         <div class="image-row">
             <img id="imgFile" style="margin: 15px auto" th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" class=""/><br>
@@ -718,7 +717,8 @@
                         th:data-period-str="${campaignSelect.eventPeriodStr}"
                         th:data-period-end="${campaignSelect.eventPeriodEnd}"
                         th:data-applicants-num="${campaignSelect.applicantsNum}"
-                        th:data-guard-type="${guardType}">
+                        th:data-guard-type="${guardType}"
+                        th:data-time-segment="${campaignSelect.timeSegment}">
                     신청하기
                 </button>
             </div>

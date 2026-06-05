@@ -20,7 +20,7 @@
                 const hourlyPayInput = document.getElementById("hourlyPayInput");
                 const dailyPay = document.getElementById("dailyPay");
                 const dailyPayInput = document.getElementById("dailyPayInput");
-                const workHours = document.getElementById("workHour"); // HTML에 id="workHour"로 되어있어서 수정
+                const workHour = document.getElementById("workHour"); // HTML에 id="workHour"로 되어있어서 수정
                 const timeInput = document.getElementById("timeInput");
 
                 console.log("선택된 경호/진행/수행 구분: " + typeCode);
@@ -30,7 +30,7 @@
                     wageRadio.classList.remove("hidden"); 
 
                     // 이벤트 리스너 중복 등록 방지를 위해 기존 이벤트를 한 번 제거하거나 새로 바인딩
-                    document.querySelectorAll('input[name="wage"]').forEach((radio) => {
+                    document.querySelectorAll('input[name="wageChk"]').forEach((radio) => {
                         radio.onchange = function() {
                             if (this.value === "01") { // 📅 일급 선택 시
                                 dailyPay.classList.remove("hidden");
@@ -41,8 +41,9 @@
                                 dailyPayInput.setAttribute("name", "campaignPay"); // 내 name은 살리고
                                 hourlyPayInput.removeAttribute("name");            // 상대 name은 지우고
                                 
-                                workHours.required = false;               
+                                workHour.required = false;               
                             } else if (this.value === "02") { // ⏰ 시급 선택 시
+                                console.log("시급 선택됨 -> 시급 입력 보이기");
                                 dailyPay.classList.add("hidden");
                                 hourlyPay.classList.remove("hidden");
                                 timeInput.classList.remove("hidden");
@@ -51,8 +52,8 @@
                                 hourlyPayInput.setAttribute("name", "campaignPay"); // 내 name은 살리고
                                 dailyPayInput.removeAttribute("name");             // 상대 name은 지우고
                                 
-                                workHours.required = true;                
-                                workHours.value = "";
+                                workHour.required = true;                
+                                workHour.value = "";
                             }
                         };
                     });
@@ -145,9 +146,26 @@
                     </div>
                 </div>
                 <!-- 캠페인 정보 -->
-                <div class="form-group">
-                    <label>캠페인명</label>
-                    <input type="text" id="campaignTitle" name="campaignTitle" />
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>캠페인명</label>
+                        <input type="text" id="campaignTitle" name="campaignTitle" />
+                    </div>
+                    <div class="form-group">
+                        <label>주간 / 야간</label>
+                        <!-- <input type="text" id="campaignTitle" name="campaignTitle" /> -->
+                        <div class="radio-group"> 
+                            <label class="radio-label">
+                                <input type="radio" name="timeSegment" id="timeSegmentDay" value="DAY" checked>주간
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="timeSegment" id="timeSegmentNight" value="NIGHT">야간
+                            </label>
+                            <!-- <label class="radio-label">
+                                <input type="radio" name="timeSegment" id="timeSegmentDawn" value="DAWN">야간
+                            </label> -->
+                        </div>
+                    </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">

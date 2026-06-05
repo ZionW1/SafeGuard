@@ -67,8 +67,7 @@
                             <tr>
                                 <td><span th:text="${campaign.campaignId}"></span></td>
                                 <td><span th:text="${campaign.placeAddr}"></span></td>
-                                <td><span th:text="${campaign.campaignTitle}"></span></td>
-                                <td><span th:text="${campaign.userNm}"></span></td>
+                                <td th:text="|${campaign.campaignTitle} (${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'})|"></td>                                <td><span th:text="${campaign.userNm}"></span></td>
                                 <td><span th:text="${campaign.eventPeriodStr != null ? #temporals.format(campaign.eventPeriodStr, 'yyyy.MM.dd') : ''}"></span>~<span th:text="${campaign.eventPeriodStr != null ? #temporals.format(campaign.eventPeriodEnd, 'yyyy.MM.dd') : ''}"></span></span></td>
                                 <td><span th:text="${campaign.applicantsNum}"></span></td>
                                 <td><span th:text="${campaign.recruitmentNum}"></span></td>

@@ -62,6 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             type_code,
             applicants_Num,
             recruitment_Num,
+            time_segment,
             u.user_nm
         from campaign c
         left outer join user u
@@ -153,6 +154,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             applicants_Num,
             leader_pay,
             campaign_pay,
+            time_segment,
             work_hour,
             wage_chk,
             leader_point,
@@ -175,6 +177,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             CASE WHEN #{leaderPay} != 0 THEN 1 ELSE 0 END,
             #{leaderPay},
             #{campaignPay},
+            #{timeSegment},
             #{workHour},
             #{wageChk},
             #{leaderPoint},
@@ -202,6 +205,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.applicants_num,
             c.leader_Pay,
             c.campaign_pay,
+            c.time_segment,
             c.place_addr,
             leader_point,
             work_hour,
@@ -259,6 +263,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             recruitment_num = #{recruitmentNum},
             leader_pay = #{leaderPay},
             campaign_pay = #{campaignPay},
+            time_segment = #{timeSegment},
             work_hour = #{workHour},
             wage_chk = #{wageChk},
             place_addr = #{placeAddr},

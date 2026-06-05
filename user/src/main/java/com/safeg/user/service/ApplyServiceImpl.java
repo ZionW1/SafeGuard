@@ -25,9 +25,9 @@ public class ApplyServiceImpl implements ApplyService {
     UserMapper userMapper;
 
     @Override
-    public List<UserCampaignVO> userCampaignApply(String id, LocalDate applyDate) throws Exception {
+    public List<UserCampaignVO> userCampaignApply(String id, LocalDate applyDate, String timeSegment) throws Exception {
         // TODO Auto-generated method stub
-        List<UserCampaignVO> userCampaignApply = applyMapper.userCampaignApply(id, applyDate);
+        List<UserCampaignVO> userCampaignApply = applyMapper.userCampaignApply(id, applyDate, timeSegment);
         return userCampaignApply;
     }
 
@@ -222,6 +222,7 @@ public class ApplyServiceImpl implements ApplyService {
 
     @Override
     public int pointInsert(PointHistoryVO pointHistoryVO) throws Exception {
+        log.info("pointInsert called with PointHistoryVO: {}", pointHistoryVO);
         log.info("pointInsert called with userId: {}, campaignId: {}, localDate: {}", pointHistoryVO.getUserId(), pointHistoryVO.getCampaignId(), pointHistoryVO.getMissionDate());
         // String dateString = localDate.toString();
         // 
@@ -232,6 +233,7 @@ public class ApplyServiceImpl implements ApplyService {
         // vo.setPointType("EARN"); // 포인트 유형 (예: EARN, DEDUCT)
         vo.setCategory("OVERPAY");
         vo.setSourceId(pointHistoryVO.getUserId());
+        vo.setReasonInfo(pointHistoryVO.getReasonInfo());
         vo.setCampaignId(pointHistoryVO.getCampaignId());
         vo.setMissionDate(pointHistoryVO.getMissionDate());
         // vo.setSettlementStatus("READY");

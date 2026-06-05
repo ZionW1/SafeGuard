@@ -14,6 +14,7 @@
             r.title,
             r.content,
             r.thumbnail_name,
+            c.time_segment,
             (CASE
                 WHEN c.type_code = '01' THEN '경호'
                 WHEN c.type_code = '02' THEN '진행'

@@ -29,7 +29,7 @@ public class PointHistoryVO {
     private int referrerCount;
     private int applicantsNum;
     private int leaderPointCount;
-    private int reasonInfo;
+    private String reasonInfo;
     private String userNm;
     private String id;
 
@@ -46,5 +46,5 @@ public class PointHistoryVO {
 
     private String campaignTitle;
     private String statusNm;
-    
+    private String timeSegment;
 }

@@ -47,12 +47,6 @@ public class CampaignServiceImpl implements CampaignService{
         LocalDate endDate;
         int result = 0;
         int result1 = 0;
-        log.info("userCampaignVO : " + userCampaignVO);
-
-        log.info("getEventPeriodEnd : " +userCampaignVO.getUserId());
-
-        log.info("getEventPeriodEnd :" +userCampaignVO.getEventPeriodStr());
-        log.info("getEventPeriodEnd :" +userCampaignVO.getEventPeriodEnd());
 
         try {
             startDate = userCampaignVO.getEventPeriodStr(); // 예: "2026-01-19" -> LocalDate
@@ -84,6 +78,7 @@ public class CampaignServiceImpl implements CampaignService{
             dailyEntry.setApplicantsNum(userCampaignVO.getApplicantsNum());
             dailyEntry.setEventPeriodStr(userCampaignVO.getEventPeriodStr());
             dailyEntry.setEventPeriodEnd(userCampaignVO.getEventPeriodEnd());
+            dailyEntry.setTimeSegment(userCampaignVO.getTimeSegment());
             
             dailyEntry.setApplyDate(date);
             dailyEntriesToInsert.add(dailyEntry);

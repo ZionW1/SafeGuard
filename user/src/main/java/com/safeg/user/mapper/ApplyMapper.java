@@ -12,7 +12,7 @@ import com.safeg.user.vo.UserCampaignVO;
 @Mapper
 public interface ApplyMapper {
 
-    public List<UserCampaignVO> userCampaignApply(@Param("id") String id, @Param("applyDate") LocalDate applyDate) throws Exception;
+    public List<UserCampaignVO> userCampaignApply(@Param("id") String id, @Param("applyDate") LocalDate applyDate, @Param("timeSegment") String timeSegment) throws Exception;
 
     public int updateStatus(@Param("userNo") Long userNo, @Param("campaignId") Long campaignId, @Param("applyDate") LocalDate applyDate, @Param("statusValue") String statusValue) throws Exception;
 

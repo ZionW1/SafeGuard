@@ -333,9 +333,26 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>캠페인명</label>
-                        <input type="text" name="campaignTitle" id="campaignTitle" th:value="${campaignSelect.campaignTitle}" />
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>캠페인명</label>
+                            <input type="text" id="campaignTitle" name="campaignTitle" th:value="${campaignSelect.campaignTitle}"/>
+                        </div>
+                        <div class="form-group">
+                            <label>주간 / 야간</label>
+                            <!-- <input type="text" id="campaignTitle" name="campaignTitle" /> -->
+                            <div class="radio-group"> 
+                                <label class="radio-label">
+                                    <input type="radio" name="timeSegment" id="timeSegmentDay" value="DAY" th:checked="${campaignSelect?.timeSegment == null || campaignSelect?.timeSegment == 'DAY'}">주간
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="timeSegment" id="timeSegmentNight" value="NIGHT" th:checked="${campaignSelect?.timeSegment == 'NIGHT'}">야간
+                                </label>
+                                <!-- <label class="radio-label">
+                                    <input type="radio" name="timeSegment" id="timeSegmentDawn" value="DAWN">야간
+                                </label> -->
+                            </div>
+                        </div>
                     </div>
                     <!-- <div class="form-row">
                         <div class="form-group">

@@ -54,8 +54,7 @@
                         <th:block th:if="${workList != null and !workList.isEmpty()}">
                             <tr th:each="point, stat : ${workList}">
                                 <td th:text="${stat.index + 1}"></td>
-                                <td th:text="${point.campaignTitle}"></td>
-                                <!-- <td th:text="${#dates.format(point.missionDate, 'yyyy-MM-dd')}"></td> -->
+                                <td th:text="|${point.campaignTitle} (${point.timeSegment == 'DAY' || point.timeSegment == null ? '주간' : '야간'})|"></td>
                                 <td th:text="${point.missionDate}"></td>
                                 <td th:text="${point.statusNm}"></td>
                                 <td th:text="${point.amount != null ? #numbers.formatInteger(point.amount, 3, 'COMMA') : 0}">0</td>
@@ -134,8 +133,8 @@
                                 <th:block th:if="${leaderList != null and !leaderList.isEmpty()}">
                                 <tr th:each="giver, stat : ${leaderList}">
                                     <td th:text="${stat.index + 1}"></td>
-                                    <Td th:text="${giver.missionDate}"></td>
-                                    <td th:text="${giver.campaignTitle}"></td>
+                                    <td th:text="${giver.missionDate}"></td>
+                                    <td th:text="|${giver.campaignTitle} (${giver.timeSegment == 'DAY' || giver.timeSegment == null ? '주간' : '야간'})|"></td>
                                     <td th:text="${giver.applicantsNum}"></td>
                                     <td th:text="${giver.amount != null ? #numbers.formatInteger(giver.amount, 3, 'COMMA') : 0}"></td>
                                 </tr>
@@ -191,9 +190,9 @@
                             <th:block th:if="${overPayList != null and !overPayList.isEmpty()}">
                                 <tr th:each="giver, stat : ${overPayList}">
                                     <td th:text="${stat.index + 1}"></td>
-                                    <Td th:text="${giver.missionDate}"></td>
-                                    <td th:text="${giver.campaignTitle}"></td>
-                                    <td th:text="${giver.applicantsNum}"></td>
+                                    <td th:text="|${giver.campaignTitle} (${giver.timeSegment == 'DAY' || giver.timeSegment == null ? '주간' : '야간'})|"></td>
+                                    <td th:text="${giver.missionDate}"></td>
+                                    <td th:text="${giver.statusNm}"></td>
                                     <td th:text="${giver.amount != null ? #numbers.formatInteger(giver.amount, 3, 'COMMA') : 0}"></td>
                                 </tr>
                                 </th:block>

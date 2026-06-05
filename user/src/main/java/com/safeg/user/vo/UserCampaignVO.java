@@ -77,6 +77,10 @@ public class UserCampaignVO {
     private int pointFull;
     private String filePath;
 
+    private String workHour;
+    private String wageChk;
+    private String timeSegment;
+
     public String getHyphenPhone() {
         // 1. 데이터가 없거나 길이가 짧은 경우 그대로 반환 (NPE 방어)
         if (this.phoneNum == null || this.phoneNum.length() < 10) {

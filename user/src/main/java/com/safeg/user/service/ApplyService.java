@@ -10,7 +10,7 @@ import com.safeg.user.vo.UserCampaignVO;
 
 public interface ApplyService {
 
-    public List<UserCampaignVO> userCampaignApply(String id, LocalDate applyDate) throws Exception;
+    public List<UserCampaignVO> userCampaignApply(String id, LocalDate applyDate, String timeSegment) throws Exception;
 
     public String updateStatus(Long userNo, Long campaignId, LocalDate applyDate, String statusValue) throws Exception;
 

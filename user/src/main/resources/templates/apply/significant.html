@@ -32,7 +32,7 @@
                         </div>
                         <div class="btn-area-significant">
                             <input type="number" class="input-significant" name="amount" step="100" placeholder="금액" >
-                            <input type="text" class="input-significant" name="reasonInfo" placeholder="사유 입력">
+                            <input type="text" class="input-significant" name="reasonInfo" id="reasonInfo" placeholder="사유 입력">
                             <!-- <a th:class="|statusInfoChange statusInfoChangeConfirm button_status significant_btn|" th:href="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${userNo}, campaignId=${campaignId}, applyDate=${applyDate})}" data-status="2">특이사항</a> -->
                             <a th:class="|statusInfoChange statusInfoChangeConfirm button_status significant_btn|" href="#" th:onclick="significantInsert()">특이사항 저장</a>
                             <!-- <button type="submit" class="statusInfoChange statusInfoChangeConfirm button_status significant_btn" name="submit" value="특이사항">특이사항</button> -->

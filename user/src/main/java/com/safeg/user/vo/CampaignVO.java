@@ -82,4 +82,8 @@ public class CampaignVO {
     private String savedName; //varchar(255) not null comment '저장 파일
     
     private boolean showPoint;
+    private String workHour;
+    private String wageChk;
+    private String timeSegment;
+
 }

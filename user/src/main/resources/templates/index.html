@@ -174,7 +174,7 @@
                                             <span>[</span>
                                             <span th:text="${campaign.typeNm}">타입명</span>
                                             <span>] </span>
-                                            <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
+                                            <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span> (<span th:text="${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'}"></span>)
                                         </div>
                                     </div>
                                     <!-- <div class="title-overlay">
@@ -207,7 +207,7 @@
                                             <span>[</span>
                                             <span th:text="${campaign.typeNm}">타입명</span>
                                             <span>] </span>
-                                            <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
+                                            <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span> (<span th:text="${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'}"></span>)
                                         </div>
                                     </div>
                                     <!-- <div class="title-overlay">
@@ -290,7 +290,7 @@
                                                 <span>[</span>
                                                 <span th:text="${campaign.typeNm}">타입명</span>
                                                 <span>] </span>
-                                                <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
+                                                <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span> (<span th:text="${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'}"></span>)
                                             </div>
                                         </div>
                                         <!-- <div class="title-overlay">
@@ -324,7 +324,7 @@
                                                 <span>[</span>
                                                 <span th:text="${campaign.typeNm}">타입명</span>
                                                 <span>] </span>
-                                                <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
+                                                <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span> (<span th:text="${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'}"></span>)
                                             </div>
                                         </div>
                                         <div th:if="${authUser.canShowPoint(campaign.typeCode)}" class="title-overlay">
@@ -366,7 +366,7 @@
                                             <span>[</span>
                                             <span th:text="${campaign.typeNm}">타입명</span>
                                             <span>] </span>
-                                            <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
+                                            <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span> (<span th:text="${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'}"></span>)
                                         </div>
                                     </div>
                                     <!-- <div class="title-overlay">
@@ -399,7 +399,7 @@
                                             <span>[</span>
                                             <span th:text="${campaign.typeNm}">타입명</span>
                                             <span>] </span>
-                                            <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span>
+                                            <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span> (<span th:text="${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'}"></span>)
                                         </div>
                                     </div>
                                     <div th:if="${authUser.canShowPoint(campaign.typeCode)}" class="title-overlay">
@@ -441,7 +441,7 @@
                                         <span>[</span>
                                         <span th:text="${review.typeNm}">타입명</span>
                                         <span>] </span>
-                                        <span th:text="${review.title}">캠페인 제목이 여기에 들어갑니다.</span>
+                                        <span th:text="${review.title}">캠페인 제목이 여기에 들어갑니다.</span> (<span th:text="${review.timeSegment == 'DAY' || review.timeSegment == null ? '주간' : '야간'}"></span>)
                                     </div>
                                 </div>
                                 <!-- <div class="title-overlay">

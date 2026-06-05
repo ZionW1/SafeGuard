@@ -24,6 +24,7 @@
         <result property="appPeriodEnd" column="app_period_end" />
         <result property="eventPeriodStr" column="event_Period_Str" />
         <result property="eventPeriodEnd" column="event_Period_End" />
+        <result property="timeSegment" column="time_segment" />
         <result property="resultDate" column="result_date" />
         <result property="applyDate" column="apply_date" />
         <result property="placeAddr" column="place_addr" />
@@ -63,6 +64,7 @@
             c.app_period_end,
             c.event_Period_str,
             c.event_Period_End,
+            c.time_segment,
             result_date,
             apply_date,
             place_addr,
@@ -88,12 +90,15 @@
         AND 
             DATE(apply_date) = #{applyDate}
         AND 
+            uc.TIME_SEGMENT = #{timeSegment}
+        AND 
             uc.is_deleted = 'N'
     </select>
 
     <select id="getApplyDate" resultType="UserCampaignVO">
         SELECT 
-            DISTINCT CONCAT(DATE_FORMAT(apply_date, '%Y-%m-%d'), ' 00:00:00') as apply_date
+            DISTINCT CONCAT(DATE_FORMAT(apply_date, '%Y-%m-%d'), ' 00:00:00') as apply_date,
+            TIME_SEGMENT
         FROM user_campaign
         WHERE campaign_id = #{campaignId}
         AND is_deleted = 'N'

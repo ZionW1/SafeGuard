@@ -55,10 +55,12 @@ public class ApplyController {
 
         // 2. 현재 조회할 '기준 날짜'를 결정합니다.
         LocalDate finalDate;
+        String timeSegment = null;
         if (date != null) { 
             finalDate = date; 
         } else if (dateList != null && !dateList.isEmpty()) {
             finalDate = dateList.get(0).getApplyDate(); 
+            timeSegment = dateList.get(0).getTimeSegment(); // timeSegment도 함께 가져오기
         } else {
             finalDate = LocalDate.now();
         }
@@ -81,7 +83,7 @@ public class ApplyController {
             model.addAttribute("user", user);
         }
         // ※ 주의: 두 번째 인자로 리스트가 아닌 '문자열 날짜'를 넘겨야 함
-        List<UserCampaignVO> userCampaignApply = applyService.userCampaignApply(campaignId , finalDate);
+        List<UserCampaignVO> userCampaignApply = applyService.userCampaignApply(campaignId , finalDate, timeSegment);
 
         // for(int i = 0; i < userCampaignApply.size(); i++){
         //     // String originalPhone = user.getPhoneNum();
@@ -123,10 +125,12 @@ public class ApplyController {
 
         // 2. 현재 조회할 '기준 날짜'를 결정합니다.
         LocalDate finalDate;
+        String timeSegment = null;
         if (date != null) { 
             finalDate = date; 
         } else if (dateList != null && !dateList.isEmpty()) {
-            finalDate = dateList.get(0).getApplyDate(); 
+            finalDate = dateList.get(0).getApplyDate();
+            timeSegment = dateList.get(0).getTimeSegment(); // timeSegment도 함께 가져오기
         } else {
             finalDate = LocalDate.now();
         }
@@ -149,7 +153,7 @@ public class ApplyController {
             model.addAttribute("user", user);
         }
         // ※ 주의: 두 번째 인자로 리스트가 아닌 '문자열 날짜'를 넘겨야 함
-        List<UserCampaignVO> userCampaignApply = applyService.userCampaignApply(campaignId , finalDate);
+        List<UserCampaignVO> userCampaignApply = applyService.userCampaignApply(campaignId , finalDate, timeSegment);
 
         // // 5. 인솔자 찾기 로직 (개선: 스트림이나 향상된 for문 사용 권장)
         // UserCampaignVO leaderCampaign = userCampaignApply.stream()

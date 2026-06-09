@@ -15,7 +15,8 @@ public class LogControlInterceptor implements HandlerInterceptor {
         if (modelAndView != null && !modelAndView.getViewName().startsWith("redirect:")) {
             
             // 실제 운영 환경 여부 (나중에 환경 변수로 관리하면 더 좋습니다)
-            boolean isProd = false; 
+            // true이면 console.log() 안보임.
+            boolean isProd = true; 
 
             if (isProd) {
                 String script = "<script>" +

@@ -13,6 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
     private LogControlInterceptor logControlInterceptor;
+    
 
     public static String getUploadPath() {
         String os = System.getProperty("os.name").toLowerCase();

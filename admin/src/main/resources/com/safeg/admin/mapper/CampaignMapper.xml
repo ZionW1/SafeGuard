@@ -280,6 +280,75 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         campaign_id = #{campaignId};
     </update>
 
+    <update id="leaderUpdate">
+        UPDATE 
+            user_campaign
+        SET
+            user_no = #{leaderNo},
+            user_id = #{leaderId} -- 새로운 인솔자 ID로 덮어쓰기
+        WHERE 
+            campaign_id = #{campaignId}
+        AND 
+            user_no = #{oldLeaderNo}
+        AND 
+            is_leader = 'Y'
+        AND 
+            is_deleted = 'N'
+
+    </update>
+
+    <update id="updateIsDeleted">
+        UPDATE
+            campaign
+        SET
+            is_deleted = #{isDeleted},
+            is_active = #{isActive}
+        WHERE
+            campaign_id = #{campaignId}
+    </update>
+
+    <update id="updateUcIsDeleted">
+        UPDATE user_campaign
+        SET is_deleted = 'Y'
+        WHERE campaign_id = #{campaignId}
+        AND is_deleted = 'N'
+        AND is_leader = 'N'
+        AND user_id IN (
+            -- 🔥 늦게 신청한 유저들의 ID만 쏙 골라내기
+            SELECT t.user_id FROM (
+                SELECT user_id 
+                FROM user_campaign
+                WHERE campaign_id = #{campaignId}
+                    AND is_deleted = 'N'
+                    AND is_leader = 'N'
+                GROUP BY user_id -- 유저별로 그룹을 묶어서 (인당 1개씩만 나오게)
+                ORDER BY MAX(created_at) DESC -- 가장 최근(늦게) 신청한 사람 순서대로!
+                LIMIT #{exceedCount} -- 💡 자바에서 넘어온 '초과된 사람 수'만큼 커트
+            ) t
+        )
+    </update>
+
+    <select id="applySelect" resultType="UserCampaignVO">
+        select
+            uc.is_leader,
+            uc.user_id,
+            uc.user_no,
+            c.recruitment_num,
+            c.applicants_num,
+            uc.event_str_date,
+            uc.event_end_date,
+            c.EVENT_PERIOD_STR,
+            c.EVENT_PERIOD_END,
+            uc.applied_str_date,
+            uc.applied_end_date
+        from user_campaign uc
+        LEFT OUTER JOIN campaign c
+        ON uc.campaign_id = c.campaign_id
+        where uc.campaign_id = #{campaignId}
+        and uc.is_deleted = 'N'
+        Limit 1
+    </select>
+
     <update id="campaignDelete">
         update campaign set
             is_deleted = 'Y',
@@ -369,10 +438,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertCampaignLeaderApply" parameterType="java.util.List">
         INSERT INTO user_campaign(
-            campaign_id, 
-            user_No, 
-            user_id, 
-            applied_str_date, 
+            campaign_id,
+            user_No,
+            user_id,
+            applied_str_date,
             applied_end_date,
             event_str_date,
             event_end_date,
@@ -427,4 +496,56 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND c.is_active = 'N'
         order by campaign_Id desc
     </select>
+
+    <update id="updateApplyDate" parameterType="CampaignVO">
+        UPDATE user_campaign
+        SET 
+            apply_date = #{newDate},
+            event_str_date = #{eventPeriodStr},
+            event_end_date = #{eventPeriodEnd},
+            updated_at = NOW()
+        WHERE campaign_id = #{campaignId}
+        AND apply_date = #{oldDate}
+        AND is_deleted = 'N'
+    </update>
+
+    <update id="deleteApplyDate">
+        UPDATE user_campaign
+        SET is_deleted = 'Y'
+        WHERE campaign_id = #{campaignId}
+        AND apply_date = #{leftoverDate}
+        AND is_deleted = 'N'
+    </update>
+
+    <insert id="copyApplyDate">
+        INSERT INTO user_campaign (
+            campaign_id,
+            user_no,
+            user_id,
+            apply_date,
+            event_str_date,
+            event_end_date,
+            status,
+            is_leader,
+            created_at,
+            updated_at,
+            is_deleted)
+        SELECT 
+            campaign_id,
+            user_No,
+            user_id,
+            #{targetDate}, -- 새로 생성될 날짜
+            #{newStrDate},
+            #{newEndDate},
+            #{status}, -- 상태는 매개변수로 전달받음 (예: '0' 또는 '8')
+            #{isLeader}, -- 리더 여부도 매개변수로 전달받음 (예: 'Y' 또는 'N')
+            now(),
+            now(),
+            'N'
+        FROM user_campaign
+        WHERE campaign_id = #{campaignId}
+            AND apply_date = #{sourceDate} -- 복사 대상이 되는 원본 날짜
+            AND is_deleted = 'N'
+        Limit 1
+    </insert>
 </mapper>

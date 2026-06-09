@@ -43,6 +43,11 @@ public class CampaignVO {
 	private LocalDate eventPeriodEnd;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate resultDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate eventStrDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate eventEndDate;
+    
 	private String createdAt;
 	private String updatedAt;
     private String isDeleted;

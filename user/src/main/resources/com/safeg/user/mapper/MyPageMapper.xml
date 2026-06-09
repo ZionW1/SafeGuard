@@ -368,7 +368,7 @@
             AND ph.user_id = #{userNo}
             AND ph.category = 'leader_extra'
         GROUP BY 
-            ph.user_id, c.CAMPAIGN_ID, c.campaign_title, c.time_segment,
+            ph.user_id, c.CAMPAIGN_ID, c.campaign_title, c.time_segment
     </select>
 
     <select id="workList" resultType="PointHistoryVO">
@@ -530,4 +530,10 @@
         WHERE id = #{userNo}
         AND is_deleted = 'N'
     </select>
+
+    <update id="updateApplicantsNum">
+        UPDATE campaign
+        SET applicants_num = #{newNum}
+        WHERE campaign_id = #{campaignId}
+    </update>
 </mapper>

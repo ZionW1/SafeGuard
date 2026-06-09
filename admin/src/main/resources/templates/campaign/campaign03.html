@@ -52,14 +52,14 @@
                                 hourlyPayInput.setAttribute("name", "campaignPay"); // 내 name은 살리고
                                 dailyPayInput.removeAttribute("name");             // 상대 name은 지우고
                                 
-                                workHour.required = true;                
+                                workHour.required = true;
                                 workHour.value = "";
                             }
                         };
                     });
                 } else {
                     console.log("다른 값 선택됨 -> 숨기기");
-                    wageRadio.classList.add("hidden");    
+                    wageRadio.classList.add("hidden");
                 }
                 
                 document.getElementById("typeCode").value = typeCode;
@@ -70,10 +70,12 @@
                 
                 const selectPhoneNumber = leaderList[idx].phoneNum;
                 const selectNo = leaderList[idx].id;
+                const leaderId = leaderList[idx].userId;
 
                 document.getElementById("leaderPhone").value = selectPhoneNumber;
                 document.getElementById("leaderNo").value = selectNo;
                 document.getElementById("leaderCode").value = leaderList[idx].id;
+                document.getElementById("leaderId").value = leaderId;
             }
         </script>
     </head>
@@ -104,6 +106,7 @@
                     </div>
                 </div>
                 <input type="hidden" id="leaderCode" name="leaderCode" />
+                <input type="hidden" id="leaderId" name="leaderId" />
                 <input type="hidden" id="leaderNo" name="leaderNo" />
                 
                 <input type="hidden" name="leaderPay" id="leaderPay" />

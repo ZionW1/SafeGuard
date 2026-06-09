@@ -24,6 +24,7 @@ public class UserCampaignVO {
     private int extendPeriod;
     private boolean eventActive;
     private int applicantsNum;
+    private String isLeader;
     private LocalDate appliedStrDate;
     private LocalDate appliedEndDate;
     private int pfmcScore;
@@ -39,5 +40,8 @@ public class UserCampaignVO {
     private LocalDate resultDate;
     private String placeAddr;
     private String statusNm;
-    private LocalDate ApplyDate;
+    private LocalDate applyDate;
+
+    private int recruitmentNum;
+    // private int applicantsNum;
 }

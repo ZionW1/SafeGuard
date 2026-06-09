@@ -117,22 +117,16 @@
             }
 
             function inputLeaderPhoneNumber(idx) {
-                console.log("선택된 인솔자 ID: " + idx);
                 const leaderList = /*[[${leaderList}]]*/ [];
-
-                console.log("selectPhoneNumber : " + JSON.stringify(leaderList[idx]));
 
                 const selectPhoneNumber = leaderList[idx].phoneNum;
                 const selectNo = leaderList[idx].id;
-                const selectId = leaderList[idx].userId;
-
-                console.log("selectPhoneNumber : " + selectPhoneNumber);
+                const leaderId = leaderList[idx].userId;
 
                 document.getElementById("leaderPhone").value = selectPhoneNumber;
                 document.getElementById("leaderNo").value = selectNo;
-                document.getElementById("leaderCode").value = selectNo;
-
-                console.log("a" + selectPhoneNumber);
+                document.getElementById("leaderCode").value = leaderList[idx].id;
+                document.getElementById("leaderId").value = leaderId;
             }
 
             // function removeFile(element, id){
@@ -293,6 +287,7 @@
                     </div>
                     
                 <input type="hidden" id="leaderCode" name="leaderCode" />
+                <input type="hidden" id="leaderId" name="leaderId" />
                 <input type="hidden" id="leaderNo" name="leaderNo" />
                 
                 <input type="hidden" name="leaderPay" id="leaderPay" />

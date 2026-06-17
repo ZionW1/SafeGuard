@@ -50,6 +50,7 @@ public class UserCampaignVO {
     // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     // private LocalDate applyDate;
     private String leaderCode;
+    private String leadApply;
     private int campaignPay;
     private int leaderPoint;
     private int referrerPoint;
@@ -81,6 +82,9 @@ public class UserCampaignVO {
     private String wageChk;
     private String timeSegment;
 
+    private String residentNum;
+    private String reasonInfo;
+    
     public String getHyphenPhone() {
         // 1. 데이터가 없거나 길이가 짧은 경우 그대로 반환 (NPE 방어)
         if (this.phoneNum == null || this.phoneNum.length() < 10) {

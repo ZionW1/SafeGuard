@@ -10,6 +10,8 @@
         <result property="userId" column="user_id" />
         <result property="userNm" column="user_nm" />
         <result property="userNo" column="user_No" />
+        <result property="userNo" column="user_No" />
+        <result property="userNo" column="user_No" />
         <result property="phoneNum" column="phone_num"
                 typeHandler="com.safeg.user.util.CryptoTypeHandler" />
         <result property="campaignTitle" column="campaign_title" />
@@ -86,7 +88,6 @@
         ON uc.campaign_id = r.campaign_id
         WHERE 
             uc.campaign_id=#{id}
-        <!-- AND uc.apply_date = #{applyDate} -->
         AND 
             DATE(apply_date) = #{applyDate}
         AND 
@@ -306,7 +307,6 @@
             user_campaign 
         SET 
             is_deleted = 'Y'
-            ㅑ
         WHERE 
             campaign_id = #{campaignId} 
         AND 

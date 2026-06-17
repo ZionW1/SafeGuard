@@ -104,4 +104,8 @@ public class UserVO {
 
     private int pendingPoint;
     
+    private String courseNum;
+    private String residentNum;
+    private String privAgree;
+
 }

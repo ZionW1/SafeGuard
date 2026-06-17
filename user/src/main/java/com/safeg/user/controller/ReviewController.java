@@ -69,9 +69,16 @@ public class ReviewController {
         log.info("authUser.getUsername() : "+ authUser.getUsername());
         ReviewVO reviewInfo = reviewService.reviewInfo(campaignId);
         
+
+        log.info("▶▶▶ reviewInfo 존재 여부: {}", reviewInfo != null);
+        if (reviewInfo != null) {
+            log.info("▶▶▶ 캠페인 인솔자 ID: {}", reviewInfo.getLeaderId());
+            log.info("▶▶▶ 현재 로그인한 유저 ID: {}", authUser != null ? authUser.getUsername() : "null");
+        }
+
         if (reviewInfo == null || authUser == null || !reviewInfo.getLeaderId().equals(authUser.getUsername())) {
-            // 인솔자가 아니면 원래 목록 화면이나 에러 페이지로 튕겨버림
-            return "redirect:/closedCampaign"; 
+            log.warn("⚠️ 권한 불일치 또는 데이터 없음으로 인해 / 으로 리다이렉트 됩니다.");
+            return "redirect:/"; 
         }
 
         String campaignTitle = reviewInfo.getCampaignTitle();

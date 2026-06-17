@@ -206,4 +206,8 @@ public class UserVO {
 
 
     private String savedName;
+
+    private String courseNum;
+    private String residentNum;
+    private String privAgree;
 }

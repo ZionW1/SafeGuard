@@ -69,20 +69,12 @@ public class SecurityConfig {
             .anyRequest().permitAll()
         );
 
-        // http.authorizeHttpRequests(auth -> auth
-        //                         // .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
-        //                         .requestMatchers("/mypage", "/mypage/**").hasAnyRole("USER", "LEADER", "ADMIN")
-        //                         // .requestMatchers("/apply", "/apply/**").hasAnyRole( "LEADER", "ADMIN")
-        //                         .requestMatchers("/**").permitAll()
-        //                         .anyRequest().permitAll());
         // 폼 로그인 설정
         http.formLogin(login -> login.loginPage("/user01") // 로그인 페이지 경로
             .loginProcessingUrl("/login")  // 로그인 요청 경로
             .usernameParameter("userId") // 아이디 파라미터
             .passwordParameter("password")// 비밀번호 파라미터
-            //.defaultSuccessUrl("/?success") // 로그인 성공 경로
             .successHandler(loginSuccessHandler) // 로그인 성공 처리자 설정
-            // .failureUrl("/login?error") // 로그인 실패 경로
             .failureHandler(loginFailureHandler) // 로그인 실패 처리자 설정
         );
 
@@ -95,24 +87,26 @@ public class SecurityConfig {
             .tokenRepository(tokenRepository())
             .tokenValiditySeconds(60 * 60 * 24 * 7)); // 7일 유효시간 (초단위)
 
-        //인증 예외 처리
+        // 인증 예외 처리
         http.exceptionHandling(exception -> exception
             .accessDeniedHandler(customAccessDeniedHandler));
 
+        // 로그아웃 설정
         http.logout(logout -> logout
                 .logoutUrl("/logout") // 로그아웃 요청 경로
                 .logoutSuccessUrl("/") // 로그아웃 성공 시 url
                 .invalidateHttpSession(true)  // 세션 초기화
                 .deleteCookies("remember-id") // 로그아웃 시, 아이디 저장 쿠키 삭제
-                // .logoutSuccessHandler("null") // 로그아웃 성공 처리자 설정
         );
 
-        // http.requiresChannel(channel -> 
-        //     channel.anyRequest().requiresSecure() // 모든 요청에 대해 보안 연결(HTTPS)을 강제함
-        // );
+        // ==========================================
+        // ⭐ 바로 요기! 로그아웃 밑, return http.build() 위에 추가합니다!
+        // ==========================================
+        http.sessionManagement(session -> session
+            .sessionFixation(sessionFixation -> sessionFixation.migrateSession()) 
+        );
 
         return http.build();
-        
     }
     
     /**

@@ -532,8 +532,24 @@
     </select>
 
     <update id="updateApplicantsNum">
-        UPDATE campaign
-        SET applicants_num = #{newNum}
+        UPDATE campaign 
+        SET applicants_num = (
+            SELECT t.cnt FROM (
+                SELECT COUNT(DISTINCT user_id) as cnt
+                FROM user_campaign 
+                WHERE campaign_id = #{campaignId}
+                AND is_deleted = 'N' -- 👈 탈락하거나 취소된(Y) 사람은 제외!
+            ) t
+        )
         WHERE campaign_id = #{campaignId}
+    </update>
+
+    <update id="updateUserInfo">
+        UPDATE user
+        SET
+            course_num = #{userVo.courseNum},
+            resident_num = #{userVo.residentNum},
+            priv_agree = #{userVo.privAgree}
+        WHERE id = #{userIdFromDb}
     </update>
 </mapper>

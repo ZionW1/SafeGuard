@@ -61,43 +61,23 @@ public class CampaignServiceImpl implements CampaignService{
     @Override
     @Transactional // 두 작업이 하나의 트랜잭션으로 묶이도록!
     public int campaignInsert(CampaignVO campaignsVO) throws Exception {
-        // TODO Auto-generated method stub
+        // 1. 캠페인 기본 정보 삽입
         int result = campaignsMapper.campaignInsert(campaignsVO);
-
+    
         LocalDate startDate;
         LocalDate endDate;
-
+    
         log.info("등록 처리 impl : " + campaignsVO);
         
         MultipartFile file = campaignsVO.getImage();
         if (campaignsVO.getCampaignId() == null) {
-            // 캠페인 ID를 가져오지 못했다면 예외 처리
             throw new RuntimeException("캠페인 등록 실패: 캠페인 ID를 가져올 수 없습니다.");
         }
-
-        // 2. user_campaign 테이블에 인솔자 데이터 추가
-        // UserCampaignDto 또는 Map 등으로 데이터를 준비
-        UserCampaignVO userCampaignVO = new UserCampaignVO();
-        userCampaignVO.setCampaignId(campaignsVO.getCampaignId());
-        userCampaignVO.setIsSelected("1");
-        userCampaignVO.setUserNo(campaignsVO.getLeaderNo()); // 인솔자(사용자) ID
-        userCampaignVO.setUserId(campaignsVO.getLeaderCode()); // 인솔자(사용자) ID
-        userCampaignVO.setPfmcScore(campaignsVO.getLeaderPay()); // 인솔자(사용자) ID
-        userCampaignVO.setRole("LEADER"); // 인솔자 역할을 명시 (예: LEADER, PARTICIPANT 등)
-
-        // int result1 = campaignsMapper.leaderInsert(userCampaignVO);
-
-        System.out.println("캠페인 '" + campaignsVO.getCampaignTitle() + "' 등록 완료 및 인솔자(ID: " + userCampaignVO + ") 연결 완료!");
-
-        if(file != null){
-            
-            // Files uploadFile = new Files();
-            // uploadFile.setFile(file);
-            // uploadFile.setParentTable("campaign");
-            // uploadFile.setParentNo(campaignsVO.getId());
-            // uploadFile.setType("main");
-            // fileService.upload(uploadFile);
-            
+    
+        System.out.println("캠페인 '" + campaignsVO.getCampaignTitle() + "' 등록 완료 및 인솔자 연결 완료!");
+    
+        // 파일 업로드 로직
+        if(file != null && !file.isEmpty()){
             FilesVO uploadFile = new FilesVO();
             uploadFile.setFile(file);
             uploadFile.setFileSize(file.getSize());
@@ -109,49 +89,64 @@ public class CampaignServiceImpl implements CampaignService{
             uploadFile.setStatusId(campaignsVO.getCampaignId());
             uploadFile.setStatus("campaign");
             log.info("등록 처리 uploadFile : " + uploadFile);
-
+    
             fileService.upload(uploadFile);
-            
         }
-
+    
+        // 날짜 파싱
         try {
-            startDate = campaignsVO.getEventPeriodStr(); // 예: "2026-01-19" -> LocalDate
-            endDate = campaignsVO.getEventPeriodEnd();   // 예: "2026-01-21" -> LocalDate
+            startDate = campaignsVO.getEventPeriodStr();
+            endDate = campaignsVO.getEventPeriodEnd();
         } catch (DateTimeParseException e) {
-            // 날짜 형식 파싱에 실패하면 예외 처리
             throw new IllegalArgumentException("캠페인 기간 날짜 형식 오류: " + e.getMessage());
         }
-
-        // 3. 시작 날짜부터 종료 날짜까지의 모든 날짜(LocalDate) 리스트 생성
+    
+        // 3. 날짜 리스트 생성 (시작일~종료일이 같아도 최소 1개의 날짜 생성됨)
         List<LocalDate> datesInRange = Stream.iterate(startDate, date -> date.plusDays(1))
-                                            // startDate와 endDate 모두 포함
                                             .limit(endDate.toEpochDay() - startDate.toEpochDay() + 1)
                                             .collect(Collectors.toList());
         log.info("datesInRange " + datesInRange);
+        
         // 4. 각 날짜별로 DB에 삽입할 DTO 객체 생성
         List<UserCampaignVO> dailyEntriesToInsert = new ArrayList<>();
-        for (LocalDate date : datesInRange) {
-            UserCampaignVO dailyEntry = new UserCampaignVO();
-            dailyEntry.setCampaignId(campaignsVO.getCampaignId());
-            dailyEntry.setUserId(campaignsVO.getLeaderId());
-            dailyEntry.setUserNo(campaignsVO.getLeaderNo());
-            dailyEntry.setApplicantsNum(campaignsVO.getApplicantsNum());
-            dailyEntry.setEventPeriodStr(campaignsVO.getEventPeriodStr());
-            dailyEntry.setEventPeriodEnd(campaignsVO.getEventPeriodEnd());
+
+        // ✨ LeaderId가 Null이 아니고 비어있지 않을 때만 진입하도록 수정!
+        if (campaignsVO.getLeaderId() != null && !campaignsVO.getLeaderId().isEmpty()) {
             
-            dailyEntry.setApplyDate(date);
-            dailyEntriesToInsert.add(dailyEntry);
+            for (LocalDate date : datesInRange) {
+                UserCampaignVO dailyEntry = new UserCampaignVO();
+                dailyEntry.setCampaignId(campaignsVO.getCampaignId());
+                
+                // 올바른 LeaderId와 LeaderNo 세팅
+                dailyEntry.setUserId(campaignsVO.getLeaderId()); 
+                dailyEntry.setUserNo(campaignsVO.getLeaderNo());
+                
+                // 급여가 0원인 4번 캠페인은 'N', 급여가 있는 5번 캠페인은 'Y'로 정상 분기
+                if(campaignsVO.getLeaderPay() == 0){
+                    dailyEntry.setLeadApply("N");
+                } else {
+                    dailyEntry.setLeadApply("Y");
+                }
+                
+                dailyEntry.setApplicantsNum(campaignsVO.getApplicantsNum());
+                dailyEntry.setEventPeriodStr(campaignsVO.getEventPeriodStr());
+                dailyEntry.setEventPeriodEnd(campaignsVO.getEventPeriodEnd());
+                dailyEntry.setTimeSegment(campaignsVO.getTimeSegment());
+                dailyEntry.setApplyDate(date);
+                
+                dailyEntriesToInsert.add(dailyEntry);
+            }
         }
-        log.info("dailyEntry : " + dailyEntriesToInsert.get(0).getUserId());
-
-        // 5. 매퍼를 통해 DB에 배치 삽입 (또는 하나씩 삽입)
+    
+        // 5. 매퍼를 통해 DB에 배치 삽입
         if (!dailyEntriesToInsert.isEmpty()) {
-            log.info("dailyEntriesToInsert " + dailyEntriesToInsert);
-
+            log.info("dailyEntriesToInsert 정보: " + dailyEntriesToInsert);
             result = campaignsMapper.insertCampaignLeaderApply(dailyEntriesToInsert);
-            // applyMapper.insertUserCampaignPeriod(dailyEntriesToInsert); // 아래 Mapper 메서드 참조
+        } else {
+            log.warn("🚨 경고: 삽입할 인솔자 날짜별 리스트가 비어있습니다. (인솔자 정보 누락 의심)");
         }
-        // HomeController 또는 Service에서 호출 시
+    
+        // 코드 타입명 바인딩
         if ("01".equals(campaignsVO.getTypeCode())) {
             campaignsVO.setTypeNm("경호");
         } else if ("02".equals(campaignsVO.getTypeCode())) {
@@ -159,11 +154,12 @@ public class CampaignServiceImpl implements CampaignService{
         } else if ("03".equals(campaignsVO.getTypeCode())) {
             campaignsVO.setTypeNm("수행");
         }
-
+    
+        // 알리고 알림톡/SMS 발송
         String AppPeriod = campaignsVO.getAppPeriodStr().toString() + " ~ "+ campaignsVO.getAppPeriodEnd().toString();
         String EventPeriod = campaignsVO.getEventPeriodStr().toString() + " ~ "+ campaignsVO.getEventPeriodEnd().toString();
         aligoSmsService.registrationAsync(campaignsVO.getCompanyPh(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), AppPeriod, EventPeriod, "https://행집.com/campaign/" + campaignsVO.getCampaignId(), campaignsVO.getLeaderPhone());
-
+    
         return result;
     }
 
@@ -224,7 +220,7 @@ public class CampaignServiceImpl implements CampaignService{
             }
         }
 
-        if (oldCampaign != null && !oldCampaign.getUserId().equals(campaignsVO.getLeaderId())) {
+        if (oldCampaign != null && !campaignsVO.getLeaderId().equals(oldCampaign.getUserId())) {
             campaignsMapper.leaderUpdate(campaignsVO.getCampaignId(), oldCampaign.getUserNo(), campaignsVO.getLeaderNo(), campaignsVO.getLeaderId());
         }
 

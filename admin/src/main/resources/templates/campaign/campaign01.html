@@ -50,7 +50,7 @@
                         <th>지역</th>
                         <th>캠페인명</th>
                         <th>인솔자</th>
-                        <th>생성일</th>
+                        <th>일정</th>
                         <th>신청자수</th>
                         <th>모집인원</th>
                         <th>명단보기</th>
@@ -107,4 +107,11 @@
         <div th:replace="~{fragments/footer :: mainFooter}"></div>
         <div th:replace="~{fragments/sidebar :: adminScript}"></div>
     </body>
+    <script th:inline="javascript">
+        //     let campaign = /*[[${campaignsList}]]*/ null;
+
+        // // 리스트 전체를 한 번에 콘솔에 출력
+        // console.log(campaign);
+    </script>
+    
 </html>

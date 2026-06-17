@@ -16,7 +16,7 @@ public class LogControlInterceptor implements HandlerInterceptor {
             
             // 실제 운영 환경 여부 (나중에 환경 변수로 관리하면 더 좋습니다)
             // true이면 console.log() 안보임.
-            boolean isProd = true; 
+            boolean isProd = false; 
 
             if (isProd) {
                 String script = "<script>" +

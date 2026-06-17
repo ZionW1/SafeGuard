@@ -15,10 +15,10 @@
                 <div id="campaignTitleDown" th:data-campaign-title="${userCampaignApply[0].campaignTitle}">
                     <div class="notice-box">
                         <h2 th:if="${userCampaignApply != null}" th:text="${userCampaignApply[0].campaignTitle}"></h2>
-                        <strong>모집인 : </strong> <strong th:text="${userCampaignApply[0].applicantsNum}"></strong> / <strong th:text="${userCampaignApply[0].recruitmentNum}"></strong><br />
-                        <strong>업체명 : </strong><strong th:text="${userCampaignApply[0].companyNm}"></strong><br><strong> 담당자 번호 : </strong><strong th:text="${userCampaignApply[0].companyPh}"></strong></p>
-                        <p> 
-                            <strong>기간</strong><br />
+                        <strong>모집인/신청자 수 : </strong> <strong th:text="${userCampaignApply[0].applicantsNum}"></strong> / <strong th:text="${userCampaignApply[0].recruitmentNum}"></strong><br />
+                        <strong>업체명 : </strong><strong th:text="${userCampaignApply[0].companyNm}"></strong><br>
+                        <strong> 담당자 번호 : </strong><strong th:text="${userCampaignApply[0].companyPh}"></strong></p>
+                        <p><strong>기간</strong><br />
                             <strong th:text="${userCampaignApply[0].eventPeriodStr}"></strong> ~ <strong th:text="${userCampaignApply[0].eventPeriodEnd}"></strong> 
                         </p>
                         <p>
@@ -42,18 +42,15 @@
                     th:selected="${item.applyDate == currentDate}"> </option>
         </select>
         <div th:if="${reviewId == null}">
-            <!-- <a class="review_btn" th:href="@{/review03/{id}(id=${campaignId})}">리뷰 등록</a> -->
             <a th:if="${#authorization.expression('isAuthenticated()')}" 
-            class="review_btn" 
-            th:href="@{/review03/{id}(id=${campaignId})}">리뷰 등록</a>
-
+                class="review_btn" 
+                th:href="@{/review03/{id}(id=${campaignId})}">리뷰 등록</a>
+        
             <a th:if="${!#authorization.expression('isAuthenticated()')}" 
-            class="review_btn" 
-            th:href="@{/user01(target='/review03/' + ${campaignId})}">리뷰 등록</a>
-            <!-- <a th:href="@{/user01(target=${#request.requestURI})}">로그인하기</a> -->
-
-            
+                class="review_btn" 
+                th:href="@{/user01(target='/review03/' + ${campaignId})}">리뷰 등록</a>
         </div>
+
         <div class="pd-b20">
             <button type="button" class="btn-info" onclick="processAttendance('1')" style="background-color: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">체크 출근</button>
             <button type="button" class="btn-info" onclick="processAttendance('2')" style="background-color: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">체크 퇴근</button>
@@ -64,7 +61,7 @@
         <div class="list-header">
             <span>신청자 수 :  <span th:text="${applicantsNum}"></span></span>
         </div>
-        <p>현재 사용자 ID: <span th:text="${userId}">guest</span></p>
+        <p>현재 사용자 ID : <span th:text="${userId}">guest</span></p>
         <div class="applicant-item3">
             <div class="applicant-info">
                 <label>
@@ -103,14 +100,15 @@
                                     th:data-url="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${currentUserNo}, campaignId=${campaignId}, applyDate=${applyDate})}" 
                                     onclick="openSignificantModal(this.dataset.url); return false;">특이사항</a>
 
-                                <div id="significantModal" onclick="closeModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
-                                    <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
-                                        <span onclick="closeSignificantModal();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
-                                        <div id="modalContent"></div>
-                                    </div>
-                                </div>
+                                
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div id="significantModal" onclick="closeModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+                    <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
+                        <span onclick="closeSignificantModal();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
+                        <div id="modalContent"></div>
                     </div>
                 </div>
             </div>
@@ -129,7 +127,7 @@
         <a class="btn-info" onclick="imgDownload('2')">이수증 사진<br>다운로드</a>
         <th:block th:if="${userCampaignApply != null and not #lists.isEmpty(userCampaignApply) and userCampaignApply[0].campaignId != null}">
             <a class="btn-info" type="button" 
-                    th:onclick="downloadExcel([[${userCampaignApply[0].campaignId}]], [[${userCampaignApply[0].applyDate}]])">
+                    th:onclick="downloadExcel([[${userCampaignApply[0].campaignId}]], [[${userCampaignApply[0].applyDate}]], [[${userCampaignApply[0].timeSegment}]])">
                 엑셀<br>다운로드
             </a>
         </th:block>
@@ -189,8 +187,20 @@
 
         function closeSignificantModal() {
             // 모달 닫기 및 컨텐츠 초기화
-            document.getElementById('significantModal').style.display = 'none';
-            document.getElementById('modalContent').innerHTML = '';
+            const modal = document.getElementById('significantModal');
+            if(modal) modal.style.display = 'none';
+            $('#modalContent').html(''); // 닫을 때 내부 내용 초기화 (중복 방지 핵심!)
+            // document.getElementById('significantModal').style.display = 'none';
+            // document.getElementById('modalContent').innerHTML = '';
+        }
+
+        function closeSignificantModal() {
+            const modal = document.getElementById('significantModal');
+            if(modal) modal.style.display = 'none';
+            
+            // 💡 제이쿼리 $ 대신 순수 자바스크립트로 완전히 비워 중복 ID 누적을 원천 차단합니다.
+            const content = document.getElementById('modalContent');
+            if(content) content.innerHTML = ''; 
         }
 
         function closeModal(event) {
@@ -270,7 +280,8 @@
                 alert('캠페인 ZIP 파일 다운로드에 실패했습니다. 다시 시도해 주세요.');
             }
         }
-        function downloadExcel(campaignId, applyDate) {
+
+        function downloadExcel(campaignId, applyDate, timeSegment) {
             if (window.event) {
                 window.event.preventDefault();
             }
@@ -279,9 +290,10 @@
                 alert("다운로드할 캠페인 ID가 올바르지 않습니다.");
                 return;
             }
-            const downloadUrl = `/file/excelDownload/${campaignId}/${applyDate}`;
+            const downloadUrl = `/file/excelDownload/${campaignId}/${applyDate}/${timeSegment}`;
             
-            window.location.href = downloadUrl;
+            // window.location.href = downloadUrl;
+            window.top.location.href = downloadUrl;
         }
         
         function updateAttendanceStatus(status, userNo, campaignId, applyDate, index) {
@@ -662,54 +674,56 @@
             });
         }
 
-        function significantInsert() {
-            const campaignId = document.getElementById('campaignId').dataset.campaignId;
-            const userNo = document.getElementById('userNo').dataset.campaignTitle;
-            const applyDate = document.getElementById('applyDate').dataset.campaignId;
-            const reasonInfo = document.getElementById('reasonInfo').value.trim();
-            const amountInput = document.querySelector('.input-significant');
-            const amount = amountInput.value.trim();
+        function significantInsert(campaignId, userNo, applyDate) {
+    // 모달창 내부에서 바뀐 클래스명(.modal-reason, .modal-amount)으로 요소를 정확히 찾아옵니다.
+    const reasonInput = document.querySelector('.modal-reason');
+    const amountInput = document.querySelector('.modal-amount');
+    
+    const reasonInfo = reasonInput ? reasonInput.value.trim() : "";
+    const amount = amountInput ? amountInput.value.trim() : "";
 
-            console.log("significantInsert called with:", {campaignId, userNo, applyDate, amount});
-            if (!amount) {
-                alert('특이사항 내용을 입력해 주세요.');
-                return;
-            }
+    console.log("실제 전송될 데이터 정보:", {campaignId, userNo, applyDate, reasonInfo, amount});
+    
+    if (!reasonInfo) {
+        alert('특이사항 내용을 입력해 주세요.');
+        return;
+    }
 
-            const requestBody = {
-                campaignId: campaignId,
-                userId: userNo,
-                missionDate: applyDate,
-                amount: amount,
-                reasonInfo : reasonInfo,
-                category: "OVERPAY"
-            };
+    const requestBody = {
+        campaignId: campaignId,
+        userId: userNo, // 이제 파라미터로 넘어온 정확한 대상(인솔자 혹은 유저)의 번호가 바인딩됩니다.
+        missionDate: applyDate,
+        amount: amount,
+        reasonInfo: reasonInfo,
+        category: "OVERPAY"
+    };
 
-            fetch('/apply/significantInsert', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken
-                },
-                body: JSON.stringify(requestBody)
-            })
-            .then(response => {
-                if (!response.ok) { 
-                    return response.json().then(errorData => {
-                        throw new Error(errorData.message || '특이사항 등록 중 알 수 없는 오류가 발생했습니다.');
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-                amountInput.value = '';
-            })
-            .catch(error => {
-                console.error('특이사항 등록 중 오류 발생:', error);
-                alert('특이사항 등록에 실패했습니다: ' + error.message);
+    fetch('/apply/significantInsert', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            [csrfHeader]: csrfToken
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => {
+        if (!response.ok) { 
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || '등록 중 오류가 발생했습니다.');
             });
         }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message);
+        closeSignificantModal(); // 저장 완료 후 모달창 닫기
+        location.reload();       // 부모창 새로고침해서 결과 반영
+    })
+    .catch(error => {
+        console.error('에러 발생:', error);
+        alert('등록에 실패했습니다: ' + error.message);
+    });
+}
     </script>
 </body>
 </html>

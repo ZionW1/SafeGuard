@@ -1,11 +1,13 @@
 package com.safeg.user.mapper;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.safeg.user.vo.FilesVO;
+import com.safeg.user.vo.UserCampaignVO;
 
 @Mapper
 public interface FileMapper {
@@ -35,5 +37,7 @@ public interface FileMapper {
     public int deleteImage(FilesVO file) throws Exception;
 
     public List<FilesVO> businessFile() throws Exception;
+
+    public List<UserCampaignVO> excelFileInfo(@Param("campaignId") String campaignId, @Param("timeSegment") String timeSegment, @Param("applyDate") LocalDate applyDate) throws Exception;
 
 }

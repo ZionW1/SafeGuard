@@ -82,219 +82,142 @@
     </style>
 </head>
 <body>
-<layout:fragment layout:fragment="content">
-    <div class="container" style="margin-top: 30px;">
-        <h2>인솔자 리뷰 작성</h2>
-        <hr style="border: 0; height: 1px; background: #ddd; margin-bottom: 25px;">
-
-        <form id="reviewForm">
-            <input type="hidden" id="campaignId" name="campaignId" th:value="${campaignId}">
-            <input type="hidden" id="userId" name="userId" th:value="${userId}">
-
-            <div class="form-group">
-                <label for="title">제목</label>
-                <input type="text" id="title" name="title" class="input-title" placeholder="리뷰 제목을 입력해주세요." th:value="${campaignTitle}" readonly>
-            </div>
-
-            <div class="form-group">
-                <label for="address">방문 장소 (지도 표시용 주소)</label>
-                <input type="text" id="address" name="address" class="input-title" placeholder="예: 경기도 광명시 하안동 OO번지" th:value="${placeAddr}" readonly>
-            </div>
-
-            <div class="form-group">
-                <label for="blog_url">블로그 url</label>
-                <input type="text" id="blog_url" name="blog_url" class="input-title" placeholder="블로그 URL을 입력해주세요.">
-            </div>
-
-            <div class="form-group">
-                <label>대표 이미지 (썸네일)</label>
-                <div class="upload-box" id="drop-zone">
-                    <p>📄 파일을 마우스로 끌어오거나 클릭하여 선택하세요 (최대 10MB)</p>
-                    <input type="file" id="thumbnail-file" name="thumbnail" accept="image/*" style="display: none;">
-                    <img id="thumbnail-preview" alt="썸네일 미리보기">
+    <layout:fragment layout:fragment="content">
+        <div class="container" style="margin-top: 30px;">
+            <h2>인솔자 리뷰 작성</h2>
+            <hr style="border: 0; height: 1px; background: #ddd; margin-bottom: 25px;">
+    
+            <form id="reviewForm">
+                <input type="hidden" id="campaignId" name="campaignId" th:value="${campaignId}">
+                <input type="hidden" id="userId" name="userId" th:value="${userId}">
+    
+                <div class="form-group">
+                    <label for="title">제목</label>
+                    <input type="text" id="title" name="title" class="input-title" placeholder="리뷰 제목을 입력해주세요." th:value="${campaignTitle}" readonly>
                 </div>
-            </div>
-
-            <!-- <div class="form-group">
-                <label>리뷰 내용</label>
-                <div id="editor-container"></div>
-            </div> -->
-
-            <div class="btn-area">
-                <button type="button" class="btn-submit" onclick="submitReview()">리뷰 등록하기</button>
-            </div>
-        </form>
-    </div>
-
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-
-    <script>
-        // 1. Quill 에디터 초기화
-        // var quill = new Quill('#editor-container', {
-        //     theme: 'snow',
-        //     modules: {
-        //         toolbar: [
-        //             [{ 'header': [1, 2, 3, false] }],
-        //             ['bold', 'italic', 'underline', 'strike'],
-        //             ['image', 'link', 'video'],
-        //             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        //             [{ 'align': [] }],
-        //             ['clean']
-        //         ]
-        //     }
-        // });
-
-        // // [옵션] 에디터 내부 이미지 업로드 커스텀 핸들러 (필요시 활성화)
-        // const toolbar = quill.getModule('toolbar');
-        // const token = document.querySelector('meta[name="_csrf"]')?.content;
-        // const header = document.querySelector('meta[name="_csrf_header"]')?.content;
-        // const title = document.getElementById('title').value;
-        // const content = quill.root.innerHTML; // Quill 에디터 본문 내용
-
-        // if (!title.trim()) { alert("제목을 입력해주세요."); return; }
-
-        // toolbar.addHandler('image', () => {
-        //     const input = document.createElement('input');
-        //     input.setAttribute('type', 'file');
-        //     input.setAttribute('accept', 'image/*');
-        //     // 💡 [핵심 추가] 사용자가 파일을 여러 개 선택할 수 있도록 설정!
-        //     input.setAttribute('multiple', 'true'); 
-        //     input.click();
-
-        //     input.onchange = async () => {
-        //         const files = input.files; // 💡 선택된 파일들 (배열 형태)
-        //         if (files.length === 0) return;
-
-        //         const token = document.querySelector('meta[name="_csrf"]')?.content;
-        //         const header = document.querySelector('meta[name="_csrf_header"]')?.content;
-        //         const campaignId = document.getElementById('campaignId').value;
-
-        //         // 💡 [핵심 수정] 선택한 파일 개수만큼 반복문을 돌며 서버로 각각 쏩니다.
-        //         for (const file of files) {
-        //             const formData = new FormData();
-                    
-        //             formData.append('image', file); // 매번 하나의 파일을 세팅
-        //             formData.append('campaignId', campaignId);
-
-        //             try {
-        //                 const res = await fetch('/review05', {
-        //                     method: 'POST',
-        //                     headers: header && token ? { [header]: token } : {}, 
-        //                     body: formData
-        //                 });
-
-        //                 if (res.ok) {
-        //                     const imgUrl = await res.text(); 
-                            
-        //                     let range = quill.getSelection();
-        //                     if (!range) {
-        //                         range = { index: quill.getLength() }; 
-        //                     }
-                            
-        //                     // 에디터에 이미지를 삽입하고 커서를 다음 칸으로 옮겨줍니다.
-        //                     quill.insertEmbed(range.index, 'image', imgUrl); 
-        //                     quill.setSelection(range.index + 1); 
-        //                 } else {
-        //                     const errorText = await res.text();
-        //                     console.error("서버 에러 응답내용:", errorText);
-        //                     alert(`${file.name} 업로드 실패 (서버 에러)`);
-        //                 }
-        //             } catch (error) {
-        //                 console.error("통신 실패:", error);
-        //                 alert("서버 연결에 실패했습니다.");
-        //             }
-        //         }
-                
-        //         // 업로드 루프가 전부 끝나면 input 초기화
-        //         input.value = ''; 
-        //     };
-        // });
-
-        // 2. 드래그 앤 드롭 & 파일 첨부 UI 로직
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('thumbnail-file');
-        const preview = document.getElementById('thumbnail-preview');
-
-        dropZone.addEventListener('click', () => fileInput.click());
-
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.style.backgroundColor = '#f1f1f1';
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.style.backgroundColor = '#fafafa';
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.style.backgroundColor = '#fafafa';
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                fileInput.files = files;
-                showPreview(files[0]);
-            }
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                showPreview(e.target.files[0]);
-            }
-        });
-
-        function showPreview(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                preview.src = e.target.result;
-                preview.style.display = 'inline-block';
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // 3. 서버로 전송 (Submit)
-        async function submitReview() {
-            const title = document.getElementById('title').value;
-            const address = document.getElementById('address').value;
-            const campaignId = document.getElementById('campaignId').value;
-            const userId = document.getElementById('userId').value;
-            const thumbnailFile = fileInput.files[0];
-            // const content = quill.root.innerHTML; // Quill 에디터 결과물 (HTML 문자열)
-
-            if (!title) {
-                alert("제목 필수 입력 사항입니다.");
-                return;
-            }
-
-            // 서버 전송을 위한 FormData 객체 생성
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('address', address);
-            formData.append('campaignId', campaignId);
-            formData.append('userId', userId);
-            // formData.append('content', content); // <p>..</p> 형태의 글 전체
-            
-            if (thumbnailFile) {
-                formData.append('thumbnail', thumbnailFile); // files 테이블에 꽂힐 파일객체
-            }
-
-            try {
-                const response = await fetch('/review04', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (response.ok) {
-                    alert("리뷰가 성공적으로 등록되었습니다!");
-                    window.close();
-                } else {
-                    alert("등록 중 오류가 발생했습니다.");
+    
+                <div class="form-group">
+                    <label for="address">방문 장소 (지도 표시용 주소)</label>
+                    <input type="text" id="address" name="address" class="input-title" placeholder="예: 경기도 광명시 하안동 OO번지" th:value="${placeAddr}" readonly>
+                </div>
+    
+                <div class="form-group">
+                    <label for="blog_url">블로그 url</label>
+                    <input type="text" id="blog_url" name="blog_url" class="input-title" placeholder="블로그 URL을 입력해주세요.">
+                </div>
+    
+                <div class="form-group">
+                    <label>대표 이미지 (썸네일)</label>
+                    <div class="upload-box" id="drop-zone">
+                        <p>📄 파일을 마우스로 끌어오거나 클릭하여 선택하세요 (최대 10MB)</p>
+                        <input type="file" id="thumbnail-file" name="thumbnail" accept="image/*" style="display: none;">
+                        <img id="thumbnail-preview" alt="썸네일 미리보기">
+                    </div>
+                </div>
+    
+                <div class="btn-area">
+                    <button type="button" class="btn-submit" onclick="submitReview()">리뷰 등록하기</button>
+                </div>
+            </form>
+        </div>
+    
+        <script>
+            // ==========================================
+            // 2. 드래그 앤 드롭 & 파일 첨부 UI 로직
+            // ==========================================
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('thumbnail-file');
+            const preview = document.getElementById('thumbnail-preview');
+    
+            dropZone.addEventListener('click', () => fileInput.click());
+    
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = '#f1f1f1';
+            });
+    
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.style.backgroundColor = '#fafafa';
+            });
+    
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = '#fafafa';
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    showPreview(files[0]);
                 }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("서버 통신 실패");
+            });
+    
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    showPreview(e.target.files[0]);
+                }
+            });
+    
+            function showPreview(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'inline-block';
+                };
+                reader.readAsDataURL(file);
             }
-        }
-    </script>
-</layout:fragment>
+    
+            // ==========================================
+            // 3. 서버로 전송 (Submit)
+            // ==========================================
+            async function submitReview() {
+                const title = document.getElementById('title').value;
+                const address = document.getElementById('address').value;
+                const campaignId = document.getElementById('campaignId').value;
+                const userId = document.getElementById('userId').value;
+                const blogUrl = document.getElementById('blog_url').value; // 블로그 URL 변수 추가
+                const thumbnailFile = fileInput.files[0];
+    
+                if (!title.trim()) {
+                    alert("제목은 필수 입력 사항입니다.");
+                    return;
+                }
+    
+                // 서버 전송을 위한 FormData 객체 생성
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('address', address);
+                formData.append('campaignId', campaignId);
+                formData.append('userId', userId);
+                formData.append('blogUrl', blogUrl); // 필요 시 서버 DVO 구조에 맞게 전송
+                
+                if (thumbnailFile) {
+                    formData.append('thumbnail', thumbnailFile); 
+                }
+    
+                try {
+                    const response = await fetch('/review04', {
+                        method: 'POST',
+                        body: formData
+                    });
+    
+                    if (response.ok) {
+                        alert("리뷰가 성공적으로 등록되었습니다!");
+                        
+                        // 💡 일반 페이지 이동 형태라면 window.close() 대신 이전 상세 화면으로 백시킵니다.
+                        // 만약 이 화면이 팝업창(Popup)으로 열린 게 맞다면 window.close()를 유지하세요.
+                        if (window.opener) {
+                            window.close();
+                        } else {
+                            window.location.href = '/review03/' + campaignId; 
+                        }
+                    } else {
+                        alert("등록 중 오류가 발생했습니다.");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("서버 통신 실패");
+                }
+            }
+        </script>
+    </layout:fragment>
 </body>
 </html>

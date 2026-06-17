@@ -3,6 +3,7 @@ package com.safeg.admin.controller;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,6 +16,8 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,10 +29,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.safeg.admin.vo.CampaignVO;
 import com.safeg.admin.vo.CommonData;
 import com.safeg.admin.vo.FilesVO;
 import com.safeg.admin.mapper.MediaUtil;
@@ -305,5 +310,55 @@ public class FileController {
         headers.setContentType(mediaType);
 
         return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
+    }
+
+    @PostMapping("/downloadImg")
+    @ResponseBody
+    public ResponseEntity<Resource> downloadImg(@RequestBody FilesVO requestData) {
+        log.info("downloadImg getFileType: " + requestData.getFileType() + " | getTargetType: " + requestData.getTargetType());
+        try {
+            Resource identificationFile = fileService.identificationFile(requestData.getFileType(), requestData.getTargetType());
+
+            // zipFileName = URLEncoder.encode("신분증_파일묶음.zip", StandardCharsets.UTF_8.toString()).replace("+", "%20");
+            String zipFileName = URLEncoder.encode("신분증_파일묶음.zip", StandardCharsets.UTF_8.toString()).replace("+", "%20");
+            // 1. 서버 컴퓨터에 파일이 실제로 저장되어 있는 절대 경로 설정 (본인 환경에 맞게 수정)
+            // 예: Mac/Linux라면 "/Users/username/upload/" , Windows라면 "C:/upload/"
+            // String uploadDir = "/Users/safeg/upload/"; 
+            
+            // // Path fileStorageLocation = Paths.get(uploadPath).toAbsolutePath().normalize();
+            // Path targetPath = fileStorageLocation.resolve(filePath).normalize();
+            
+            // Resource resource = new UrlResource(targetPath.toUri());
+
+            // // // 2. 파일이 진짜 존재하는지 확인
+            // // if (!resource.exists()) {
+            // //     return ResponseEntity.notFound().build();
+            // // }
+
+            // // // 3. 다운로드될 파일명 한글 깨짐 방지 처리
+            // // String filename = resource.getFilename();
+            // String encodedFilename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+
+            // // 4. 브라우저에게 "이건 화면에 띄우지 말고 '다운로드'해라"라고 명령 전달 (attachment)
+            // return ResponseEntity.ok()
+            //         .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            //         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFilename + "\"")
+            //         .body(resource);
+
+
+            // return ResponseEntity.ok()
+            //         .contentType(MediaType.parseMediaType("application/zip"))
+            //         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + zipFileName + "\"")
+            //         .body(identificationFile);
+            return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/zip"))
+                // ✨ 파일 크기를 브라우저에 정확히 알려주기 위해 contentLength 추가
+                .contentLength(identificationFile.contentLength()) 
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + zipFileName + "\"")
+                .body(identificationFile);
+        } catch (Exception e) {
+            log.error("파일 다운로드 중 에러 발생: ", e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

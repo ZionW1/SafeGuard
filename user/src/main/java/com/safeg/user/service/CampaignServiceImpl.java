@@ -79,6 +79,7 @@ public class CampaignServiceImpl implements CampaignService{
             dailyEntry.setEventPeriodStr(userCampaignVO.getEventPeriodStr());
             dailyEntry.setEventPeriodEnd(userCampaignVO.getEventPeriodEnd());
             dailyEntry.setTimeSegment(userCampaignVO.getTimeSegment());
+            dailyEntry.setLeadApply(userCampaignVO.getLeadApply());
             
             dailyEntry.setApplyDate(date);
             dailyEntriesToInsert.add(dailyEntry);
@@ -91,6 +92,7 @@ public class CampaignServiceImpl implements CampaignService{
             result = campaignMapper.campaignApply(dailyEntriesToInsert);
             // applyMapper.insertUserCampaignPeriod(dailyEntriesToInsert); // 아래 Mapper 메서드 참조
         }
+
         if(result >= 1) {
             log.info("updateApplicants : " + userCampaignVO.getApplicantsNum());
             result1 = campaignMapper.updateApplicants(userCampaignVO);

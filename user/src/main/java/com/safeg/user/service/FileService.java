@@ -1,5 +1,6 @@
 package com.safeg.user.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.core.io.Resource;
@@ -35,11 +36,13 @@ public interface FileService {
     // 프로필 사진 다운 (zip)
     public Resource createZipFile(Long campaignId, String code) throws Exception;
 
-    public byte[] ApplicationExcel(List<UserCampaignVO> applications, String finalCampaignName) throws Exception;
+    public byte[] ApplicationExcel(List<UserCampaignVO> applications, String finalCampaignName, LocalDate applyDate) throws Exception;
 
     public int deleteImage(UserVO userVO) throws Exception;
 
     public List<FilesVO> businessFile() throws Exception;
 
     public String getFileName(FilesVO uploadFile) throws Exception;
+
+    public List<UserCampaignVO> excelFileInfo(String campaignId, String timeSegment, LocalDate applyDate) throws Exception;
 }

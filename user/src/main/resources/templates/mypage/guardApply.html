@@ -119,7 +119,22 @@
             <form id="certForm" class="guardApply_form certificate-preview" action="/mypage/uploadCertImage" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="id" th:value="${user.id}" />
                 <input type="hidden" name="userId" th:value="${user.userId}" />
-            
+                <div class="checkbox-group" style="margin-bottom: 15px;">
+                    <label style="font-size: 1.2em; color: #333; cursor: pointer;">
+                        <input class="agreeChk" type="checkbox" id="privAgree" name="privAgree">
+                        (필수) 개인정보 수집 및 이용에 동의합니다.
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label for="courseNum">이수 번호</label>
+                    <input type="text" class="mypageInput" id="courseNum" name="courseNum" placeholder="이수 번호를 입력하세요.">
+                    <div id="courseNumError" style="color: #ff4d4d; font-size: 13px; margin: 5px 5px 0; min-height: 18px;"></div>
+                </div>
+                <div class="form-row">
+                    <label for="residentNum">주민등록번호</label>
+                    <input type="tel" pattern="\d*" id="residentNum" name="residentNum" class="mypageInput" placeholder="숫자만 입력하세요.">
+                    <div id="residentNumError" style="color: #ff4d4d; font-size: 13px; margin: 5px 5px 0; min-height: 18px;"></div>
+                </div>
                 <div class="section">
                     <div class="guard_apply_title">신분증</div>
                     <div th:if="${getIdentity != null}" class="form-remove">
@@ -210,7 +225,28 @@
             const certPlaceholderMessage = document.getElementById("cert_placeholder_message");
             const certUploadForm = document.getElementById("certForm");
             
+            const courseNum = document.getElementById('courseNum');
+            const residentNum = document.getElementById('residentNum');
+            const residentNumError = document.getElementById('residentNumError');
 
+            if (residentNum && residentNumError) {
+                residentNum.addEventListener('input', function(event) {
+                    const inputValue = event.target.value;
+
+                    // 숫자가 아닌 문자가 포함되어 있는지 검사
+                    if (/[^0-9]/g.test(inputValue)) {
+                        // 1. 빨간색 경고 메시지 출력
+                        residentNumError.textContent = "숫자만 입력 가능합니다.";
+                        
+                        // 2. [선택] 숫자가 아닌 문자는 실시간으로 지워버리고 싶다면 아래 코드 활성화
+                        // event.target.value = inputValue.replace(/[^0-9]/g, '');
+                    } else {
+                        // 숫자가 제대로 입력되면 메시지 초기화
+                        residentNumError.textContent = "";
+                    }
+                });
+            }
+            
             // --- [1] 미리보기 및 표시 업데이트 함수 ---
             function showPreview(file, type) {
                 const reader = new FileReader();
@@ -379,10 +415,19 @@
             const imgCertFile = document.getElementById('imgCertFile');
             const imgIdttFile = document.getElementById('imgIdttFile');
             const imgFile = document.getElementById('imgFile');
+            const courseNum = document.getElementById('courseNum');
+            const residentNum = document.getElementById('residentNum');
             const bankNm = user?.bankNm;
             const accountNumber = user?.accountNumber;
             const depositor = user?.depositor;
             const getFullAddress = user?.fullAddress;
+            const privAgree = document.getElementById('privAgree');
+
+            if (!privAgree || !privAgree.checked) {
+                alert("개인정보 수집 및 이용에 동의해 주세요.");
+                if(privAgree) privAgree.focus();
+                return false;
+            }
 
             if (!imgFile?.src || imgFile.src.includes('not-image')) {
                 alert('프로필 이미지가 없습니다.\n"내 정보 수정" 페이지에서 프로필이미지 추가해주세요.'); return;
@@ -400,6 +445,36 @@
             if (!getFullAddress) {
                 alert('주소를 등록하고 저장해주세요.');
                 return;
+            }
+
+            if (!courseNum || !courseNum.value.trim()) {
+                alert("이수 번호를 입력해 주세요.");
+                if(courseNum) courseNum.focus();
+                return;
+            }
+            
+            if (!residentNum || !residentNum.value.trim()) {
+                alert('주민등록번호를 입력하고 경호원 신청 해주세요.');
+                if(residentNum) residentNum.focus();
+                return;
+            } else {
+                // residentNum.addEventListener('input', onlyNumber);
+                if (/[^0-9]/g.test(residentNum.value)) {
+                    alert("숫자만 입력할 수 있습니다.");
+                    // 숫자가 아닌 문자는 제거
+                    residentNum.value = residentNum.value.replace(/[^0-9]/g, '');
+                    if(residentNum) residentNum.focus();
+                    return false;
+                }
+
+                if (residentNum.value.length != 13) {
+                    alert("주민등록번호 13자리를 올바르게 입력해주세요.");
+                    if (residentNum) residentNum.focus();
+                    
+                    // 숫자가 아닌 문자 제거 (선택 사항: 입력 도중 잘못 섞인 문자 정화)
+                    residentNum.value = residentNum.value.replace(/[^0-9]/g, '');
+                    return false;
+                }
             }
         
             if(!confirm("경호원 신청을 하시겠습니까?")) return;

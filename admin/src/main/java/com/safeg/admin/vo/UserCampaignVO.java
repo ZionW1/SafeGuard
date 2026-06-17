@@ -41,6 +41,8 @@ public class UserCampaignVO {
     private String placeAddr;
     private String statusNm;
     private LocalDate applyDate;
+    private String timeSegment;
+    private String leadApply;
 
     private int recruitmentNum;
     // private int applicantsNum;

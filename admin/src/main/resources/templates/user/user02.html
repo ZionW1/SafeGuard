@@ -39,9 +39,18 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
+                        <label for="phoneNum">주민등록번호</label>
+                        <span th:if="${#strings.isEmpty(userSelect?.residentNum)}">
+                            <input type="text" name="residentNum" id="" value="" />
+                        </span>
+                        <span th:unless="${#strings.isEmpty(userSelect?.residentNum)}">
+                            <input type="text" name="residentNum" id="" th:value="${userSelect.residentNum}" />
+                        </span>
+                    </div>
+                    <div class="form-group">
                         <label for="email">이메일</label>
                         <span th:if="${#strings.isEmpty(userSelect?.email)}">
-                            <input type="text" name="email" id="email" value="" placeholder="닉네임을 입력하세요" />
+                            <input type="text" name="email" id="email" value="" placeholder="이메일을 입력하세요" />
                         </span>
                         <span th:unless="${#strings.isEmpty(userSelect?.email)}">
                             <input type="text" name="email" id="email" th:value="${userSelect.email}" required />
@@ -53,7 +62,7 @@
                         <label for="phoneNum">휴대폰 번호</label>
                         <!-- <input type="text" name="phoneNum" id="phoneNum" value="" placeholder="휴대폰 번호를 입력하세요" /> -->
                         <span th:if="${#strings.isEmpty(userSelect?.phoneNum)}">
-                            <input type="text" name="phoneNum" id="phoneNum" value="" placeholder="닉네임을 입력하세요" />
+                            <input type="text" name="phoneNum" id="phoneNum" value="" placeholder="휴대폰번호를 입력하세요" />
                         </span>
                         <span th:unless="${#strings.isEmpty(userSelect?.phoneNum)}">
                             <input type="text" name="phoneNum" id="phoneNum" th:value="${userSelect.phoneNum}" required />
@@ -113,6 +122,23 @@
                     <span th:unless="${#strings.isEmpty(userSelect?.referrerId)}">
                         <input type="text" name="referrerId" id="referrerId" th:value="${userSelect.referrerId}" placeholder="메모를 입력하세요" />
                     </span>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="courseNum">이수 번호</label>
+                        <input type="text" class="mypageInput" id="courseNum" name="courseNum" placeholder="이수 번호를 입력하세요." th:value="${userSelect.courseNum}">
+                        <div id="courseNumError" style="color: #ff4d4d; font-size: 13px; margin: 5px 5px 0; min-height: 18px;"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox-group" style="margin-bottom: 15px;">
+
+                                <label style="margin: 18px 0 0; font-size: 1.2em; color: #333; cursor: pointer;">
+                                    <input class="agreeChk" type="checkbox" id="privAgree" name="privAgree" th:checked="${userSelect.privAgree == 'Y'}">
+                                    (필수) 개인정보 수집 및 동의
+                                </label>
+
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>거부 사유</label>
@@ -546,6 +572,92 @@
                         };
                     }
                 }
+            });
+        }
+
+        function updateUserInfo() {
+            const userId = document.getElementById('id').value; // <input type="hidden" name="id" id="id" ...> 에서 id 값을 가져옴
+            const form = document.getElementById('form');
+            const courseNum = document.getElementById('courseNum');
+            const residentNum = document.getElementById('residentNum');
+            const privAgree = document.getElementById('privAgree');
+
+            const formData = new FormData(form);
+            const url = '/admin/updateUserInfo';
+            
+            if (!privAgree || !privAgree.checked) {
+                alert("개인정보 수집 및 이용에 동의해 주세요.");
+                if(privAgree) privAgree.focus();
+                return false;
+            }
+
+            if (!residentNum || !residentNum.value.trim()) {
+                alert('주민등록번호를 입력하고 경호원 신청 해주세요.');
+                if(residentNum) residentNum.focus();
+                return;
+            } else {
+                // residentNum.addEventListener('input', onlyNumber);
+                if (/[^0-9]/g.test(residentNum.value)) {
+                    alert("숫자만 입력할 수 있습니다.");
+                    // 숫자가 아닌 문자는 제거
+                    residentNum.value = residentNum.value.replace(/[^0-9]/g, '');
+                    if(residentNum) residentNum.focus();
+                    return false;
+                }
+
+                if (residentNum.value.length != 13) {
+                    alert("주민등록번호 13자리를 올바르게 입력해주세요.");
+                    if (residentNum) residentNum.focus();
+                    
+                    // 숫자가 아닌 문자 제거 (선택 사항: 입력 도중 잘못 섞인 문자 정화)
+                    residentNum.value = residentNum.value.replace(/[^0-9]/g, '');
+                    return false;
+                }
+            }
+            fetch(url, {
+                method: 'POST', // 요청 방식은 POST
+                headers: {
+                    // 'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                    // 만약 스프링 시큐리티를 사용하고 있다면 CSRF 토큰도 헤더에 추가해야 할 수 있어.
+                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                },
+                body: formData
+                // FormData 객체를 body에 바로 전달 (Content-Type 헤더는 자동으로 'multipart/form-data'로 설정됨)
+                            // 만약 application/json 형식으로 보내고 싶다면:
+                            // headers: { 'Content-Type': 'application/json' },
+                            // body: JSON.stringify({
+                            //    id: userId,
+                            //    authRole: 'ROLE_USER',
+                            //    authCode: '02'
+                            // })
+            })
+            .then(response => {
+                // 응답이 성공적인지 확인 (HTTP 상태 코드 200-299)
+                if (!response.ok) {
+                    // 서버에서 에러 응답을 보낸 경우 (예: 400, 500)
+                    // JSON 응답을 예상한다면 .json()으로 파싱
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || '서버 응답 오류');
+                    });
+                }
+                // 응답 본문을 JSON으로 파싱 (서버가 JSON을 반환한다고 가정)
+                return response.json();
+            })
+            .then(data => {
+                // 성공적으로 응답을 받았을 때
+                if (data.success) { // 서버 응답에 'success' 필드가 true인 경우
+                    alert(data.message || '유저 정보가 변경되었습니다.!');
+                    // 성공 후 필요한 UI 업데이트 또는 페이지 새로고침 (선택 사항)
+                    window.location.reload(); // 현재 페이지 새로고침
+                } else {
+                    alert(data.message || '사용자 변경에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                // 네트워크 오류 또는 catch 블록에서 throw된 에러 처리
+                console.error('Error:', error);
+                alert('요청 처리 중 오류가 발생했습니다: ' + error.message);
             });
         }
     </script>

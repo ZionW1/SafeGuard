@@ -10,6 +10,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="userId" column="user_id" />
         <result property="userNm" column="user_nm" />
         <result property="password" column="password" />
+        <result property="privAgree" column="priv_agree" />
+        <result property="courseNum" column="course_num" />
+        <result property="residentNum" column="resident_num" />
         <result property="accountNumber" column="account_number"
                 typeHandler="com.safeg.admin.util.CryptoTypeHandler" />
         <result property="bankNm" column="bank_nm" />
@@ -143,12 +146,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
     </select>
 
-    <!-- <select id="userSelect" resultMap="userMap"> -->
     <select id="userSelect" resultMap="userMap">
         SELECT
             u.id,
             u.user_id,
             u.user_nm,
+            u.priv_agree,
+            u.course_num,
+            u.resident_num,
             u.email,
             u.enabled,
             u.phone_num,
@@ -352,5 +357,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY user_id
         HAVING SUM(amount) > 0
         ]]>
-</update>
+    </update>
+
+    <update id="updateUserInfo">
+        UPDATE
+            user
+        SET
+            course_num = #{courseNum},
+            resident_num = #{residentNum},
+            priv_agree = #{privAgree}
+        where
+            id = #{id}
+    </update>
 </mapper>

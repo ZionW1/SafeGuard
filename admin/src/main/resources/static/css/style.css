@@ -118,6 +118,14 @@ footer {
     vertical-align: middle;
 }
 
+.mypageInput{
+    flex: 1;
+    padding: 15px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
 .admin-container {
     /* display: contents; */
     /* min-width: 100%; */
@@ -755,10 +763,9 @@ margin: 5px 0 0;
     display: flex !important; /* block 대신 부모의 flex 속성 유지 */
 }
 
+/* 체크박스 크기 조절 */
 input[type=checkbox] {
-
     zoom: 2;
-    
 }
 
 @media (max-width: 768px) {

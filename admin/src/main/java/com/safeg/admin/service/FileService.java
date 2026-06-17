@@ -2,6 +2,8 @@ package com.safeg.admin.service;
 
 import java.util.List;
 
+import org.springframework.core.io.Resource;
+
 import com.safeg.admin.vo.FilesVO;
 
 public interface FileService {
@@ -38,5 +40,9 @@ public interface FileService {
     public FilesVO getMypageImage(String id, String string) throws Exception;
 
     public int updateFileCampaign() throws Exception;
+
+    public Resource identificationFile(String fileType, String targetType) throws Exception;
+
+    FilesVO getInfoImage(String id, String fileType, String targetType) throws Exception;
 
 }

@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safeg.user.service.FileService;
 import com.safeg.user.service.MyPageService;
 import com.safeg.user.service.UserService;
+import com.safeg.user.util.EncryptionUtil;
 import com.safeg.user.vo.CalendarEventVO;
 import com.safeg.user.vo.CustomUser;
 import com.safeg.user.vo.FilesVO;
@@ -228,9 +229,20 @@ public class MyPageController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int result = 0;
 
+        if ("on".equals(userVO.getPrivAgree())) {
+            userVO.setPrivAgree("Y");
+        } else {
+            userVO.setPrivAgree("N"); // 체크박스가 해제되어 null로 넘어왔을 때 방어 코드
+            response.put("error", false);
+            response.put("message", "사용자 변경 중 오류가 발생했습니다");
+            return response;
+        }
+
         log.info(":::::::::: authUser 회원 마이 페이지 :::::::::: + " + authUser);
         log.info(":::::::::: userVO.getGuardType :::::::::: + " + userVO.getGuardType());
-
+        log.info(":::::::::: userVO.getResidentNum :::::::::: + " + userVO.getResidentNum());
+        log.info(":::::::::: userVO.getCourseNum :::::::::: + " + userVO.getCourseNum());
+        log.info(":::::::::: userVO.getPrivAgree :::::::::: + " + userVO.getPrivAgree());
 
         if(authentication.getPrincipal() instanceof CustomUser){
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
@@ -241,13 +253,35 @@ public class MyPageController {
             // result = myPageService.applyBodyguard(userVo);
 
             try {
-                // 일반 유저로 변경하는 서비스 로직 호출
-                result = myPageService.applyBodyguard(userIdFromDb, userVO.getGuardType());
+                if (userVO.getResidentNum() != null && !userVO.getResidentNum().trim().isEmpty()) {
+                    try {
+                        // 보내주신 EncryptionUtil의 encrypt 메서드 호출
+                        String encryptedData = EncryptionUtil.encrypt(userVO.getResidentNum());
+                        log.info("::::: 주민등록번호 암호화 성공 ::::: " + encryptedData);
 
+                        // 암호화된 텍스트(Base64 형태)를 다시 VO에 저장
+                        userVO.setResidentNum(encryptedData);
+                        
+                        log.info("::::: 주민등록번호 암호화 성공 :::::");
+                    } catch (Exception e) {
+                        log.error("::::: 주민등록번호 암호화 중 오류 발생 :::::", e);
+                        response.put("result", "FAIL");
+                        response.put("message", "보안 처리 중 오류가 발생했습니다.");
+                        return response;
+                    }
+                }
+                // 일반 유저로 변경하는 서비스 로직 호출
+                result = myPageService.updateUserInfo(userIdFromDb, userVO);
+                if(result > 0 ) {
+                    result = myPageService.applyBodyguard(userIdFromDb, userVO.getGuardType());
+                }else {
+                    response.put("error", true);
+                    response.put("message", "사용자 변경 중 오류가 발생했습니다");
+                }
                 response.put("success", true);
                 response.put("message", "사용자가 성공적으로 경호원 요청 되었습니다.");
             } catch (Exception e) {
-                response.put("success", false);
+                response.put("error", false);
                 response.put("message", "사용자 변경 중 오류가 발생했습니다: " + e.getMessage());
                 // 필요하다면 에러 코드 등 추가 정보 포함
             }
@@ -845,4 +879,5 @@ public class MyPageController {
         }
         return "mypage/mypageMenu";
     }
+    
 }

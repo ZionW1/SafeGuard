@@ -1069,6 +1069,14 @@ a {
     margin-left: 23%;
 }
 
+.mypageInput{
+    flex: 1;
+    padding: 15px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
 .mypage_subtitle {
     font-size: 1.5rem;
     font-weight: 700;
@@ -1548,6 +1556,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
   }
 
   .askForm input[type="text"],
+  input[type="number"]
   input[type="tel"],
   input[type="email"],
   input[type="password"] {
@@ -2033,6 +2042,13 @@ table.bestPayList {
     width: 69%;
     text-align: center;
     padding: 0px 0 15px;
+}
+
+.agreeChk  {
+    margin-left: 8px;
+    margin-right: 15px;
+    width: 10px;
+    transform : scale(2.8);
 }
 
 .drop-zone{

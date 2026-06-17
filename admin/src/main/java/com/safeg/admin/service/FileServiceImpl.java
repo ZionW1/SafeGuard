@@ -1,12 +1,22 @@
 package com.safeg.admin.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +34,8 @@ public class FileServiceImpl implements FileService{
     @Autowired
     private FileMapper fileMapper;
     
-    // @Value("${upload.path}") // application.properties 에서 지정한 업로드 경로 가져옴
-    // private String uploadPath;
+    @Value("${upload.path}") // application.properties 에서 지정한 업로드 경로 가져옴
+    private String uploadPath;
 
     // String uploadPath = CommonData.getUploadPath();
 
@@ -288,9 +298,17 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public FilesVO getMypageImage(String id, String targetType) throws Exception{
+    public FilesVO getMypageImage(String id, String targetType) throws Exception {
         log.info("id : " + id + " targetType : " + targetType);
         FilesVO file = fileMapper.getMypageImage(id, targetType);
+        log.info("file : " + file);
+        return file;
+    }
+
+    @Override
+    public FilesVO getInfoImage(String id, String fileType, String targetType) throws Exception {
+        log.info("id : " + id + " targetType : " + fileType + " targetType : " + targetType);
+        FilesVO file = fileMapper.getInfoImage(id, fileType, targetType);
         log.info("file : " + file);
         return file;
     }
@@ -300,6 +318,112 @@ public class FileServiceImpl implements FileService{
         int result = fileMapper.updateFileCampaign();
 
         return result;
+    }
+    
+    // @Override
+    // public Resource identificationFile(String fileType, String targetType) throws Exception {
+    //     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    //     log.info("넘어온 값 : " + fileType + ", " + targetType);
+    //     try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+
+    //         Set<Long> processedFileIds = new HashSet<>(); // 이미 추가된 fileId를 추적하여 중복 방지
+
+    //         // 해당 userNo에 연결된 모든 fileId 목록을 조회
+    //         // 캠페인 번호로 유저 번호 조회
+    //         List<Long> fileIdsForUser = fileMapper.identFileList(); // 예시: 'PROFILE'
+
+    //         for (Long fileId : fileIdsForUser) {
+    //             // ⭐ 중복 파일 ID가 여러 번 조회되어도 ZIP에 한 번만 추가하도록 방지 ⭐
+    //             if (!processedFileIds.add(fileId)) {
+    //                 log.warn("File ID {} 는 이미 ZIP에 추가되었거나 중복 조회되었습니다. 건너뜝니다.", fileId);
+    //                 continue; // 이미 처리했으면 건너뜀
+    //             }
+    //             FilesVO fileInfo ;
+    //             fileInfo = getInfoImage(String.valueOf(fileId), fileType, targetType); // 단일 파일 정보 조회
+
+                
+    //             if (fileInfo == null) {
+    //                 log.warn("File ID {} 에 대한 파일 정보를 찾을 수 없습니다. ZIP에서 제외합니다.", fileId);
+    //                 continue;
+    //             }
+
+    //             Path filePath = Paths.get(fileInfo.getFilePath()); // FilesVO.getFilePath()는 full path여야 함
+    //             if (!Files.exists(filePath) || !Files.isReadable(filePath)) {
+    //                 log.warn("경로 {} 의 파일 {} 을(를) 찾을 수 없거나 읽을 수 없습니다. ZIP에서 제외합니다.",
+    //                             filePath.toString(), fileInfo.getOriginalName());
+    //                 continue;
+    //             }
+
+    //             // ZIP Entry 생성 (ZIP 파일 내에서 보일 이름)
+    //             // fileInfo.getOriginalName()으로 사용
+    //             ZipEntry zipEntry = new ZipEntry(fileInfo.getOriginalName());
+    //             zos.putNextEntry(zipEntry);
+
+    //             // 실제 파일 데이터를 ZIP에 씀
+    //             Files.copy(filePath, zos);
+    //             zos.closeEntry();
+    //             log.info("파일 '{}' (fileId: {}) ZIP에 추가 완료.", fileInfo.getOriginalName(), fileId);
+    //         }
+            
+    //     } // zos.close()는 try-with-resources에 의해 자동으로 호출됨
+
+    //     return new ByteArrayResource(baos.toByteArray()); // 생성된 ZIP 데이터를 Resource로 반환
+    // }
+
+    @Override
+    public Resource identificationFile(String fileType, String targetType) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        log.info("넘어온 값 : " + fileType + ", " + targetType);
+        
+        // 1. 압축 스트림 열기
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            Set<Long> processedFileIds = new HashSet<>(); 
+
+            // 🚨 중요: 나중에 꼭 파라미터를 넘겨서 해당 캠페인 것만 조회하도록 mapper 메서드를 수정하시는 걸 추천합니다!
+            List<Long> fileIdsForUser = fileMapper.identFileList(fileType, targetType); 
+
+            for(int i = 0; i < fileIdsForUser.size(); i++) {
+                log.info("fileIdsForUser " + i + " : "+ fileIdsForUser.get(i));
+            }
+            // log.info("fileIdsForUser : " + fileIdsForUser.toString());
+            for (Long fileId : fileIdsForUser) {
+                log.info("fileIdA : " + fileId);
+                if (!processedFileIds.add(fileId)) {
+                    log.warn("File ID {} 는 이미 ZIP에 추가되었거나 중복 조회되었습니다. 건너뜝니다.", fileId);
+                    continue; 
+                }
+                
+                FilesVO fileInfo = getInfoImage(String.valueOf(fileId), fileType, targetType); 
+                
+                if (fileInfo == null) {
+                    log.warn("File ID {} 에 대한 파일 정보를 찾을 수 없습니다. ZIP에서 제외합니다.", fileId);
+                    continue;
+                }
+
+                Path filePath = Paths.get(fileInfo.getFilePath()); 
+                if (!Files.exists(filePath) || !Files.isReadable(filePath)) {
+                    log.warn("경로 {} 의 파일 {} 을(를) 찾을 수 없거나 읽을 수 없습니다. ZIP에서 제외합니다.",
+                                filePath.toString(), fileInfo.getOriginalName());
+                    continue;
+                }
+
+                // ✨ [버그 수정 1] 압축 파일 내 파일명 중복을 방지하기 위해 파일ID를 접두사로 붙임
+                String safeFileName = fileId + "_" + fileInfo.getOriginalName();
+                log.info("safeFileName : " + safeFileName);
+                ZipEntry zipEntry = new ZipEntry(safeFileName);
+                zos.putNextEntry(zipEntry);
+
+                // 실제 파일 데이터를 ZIP에 복사
+                Files.copy(filePath, zos);
+                zos.closeEntry();
+                log.info("파일 '{}' (fileId: {}) ZIP에 추가 완료.", safeFileName, fileId);
+            }
+            
+            // ✨ 이 블록이 끝나면서 zos.close()가 호출되어 완벽한 ZIP 포맷 파일이 완성됩니다.
+        } 
+
+        // ✨ [버그 수정 2] zos가 확실하게 close 완료된 '이 위치'에서 데이터를 꺼내 반환해야 안 깨집니다!
+        return new ByteArrayResource(baos.toByteArray()); 
     }
 
 }

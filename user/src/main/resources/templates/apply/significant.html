@@ -5,42 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>모바일 최적화 예시</title>
+    <title>행집 명단 확인 - 특이사항</title>
     <link rel="stylesheet" href="/mobile/css/style.css" />
 </head>
 <body class="bodyApply">
-    
-
     <div class="section applicant-list-area">
-        <!-- <form class="applicant-list-form" method="post" id="form" th:action="@{/apply/significantInsert}" method="post"> -->
-            <div class="applicant-item-title">
-                특이사항
-            </div>
-            <input type="hidden" name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <input type="hidden" id="campaignId" name="campaignId" th:data-campaign-id="${campaignId}">
-            <input type="hidden" id="userNo" name="userNo" th:data-campaign-title="${userNo}">
-            <input type="hidden" id="applyDate" name="applyDate" th:data-campaign-id="${applyDate}">
-            <div class="applicant-item3">
-                <div class="applicant-info">
-                    <div class="width100 mrg-b5 applicant-item">
-                        <div class="btn-area">
-                            <a th:class="|statusInfoChange statusInfoChangeConfirm button_status|" href="#" data-status="3" th:data-user-no="${userNo}" th:data-campaign-id="${campaignId}" th:data-apply-date="${applyDate}" onclick="updateSignificantStatus(this.dataset.status, this.dataset.userNo, this.dataset.campaignId, this.dataset.applyDate);">지각</a>
-                            <!-- <a th:class="|statusInfoChange statusInfoChangeConfirm button_status|" href="#" data-status="4" th:onclick="updateSignificantStatus(${userNo}, ${campaignId}, ${applyDate});">결근</a> -->
-                            <a th:class="|statusInfoChange statusInfoChangeConfirm button_status|" href="#" data-status="4" th:data-user-no="${userNo}" th:data-campaign-id="${campaignId}" th:data-apply-date="${applyDate}" onclick="updateSignificantStatus(this.dataset.status, this.dataset.userNo, this.dataset.campaignId, this.dataset.applyDate);">결근</a>
-                            <a th:class="|statusInfoChange statusInfoChangeConfirm button_status|" href="#" data-status="5" th:data-user-no="${userNo}" th:data-campaign-id="${campaignId}" th:data-apply-date="${applyDate}" onclick="updateSignificantStatus(this.dataset.status, this.dataset.userNo, this.dataset.campaignId, this.dataset.applyDate);">무단</a>
-                            <!-- <a th:class="|statusInfoChange statusInfoChangeConfirm button_status|" href="#" data-status="5" th:onclick="updateSignificantStatus(${userNo}, ${campaignId}, ${applyDate});">무단</a> -->
-                        </div>
-                        <div class="btn-area-significant">
-                            <input type="number" class="input-significant" name="amount" step="100" placeholder="금액" >
-                            <input type="text" class="input-significant" name="reasonInfo" id="reasonInfo" placeholder="사유 입력">
-                            <!-- <a th:class="|statusInfoChange statusInfoChangeConfirm button_status significant_btn|" th:href="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${userNo}, campaignId=${campaignId}, applyDate=${applyDate})}" data-status="2">특이사항</a> -->
-                            <a th:class="|statusInfoChange statusInfoChangeConfirm button_status significant_btn|" href="#" th:onclick="significantInsert()">특이사항 저장</a>
-                            <!-- <button type="submit" class="statusInfoChange statusInfoChangeConfirm button_status significant_btn" name="submit" value="특이사항">특이사항</button> -->
-                        </div>
+        <div class="applicant-item-title">
+            특이사항 설정
+        </div>
+        
+        <div class="applicant-item3">
+            <div class="applicant-info">
+                <div class="width100 mrg-b5 applicant-item">
+                    <div class="btn-area">
+                        <a class="statusInfoChange statusInfoChangeConfirm button_status" href="#" data-status="3" 
+                            th:onclick="updateSignificantStatus(this.dataset.status, [[${userNo}]], [[${campaignId}]], [[${applyDate}]]); return false;">지각</a>
+                        
+                        <a class="statusInfoChange statusInfoChangeConfirm button_status" href="#" data-status="4" 
+                            th:onclick="updateSignificantStatus(this.dataset.status, [[${userNo}]], [[${campaignId}]], [[${applyDate}]]); return false;">결근</a>
+                        
+                        <a class="statusInfoChange statusInfoChangeConfirm button_status" href="#" data-status="5" 
+                            th:onclick="updateSignificantStatus(this.dataset.status, [[${userNo}]], [[${campaignId}]], [[${applyDate}]]); return false;">무단</a>
+                    </div>
+                    
+                    <div class="btn-area-significant">
+                        <input type="number" class="input-significant modal-amount" name="amount" step="100" placeholder="금액" >
+                        <input type="text" class="input-significant modal-reason" name="reasonInfo" placeholder="사유 입력">
+                        
+                        <button type="button" class="statusInfoChange statusInfoChangeConfirm button_status significant_btn"
+                                th:onclick="significantInsert([[${campaignId}]], [[${userNo}]], [[${applyDate}]])">
+                            특이사항 저장
+                        </button>
                     </div>
                 </div>
             </div>
-        <!-- </form> -->
+        </div>
     </div>
 </body>
 </html>

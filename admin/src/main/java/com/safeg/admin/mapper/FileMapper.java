@@ -39,5 +39,9 @@ public interface FileMapper {
     public FilesVO getMypageImage(@Param("id") String id, @Param("targetType") String targetType) throws Exception;
 
     public int updateFileCampaign() throws Exception;
+
+    public List<Long> identFileList(@Param("fileType") String fileType, @Param("targetType") String targetType) throws Exception;
+
+    public FilesVO getInfoImage(@Param("id") String id, @Param("fileType") String fileType, @Param("targetType") String targetType) throws Exception;
     
 }

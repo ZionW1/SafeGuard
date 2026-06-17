@@ -68,5 +68,6 @@ public interface MyPageMapper {
 
     public String getUserAuth(Long userNo) throws Exception;
 
+    public int updateUserInfo(@Param("userIdFromDb") Long userIdFromDb, @Param("userVo") UserVO userVo);
 
 }

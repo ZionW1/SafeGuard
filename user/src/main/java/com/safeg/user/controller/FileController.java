@@ -4,15 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -30,13 +23,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.safeg.user.mapper.MediaUtil;
 import com.safeg.user.service.ApplyService;
 import com.safeg.user.service.FileService;
-import com.safeg.user.service.FileServiceImpl;
 import com.safeg.user.vo.CampaignVO;
 import com.safeg.user.vo.CommonData;
 import com.safeg.user.vo.FilesVO;
@@ -186,6 +176,7 @@ public class FileController {
         return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
     }
 
+    @SuppressWarnings("null")
     @GetMapping("/file/{id}") // 엔드포인트 변경
     @ResponseBody
     public ResponseEntity<byte[]> downloadSingleFile(@PathVariable("id") Long id) throws Exception {
@@ -332,16 +323,15 @@ public class FileController {
         return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/file/excelDownload/{id}/{applyDate}")
-    public ResponseEntity<byte[]> downloadCampaignApplicationsExcel(@PathVariable("id") String campaignId, @PathVariable("applyDate") LocalDate applyDate) throws Exception {
+    @GetMapping("/file/excelDownload/{id}/{applyDate}/{timeSegment}")
+    public ResponseEntity<byte[]> downloadCampaignApplicationsExcel(@PathVariable("id") String campaignId, @PathVariable("applyDate") LocalDate applyDate, @PathVariable("timeSegment") String timeSegment) throws Exception {
         log.info("downloadCampaignApplicationsExcel " + campaignId);
-        String timeSegment = "";
         
         // 1. DB에서 해당 캠페인의 모든 신청 정보 조회
         // List<UserCampaignVO> applications = userCampaignApplyService.getAllApplicationsForCampaign(campaignId);
-        List<UserCampaignVO> applications = applyService.userCampaignApply(campaignId, applyDate, timeSegment);
+        List<UserCampaignVO> applications = fileService.excelFileInfo(campaignId, timeSegment, applyDate);
 
-
+        log.info("app : "+applications);
         if (applications.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 신청 정보가 없으면 Not Found
         }
@@ -352,7 +342,7 @@ public class FileController {
         String finalCampaignName = (campaignName != null) ? campaignName : "캠페인";
 
         // 3. 엑셀 파일 생성
-        byte[] excelBytes = fileService.ApplicationExcel(applications, finalCampaignName);
+        byte[] excelBytes = fileService.ApplicationExcel(applications, finalCampaignName, applyDate);
 
         // 4. HTTP 응답 헤더 설정 (다운로드하도록 유도)
         HttpHeaders headers = new HttpHeaders();
@@ -366,4 +356,5 @@ public class FileController {
 
         return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
     }
+    
 }

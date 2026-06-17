@@ -58,4 +58,6 @@ public interface MyPageService {
 
     public String getUserAuth(Long userNo) throws Exception;
 
+    public int updateUserInfo(Long userIdFromDb, UserVO userVo) throws Exception;
+
 }

@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService{
         this.passwordEncoder = passwordEncoder;
     }
 
+    // 유저 추가
     @Override
     @Transactional
     public int userJoin(UserVO userVO) throws Exception {
@@ -56,32 +57,33 @@ public class UserServiceImpl implements UserService{
         return result;
     }
 
+    // userList 유저 리스트
     @Override
     public List<UserVO> userList(Option option, Page page) throws Exception {
         // TODO Auto-generated method stub
-        log.info("userList impl 호출 : " + option.getKeyword());
-        log.info("userList impl page 호출 : " + page);
-
+        
         int total = userCount(option);
-        log.info(":::::::::: total :::::::::: " + total);
         page.setTotal(total);
         List<UserVO> userList = userMapper.userList(option, page);
 
         return userList;
     }
 
+    // 유저 카운트 
     public int userCount(Option option) throws Exception {
         return userMapper.userCount(option);
     }
 
+    // 유저 상세 페이지
     @Override
     public UserVO userSelect(String id) throws Exception {
         // TODO Auto-generated method stub
-        log.info("userSelect impl 호출");
         UserVO userSelect = userMapper.userSelect(id);
 
-        return userSelect;    }
+        return userSelect;    
+    }
 
+    // 유저 업데이트
     @Override
     public int userInfoUpdate(UserVO userVO) throws Exception {
         // TODO Auto-generated method stub
@@ -92,7 +94,6 @@ public class UserServiceImpl implements UserService{
     @Override
     public int userRemove(String id) throws Exception {
         // TODO Auto-generated method stub
-        log.info("userRemove impl 호출 : " + id);
         int result = userMapper.userRemove(id);
         return result;
     }
@@ -103,7 +104,6 @@ public class UserServiceImpl implements UserService{
     // 02로 변경
     public int userUpdate(Long id) throws Exception{
         // TODO Auto-generated method stub
-        log.info("userUpdate impl 호출 : " + id);
         String idStr = String.valueOf(id);
         int result = userMapper.userUpdate(idStr, "USER", "02");
         if( result > 0 ){
@@ -179,7 +179,7 @@ public class UserServiceImpl implements UserService{
     public List<UserVO> userAddressList() throws Exception {
         // TODO Auto-generated method stub
         List<UserVO> userAddressList = userMapper.userAddressList();
-        log.info("userAddressList : " + userAddressList);
+        
         return userAddressList;
     }
 
@@ -217,6 +217,13 @@ public class UserServiceImpl implements UserService{
         }
 
         return insertedCount;
+    }
+
+    public int updateUserInfo(UserVO userVO) throws Exception {
+        log.info("userVo " + userVO);
+        int result = userMapper.updateUserInfo(userVO);
+
+        return result;
     }
 
 }

@@ -125,10 +125,18 @@
         })
         .then(async response => {
             if (response.ok) {
-                // 성공 시 메인으로 이동
-                window.location.href = '/';
+                const targetUrl = await response.text();
+                
+                // ❌ 이 부분이 에러를 만들고 있었습니다. 지우거나 아래처럼 console.log로 바꿔주세요!
+                // log.info("서버가 가라고 한 최종 주소: " + targetUrl); 
+                console.log("🎯 서버가 안내해준 최종 이동 목적지:", targetUrl); 
+
+                if (targetUrl) {
+                    window.location.href = targetUrl;
+                } else {
+                    window.location.href = '/';
+                }
             } else {
-                // 에러 발생 시 서버에서 보낸 에러 메시지 출력
                 const data = await response.json();
                 throw new Error(data.error || '로그인에 실패했습니다.');
             }

@@ -39,4 +39,6 @@ public interface UserService {
 
     public int settlementAll() throws Exception;
 
+    public int updateUserInfo(UserVO userVO) throws Exception;
+
 }

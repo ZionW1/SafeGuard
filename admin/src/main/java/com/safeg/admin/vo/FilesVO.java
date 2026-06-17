@@ -29,6 +29,9 @@ public class FilesVO {
     private String fileType; //varchar(50) not null comment '파일 용도 구분자 (PROFILE_IMG, BOARD_ATTACH 등)',
     private Long targetId; //bigint null comment '파일이 속한 대상의 ID (예: 게시글 ID, 회원 ID)',
     private String targetType; //varchar(50) null comment 'target_id가 참조하는 테이블명 (예: USER, BOARD)',
+    private String targetType1; //varchar(50) null comment 'target_id가 참조하는 테이블명 (예: USER, BOARD)',
+    private String targetType2; //varchar(50) null comment 'target_id가 참조하는 테이블명 (예: USER, BOARD)',
+
     private String originalName; //varchar(255) not null comment '원본 파일 이름',
     private String savedName; //varchar(255) not null comment '서버 저장 파일 이름 (UUID)',
     private String filePath; //varchar(500) not null comment '파일 저장 경로',

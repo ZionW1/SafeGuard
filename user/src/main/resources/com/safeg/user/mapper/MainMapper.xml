@@ -240,6 +240,7 @@
         and c.is_deleted = 'N'
         Where f.is_deleted = 'N'
         and c.app_Period_End >= CURDATE()
+        and c.is_deleted = 'N'
         and is_active = 'Y'
         and f.target_type = 'campaign'
         ]]>

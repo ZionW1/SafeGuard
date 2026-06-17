@@ -91,9 +91,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="campaignApply" parameterType="java.util.List">
         INSERT INTO user_campaign(
-            campaign_id, 
-            user_No, 
-            user_id, 
+            campaign_id,
+            user_No,
+            user_id,
+            lead_apply,
             applied_str_date, 
             applied_end_date,
             event_str_date,
@@ -106,6 +107,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{entry.campaignId},
             #{entry.userNo},
             #{entry.userId},
+            #{entry.leadApply},
             #{entry.appliedStrDate},
             #{entry.appliedEndDate},
             #{entry.eventPeriodStr},
@@ -117,9 +119,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <update id="updateApplicants">
-        update campaign set 
-            applicants_Num = #{applicantsNum} + 1
-        where campaign_id= #{campaignId}
+        UPDATE campaign 
+        SET applicants_num = (
+            SELECT t.cnt FROM (
+                SELECT COUNT(DISTINCT user_id) as cnt
+                FROM user_campaign 
+                WHERE campaign_id = #{campaignId}
+                AND is_deleted = 'N'
+                -- 'N'인 인솔자만 제외하고, 일반 사용자(NULL)와 Y인 인솔자는 모두 포함합니다.
+                AND (lead_apply IS NULL OR lead_apply != 'N')
+            ) t
+        )
+        WHERE campaign_id = #{campaignId}
     </update>
 
     <update id="updateCampaign">

@@ -340,4 +340,13 @@ public class MyPageServiceImpl implements MyPageService {
         return getUserAuth;
     }
     
+    @Override
+    public int updateUserInfo(Long userIdFromDb, UserVO userVo) throws Exception {
+        log.info("userIdFormDb + " + userIdFromDb);
+        log.info("userVO + " + userVo);
+        int result = myPageMapper.updateUserInfo(userIdFromDb, userVo);
+
+        return result;
+    }
+
 }

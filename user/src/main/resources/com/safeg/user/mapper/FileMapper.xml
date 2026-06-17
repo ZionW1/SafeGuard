@@ -5,7 +5,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <!-- namespace="매퍼 인터페이스 경로" --> 
 <mapper namespace="com.safeg.user.mapper.FileMapper">
-
+    <resultMap type="com.safeg.user.vo.UserCampaignVO" id="userCampaignMap">
+        <id property="id" column="id" />
+        <result property="campaignId" column="campaign_id" />
+        <result property="userId" column="user_id" />
+        <result property="userNm" column="user_nm" />
+        <result property="userNo" column="user_No" />
+        <result property="userNo" column="user_No" />
+        <result property="userNo" column="user_No" />
+        <result property="phoneNum" column="phone_num"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+        <result property="residentNum" column="resident_Num"/>
+        <result property="amount" column="amount"/>
+        <result property="campaignTitle" column="campaign_title" />
+        <result property="companyNm" column="company_nm" />
+        <result property="companyPh" column="company_ph" />
+        <result property="applicantsNum" column="applicants_Num" />
+        <result property="recruitmentNum" column="recruitment_Num" />
+        <result property="status" column="status" />
+        <result property="typeNm" column="type_nm" />
+        <result property="statusNm" column="status_nm" />
+        <result property="appPeriodStr" column="app_period_str" />
+        <result property="appPeriodEnd" column="app_period_end" />
+        <result property="eventPeriodStr" column="event_Period_Str" />
+        <result property="eventPeriodEnd" column="event_Period_End" />
+        <result property="timeSegment" column="time_segment" />
+        <result property="resultDate" column="result_date" />
+        <result property="applyDate" column="apply_date" />
+        <result property="placeAddr" column="place_addr" />
+    </resultMap>
     <!-- 조회 -->
     <select id="select" resultType="filesVO">
         select * from files where target_id = #{id} and target_type='campaign' and is_deleted = 'N';
@@ -81,4 +109,56 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="businessFile" resultType="filesVO">
         select * from files where target_type='campaign' and is_deleted = 'N';
     </select>
+
+    <select id="excelFileInfo" resultMap="userCampaignMap">
+        SELECT 
+            uc.campaign_id,
+            uc.user_id,
+            uc.user_No,
+            u.user_nm,
+            u.phone_Num,
+            c.campaign_title,
+            c.leader_pay,
+            (CASE
+                WHEN c.type_code = '01' THEN '경호'
+                WHEN c.type_code = '02' THEN '진행'
+                WHEN c.type_code = '03' THEN '수행'
+                ELSE ''
+            END) as type_nm,
+            (CASE
+                WHEN uc.status = '0' THEN '대기'
+                WHEN uc.status = '1' THEN '출근'
+                WHEN uc.status = '2' THEN '퇴근'
+                WHEN uc.status = '3' THEN '지각'
+                WHEN uc.status = '4' THEN '결근'
+                WHEN uc.status = '5' THEN '무단'
+                ELSE '없음'
+            END) as status_nm,
+            ph.reason_info,
+            c.time_segment,
+            uc.apply_date,
+            ph.amount, -- 테이블명 명시가 누락되었다면 ph. 추가
+            u.resident_Num,
+            uc.IS_DELETED
+        FROM 
+            user_campaign uc 
+        LEFT OUTER JOIN user u 
+            ON uc.user_id = u.user_id
+        LEFT OUTER JOIN campaign c 
+            ON uc.campaign_id = c.campaign_id
+        LEFT OUTER JOIN point_history ph
+            ON uc.campaign_id = ph.campaign_id
+            AND uc.user_no = ph.user_id -- 💡 [핵심 추가] 특이사항을 등록한 유저 아이디가 일치해야 함!
+            AND ph.category = 'OVERPAY'
+            AND ph.is_deleted = 'N' -- 💡 [핵심 이동] 조인 조건으로 넣어야 ph 데이터가 있을 때만 체크합니다!
+        WHERE 
+            uc.campaign_id = #{campaignId}
+        AND 
+            DATE(apply_date) = #{applyDate}
+        AND 
+            uc.time_segment = #{timeSegment}
+        AND
+            uc.is_deleted = 'N'
+    </select>
+
 </mapper>

@@ -223,42 +223,42 @@
                 });
             }
 
-            document.getElementById('globalCalcBtn').addEventListener('click', function() {
-                // 1차 확인
-                if (!confirm("시스템 내 모든 미정산 데이터를 일괄 정산하시겠습니까?")) return;
+            // document.getElementById('globalCalcBtn').addEventListener('click', function() {
+            //     // 1차 확인
+            //     if (!confirm("시스템 내 모든 미정산 데이터를 일괄 정산하시겠습니까?")) return;
                 
-                // 2차 확인 (실수 방지용)
-                const safetyCheck = prompt("실행하시려면 '전체정산'이라고 입력해주세요.");
-                if (safetyCheck !== "전체정산") {
-                    alert("입력이 일치하지 않아 취소되었습니다.");
-                    return;
-                }
+            //     // 2차 확인 (실수 방지용)
+            //     const safetyCheck = prompt("실행하시려면 '전체정산'이라고 입력해주세요.");
+            //     if (safetyCheck !== "전체정산") {
+            //         alert("입력이 일치하지 않아 취소되었습니다.");
+            //         return;
+            //     }
 
-                const btn = this;
-                btn.disabled = true;
-                btn.innerText = "정산 처리 중... (창을 닫지 마세요)";
+            //     const btn = this;
+            //     btn.disabled = true;
+            //     btn.innerText = "정산 처리 중... (창을 닫지 마세요)";
 
-                fetch('/admin/api/v1/calculate-all-users', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(`총 ${data.processedCount}건의 정산이 완료되었습니다!`);
-                        location.reload(); 
-                    } else {
-                        alert("에러 발생: " + data.message);
-                        btn.disabled = false;
-                        btn.innerText = "시스템 전체 유저 일괄 정산 실행";
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert("서버 응답 지연 또는 오류가 발생했습니다.");
-                    btn.disabled = false;
-                });
-            });
+            //     fetch('/admin/api/v1/calculate-all-users', {
+            //         method: 'POST',
+            //         headers: { 'Content-Type': 'application/json' }
+            //     })
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         if (data.success) {
+            //             alert(`총 ${data.processedCount}건의 정산이 완료되었습니다!`);
+            //             location.reload(); 
+            //         } else {
+            //             alert("에러 발생: " + data.message);
+            //             btn.disabled = false;
+            //             btn.innerText = "시스템 전체 유저 일괄 정산 실행";
+            //         }
+            //     })
+            //     .catch(err => {
+            //         console.error(err);
+            //         alert("서버 응답 지연 또는 오류가 발생했습니다.");
+            //         btn.disabled = false;
+            //     });
+            // });
         });
 
         async function settlementAll() {
@@ -294,6 +294,7 @@
                 alert("서버 통신 실패" + err);
             }
         }
+
     </script>
 </body>
 </html>

@@ -62,4 +62,6 @@ public interface UserMapper {
 
     public int settlementAll() throws Exception;
 
+    public int updateUserInfo(UserVO userVO) throws Exception;
+
 }

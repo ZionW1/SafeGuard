@@ -341,11 +341,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.EVENT_PERIOD_END,
             uc.applied_str_date,
             uc.applied_end_date
-        from user_campaign uc
-        LEFT OUTER JOIN campaign c
-        ON uc.campaign_id = c.campaign_id
-        where uc.campaign_id = #{campaignId}
+        from campaign c
+        LEFT OUTER JOIN user_campaign uc
+        ON c.campaign_id = uc.campaign_id
         and uc.is_deleted = 'N'
+        where c.campaign_id = #{campaignId}
         Limit 1
     </select>
 
@@ -445,6 +445,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             applied_end_date,
             event_str_date,
             event_end_date,
+            time_segment,
             apply_date,
             status,
             is_leader
@@ -458,6 +459,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{entry.appliedEndDate},
             #{entry.eventPeriodStr},
             #{entry.eventPeriodEnd},
+            #{entry.timeSegment},
             #{entry.applyDate},
             '8',
             'Y'

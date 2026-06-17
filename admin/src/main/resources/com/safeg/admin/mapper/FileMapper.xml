@@ -164,4 +164,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             CURDATE() > c.app_period_end
         ]]>
     </update>
+
+    <select id="identFileList" resultType="java.lang.Long">
+        <!-- SELECT
+            file_id
+        FROM
+            files
+        WHERE 
+            file_type = #{fileType}
+        AND 
+            target_type = #{targetType} 
+        AND 
+            is_deleted = 'N'; -->
+
+        SELECT id FROM user WHERE is_deleted = 'N'
+    </select>
+
+    <select id="getInfoImage" resultType="FilesVO">
+        SELECT
+            *
+        FROM
+            files
+        WHERE
+            file_type = #{fileType}
+        AND
+            target_type = #{targetType}
+        AND
+            target_id = #{id}
+        AND
+            is_deleted = 'N';
+    </select>
 </mapper>

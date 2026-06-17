@@ -1,10 +1,16 @@
 package com.safeg.admin.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,8 +50,6 @@ public class UserController {
 
     @GetMapping("/user01")
     public String user01(@AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {
-        log.info("user List 호출 option : " + option);
-        log.info("user List 호출 page : " + page);
         if(authUser != null){
             UserVO user = authUser.getUserVo();
             // 1. URL은 원본 키워드를 유지 (사용자에게 보여지는 용도)
@@ -88,7 +92,6 @@ public class UserController {
             
             List<UserVO> userList = userService.userList(option, page); // 해시된 키워드로 DB 조회
             if(userList != null){
-                log.info("userList not null");
                 List<UserVO> userAddressList = userService.userAddressList();
                 model.addAttribute("userAddressList", userAddressList);
             }
@@ -118,6 +121,40 @@ public class UserController {
 
         List<FilesVO> profileImage = fileService.userImageFile(id);
         
+        String rawPhone = userSelect.getPhoneNum(); // ex: "01012345678"
+        if (rawPhone != null) {
+            // 10자리, 11자리 모두 자동으로 하이픈을 찌르는 정규식 적용
+            String formattedPhone = rawPhone.replaceAll("[^0-9]", "")
+                                            .replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
+            userSelect.setPhoneNum(formattedPhone); // 하이픈이 포함된 값으로 세팅
+        }
+
+        String ResidentNum = userSelect.getResidentNum();
+        String rrn = "";
+        // 1. 먼저 null 및 빈값 체크를 수행하여 안전성 확보
+        if (ResidentNum != null && !ResidentNum.trim().isEmpty()) {
+            try { 
+                // 2. 먼저 암호화된 주민번호를 평문(순수 숫자)으로 복호화
+                String decryptRrn = EncryptionUtil.decrypt(ResidentNum); 
+                
+                // 3. 복호화된 결과물에서 숫자만 추출
+                rrn = decryptRrn.replaceAll("[^0-9]", "");
+                
+                // 4. 정상적으로 13자리라면 6글자 뒤에 "-" 삽입
+                rrn = rrn.substring(0, 6) + "-" + rrn.substring(6);
+                String rrnSubstring = rrn.substring(8); // ""
+                userSelect.setResidentNum(rrn.substring(0, 8) + rrnSubstring.replaceAll(".", "*"));
+            } 
+            catch (Exception e) { 
+                log.error("주민등록번호 복호화 실패: {}", ResidentNum, e);
+                rrn = "복호화 실패"; 
+            }
+        } else {
+            // 5. 원래 값이 null이거나 비어있었다면 공백 처리
+            rrn = "";
+        }
+        
+
         log.info("profileImage.size() : " + profileImage.size());
         log.info("profileImage : " + profileImage.toString());
 
@@ -344,7 +381,7 @@ public class UserController {
 
     @PostMapping("/user/resetPoint")
     @ResponseBody
-    public String resetPoint(@RequestParam("userNo") int userNo) {
+    public String resetPoint(@RequestParam("userNo") int userNo) throws Exception{
         try {
             userService.resetAllUserPay();
             userService.resetAllUserApply();
@@ -356,7 +393,7 @@ public class UserController {
 
     @PostMapping("/settlementAll")
     @ResponseBody
-    public Map<String, Object> settlementAll() {
+    public Map<String, Object> settlementAll() throws Exception{
         log.info("settlementAll");
         Map<String, Object> result = new HashMap<>();
         try {
@@ -370,4 +407,44 @@ public class UserController {
         }
         return result; // 이 데이터가 다시 JS의 'result'로 돌아갑니다.
     }
+    
+    @PostMapping("/updateUserInfo")
+    @ResponseBody
+    public Map<String, Object> updateUserInfo(UserVO userVO) throws Exception{
+        log.info("updateUserInfo : " + userVO);
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String encryptedData = EncryptionUtil.encrypt(userVO.getResidentNum());
+        log.info("::::: 주민등록번호 암호화 성공 ::::: " + encryptedData);
+
+        // 암호화된 텍스트(Base64 형태)를 다시 VO에 저장
+        userVO.setResidentNum(encryptedData);
+
+        if ("on".equals(userVO.getPrivAgree())) {
+            userVO.setPrivAgree("Y");
+        } else {
+            userVO.setPrivAgree("N"); // 체크박스가 해제되어 null로 넘어왔을 때 방어 코드
+            resultMap.put("error", false);
+            resultMap.put("message", "사용자 변경 중 오류가 발생했습니다");
+            return resultMap;
+        }
+        
+        log.info("::::: 주민등록번호 암호화 성공 ::::: " + userVO.getResidentNum());
+        try {
+            int result = userService.updateUserInfo(userVO);
+            log.info("updateUserInfo res : " + result);
+            if(result > 0) {
+                resultMap.put("success", true);
+            } else {
+                resultMap.put("success", false);
+            }
+            
+        } catch (Exception e) {
+            resultMap.put("failed", false);
+        }
+        // result.put("success", true);
+
+        return resultMap;
+    }
+
 }

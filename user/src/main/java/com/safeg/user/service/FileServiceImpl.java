@@ -1,13 +1,19 @@
 package com.safeg.user.service;
 
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.Encryptor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter; // 날짜 포맷팅용
 
 
 import java.io.File;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,6 +33,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.safeg.user.mapper.FileMapper;
+import com.safeg.user.util.EncryptionUtil;
 import com.safeg.user.vo.CommonData;
 import com.safeg.user.vo.FilesVO;
 import com.safeg.user.vo.UserCampaignVO;
@@ -234,7 +241,7 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public byte[] ApplicationExcel(List<UserCampaignVO> applications, String campaignName) throws Exception {
+    public byte[] ApplicationExcel(List<UserCampaignVO> applications, String campaignName, LocalDate applyDate) throws Exception {
         log.info("엑셀 파일 생성 요청: 캠페인명 - {}", campaignName);
         log.info("applications - {}", applications);
 
@@ -245,13 +252,38 @@ public class FileServiceImpl implements FileService{
         // 2. 헤더 스타일 설정 (선택 사항이지만, 깔끔하게 보이도록)
         Font headerFont = workbook.createFont();
         headerFont.setBold(true);
+        // CellStyle headerCellStyle = workbook.createCellStyle();
+        // headerCellStyle.setFont(headerFont);
+        // headerCellStyle.setAlignment(HorizontalAlignment.CENTER); // 가운데 정렬
+        Font dataFont = workbook.createFont();
+        dataFont.setFontHeightInPoints((short) 10);
+
         CellStyle headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFont(headerFont);
-        headerCellStyle.setAlignment(HorizontalAlignment.CENTER); // 가운데 정렬
+        headerCellStyle.setAlignment(HorizontalAlignment.CENTER);     // 가로 가운데 정렬
+        headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER); // 세로 가운데 정렬
+        
+        // 헤더 테두리선 추가
+        headerCellStyle.setBorderTop(BorderStyle.THIN);
+        headerCellStyle.setBorderBottom(BorderStyle.THIN);
+        headerCellStyle.setBorderLeft(BorderStyle.THIN);
+        headerCellStyle.setBorderRight(BorderStyle.THIN);
 
+        // 3. [핵심] 데이터 셀 스타일 설정 (가운데 정렬 + 테두리)
+        CellStyle dataCellStyle = workbook.createCellStyle();
+        dataCellStyle.setFont(dataFont);
+        dataCellStyle.setAlignment(HorizontalAlignment.CENTER);     // 가로 가운데 정렬 💡
+        dataCellStyle.setVerticalAlignment(VerticalAlignment.CENTER); // 세로 가운데 정렬 💡
+        
+        // 데이터 테두리선 추가
+        dataCellStyle.setBorderTop(BorderStyle.THIN);
+        dataCellStyle.setBorderBottom(BorderStyle.THIN);
+        dataCellStyle.setBorderLeft(BorderStyle.THIN);
+        dataCellStyle.setBorderRight(BorderStyle.THIN);
         // 3. 헤더 Row 생성 및 컬럼명 추가
         Row headerRow = sheet.createRow(0); // 첫 번째 줄 (0 인덱스)
-        String[] headers = {"No.","캠페인명", "신청자 ID", "신청자명","상태"};
+        headerRow.setHeightInPoints(28); // 헤더 행 높이 설정 (기본보다 높게) 💡
+        String[] headers = {"No.","캠페인명", "신청자 ID", "신청자명", "휴대폰번호", "주민번호", "출/퇴근", "근무일", "오버페이", "오버페이 사유"};
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
@@ -262,33 +294,124 @@ public class FileServiceImpl implements FileService{
         int rowNum = 1; // 헤더 다음 줄부터 시작 (1 인덱스)
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); // 날짜 포맷터
 
-        log.info("generateCampaignApplicationsExcel : ");
-
         for (UserCampaignVO app : applications) {
             Row row = sheet.createRow(rowNum++);
             int colNum = 0;
 
-            row.createCell(colNum++).setCellValue(rowNum - 1); // No.
-            row.createCell(colNum++).setCellValue(campaignName); // 캠페인 이름
-            row.createCell(colNum++).setCellValue(app.getUserId()); // 신청자 ID
-            row.createCell(colNum++).setCellValue(app.getUserNm()); // 신청자명
-            row.createCell(colNum++).setCellValue(app.getStatusNm()); // 상태
+            Cell cell0 = row.createCell(colNum++); cell0.setCellValue(rowNum - 1); cell0.setCellStyle(dataCellStyle); // No.
+            Cell cell1 = row.createCell(colNum++); cell1.setCellValue(campaignName); cell1.setCellStyle(dataCellStyle); // 캠페인명.
+            Cell cell2 = row.createCell(colNum++); cell2.setCellValue(app.getUserId()); cell2.setCellStyle(dataCellStyle); // 신청자 ID.
+            Cell cell3 = row.createCell(colNum++); cell3.setCellValue(app.getUserNm()); cell3.setCellStyle(dataCellStyle); // 신청자명.
+            String getPhoneNum = app.getPhoneNum();
+            String phoneNum = "";
+            if (getPhoneNum != null && !getPhoneNum.trim().isEmpty()) {
+                phoneNum = getPhoneNum.replaceAll("[^0-9]", "").replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
+            }
+            Cell cell4 = row.createCell(colNum++); cell4.setCellValue(phoneNum); cell4.setCellStyle(dataCellStyle); // 휴대폰번호.
+            
+            // 주민번호 복호화단
+            String ResidentNum = app.getResidentNum();
+            String rrn = "";
+            // 1. 먼저 null 및 빈값 체크를 수행하여 안전성 확보
+            if (ResidentNum != null && !ResidentNum.trim().isEmpty()) {
+                try { 
+                    // 2. 먼저 암호화된 주민번호를 평문(순수 숫자)으로 복호화
+                    String decryptRrn = EncryptionUtil.decrypt(ResidentNum); 
+                    
+                    // 3. 복호화된 결과물에서 숫자만 추출
+                    rrn = decryptRrn.replaceAll("[^0-9]", "");
+                    
+                    // 4. 정상적으로 13자리라면 6글자 뒤에 "-" 삽입
+                    rrn = rrn.substring(0, 6) + "-" + rrn.substring(6);
+                } 
+                catch (Exception e) { 
+                    log.error("주민등록번호 복호화 실패: {}", ResidentNum, e);
+                    rrn = "복호화 실패"; 
+                }
+            } else {
+                // 5. 원래 값이 null이거나 비어있었다면 공백 처리
+                rrn = "";
+            }
+            Cell cell5 = row.createCell(colNum++); cell5.setCellValue(rrn); cell5.setCellStyle(dataCellStyle); // 주민등록번호.
+            
+            Cell cell6 = row.createCell(colNum++); cell6.setCellValue(app.getStatusNm()); cell6.setCellStyle(dataCellStyle); // 상태 출퇴근.
+            Cell cell7 = row.createCell(colNum++); cell7.setCellValue(app.getApplyDate() != null ? app.getApplyDate().toString() : ""); cell7.setCellStyle(dataCellStyle); // 신청일.
+            Cell cell8 = row.createCell(colNum++); cell8.setCellValue(app.getAmount()); cell8.setCellStyle(dataCellStyle); // 오버페이.
+            Cell cell9 = row.createCell(colNum++); cell9.setCellValue(app.getReasonInfo()); cell9.setCellStyle(dataCellStyle); // 오버페이사유.
+            // row.createCell(colNum++).setCellValue(rowNum - 1); // No.
+            // row.createCell(colNum++).setCellValue(campaignName); // 캠페인 이름
+            // row.createCell(colNum++).setCellValue(app.getUserId()); // 신청자 ID
+            // row.createCell(colNum++).setCellValue(app.getUserNm()); // 신청자명
+            // row.createCell(colNum++).setCellValue(app.getPhoneNum()); // 휴대폰번호
 
-            // TODO: UserCampaignDto에 더 많은 정보가 있다면 여기에 추가해 줘!
-            // 예시: row.createCell(colNum++).setCellValue(app.getPhoneNumber()); // 전화번호
+            // // [핵심 변경 사항] 주민등록번호 복호화 처리
+            // String displayResidentNum = ""; 
+            // String encryptedResidentNum = app.getResidentNum();
+
+            // if (encryptedResidentNum != null && !encryptedResidentNum.trim().isEmpty()) {
+            //     try {
+            //         // EncryptionUtil을 사용하여 복호화 진행
+            //         displayResidentNum = EncryptionUtil.decrypt(encryptedResidentNum);
+            //     } catch (Exception e) {
+            //         // 복호화 도중 에러(예: 암호화 안 된 레거시 데이터 등) 발생 시 방어 코드
+            //         log.error("주민등록번호 복호화 중 에러 발생 (데이터 유실 방지) : {}", encryptedResidentNum, e);
+            //         displayResidentNum = "복호화 실패"; 
+            //     }
+            // }
+            // row.createCell(colNum++).setCellValue(displayResidentNum); // 복호화된 주민번호 주입
+
+            // row.createCell(colNum++).setCellValue(app.getStatusNm()); // 상태 출퇴근.
+            // row.createCell(colNum++).setCellValue(app.getApplyDate() != null ? app.getApplyDate().toString() : ""); // 신청일.
+            // row.createCell(colNum++).setCellValue(app.getAmount()); // 오버페이사유.
+            // row.createCell(colNum++).setCellValue(app.getReasonInfo()); // 오버페이사유.
         }
 
         // 5. 컬럼 너비 자동 조정 (선택 사항이지만 보기 좋게)
         for (int i = 0; i < headers.length; i++) {
+            // sheet.autoSizeColumn(i);
             sheet.autoSizeColumn(i);
+            // autoSizeColumn은 글자 크기에 딱 맞추기 때문에 양옆이 체해 보입니다.
+            // 현재 너비에 여유분(예: 글자 4~5개 크기인 1200~1500)을 더해 넓게 벌려줍니다.
+            int currentWidth = sheet.getColumnWidth(i);
+    
+            // 💡 [핵심 수정] 캠페인명 컬럼(B열, 인덱스 1)은 한글과 공백이 길므로 여백을 훨씬 넉넉하게 줍니다.
+            if (i == 1) {
+                sheet.setColumnWidth(i, currentWidth + 4000); // 기존 1500에서 4000으로 대폭 확대 
+            } else {
+                sheet.setColumnWidth(i, currentWidth + 1500); // 다른 컬럼은 기존대로 유지
+            }
         }
 
         // 6. 워크북을 ByteArrayOutputStream에 써서 byte[]로 변환
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        workbook.write(outputStream);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        workbook.write(bos);
         workbook.close(); // 워크북 사용 후 꼭 닫아줘야 메모리 누수를 방지할 수 있어.
 
-        return outputStream.toByteArray();
+        byte[] excelBytes = bos.toByteArray();
+
+        // 7. [핵심] 추출한 엑셀 바이너리에 비밀번호(암호화) 걸기
+        ByteArrayOutputStream encryptedOutputStream = new ByteArrayOutputStream();
+        
+        // 가상 파일 시스템(POIFS) 생성
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            // AES-128 또는 AES-256 표준 암호화 방식 선언
+            EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
+            Encryptor enc = info.getEncryptor();
+            
+            // 💡 여기에 원하는 비밀번호를 설정하세요 (예: "1234" 또는 캠페인 ID 등 조합)
+            enc.confirmPassword(applyDate.toString().replaceAll("-","")); 
+            
+            // 암호화된 파일 시스템에 데이터 쓰기
+            try (OutputStream os = enc.getDataStream(fs)) {
+                os.write(excelBytes);
+            }
+            
+            // 최종 암호화된 명세를 출력 스트림에 담기
+            fs.writeFilesystem(encryptedOutputStream);
+        }
+
+        // 암호화가 완료된 byte[] 배열 반환
+        return encryptedOutputStream.toByteArray();
     }
 
     @Override
@@ -380,6 +503,12 @@ public class FileServiceImpl implements FileService{
         } else {
             return "";
         }
-        
+    }
+
+    @Override
+    public List<UserCampaignVO> excelFileInfo(String campaignId, String timeSegment, LocalDate applyDate) throws Exception {
+        List<UserCampaignVO> excelFileInfo = fileMapper.excelFileInfo(campaignId, timeSegment, applyDate);
+
+        return excelFileInfo;
     }
 }

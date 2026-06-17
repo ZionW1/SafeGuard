@@ -13,7 +13,7 @@ import com.safeg.user.vo.UserCampaignVO;
 @Mapper
 public interface CampaignMapper {
 
-    public int campaignApply(@Param("dailyEntries") List<UserCampaignVO> userCampaign) throws Exception;
+    public int campaignApply(@Param("dailyEntries") List<UserCampaignVO> dailyEntries) throws Exception;
     // void insertUserCampaignPeriod(@Param("dailyEntries") List<UserCampaignDailyEntry> dailyEntries);
 
     public int updateApplicants(UserCampaignVO userCampaign) throws Exception;

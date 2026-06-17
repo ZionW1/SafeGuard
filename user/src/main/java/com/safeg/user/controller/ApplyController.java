@@ -169,7 +169,7 @@ public class ApplyController {
 
         String reviewId = reviewService.reviewSelectConfirm(campaignId);
         model.addAttribute("userCampaignApply", userCampaignApply);
-        model.addAttribute("applicantsNum", userCampaignApply.size()-1); // 신청 수 추가
+        model.addAttribute("applicantsNum", userCampaignApply.get(0).getApplicantsNum()); // 신청 수 추가
         model.addAttribute("reviewId", reviewId); // 신청 수 추가
 
 

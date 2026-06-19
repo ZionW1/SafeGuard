@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="/mobile/css/style.css" />
 </head>
 <body class="bodyApply">
+    <input type="hidden" id="workHour" name="workHour" th:value="${workHour}">
+    <input type="hidden" id="wageChk" name="wageChk" th:value="${wageChk}">
+
     <div th:if="${not #lists.isEmpty(userCampaignApply)}">
         <div id="campaignFileDownloadArea" th:data-campaign-id="${userCampaignApply[0].campaignId}">
             <div id="campaignIdDown" th:data-campaign-id="${userCampaignApply[0].campaignId}">
@@ -132,7 +135,12 @@
     </div>
     <div class="btn-area">
         <a class="btn_leader" th:if="${leaderUserNo}" th:data-user-no="${leaderUserNo}" th:data-status="${leaderStatus}" th:data-campaign-id="${leaderCampaignId}" th:data-apply-date="${leaderApplyDate}" th:onclick="leaveWork(this)">인솔자 퇴근</a>
-        <a th:class="|btn_leader|" th:href="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${leaderUserNo}, campaignId=${campaignId}, applyDate=${leaderApplyDate})}" data-status="">인솔자 특이사항</a>
+        <!-- <a th:class="|btn_leader|" th:href="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${leaderUserNo}, campaignId=${campaignId}, applyDate=${leaderApplyDate})}" data-status="">인솔자 특이사항</a> -->
+        <a th:class="|statusInfoChange applyConfirmButotn btn_leader|" 
+            href="#" 
+            th:data-url="@{/apply/significant/{userNo}/{campaignId}/{applyDate}(userNo=${leaderUserNo}, campaignId=${campaignId}, applyDate=${leaderApplyDate})}" 
+            onclick="openSignificantModal(this.dataset.url); return false;">특이사항</a>
+        
     </div>
     
 
@@ -162,6 +170,7 @@
         });
 
         function openSignificantModal(url) {
+            console.log(url);
             // 1. 서버에 해당 url의 HTML 내용을 요청
             fetch(url)
                 .then(response => {
@@ -282,7 +291,9 @@
                 window.event.preventDefault();
             }
             const clickedButtonIndex = document.querySelector(`.button_status` + index);
-    
+            const wageChk = document.getElementById("wageChk").value;
+            const workHour = document.getElementById("workHour").value;
+
             if (clickedButtonIndex) {
                 if (clickedButtonIndex.getAttribute('data-clicked') === 'true') {
                     console.log("이미 처리 중인 요청입니다. 연타 금지!");
@@ -297,12 +308,24 @@
             
             const clickedButton = event.target;
             const applicantItems = document.querySelectorAll('.applicant-item');
-            const requestBody = {
-                userNo: userNo,
-                campaignId: campaignId,
-                applyDate: applyDate,
-                status: status
-            };
+            var requestBody;
+            if(wageChk == "01"){
+                requestBody = {
+                    userNo: userNo,
+                    campaignId: campaignId,
+                    applyDate: applyDate,
+                    status: status,
+                    workHour : workHour
+                };
+            } else {
+                requestBody = {
+                    userNo: userNo,
+                    campaignId: campaignId,
+                    applyDate: applyDate,
+                    status: status,
+                    workHour : workHour
+                };
+            }
             applicantItems.forEach(item => {
                 const chooseStatus = item.dataset.chooseStatus;
                 const statusButtons = item.querySelectorAll('.button_status'+index);

@@ -33,7 +33,7 @@ public class ApplyServiceImpl implements ApplyService {
 
     @Override
     @Transactional
-    public String updateStatus(Long userNo, Long campaignId, LocalDate applyDate, String statusValue) throws Exception{
+    public String updateStatus(Long userNo, Long campaignId, LocalDate applyDate, String statusValue, int workHour) throws Exception{
         // TODO Auto-generated method stub
         log.info("userNo : " + userNo + ", campaignId : " + campaignId + ", applyDate : " + applyDate +  ", statusValue : " + statusValue  + ", applyDateToString : " + applyDate.toString().substring(0, 7));
         String fullAttendDate = applyDate.toString().substring(0, 7);
@@ -93,7 +93,11 @@ public class ApplyServiceImpl implements ApplyService {
                 }
 
                 // 일반 근무 포인트
-                myPoint.setAmount(point);
+                if(workHour != 0) {
+                    myPoint.setAmount(point * workHour);
+                } else {
+                    myPoint.setAmount(point);
+                }
                 myPoint.setCategory("WORK");
                 myPoint.setCampaignId(campaignId);
                 applyMapper.insertPointHistory(myPoint);
@@ -240,5 +244,12 @@ public class ApplyServiceImpl implements ApplyService {
 
         applyMapper.insertPointHistory(vo);
         return 1; // 성공적으로 처리되었음을 나타내는 예시 반환값
+    }
+
+    @Override
+    public UserCampaignVO getWorkInfo(String campaignId, LocalDate applyDate) throws Exception {
+        UserCampaignVO getWorkInfo = applyMapper.getWorkInfo(campaignId, applyDate);
+
+        return getWorkInfo;
     }
 }

@@ -583,10 +583,29 @@
             <!-- 이미지 경로는 마이클 환경에 맞게 수정해주세요 -->
             <!-- <img src="image2.jpg" alt="음식 이미지 2" /> -->
         </div>
+        
         <div class="mobile_view">
             <div class="mrg15-bottom">
-                <div class="campaign-point-text">포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span></div>
-                <div class="campaign-point-text"> [만근포인트 : 10,000]</div>
+                <div th:if="${authUser != null && campaignSelect != null && authUser.canShowPoint(campaignSelect?.typeCode)}">
+                    <div th:if="${#strings.isEmpty(campaignSelect.workHour)}">
+                            <div class="campaign-point-text">
+                            포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span>
+                        </div>
+                    </div>
+                    <!-- <p style="color: blue;">시급 데이터 확인: [[${campaignSelect?.campaignPay}]]</p>
+                    <p style="color: blue;">근무시간 데이터 확인: [[${campaignSelect?.workHour}]]</p> -->
+                    <div th:unless="${#strings.isEmpty(campaignSelect.workHour)}">
+                        <div class="campaign-point-text">
+                            시급 시간당 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span>
+                            , 근무시간 : <span th:text="${campaignSelect.workHour}"></span>
+                            <div>
+                                총 포인트 : 
+                                <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay * #conversions.convert(campaignSelect.workHour, 'java.lang.Integer'), 3, 'COMMA')}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="campaign-point-text"> [만근포인트 : 10,000]</div>
+                </div>
             </div>
             <nav class="tabs" role="tablist" aria-label="탭 메뉴">
                 <div class="tab active" role="tab" tabindex="0" aria-selected="true" aria-controls="campaign" id="tab-campaign">
@@ -605,11 +624,25 @@
             <!-- <div class="campaign-point-text">포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span></div>
             <div class="campaign-point-text"> [만근포인트 : 10,000]</div> -->
             <div sec:authorize="isAuthenticated()" class="guest-message">
-                <div th:if="${authUser.canShowPoint(campaignSelect.typeCode)}" class="title-overlay">
-                    <div class="card-point">
-                        <div class="campaign-point-text">포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span></div>
-                        <div class="campaign-point-text"> [만근포인트 : 10,000]</div>
+                <div th:if="${authUser != null && campaignSelect != null && authUser.canShowPoint(campaignSelect?.typeCode)}">
+                    <div th:if="${#strings.isEmpty(campaignSelect.workHour)}">
+                            <div class="campaign-point-text">
+                            포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span>
+                        </div>
                     </div>
+                    <!-- <p style="color: blue;">시급 데이터 확인: [[${campaignSelect?.campaignPay}]]</p>
+                    <p style="color: blue;">근무시간 데이터 확인: [[${campaignSelect?.workHour}]]</p> -->
+                    <div th:unless="${#strings.isEmpty(campaignSelect.workHour)}">
+                        <div class="campaign-point-text">
+                            시급 시간당 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span>
+                            , 근무시간 : <span th:text="${campaignSelect.workHour}"></span>
+                            <div>
+                                총 포인트 : 
+                                <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay * #conversions.convert(campaignSelect.workHour, 'java.lang.Integer'), 3, 'COMMA')}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="campaign-point-text"> [만근포인트 : 10,000]</div>
                 </div>
             </div>
         </div>
@@ -680,10 +713,15 @@
 
     <section class="right-view">
         <h1>인솔자 : <span th:text="${campaignSelect.userNm}"></span></h1>
-        <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
+        <!-- <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
         <h2><span class="d-Day"th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
             th:data-campaign-id="${campaignSelect.campaignId}"></span></h2>
-        <div class="period-info">
+        <div class="period-info"> -->
+        <img id="imgFile" 
+            th:src="${#strings.isEmpty(campaignSelect?.leaderCode) ? '/images/not-image.png' : '|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|'}" 
+            alt="파일이미지" 
+            class="profile_img"/><br>
+        <br>
             <div>신청기간 : <span th:text="${campaignSelect.appPeriodStr}"></span> ~<span th:text="${campaignSelect.appPeriodEnd}"></span></div>
             <!-- <div>결과발표 : <span th:text="${campaignSelect.resultDate}">11.03</span></div> -->
             <div>행사 날짜 : <span th:text="${campaignSelect.eventPeriodStr}"></span> ~<span th:text="${campaignSelect.eventPeriodEnd}"></span></div>

@@ -6,6 +6,7 @@
         <link rel="stylesheet" th:href="@{/css/style.css}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
     </head>
     <body>
         <div class="admin-container">
@@ -33,17 +34,18 @@
                     <input type="text" name="keyword" placeholder="검색어를 입력해 주세요." th:value="${param.keyword}" style="width: 160px;">
                     <input class="optionSubmit" type="submit" value="검색">
                 </form>
-                <table class="campaign_Table" border="1">
+                <table class="info_table campaign_Table" border="1">
                     <colgroup>
                         <col width="5%"></col>
                         <col width="*"></col>
                         <col width="20%"></col>
                         <col width="10%"></col>
                         <col width="12%"></col>
+                        <col width="5%"></col>
+                        <col width="5%"></col>
                         <col width="10%"></col>
                         <col width="10%"></col>
-                        <col width="10%"></col>
-                        <col width="10%"></col>
+                        <col width="5%"></col>
                     </colgroup>
                     <thead>
                         <th>ID</th>
@@ -55,6 +57,7 @@
                         <th>모집인원</th>
                         <th>명단보기</th>
                         <th>상세보기</th>
+                        <th>캠페인신청</th>
                     </thead>
                     <tbody>
                         <th:block th:if="${campaignsList.isEmpty()}">
@@ -76,6 +79,14 @@
                                 </td>
                                 <td class="pointer">
                                     <a th:href="@{/campaign02(id=${campaign.campaignId})}" target="_blank">상세보기</a>
+                                </td>
+                                <td class="pointer">
+                                    <!-- <a th:href="|/campaign02(id=${campaign.campaignId})|" target="_blank">신청하기</a> -->
+                                    
+                                    <a th:class="|statusInfoChange applyConfirmButotn|" 
+                                    href="#" 
+                                    th:data-url="@{/campaignPopup01/{campaignId}(campaignId=${campaign.campaignId})}" 
+                                    onclick="openPopup(this.dataset.url); return false;">캠페인신청</a>
                                 </td>
                             </tr>
                         </th:block>
@@ -104,14 +115,50 @@
                 <a th:href="@{/campaign03}" class="insert">등록</a>
             </div>
         </div>
+        <div id="modalPopup" onclick="closeModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+            <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
+                <span onclick="closeModal();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
+                <div id="modalContent"></div>
+            </div>
+        </div>
         <div th:replace="~{fragments/footer :: mainFooter}"></div>
         <div th:replace="~{fragments/sidebar :: adminScript}"></div>
     </body>
     <script th:inline="javascript">
-        //     let campaign = /*[[${campaignsList}]]*/ null;
+        let campaign = /*[[${campaignsList}]]*/ null;
 
         // // 리스트 전체를 한 번에 콘솔에 출력
         // console.log(campaign);
+
+        function openPopup(url) {
+            // 1. 서버에 해당 url의 HTML 내용을 요청
+            fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error('네트워크 응답 실패');
+                return response.text(); // 페이지를 텍스트(HTML)로 읽어옴
+            })
+            .then(html => {
+                // 2. 모달 컨텐츠 영역에 서버에서 가져온 HTML 주입
+                document.getElementById('modalContent').innerHTML = html;
+                // 3. 모달 display를 flex로 바꿔서 화면에 노출
+                document.getElementById('modalPopup').style.display = 'flex';
+            })
+            .catch(error => {
+                console.error('모달 로드 중 에러 발생:', error);
+                alert('페이지를 불러오는 중 오류가 발생했습니다.');
+            });
+        }
+
+        function closeModal() {
+            // 모달 닫기 및 컨텐츠 초기화
+            const modal = document.getElementById('modalPopup');
+            if(modal) 
+                modal.style.display = 'none';
+
+            $('#modalContent').html(''); // 닫을 때 내부 내용 초기화 (중복 방지 핵심!)
+            // document.getElementById('significantModal').style.display = 'none';
+            // document.getElementById('modalContent').innerHTML = '';
+        }
     </script>
     
 </html>

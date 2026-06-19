@@ -13,7 +13,7 @@ public interface CampaignService {
 
     public List<CampaignVO> campaignList(Option option, Page page) throws Exception;
 
-    public int campaignCount(Option option) throws Exception;
+    public int campaignCount(Option option, Page page) throws Exception;
 
     public CampaignVO campaignSelect(String id) throws Exception;
 

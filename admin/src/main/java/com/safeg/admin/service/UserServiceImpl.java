@@ -66,6 +66,16 @@ public class UserServiceImpl implements UserService{
         page.setTotal(total);
         List<UserVO> userList = userMapper.userList(option, page);
 
+        for(int i = 0; i < userList.size(); i++) {
+            String rawPhone = userList.get(i).getPhoneNum(); // ex: "01012345678"
+            if (rawPhone != null) {
+                // 10자리, 11자리 모두 자동으로 하이픈을 찌르는 정규식 적용
+                String formattedPhone = rawPhone.replaceAll("[^0-9]", "")
+                                                .replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
+                userList.get(i).setPhoneNum(formattedPhone); // 하이픈이 포함된 값으로 세팅
+            }
+        }
+
         return userList;
     }
 
@@ -224,6 +234,14 @@ public class UserServiceImpl implements UserService{
         int result = userMapper.updateUserInfo(userVO);
 
         return result;
+    }
+
+    @Override
+    public List<UserVO> userInfoList() throws Exception {
+
+        List<UserVO> userNameList = userMapper.userInfoList();
+
+        return userNameList;
     }
 
 }

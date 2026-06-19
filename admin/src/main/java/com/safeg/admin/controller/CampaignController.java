@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -20,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.safeg.admin.service.CampaignService;
 import com.safeg.admin.service.FileService;
+import com.safeg.admin.service.UserService;
 import com.safeg.admin.vo.CampaignVO;
 import com.safeg.admin.vo.CustomUser;
 import com.safeg.admin.vo.FilesVO;
@@ -38,9 +40,16 @@ public class CampaignController {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/campaign01")
     public String campaign01(@AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {
         List<CampaignVO> campaignsList = campaignsService.campaignList(option, page);
+
+        log.info("page : " + page);
+        log.info("page.getRows : " + page.getRows());
+        log.info("option : " + option);
 
         model.addAttribute("campaignsList", campaignsList);
         model.addAttribute("option", option);
@@ -257,4 +266,12 @@ public class CampaignController {
         return "campaign/campaign09";
     }
     
+    @GetMapping("/campaignPopup01/{campaignId}")
+    public String userInfoList(@PathVariable("campaignId") int campaignId, Model model) throws Exception {
+        List<UserVO> userInfoList = userService.userInfoList();
+        log.info("userInfoList : " + userInfoList);
+
+        model.addAttribute("userInfoList", userInfoList);
+        return "campaign/campaignPopup01";
+    }
 }

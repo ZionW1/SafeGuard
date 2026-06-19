@@ -18,7 +18,7 @@ public interface CampaignMapper {
 
     public List<CampaignVO> campaignList(@Param("option") Option option, @Param("page") Page page) throws Exception;
 
-    public int campaignCount(@Param("option") Option option) throws Exception;
+    public int campaignCount(@Param("option") Option option, @Param("page") Page page) throws Exception;
 
     public CampaignVO campaignSelect(@Param("id") String id) throws Exception;
 
@@ -37,6 +37,8 @@ public interface CampaignMapper {
 	public List<CampaignVO> securityType() throws Exception;
 
     public List<CampaignVO> campaign07(@Param("option") Option option, @Param("page") Page page);
+
+    public int campNotApplyCount(@Param("option") Option option, @Param("page") Page page) throws Exception;
 
     public int updateExpiredCampaignsStatus() throws Exception;
 

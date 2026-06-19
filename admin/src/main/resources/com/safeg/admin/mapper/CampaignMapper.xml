@@ -88,6 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="option.orderCode == 1">
             order by campaign_title asc, campaign_id desc
         </if>
+        LIMIT #{page.index}, #{page.rows}
     </select>
 
     <select id="campaignCount" resultType="int">
@@ -398,6 +399,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="option.orderCode == 1">
             order by campaign_title asc, id desc
+        </if>
+        LIMIT #{page.index}, #{page.rows}
+    </select>
+
+    <select id="campNotApplyCount" resultType="int">
+        SELECT COUNT(*) 
+        FROM campaign c
+        WHERE is_deleted = 'N'
+        AND applicants_num = 0
+        <if test="option.keyword != null and option.keyword != ''">
+            <choose>
+                <when test="option.code == 0">
+                    AND (
+                        campaign_title LIKE CONCAT('%', #{option.keyword}, '%')
+                        OR status_code LIKE CONCAT('%', #{option.keyword}, '%')
+                        OR leader_code LIKE CONCAT('%', #{option.keyword}, '%')
+                    )
+                </when>
+                <when test="option.code == 1">
+                    AND campaign_title LIKE CONCAT('%', #{option.keyword}, '%')
+                </when>
+                <when test="option.code == 2">
+                    AND status_code LIKE CONCAT('%', #{option.keyword}, '%')
+                </when>
+                <when test="option.code == 3">
+                    AND leader_code LIKE CONCAT('%', #{option.keyword}, '%')
+                </when>
+            </choose>
         </if>
     </select>
 

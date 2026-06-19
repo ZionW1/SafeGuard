@@ -48,4 +48,6 @@ public interface ApplyMapper {
 
     public void applicantsMinus(Long campaignId) throws Exception;
 
+    public UserCampaignVO getWorkInfo(@Param("campaignId") String campaignId, @Param("applyDate") LocalDate applyDate);
+
 }

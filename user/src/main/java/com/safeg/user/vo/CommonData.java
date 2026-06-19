@@ -21,6 +21,7 @@ public class CommonData {
 
     public static String getUploadPath() {
         String os = System.getProperty("os.name").toLowerCase();
+        
         if (os.contains("win")) {
             return "C:/SafeGuard_Project/upload/";
         } else if (os.contains("linux")) {

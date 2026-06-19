@@ -41,4 +41,6 @@ public interface UserService {
 
     public int updateUserInfo(UserVO userVO) throws Exception;
 
+    public List<UserVO> userInfoList() throws Exception;
+
 }

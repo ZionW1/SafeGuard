@@ -18,9 +18,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String path = "";
-        // System.out.println("path : " + path);
+
         try {
             path = CommonData.getUploadPath();
+            System.out.println("path : " + path);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

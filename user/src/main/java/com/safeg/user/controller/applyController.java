@@ -50,20 +50,33 @@ public class ApplyController {
         // @PathVariable("date") @DateTimeFormat(pattern = "yy-MM-dd") LocalDate applyDate // String 대신 LocalDate로 받고 패턴 지정
         ) throws Exception{
         
+        log.info("userCampaignApply date : " + date);
+
         List<UserCampaignVO> dateList = applyService.getApplyDate(campaignId);
         model.addAttribute("applyDate", dateList); // 현재 보고 있는 날짜를 다시 전달
 
         // 2. 현재 조회할 '기준 날짜'를 결정합니다.
         LocalDate finalDate;
         String timeSegment = null;
+        int workHour = 0;
+        String wageChk = null;
+
         if (date != null) { 
             finalDate = date; 
         } else if (dateList != null && !dateList.isEmpty()) {
             finalDate = dateList.get(0).getApplyDate(); 
-            timeSegment = dateList.get(0).getTimeSegment(); // timeSegment도 함께 가져오기
         } else {
             finalDate = LocalDate.now();
         }
+
+        UserCampaignVO workInfo = applyService.getWorkInfo(campaignId, finalDate);
+
+        timeSegment = workInfo.getTimeSegment();
+        workHour = workInfo.getWorkHour();
+        wageChk = workInfo.getWageChk();
+
+        model.addAttribute("workHour", workHour);
+        model.addAttribute("wageChk", wageChk);
 
         model.addAttribute("currentDate", finalDate); // 현재 선택된 날짜 강조용
         model.addAttribute("campaignId", campaignId); // JS용
@@ -121,19 +134,32 @@ public class ApplyController {
         ) throws Exception{
         
         List<UserCampaignVO> dateList = applyService.getApplyDate(campaignId);
+
         model.addAttribute("applyDate", dateList); // 현재 보고 있는 날짜를 다시 전달
 
         // 2. 현재 조회할 '기준 날짜'를 결정합니다.
         LocalDate finalDate;
         String timeSegment = null;
+        int workHour = 0;
+        String wageChk = null;
+        // String timeSegment = null;
+
         if (date != null) { 
             finalDate = date; 
         } else if (dateList != null && !dateList.isEmpty()) {
             finalDate = dateList.get(0).getApplyDate();
-            timeSegment = dateList.get(0).getTimeSegment(); // timeSegment도 함께 가져오기
         } else {
             finalDate = LocalDate.now();
         }
+
+        UserCampaignVO workInfo = applyService.getWorkInfo(campaignId, finalDate);
+
+        timeSegment = workInfo.getTimeSegment();
+        workHour = workInfo.getWorkHour();
+        wageChk = workInfo.getWageChk();
+
+        model.addAttribute("workHour", workHour);
+        model.addAttribute("wageChk", wageChk);
 
         model.addAttribute("currentDate", finalDate); // 현재 선택된 날짜 강조용
         model.addAttribute("campaignId", campaignId); // JS용
@@ -177,7 +203,7 @@ public class ApplyController {
 
         for (int i = 0; i < userCampaignApply.size(); i++) {
             UserCampaignVO currentCampaign = userCampaignApply.get(i);
-            if ("8".equals(currentCampaign.getStatus())) {
+            if ("8".equals(currentCampaign.getStatus()) || "9".equals(currentCampaign.getStatus())) {
                 leaderCampaign = currentCampaign; // 첫 번째 인솔자 또는 유일한 인솔자를 여기에 저장 (논리에 따라)
                 break; // 만약 첫 인솔자만 중요하면 여기서 루프를 멈춤
             }
@@ -229,14 +255,15 @@ public class ApplyController {
         Long campaignId = request.getCampaignId();
         LocalDate applyDate = request.getApplyDate();
         String status = request.getStatus(); // JavaScript에서 newStatus 필드로 보냈다면
+        int workHour = request.getWorkHour();
         String statusInfo = applyService.statusInfo(userNo, campaignId, applyDate);
 
         try {
             // 서비스 계층 호출: DB에 해당 userNo의 출결 상태를 request.getNewStatus()로 업데이트
-            String updateStatus = applyService.updateStatus(userNo, campaignId, applyDate, status);
+            String updateStatus = applyService.updateStatus(userNo, campaignId, applyDate, status, workHour);
             if(statusInfo.equals("0")){
                 if(updateStatus.equals("2")){
-                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo, workHour);
                     return ResponseEntity.ok().body("{\"message\": \"출근 or 지각 터치 후 퇴근 버튼 터치 하세요.\"}");
                 } else if (updateStatus.equals("3")) {
                     applyService.lateYn(userNo, campaignId, applyDate);
@@ -250,11 +277,11 @@ public class ApplyController {
                     applyService.pointFull(userNo, campaignId, applyDate);
                     return ResponseEntity.ok().body("{\"message\": \"퇴근으로 성공적으로 업데이트되었습니다.\"}");
                 } else if(updateStatus.equals("4") || updateStatus.equals("5")) {
-                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo, workHour);
                     return ResponseEntity.ok().body("{\"message\": \"출근 or 지각 상태에서는 결근, 무단결근은 터치가 안됩니다.\"}");
                 } else{
                     if(updateStatus.equals("3")){
-                        applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                        applyService.updateStatus(userNo, campaignId, applyDate, statusInfo, workHour);
                         return ResponseEntity.ok().body("{\"message\": \"출근 상태 입니다.\"}");
                     }else{
                         return ResponseEntity.ok().body("{\"message\": \"출근 상태 입니다.\"}");
@@ -264,7 +291,7 @@ public class ApplyController {
                 if (updateStatus.equals("2")){
                     return ResponseEntity.ok().body("{\"message\": \"출결 상태가 성공적으로 업데이트되었습니다.\"}");
                 } else {
-                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo, workHour);
                     return ResponseEntity.ok().body("{\"message\": \"퇴근 터치 하셨으므로, 변경 불가 합니다.\"}");
                 }
             } else if(statusInfo.equals("3")){
@@ -272,11 +299,11 @@ public class ApplyController {
                     applyService.pointFull(userNo, campaignId, applyDate);
                     return ResponseEntity.ok().body("{\"message\": \"퇴근으로 성공적으로 업데이트되었습니다.\"}");
                 }else if(updateStatus.equals("4") || updateStatus.equals("5")) {
-                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo, workHour);
                     return ResponseEntity.ok().body("{\"message\": \"출근 or 지각 상태에서는 결근, 무단결근은 터치가 안됩니다.\"}");
                 }else{
                     if(updateStatus.equals("1")){
-                        applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                        applyService.updateStatus(userNo, campaignId, applyDate, statusInfo, workHour);
                         return ResponseEntity.ok().body("{\"message\": \"지각 상태 입니다.\"}");
                     }else{
                         return ResponseEntity.ok().body("{\"message\": \"지각 상태 입니다.\"}");
@@ -286,7 +313,7 @@ public class ApplyController {
             
             else if(statusInfo.equals("4")){
                 if(updateStatus.equals("1") || updateStatus.equals("2") || updateStatus.equals("3") || updateStatus.equals("5")){
-                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo, workHour);
                     return ResponseEntity.ok().body("{\"message\": \"결근 상태 입니다.\"}");
                 }else{
                     return ResponseEntity.ok().body("{\"message\": \"결근 상태 입니다.\"}");
@@ -297,7 +324,7 @@ public class ApplyController {
                 response.put("message", "무단 결근 상태 입니다.");
 
                 if(updateStatus.equals("1") || updateStatus.equals("2") || updateStatus.equals("3") || updateStatus.equals("4")){
-                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo);
+                    applyService.updateStatus(userNo, campaignId, applyDate, statusInfo, workHour);
                     // 2. 객체 자체를 리턴하면 자동으로 JSON {"message": "..."} 이 됩니다.
                     return ResponseEntity.ok().body(response);
                 } else {

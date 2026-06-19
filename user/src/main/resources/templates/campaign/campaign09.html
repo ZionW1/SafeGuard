@@ -300,7 +300,7 @@
                                             <span>[</span>
                                             <span th:text="${campaign.typeNm}">타입명</span>
                                             <span>] </span>
-                                                <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span> (<span th:text="${campaign.timeSegment == 'DAY' || campaignSelect.timeSegment == null ? '주간' : '야간'}"></span>)
+                                                <span class="campaign-title-text" th:text="${campaign.campaignTitle}"></span> (<span th:text="${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'}"></span>)
                                         </div>
                                     </div>
                                     <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>

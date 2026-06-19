@@ -78,7 +78,7 @@ public class UserCampaignVO {
     private int pointFull;
     private String filePath;
 
-    private String workHour;
+    private int workHour;
     private String wageChk;
     private String timeSegment;
 

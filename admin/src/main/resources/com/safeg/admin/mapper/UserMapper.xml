@@ -30,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="commonId" column="common_id" />
         <result property="addressId" column="address_id" />
         <result property="gradeId" column="grade_id" />
+        <result property="role" column="role" />
         <result property="stopDate" column="stop_date" />
         <result property="memo" column="memo" />
         <result property="fileId" column="FILE_ID" />
@@ -64,7 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             /* 1. 검색과 페이징이 적용된 핵심 유저 추출 */
             SELECT 
                 usr.id, usr.user_id, usr.user_nm, usr.email, usr.phone_num, usr.address_id, usr.point_id,
-                usr.referrer_no, usr.guard_type, usr.role, usr.is_stopped, usr.created_at, usr.phone_hash,
+                usr.referrer_no, usr.guard_type, usr.role, usr.is_stopped, usr.created_at, usr.phone_hash, usr.course_num,
                 /* 포인트 합계 (스칼라 서브쿼리가 조인보다 안전하고 빠릅니다) */
                 (SELECT COALESCE(SUM(amount), 0) 
                 FROM point_history 
@@ -157,6 +158,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.email,
             u.enabled,
             u.phone_num,
+            u.course_num,
             u.nickname,
             u.bank_nm,
             u.depositor,
@@ -172,6 +174,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.is_stopped,
             u.guard_type,
             ua.full_Address,
+            u.course_num,
             (CASE
                 WHEN u.auth_id = '01' THEN 'ROLE_ADMIN'
                 WHEN u.auth_id = '02' THEN 'ROLE_USER'
@@ -369,4 +372,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where
             id = #{id}
     </update>
+
+    <select id="userInfoList" resultMap="userMap">
+        SELECT 
+            user_nm,
+            phone_num
+        FROM 
+            USER
+        order by user_nm, id
+    </select>
 </mapper>

@@ -11,7 +11,7 @@
     <div class="admin-container">
         <th:block th:replace="~{fragments/sidebar :: sidebarFragment}"></th:block>
         <div class="main-content">
-            <h1><a th:href="@{/faq01}">FAQ</a></h1>
+            <h1><a th:href="@{/inquiry01}">행사문의</a></h1>
             <form class="optionForm" th:action="@{/inquiry01}" method="get" id="form">
                 <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block>
                 <select name="code" class="wdt160">

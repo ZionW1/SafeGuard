@@ -788,7 +788,7 @@ public class MyPageController {
         
         
         // 최종 합계 계산 (리더 금액 포함)
-        model.addAttribute("totalPoint", rAmt + wAmt + lAmt);
+        model.addAttribute("totalPoint", rAmt + wAmt + lAmt + opAmt);
     
         return "mypage/pointList";
     }

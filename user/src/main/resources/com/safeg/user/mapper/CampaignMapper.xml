@@ -37,6 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             applicants_Num,
             campaign_pay,
             time_segment,
+            work_hour,
             place_Addr,
             mission,
             type_code,
@@ -148,6 +149,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.applicants_Num, 
             f.saved_name, 
             f.file_path,
+            time_segment,
             (CASE
                 WHEN type_code = '01' THEN '경호'
                 WHEN type_code = '02' THEN '진행'
@@ -172,6 +174,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND f.target_type = 'campaign'
         AND c.is_active = 'N'
         ORDER BY c.campaign_id desc
+        LIMIT 20
         ]]>
     </select>
 

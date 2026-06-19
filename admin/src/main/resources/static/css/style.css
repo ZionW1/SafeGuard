@@ -343,7 +343,7 @@ button[type="submit"]:hover {
     background-color: #ff4b4b;
 }
 
-table {
+.info_table {
     /* width: 0%; */
     border-collapse: collapse;
     background: white;
@@ -356,22 +356,56 @@ table {
     width: 100%;
 }
 
-th,
-td {
+.user_info {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+.modal-title {
+    font-size: 1.5em;
+}
+
+.user_info th,
+.user_info td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    font-size: 1.2em;
+}
+.user_info th {
+    background-color: #f3ecff;
+    color: #5e4b8b;
+}
+.user_info th.title {
+    width: 30%;
+}
+
+.user_info tr:hover {
+    background-color: #f9f3ff;
+}
+
+
+
+
+.info_table th,
+.info_table td {
     padding: 12px 10px;
     border-bottom: 1px solid #eee;
     text-align: center;
     font-size: 12px;
 }
-th {
+.info_table th {
     background-color: #f3ecff;
     color: #5e4b8b;
 }
-th.title {
+.info_table th.title {
     width: 30%;
 }
 
-tr:hover {
+.info_table tr:hover {
     background-color: #f9f3ff;
 }
 
@@ -766,6 +800,22 @@ margin: 5px 0 0;
 /* 체크박스 크기 조절 */
 input[type=checkbox] {
     zoom: 2;
+}
+
+/* 팝업 전체 컨테이너 (중앙 정렬 및 너비 설정) */
+.popup-content {
+    width: 100%;
+    max-width: 750px; /* 대형 팝업 크기 */
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 팝업 내부 바디 (여기에 스크롤 핵심 속성 부여) */
+.popup-body {
+    max-height: 60vh; /* 화면 높이의 60%까지만 자람 */
+    overflow-y: auto; /* 데이터가 넘치면 세로 스크롤바 자동 생성 */
 }
 
 @media (max-width: 768px) {

@@ -619,8 +619,8 @@ a {
 
     /* 추가 디자인 제안 */
     width: 100%;
-    font-size: 1.1em;
-    font-weight: 500;
+    font-size: 1.4em;
+    font-weight: 700;
     line-height: 1.4;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
 }
 
@@ -672,7 +672,7 @@ a {
   }
   .campaign_mission {
         font-weight: bold;
-        font-size: 1.1em;
+        font-size: 1.5em;
         /* padding: 10px 0px; */
         color: #333;
         margin-top: 20px;
@@ -1894,7 +1894,7 @@ table.bestPayList {
     white-space: pre-wrap;    /* 핵심: 엔터 친 곳은 줄바꿈하고, 화면 끝에서도 자동으로 줄바꿈함 */
     word-break: break-all;    /* 긴 영문/숫자도 화면 밖으로 안 나가게 끊어줌 */
     line-height: 1.5;         /* 가독성을 위해 줄 간격을 약간 넓힘 */
-    font-size: 14px;
+    font-size: 1.2em;
     color: #444;
     padding: 10px 0;
 }
@@ -2480,7 +2480,7 @@ table.bestPayList {
 
     .campaign_mission {
         font-weight: bold;
-        font-size: 1.1em;
+        font-size: 1.3em;
         /* padding: 10px 0px; */
         color: #333;
         margin-top: 20px;
@@ -2760,7 +2760,7 @@ table.bestPayList {
         white-space: pre-wrap;    /* 핵심: 엔터 친 곳은 줄바꿈하고, 화면 끝에서도 자동으로 줄바꿈함 */
         word-break: break-all;    /* 긴 영문/숫자도 화면 밖으로 안 나가게 끊어줌 */
         line-height: 1.5;         /* 가독성을 위해 줄 간격을 약간 넓힘 */
-        font-size: 14px;
+        font-size: 1.2em;
         color: #444;
         padding: 10px 0;
     }
@@ -2960,7 +2960,7 @@ table.bestPayList {
     
         /* 추가 디자인 제안 */
         width: 100%;
-        font-size: 1em;
+        font-size: 1.4em;
         font-weight: 700;
         line-height: 1.6;   /* 줄 간격이 너무 좁으면 겹쳐 보이니 1.4 정도가 적당합니다 */
     }

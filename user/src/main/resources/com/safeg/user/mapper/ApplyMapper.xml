@@ -45,6 +45,9 @@
             c.applicants_Num,
             c.recruitment_Num,
             c.leader_pay,
+            c.work_hour,
+            c.wage_chk,
+            c.time_segment,
             uc.status,
             (CASE
                 WHEN c.type_code = '01' THEN '경호'
@@ -98,11 +101,11 @@
 
     <select id="getApplyDate" resultType="UserCampaignVO">
         SELECT 
-            DISTINCT CONCAT(DATE_FORMAT(apply_date, '%Y-%m-%d'), ' 00:00:00') as apply_date,
-            TIME_SEGMENT
-        FROM user_campaign
-        WHERE campaign_id = #{campaignId}
-        AND is_deleted = 'N'
+            DISTINCT 
+            CONCAT(DATE_FORMAT(apply_date, '%Y-%m-%d'), ' 00:00:00') as apply_date
+        FROM user_campaign uc
+        WHERE uc.campaign_id = #{campaignId}
+        AND uc.is_deleted = 'N'
     </select>
 
     <update id="updateStatus">
@@ -351,4 +354,18 @@
         ]]>
     </update>
     
+    <select id="getWorkInfo" resultType="UserCampaignVO">
+        SELECT 
+            DISTINCT
+            c.work_hour,
+            c.wage_chk,
+            uc.time_segment
+        FROM user_campaign uc
+        LEFT OUTER JOIN campaign c
+        ON uc.CAMPAIGN_ID = c.CAMPAIGN_ID 
+        WHERE uc.campaign_id = #{campaignId}
+        AND uc.apply_date = #{applyDate}
+        AND uc.is_deleted = 'N'
+    </select>
+
 </mapper>

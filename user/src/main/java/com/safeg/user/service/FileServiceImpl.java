@@ -125,11 +125,12 @@ public class FileServiceImpl implements FileService{
         log.info("파일 용량 : " + fileSize);
         log.info("파일 데이터 : " + fileData);
 
-        log.info("파일 업로드 경로 : " + uploadPath);
+        // log.info("파일 업로드 경로 : " + uploadPath);
 
         // ⭐️ 파일 업로드
         // 1. 파일 데이터를 업로드 경로에 복사
         // 2. 업로드된 파일 정보를 DB에 등록
+        String uploadPath = CommonData.getUploadPath();
 
         // 1. 파일복사
         // 파일명 중복 방지 : 파일명 뒤에 날짜데이터 또는 UID를 붙여준다.
@@ -399,7 +400,8 @@ public class FileServiceImpl implements FileService{
             Encryptor enc = info.getEncryptor();
             
             // 💡 여기에 원하는 비밀번호를 설정하세요 (예: "1234" 또는 캠페인 ID 등 조합)
-            enc.confirmPassword(applyDate.toString().replaceAll("-","")); 
+            // applyDate.toString().replaceAll("-","")
+            enc.confirmPassword("6824"); 
             
             // 암호화된 파일 시스템에 데이터 쓰기
             try (OutputStream os = enc.getDataStream(fs)) {

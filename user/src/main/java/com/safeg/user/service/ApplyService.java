@@ -12,7 +12,7 @@ public interface ApplyService {
 
     public List<UserCampaignVO> userCampaignApply(String id, LocalDate applyDate, String timeSegment) throws Exception;
 
-    public String updateStatus(Long userNo, Long campaignId, LocalDate applyDate, String statusValue) throws Exception;
+    public String updateStatus(Long userNo, Long campaignId, LocalDate applyDate, String statusValue, int workHour) throws Exception;
 
     public String statusInfo(Long userNo, Long campaignId, LocalDate applyDate) throws Exception;
 
@@ -27,5 +27,7 @@ public interface ApplyService {
     public int rosterRemove(Long userNo, Long campaignId, LocalDate applyDate) throws Exception;
 
     public int pointInsert(PointHistoryVO pointHistoryVO) throws Exception;
+
+    public UserCampaignVO getWorkInfo(String campaignId, LocalDate applyDate) throws Exception;
 
 }

@@ -35,4 +35,8 @@ public interface CampaignService {
 
     public List<CampaignVO> closedCampaign() throws Exception;
 
+    public String overlapTitle(CampaignVO dto) throws Exception;
+
+    // public int userApply(Long campaignId, Long id) throws Exception;
+
 }

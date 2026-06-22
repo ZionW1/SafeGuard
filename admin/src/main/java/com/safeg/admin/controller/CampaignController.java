@@ -1,6 +1,12 @@
 package com.safeg.admin.controller;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -27,6 +34,7 @@ import com.safeg.admin.vo.CustomUser;
 import com.safeg.admin.vo.FilesVO;
 import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
+import com.safeg.admin.vo.UserCampaignVO;
 import com.safeg.admin.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CampaignController {
 
     @Autowired
-    private CampaignService campaignsService;
+    private CampaignService campaignService;
 
     @Autowired
     private FileService fileService;
@@ -45,7 +53,7 @@ public class CampaignController {
 
     @GetMapping("/campaign01")
     public String campaign01(@AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {
-        List<CampaignVO> campaignsList = campaignsService.campaignList(option, page);
+        List<CampaignVO> campaignsList = campaignService.campaignList(option, page);
 
         log.info("page : " + page);
         log.info("page.getRows : " + page.getRows());
@@ -84,9 +92,9 @@ public class CampaignController {
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         String username = customUser.getUsername(); // 로그인 아이디 (userId)
 
-        CampaignVO campaignSelect = campaignsService.campaignSelect(id);
-        List<UserVO> leaderList = campaignsService.leaderList();
-        List<CampaignVO> securityType = campaignsService.securityType();
+        CampaignVO campaignSelect = campaignService.campaignSelect(id);
+        List<UserVO> leaderList = campaignService.leaderList();
+        List<CampaignVO> securityType = campaignService.securityType();
         FilesVO file = fileService.select(id);
         
         for(UserVO leader : leaderList){
@@ -118,8 +126,8 @@ public class CampaignController {
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         String username = customUser.getUsername(); // 로그인 아이디 (userId)
 
-        List<UserVO> leaderList = campaignsService.leaderList();
-        List<CampaignVO> securityType = campaignsService.securityType();
+        List<UserVO> leaderList = campaignService.leaderList();
+        List<CampaignVO> securityType = campaignService.securityType();
 
         model.addAttribute("leaderList", leaderList);
         model.addAttribute("securityType", securityType);
@@ -140,7 +148,7 @@ public class CampaignController {
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         String username = customUser.getUsername(); // 로그인 아이디 (userId)
 
-        int result = campaignsService.campaignInsert(campaignVO);
+        int result = campaignService.campaignInsert(campaignVO);
 
         if(result > 0){
             return "redirect:/campaign01";
@@ -177,7 +185,7 @@ public class CampaignController {
     public ResponseEntity<String> campaign05(@ModelAttribute CampaignVO campaignVO) throws Exception {
         
         // 1. 수정 서비스 로직 수행
-        campaignsService.campaignUpdate(campaignVO);
+        campaignService.campaignUpdate(campaignVO);
         
         // 2. 부모 창을 새로고침하고 현재 팝업창을 닫는 스크립트 작성
         String script = "<script>" +
@@ -202,8 +210,8 @@ public class CampaignController {
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         String username = customUser.getUsername(); // 로그인 아이디 (userId)
 
-        int result = campaignsService.campaignDelete(id);
-        int result1 = campaignsService.applyDelete(id);
+        int result = campaignService.campaignDelete(id);
+        int result1 = campaignService.applyDelete(id);
 
         if(result > 0){
             return "redirect:/campaign01";
@@ -213,7 +221,7 @@ public class CampaignController {
 
     @GetMapping("/campaign07")
     public String campaign07(Model model, Option option, Page page) throws Exception{
-        List<CampaignVO> campaign07 = campaignsService.campaign07(option, page);
+        List<CampaignVO> campaign07 = campaignService.campaign07(option, page);
 
         model.addAttribute("campaignsList", campaign07);
         model.addAttribute("option", option);
@@ -237,7 +245,7 @@ public class CampaignController {
     @GetMapping("/campaign09")
     public String campaign09(@AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {
         log.info("campaign09");
-        List<CampaignVO> campaignsList = campaignsService.campaignList(option, page);
+        List<CampaignVO> campaignsList = campaignService.campaignList(option, page);
 
         model.addAttribute("campaignsList", campaignsList);
         model.addAttribute("option", option);
@@ -269,9 +277,31 @@ public class CampaignController {
     @GetMapping("/campaignPopup01/{campaignId}")
     public String userInfoList(@PathVariable("campaignId") int campaignId, Model model) throws Exception {
         List<UserVO> userInfoList = userService.userInfoList();
-        log.info("userInfoList : " + userInfoList);
 
+        model.addAttribute("campaignId", campaignId);
         model.addAttribute("userInfoList", userInfoList);
         return "campaign/campaignPopup01";
+    }
+
+    @PostMapping("/userApply")
+    public ResponseEntity<?> userApply(@RequestBody CampaignVO dto) throws Exception {
+        log.info("userApply : " + dto);
+        
+        try {
+            campaignService.overlapTitle(dto);
+            return ResponseEntity.ok().body("{\"message\": \"성공\"}");
+        } catch (IllegalArgumentException e) {
+            // 서비스에서 throw한 에러 메시지를 그대로 프론트로 전달
+            Map<String, String> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response); 
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "서버 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+        // String overlapTitle = campaignService.overlapTitle(dto);
+
     }
 }

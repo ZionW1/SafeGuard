@@ -22,7 +22,8 @@ public class CampaignVO {
     private String statusName;
     private int applicantsNum;
     private int recruitmentNum;
-    
+    private List<String> userNos;
+    private List<String> userIds;
     private Long campaignId;
 	private String companyNm;
 	private String companyPh;

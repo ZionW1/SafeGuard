@@ -9,9 +9,9 @@
         <div class="popup-body">
             <table class="user_info table table-hover">
                 <colgroup>
-                    <col width="20%"></col>
+                    <col width="10%"></col>
+                    <col width="40%"></col>
                     <col width="*"></col>
-                    <col width="50%"></col>
                 </colgroup>
                 <thead class="table-light">
                     <tr>
@@ -30,18 +30,21 @@
                         <td colspan="3" class="text-center">참여자가 없습니다.</td>
                     </tr> -->
                     <th:block th:each="userInfo : ${userInfoList}">
-                        <tr>
-                            <td><input type="checkbox" class="chkSelect" name="Attendance"></td>
-                            <td><span th:text="${userInfo.userNm}"></span></td>
-                            <td><span th:text="${userInfo.phoneNum}"></span></td>
-                        </tr>
-                    </th:block>
+                    <tr>
+                        <td>
+                            <input type="hidden" th:value="${userInfo.userId}" class="user_Id" name="userId">
+                            <input th:value="${userInfo.id}" type="checkbox" class="user_Chk" name="Attendance">
+                        </td>
+                        <td><span th:text="${userInfo.userNm}"></span></td>
+                        <td><span th:text="${userInfo.phoneNum}"></span></td>
+                    </tr>
+                </th:block>
                 </tbody>
             </table>
         </div>
         
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closePopup()">신청하기</button>
+            <button type="button" class="btn btn-secondary" th:onclick="applyCampaign([[${campaignId}]])">신청하기</button>
             <button type="button" class="btn btn-secondary" onclick="closePopup()">닫기</button>
         </div>
         

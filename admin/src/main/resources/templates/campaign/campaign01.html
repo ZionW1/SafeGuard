@@ -5,6 +5,8 @@
         <title>캠페인 목록 요약</title>
         <link rel="stylesheet" th:href="@{/css/style.css}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>    
         <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
     </head>
@@ -115,7 +117,7 @@
                 <a th:href="@{/campaign03}" class="insert">등록</a>
             </div>
         </div>
-        <div id="modalPopup" onclick="closeModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+        <div id="modalPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
             <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
                 <span onclick="closeModal();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
                 <div id="modalContent"></div>
@@ -158,6 +160,76 @@
             $('#modalContent').html(''); // 닫을 때 내부 내용 초기화 (중복 방지 핵심!)
             // document.getElementById('significantModal').style.display = 'none';
             // document.getElementById('modalContent').innerHTML = '';
+        }
+
+        function applyCampaign(campaignId, id) {
+            const userChk = document.querySelectorAll('.user_Chk:checked');
+            const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+            const userNoList = Array.from(userChk).map(cb => cb.value);
+            // 3. 🔥 [추가] 체크된 체크박스와 '같은 칸(td)'에 숨겨져 있는 userId 문자열 값 배열
+            const userIdList = Array.from(userChk).map(cb => {
+                // 체크박스(cb)의 부모 태그(td)를 찾은 후, 그 안에서 .user_Id 클래스를 가진 hidden 값을 가져옴
+                return cb.closest('td').querySelector('.user_Id').value;
+            });
+            
+            console.log("선택된 유저 일련번호(id) 리스트:", userIdList);      // 예: ["43", "34"]
+            console.log("선택된 유저 아이디(userId) 리스트:", userIdList); // 예: ["admin123", "test01"]
+            
+            const url = "/admin/userApply";
+            
+            const sendData = {
+                campaignId: campaignId,
+                userNos: userNoList, // [1, 2, 3] 형태의 배열
+                userIds: userIdList,
+                eventPeriodStr: campaign[0].eventPeriodStr,
+                eventPeriodEnd: campaign[0].eventPeriodEnd,
+                timeSegment: campaign[0].timeSegment
+            };
+            // // 모달 닫기 및 컨텐츠 초기화
+            // const modal = document.getElementById('modalPopup');
+            // if(modal) 
+            //     modal.style.display = 'none';
+
+            // $('#modalContent').html(''); // 닫을 때 내부 내용 초기화 (중복 방지 핵심!)
+            // document.getElementById('significantModal').style.display = 'none';
+            // document.getElementById('modalContent').innerHTML = '';
+            console.log("sendData 값 확인:", sendData);
+
+            console.log("csrfHeader 값 확인:", csrfHeader);
+            console.log("csrfToken 값 확인:", csrfToken);
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(sendData)
+            })
+            .then(response => {
+                // 성공(200 OK)인 경우
+                if (response.ok) {
+                    alert('신청이 완료되었습니다!');
+                    // currentBtn.innerText = '신청완료';
+                    // currentBtn.disabled = true;
+                    // currentBtn.classList.add('completed');
+                    // location.reload();
+                    closeModal();
+                    return; // 성공 시 여기서 종료
+                }
+                
+                // 실패(400, 500 등)인 경우 서버가 보낸 JSON 에러 메시지 추출
+                return response.json().then(errData => {
+                    // 서버에서 ResponseEntity.badRequest().body("{\"message\": \"...\"}") 로 보낸 내용
+                    throw new Error(errData.message || '신청 중 알 수 없는 오류가 발생했습니다.');
+                });
+            })
+            .catch(error => {
+                // 위에서 throw한 에러나 네트워크 에러를 여기서 처리
+                console.error('Error:', error);
+                alert(error.message); // "이미 해당 기간에 신청된 다른 일정이 있습니다." 등이 출력됨
+            });
         }
     </script>
     

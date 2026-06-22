@@ -579,4 +579,54 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND is_deleted = 'N'
         Limit 1
     </insert>
+
+    <select id="overlapTitle" resultType="String">
+        <![CDATA[
+            SELECT 
+                c.campaign_title
+            FROM user_campaign uc
+            LEFT OUTER JOIN campaign c ON uc.campaign_id = c.campaign_id
+            WHERE uc.user_no = #{userNo}
+            AND uc.campaign_id = #{dto.campaignId}
+            AND uc.is_deleted = 'N'
+            -- 1. 날짜 기간이 겹치는지 확인
+            AND (
+                uc.event_str_date <= #{dto.eventPeriodEnd}
+                AND uc.event_end_date >= #{dto.eventPeriodStr}
+            )
+            -- 2. 🔥 [추가] 시간대(주야간)까지 겹치는지 확인
+            AND c.time_segment = #{dto.timeSegment}
+            LIMIT 1
+        ]]>
+    </select>
+
+    <insert id="userApply">
+        INSERT INTO user_campaign (
+            campaign_id,
+            user_No,
+            user_id,
+            applied_str_date, 
+            applied_end_date,
+            event_str_date,
+            event_end_date,
+            time_segment,
+            apply_date
+        ) VALUES 
+        <foreach collection="userNoList" item="userNo" index="i" separator=",">
+            <foreach collection="datesInRange" item="date" separator=",">
+                (
+                    #{campaignId},
+                    #{userNo},
+                    #{userIdList[${i}]}, 
+                    #{appPeriodStr},
+                    #{appPeriodEnd},
+                    #{eventPeriodStr},
+                    #{eventPeriodEnd},
+                    #{timeSegment},
+                    #{date}
+                )
+            </foreach>
+        </foreach>
+    </insert>
+
 </mapper>

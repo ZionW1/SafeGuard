@@ -374,7 +374,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <select id="userInfoList" resultMap="userMap">
-        SELECT 
+        SELECT
+            id,
+            user_id,
             user_nm,
             phone_num
         FROM 

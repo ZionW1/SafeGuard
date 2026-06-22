@@ -2,6 +2,7 @@ package com.safeg.admin.mapper;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -63,5 +64,9 @@ public interface CampaignMapper {
     public void updateUcIsDeleted(@Param("campaignId") Long campaignId, @Param("exceedCount") int exceedCount) throws Exception;
 
     public void updateApplicantsNum(@Param("campaignId") Long campaignId, @Param("newNum") int newNum) throws Exception;
+
+    public String overlapTitle(@Param("dto") CampaignVO dto, @Param("userNo") String userNo) throws Exception;
+    
+    public int userApply(Map<String, Object> paramMap) throws Exception;
 
 }

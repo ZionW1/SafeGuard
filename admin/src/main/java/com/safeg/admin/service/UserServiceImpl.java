@@ -237,11 +237,11 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<UserVO> userInfoList() throws Exception {
+    public List<UserVO> userInfoList(Long campaignId) throws Exception {
+        List<UserVO> userInfoList = userMapper.userInfoList(campaignId);
+        log.info("userInfoList : " + userInfoList);
 
-        List<UserVO> userNameList = userMapper.userInfoList();
-
-        return userNameList;
+        return userInfoList;
     }
 
 }

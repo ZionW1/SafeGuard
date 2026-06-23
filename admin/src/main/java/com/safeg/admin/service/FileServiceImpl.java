@@ -385,7 +385,6 @@ public class FileServiceImpl implements FileService{
             for(int i = 0; i < fileIdsForUser.size(); i++) {
                 log.info("fileIdsForUser " + i + " : "+ fileIdsForUser.get(i));
             }
-            // log.info("fileIdsForUser : " + fileIdsForUser.toString());
             for (Long fileId : fileIdsForUser) {
                 log.info("fileIdA : " + fileId);
                 if (!processedFileIds.add(fileId)) {

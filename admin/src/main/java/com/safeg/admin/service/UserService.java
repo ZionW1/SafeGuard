@@ -41,6 +41,6 @@ public interface UserService {
 
     public int updateUserInfo(UserVO userVO) throws Exception;
 
-    public List<UserVO> userInfoList() throws Exception;
+    public List<UserVO> userInfoList(Long campaignId) throws Exception;
 
 }

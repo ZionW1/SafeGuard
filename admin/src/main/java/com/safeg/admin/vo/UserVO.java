@@ -108,4 +108,5 @@ public class UserVO {
     private String residentNum;
     private String privAgree;
 
+    private String isApplied;
 }

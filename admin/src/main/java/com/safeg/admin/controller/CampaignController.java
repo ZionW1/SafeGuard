@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -72,13 +73,10 @@ public class CampaignController {
                         .queryParam("orderCode", option.getOrderCode())
                         .build()
                         .toUriString();
-        log.info("pageRows : " + page.getRows());
         model.addAttribute("pageUrl", pageUrl);
 
         if(authUser != null){
             UserVO user = authUser.getUserVo();
-            log.info("user : " + user);
-
             model.addAttribute("user", user);
         }
 
@@ -264,44 +262,60 @@ public class CampaignController {
         model.addAttribute("pageUrl", pageUrl);
 
         if(authUser != null){
-            log.info("authUser : " + authUser);
             UserVO user = authUser.getUserVo();
-            log.info("user : " + user);
-
             model.addAttribute("user", user);
         }
 
         return "campaign/campaign09";
     }
     
-    @GetMapping("/campaignPopup01/{campaignId}")
-    public String userInfoList(@PathVariable("campaignId") int campaignId, Model model) throws Exception {
-        List<UserVO> userInfoList = userService.userInfoList();
+    @PostMapping("/campaignPopup01/{campaignId}")
+    public String userInfoList(@PathVariable("campaignId") Long campaignId, @RequestBody CampaignVO dto, Model model) throws Exception {
+        List<UserVO> userInfoList = userService.userInfoList(campaignId);
 
+        model.addAttribute("campaignTitle", dto.getCampaignTitle());
         model.addAttribute("campaignId", campaignId);
         model.addAttribute("userInfoList", userInfoList);
+        
         return "campaign/campaignPopup01";
     }
 
     @PostMapping("/userApply")
+    @ResponseBody
     public ResponseEntity<?> userApply(@RequestBody CampaignVO dto) throws Exception {
-        log.info("userApply : " + dto);
-        
+        Map<String, String> response = new HashMap<>();
+
+        if(dto.getRecruitmentNum() <= dto.getApplicantsNum()) {
+            response.put("message", "모집인과 신청인이 같거나 큽니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
         try {
             campaignService.overlapTitle(dto);
             return ResponseEntity.ok().body("{\"message\": \"성공\"}");
         } catch (IllegalArgumentException e) {
             // 서비스에서 throw한 에러 메시지를 그대로 프론트로 전달
-            Map<String, String> response = new HashMap<>();
             response.put("message", e.getMessage());
             return ResponseEntity.badRequest().body(response); 
         } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
             response.put("message", "서버 오류가 발생했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+    @PostMapping("/userCancel")
+    @ResponseBody
+    public ResponseEntity<?> userCancel(@RequestBody CampaignVO dto) throws Exception {
+        log.info("userCancel " + dto);
+        Map<String, String> response = new HashMap<>();
 
-        // String overlapTitle = campaignService.overlapTitle(dto);
-
+        try {
+            // 앞서 질문하셨던 Map 리턴 방식을 활용하여 화면에 결과 건수를 줍니다.
+            int result = campaignService.userCancel(dto);
+            response.put("message", String.valueOf(result)); 
+            
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }

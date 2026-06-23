@@ -43,6 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="guardTypeNm" column="guard_type_nm" />
         <result property="referrerId" column="referrer_id" />
         <result property="pendingPoint" column="pending_point" />
+        <result property="isApplied" column="is_applied" />
         <collection property="authList" resultMap="authMap"></collection>
     </resultMap>
 
@@ -375,12 +376,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="userInfoList" resultMap="userMap">
         SELECT
-            id,
-            user_id,
-            user_nm,
-            phone_num
+            u.id,
+            u.user_id,
+            u.user_nm,
+            u.phone_num,
+            CASE WHEN sub.user_no IS NOT NULL THEN 'Y' ELSE 'N' END AS is_applied
         FROM 
-            USER
-        order by user_nm, id
+            user u
+        LEFT OUTER JOIN (
+            -- 🔥 122번 캠페인을 신청한 유저 번호를 딱 1줄씩만 뽑아내는 가상 가방
+            SELECT DISTINCT user_no 
+            FROM user_campaign 
+            WHERE CAMPAIGN_ID = #{campaignId}
+            AND is_deleted = 'N'
+        ) sub ON u.id = sub.user_no
+        ORDER BY
+            u.user_nm, u.id;
     </select>
 </mapper>

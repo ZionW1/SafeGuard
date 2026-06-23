@@ -47,7 +47,7 @@
                         <col width="5%"></col>
                         <col width="10%"></col>
                         <col width="10%"></col>
-                        <col width="5%"></col>
+                        <col width="10%"></col>
                     </colgroup>
                     <thead>
                         <th>ID</th>
@@ -68,7 +68,7 @@
                             </tr>
                         </th:block>
                     </div>
-                        <th:block th:each="campaign : ${campaignsList}">
+                        <th:block th:each="campaign, stat : ${campaignsList}">
                             <tr>
                                 <td><span th:text="${campaign.campaignId}"></span></td>
                                 <td><span th:text="${campaign.placeAddr}"></span></td>
@@ -87,9 +87,8 @@
                                     
                                     <a th:class="|statusInfoChange applyConfirmButotn|" 
                                     href="#" 
-                                    th:data-url="@{/campaignPopup01/{campaignId}(campaignId=${campaign.campaignId})}" 
-                                    onclick="openPopup(this.dataset.url); return false;">캠페인신청</a>
-                                </td>
+                                    th:data-url="@{/campaignPopup01/{campaignId}(campaignId=${campaign.campaignId})}"
+                                    th:onclick="|openPopup(this.dataset.url, ${stat.index}); return false;|">캠페인신청</a>                                </td>
                             </tr>
                         </th:block>
                     </tbody>
@@ -128,13 +127,30 @@
     </body>
     <script th:inline="javascript">
         let campaign = /*[[${campaignsList}]]*/ null;
-
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+        let selectIndex = "";
         // // 리스트 전체를 한 번에 콘솔에 출력
         // console.log(campaign);
 
-        function openPopup(url) {
+        function openPopup(url, index) {
+            // const campaignTItle = document.getElementById("campaignTitle").value;
+            selectIndex = index;
+            var sendData = {
+                campaignTitle: campaign[index].campaignTitle,
+                recruitmentNum: campaign[index].recruitmentNum,
+                applicantsNum: campaign[index].applicantsNum
+            };
+
             // 1. 서버에 해당 url의 HTML 내용을 요청
-            fetch(url)
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(sendData)
+            })
             .then(response => {
                 if (!response.ok) throw new Error('네트워크 응답 실패');
                 return response.text(); // 페이지를 텍스트(HTML)로 읽어옴
@@ -142,8 +158,23 @@
             .then(html => {
                 // 2. 모달 컨텐츠 영역에 서버에서 가져온 HTML 주입
                 document.getElementById('modalContent').innerHTML = html;
-                // 3. 모달 display를 flex로 바꿔서 화면에 노출
+                // // 3. 모달 display를 flex로 바꿔서 화면에 노출
                 document.getElementById('modalPopup').style.display = 'flex';
+                
+                // 🔥 [추가] 이미 신청한 유저 체크박스 자동 선택 및 비활성화 로직
+                const appliedBoxes = document.querySelectorAll('.user_Chk.already-applied');
+
+                appliedBoxes.forEach(cb => {
+                    cb.checked = true;  // 자동으로 체크 표시 활성화
+                    // cb.disabled = true; // 유저가 임의로 체크 해제하지 못하도록 비활성화
+                    
+                    // (시각적 효과) 해당 행을 흐리게 만들어서 이미 신청 완료된 상태임을 표시
+                    const row = cb.closest('tr');
+                    if (row) {
+                        row.style.backgroundColor = '#f8f9fa';
+                        row.style.color = '#bbb';
+                    }
+                });
             })
             .catch(error => {
                 console.error('모달 로드 중 에러 발생:', error);
@@ -162,31 +193,118 @@
             // document.getElementById('modalContent').innerHTML = '';
         }
 
-        function applyCampaign(campaignId, id) {
-            const userChk = document.querySelectorAll('.user_Chk:checked');
-            const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
-            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+        async function applyCampaign(campaignId, id) {
+            const timeSegment = campaign[selectIndex].timeSegment; // 혹은 해당 캠페인의 timeSegment 값
 
-            const userNoList = Array.from(userChk).map(cb => cb.value);
-            // 3. 🔥 [추가] 체크된 체크박스와 '같은 칸(td)'에 숨겨져 있는 userId 문자열 값 배열
-            const userIdList = Array.from(userChk).map(cb => {
-                // 체크박스(cb)의 부모 태그(td)를 찾은 후, 그 안에서 .user_Id 클래스를 가진 hidden 값을 가져옴
+            // 1. 기존에 신청 상태였던 '체크박스 엘리먼트' 목록 및 번호 추출
+            const appliedBoxes = Array.from(document.querySelectorAll('.user_Chk.already-applied'));
+            const appliedUserNos = appliedBoxes.map(cb => cb.value); // ["43", "34"] 형태의 문자열 배열
+
+            // 2. 🔥 [수정] 현재 체크박스에 '체크가 되어 있는' 엘리먼트 자체를 배열로 수집!
+            const checkedBoxes = Array.from(document.querySelectorAll('.user_Chk:checked'));
+            const checkedUserNos = checkedBoxes.map(cb => cb.value); // ["43", "55"] 형태의 문자열 배열
+
+            // 3. 기존에 신청했으나 현재 체크가 풀린 유저 번호 (취소 대상자)
+            // 기존 번호들 중 현재 체크된 번호 목록에 없는 것만 필터링
+            const usersToCancel = appliedUserNos.filter(userNo => !checkedUserNos.includes(userNo));
+
+            // 4. 🔥 [수정] 새롭게 체크된 '체크박스 엘리먼트' 골라내기 (태그 자체를 필터링)
+            // 현재 체크된 태그들 중, 기존 번호 목록에 없는 태그들만 걸러냄
+            const boxesToInsert = checkedBoxes.filter(cb => !appliedUserNos.includes(cb.value));
+
+            // 5. 이제 boxesToInsert 안에는 진짜 HTML 태그가 들어있으므로 에러가 나지 않습니다!
+            const usersToInsert = boxesToInsert.map(cb => cb.value); // 신규 등록 유저 번호 목록
+            const userIdList = boxesToInsert.map(cb => {
+                // 체크박스(cb) 부모 td 내부의 hidden input 값 가져오기
                 return cb.closest('td').querySelector('.user_Id').value;
             });
+
+            // 콘솔 출력 확인
+            console.log("취소할 유저 번호 리스트:", usersToCancel);
+            console.log("새로 등록할 유저 번호(id) 리스트:", usersToInsert);      
+            console.log("새로 등록할 유저 아이디(userId) 리스트:", userIdList);
+
+
+
+
+
+
+
+
+
+
+
+            // // 4. 새롭게 체크된 유저 골라내기 (신규 등록 대상자 - 필요시 사용)
+            // const usersToInsert = checkedUsers.filter(userNo => !appliedUsers.includes(userNo));
+
+            // // const userNoList = Array.from(userChk).map(cb => cb.value);
+            // // // 3. 🔥 [추가] 체크된 체크박스와 '같은 칸(td)'에 숨겨져 있는 userId 문자열 값 배열
+            // const userIdList = Array.from(usersToInsert).map(cb => {
+            //     // 체크박스(cb)의 부모 태그(td)를 찾은 후, 그 안에서 .user_Id 클래스를 가진 hidden 값을 가져옴
+            //     return cb.closest('td').querySelector('.user_Id').value;
+            // });
             
-            console.log("선택된 유저 일련번호(id) 리스트:", userIdList);      // 예: ["43", "34"]
+            console.log("선택된 유저 일련번호(id) 리스트:", usersToInsert);      // 예: ["43", "34"]
             console.log("선택된 유저 아이디(userId) 리스트:", userIdList); // 예: ["admin123", "test01"]
             
             const url = "/admin/userApply";
             
             const sendData = {
                 campaignId: campaignId,
-                userNos: userNoList, // [1, 2, 3] 형태의 배열
+                userNos: usersToInsert, // [1, 2, 3] 형태의 배열
                 userIds: userIdList,
-                eventPeriodStr: campaign[0].eventPeriodStr,
-                eventPeriodEnd: campaign[0].eventPeriodEnd,
-                timeSegment: campaign[0].timeSegment
+                recruitmentNum: campaign[selectIndex].recruitmentNum,
+                applicantsNum: campaign[selectIndex].applicantsNum,
+                eventPeriodStr: campaign[selectIndex].eventPeriodStr,
+                eventPeriodEnd: campaign[selectIndex].eventPeriodEnd,
+                timeSegment: campaign[selectIndex].timeSegment
             };
+
+
+            try {
+                // 🔥 STEP 1: 체크를 푼 유저가 있다면 취소(삭제) 프로세스 진행
+                if (usersToCancel.length > 0) {
+                    const cancelData = { campaignId: campaignId, timeSegment: timeSegment, userNos: usersToCancel,
+                    eventPeriodStr: campaign[selectIndex].eventPeriodStr,
+                    eventPeriodEnd: campaign[selectIndex].eventPeriodEnd };
+                    const res = await fetch('/admin/userCancel', { // 본인 URL 확인
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+                        body: JSON.stringify(cancelData)
+                    });
+                    if (!res.ok) throw new Error('취소 처리 실패');
+                }
+
+                // 🔥 STEP 2: 새로 체크한 유저가 있다면 등록(추가) 프로세스 진행
+                if (usersToInsert.length > 0) {
+                    const insertData = { 
+                        campaignId: campaignId,
+                        userNos: usersToInsert, // [1, 2, 3] 형태의 배열
+                        userIds: userIdList,
+                        recruitmentNum: campaign[selectIndex].recruitmentNum,
+                        applicantsNum: campaign[selectIndex].applicantsNum,
+                        eventPeriodStr: campaign[selectIndex].eventPeriodStr,
+                        eventPeriodEnd: campaign[selectIndex].eventPeriodEnd,
+                        timeSegment: timeSegment
+                    };
+                    const res = await fetch('/admin/userApply', { // 본인의 등록 URL 확인
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+                        body: JSON.stringify(insertData)
+                    });
+                    if (!res.ok) throw new Error('신규 등록 실패');
+                }
+
+                // 3. 모두 성공 시 완료 알림 후 새로고침
+                alert("수정 사항이 성공적으로 반영되었습니다.");
+                location.reload();
+
+            } catch (error) {
+                console.error("작업 중 오류 발생:", error);
+                alert("처리 중 오류가 발생했습니다: " + error.message);
+            }
+
+
             // // 모달 닫기 및 컨텐츠 초기화
             // const modal = document.getElementById('modalPopup');
             // if(modal) 
@@ -196,40 +314,98 @@
             // document.getElementById('significantModal').style.display = 'none';
             // document.getElementById('modalContent').innerHTML = '';
             console.log("sendData 값 확인:", sendData);
-
-            console.log("csrfHeader 값 확인:", csrfHeader);
-            console.log("csrfToken 값 확인:", csrfToken);
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken
-                },
-                body: JSON.stringify(sendData)
-            })
-            .then(response => {
-                // 성공(200 OK)인 경우
-                if (response.ok) {
-                    alert('신청이 완료되었습니다!');
-                    // currentBtn.innerText = '신청완료';
-                    // currentBtn.disabled = true;
-                    // currentBtn.classList.add('completed');
-                    // location.reload();
-                    closeModal();
-                    return; // 성공 시 여기서 종료
-                }
+            // fetch(url, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         [csrfHeader]: csrfToken
+            //     },
+            //     body: JSON.stringify(sendData)
+            // })
+            // .then(response => {
+            //     // 성공(200 OK)인 경우
+            //     if (response.ok) {
+            //         alert('신청이 완료되었습니다!');
+            //         // currentBtn.innerText = '신청완료';
+            //         // currentBtn.disabled = true;
+            //         // currentBtn.classList.add('completed');
+            //         location.reload();
+            //         closeModal();
+            //         return; // 성공 시 여기서 종료
+            //     }
                 
-                // 실패(400, 500 등)인 경우 서버가 보낸 JSON 에러 메시지 추출
-                return response.json().then(errData => {
-                    // 서버에서 ResponseEntity.badRequest().body("{\"message\": \"...\"}") 로 보낸 내용
-                    throw new Error(errData.message || '신청 중 알 수 없는 오류가 발생했습니다.');
-                });
-            })
-            .catch(error => {
-                // 위에서 throw한 에러나 네트워크 에러를 여기서 처리
-                console.error('Error:', error);
-                alert(error.message); // "이미 해당 기간에 신청된 다른 일정이 있습니다." 등이 출력됨
+            //     // 실패(400, 500 등)인 경우 서버가 보낸 JSON 에러 메시지 추출
+            //     return response.json().then(errData => {
+            //         // 서버에서 ResponseEntity.badRequest().body("{\"message\": \"...\"}") 로 보낸 내용
+            //         throw new Error(errData.message || '신청 중 알 수 없는 오류가 발생했습니다.');
+            //     });
+            // })
+            // .catch(error => {
+            //     // 위에서 throw한 에러나 네트워크 에러를 여기서 처리
+            //     console.error('Error:', error);
+            //     alert(error.message); // "이미 해당 기간에 신청된 다른 일정이 있습니다." 등이 출력됨
+            // });
+        }
+
+        function cancelCampaign(campaignId) {
+            const timeSegment = campaign[selectIndex].timeSegment; // 혹은 해당 캠페인의 timeSegment 값
+            // 1. 팝업창이 열렸을 당시 '이미 신청 상태였던' 유저들의 No 목록 (already-applied 클래스 활용)
+            const appliedUsers = [];
+            document.querySelectorAll('.user_Chk.already-applied').forEach(cb => {
+                appliedUsers.push(cb.value);
             });
+
+            // 2. 현재 체크박스에 '체크가 되어 있는' 유저들의 No 목록
+            const checkedUsers = [];
+            document.querySelectorAll('.user_Chk:checked').forEach(cb => {
+                checkedUsers.push(cb.value);
+            });
+
+            console.log("appliedUsers : " + appliedUsers);
+            console.log("checkedUsers : " + checkedUsers);
+            
+            // 3. 🔥 핵심: 기존에 신청했었는데(original), 현재 체크가 풀린(current에 없는) 유저 골라내기 (취소 대상자)
+            const usersToCancel = appliedUsers.filter(userNo => !checkedUsers.includes(userNo));
+
+            // 4. 새롭게 체크된 유저 골라내기 (신규 등록 대상자 - 필요시 사용)
+            const usersToInsert = checkedUsers.filter(userNo => !appliedUsers.includes(userNo));
+
+            console.log("취소할 유저 번호 목록:", usersToCancel);
+            console.log("새로 등록할 유저 번호 목록:", usersToInsert);
+
+            // ========================================================
+            // 5. 서버에 취소 요청 보내기 (취소 대상자가 있을 때만)
+            // ========================================================
+            if (usersToCancel.length > 0) {
+                const cancelData = {
+                    campaignId: campaignId,
+                    timeSegment: timeSegment,
+                    userNos: usersToCancel, // [34, 43] 형태로 전송
+                    eventPeriodStr: campaign[selectIndex].eventPeriodStr,
+                    eventPeriodEnd: campaign[selectIndex].eventPeriodEnd
+                    // 만약 날짜 정보도 필요하다면 dto에 맞게 추가 (예: eventPeriodStr, eventPeriodEnd 등)
+                };
+
+                fetch('/admin/userCancel', { // 본인의 Controller URL 확인
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [csrfHeader]: csrfToken
+                    },
+                    body: JSON.stringify(cancelData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("취소 처리 결과 건수:", data.message);
+                    alert("선택한 유저의 신청 취소가 완료되었습니다.");
+                    location.reload(); // 화면 새로고침
+                })
+                .catch(error => {
+                    console.error("취소 처리 중 에러:", error);
+                });
+            } else {
+                alert("수정된 내역이 없습니다.");
+            }
         }
     </script>
     

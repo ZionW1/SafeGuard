@@ -214,7 +214,7 @@ public class CampaignServiceImpl implements CampaignService{
                         campaignMapper.updateUcIsDeleted(campaignsVO.getCampaignId(), exceedCount);
                         // 3. ★ [중요] 캠페인 본체 테이블의 applicants_num 컬럼도 줄어든 정원 숫자로 맞춰줍니다.
                         // (3명을 잘랐으니 신청자 수도 새 정원인 5명으로 업데이트해 주는 것이 안전합니다.)
-                        campaignMapper.updateApplicantsNum(campaignsVO.getCampaignId(), newNum);                    }
+                        campaignMapper.updateApplicantsNum(campaignsVO.getCampaignId());                    }
                 } 
                 else {
                     // 정원을 줄였어도 아직 자리가 남아있다면 -> 계속 모집(활성화)
@@ -424,12 +424,9 @@ public class CampaignServiceImpl implements CampaignService{
     @Override
     @Transactional(rollbackFor = Exception.class) // 에러 발생 시 자동 롤백
     public String overlapTitle(CampaignVO dto) throws Exception {
-        log.info("overlapTitle campaignVO : " + dto);
-
         Long campaignId = dto.getCampaignId();
         List<String> userNoList = dto.getUserNos();
         List<String> userIdList = dto.getUserIds();
-        log.info("userNoList : " + userNoList);
 
         // 1단계: [검증] 체크된 모든 유저들을 먼저 '전부' 검사합니다.
         for (String userNo : userNoList) {
@@ -437,12 +434,11 @@ public class CampaignServiceImpl implements CampaignService{
             log.info("dto : " + dto);
 
             String overlapTitle = campaignMapper.overlapTitle(dto, userNo);
-            log.info("overlapTitle : " + overlapTitle);
+
 
             // 공백이나 null이 아니라는 것은 무언가 중복된 캠페인 타이틀이 조회되었다는 뜻!
             if (overlapTitle != null && !overlapTitle.trim().isEmpty()) {
                 log.info("중복 발견 - 유저 번호: {}, 중복 캠페인: {}", userNo, overlapTitle);
-                
                 // 컨트롤러의 .catch(error => alert(error.message)) 로 전달될 에러 메시지
                 throw new IllegalArgumentException("이미 [" + overlapTitle + "] 캠페인 일정이 있는 유저가 포함되어 있습니다.\n기간을 확인해 주세요.");
             }
@@ -459,23 +455,71 @@ public class CampaignServiceImpl implements CampaignService{
                                             .limit(endDate.toEpochDay() - startDate.toEpochDay() + 1)
                                             .collect(Collectors.toList());
 
-        log.info("datesInRange " + datesInRange);
+
         // 4. 각 날짜별로 DB에 삽입할 DTO 객체 생성
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("campaignId", dto.getCampaignId());
         paramMap.put("timeSegment", dto.getTimeSegment());
         paramMap.put("eventPeriodStr", dto.getEventPeriodStr());
         paramMap.put("eventPeriodEnd", dto.getEventPeriodEnd());
-        
+
         paramMap.put("userNoList", dto.getUserNos()); // [43, 34]
         paramMap.put("userIdList", dto.getUserIds()); // [admin123, test01]
         paramMap.put("datesInRange", datesInRange);    // [2026-06-26]
 
         int result = campaignMapper.userApply(paramMap);
+        log.info("result + " + result);
+
+        if(result > 0) {
+            campaignMapper.updateApplicantsNum(campaignId);
+        }
+
         log.info("총 등록된 날짜별 데이터 건수: " + result);
 
         // 모든 작업이 성공적으로 끝나면 성공 메시지 반환
         return String.valueOf(result);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class) // 에러 발생 시 자동 롤백
+    public int userCancel(CampaignVO dto) throws Exception {
+        log.info("overlapTitle campaignVO : " + dto);
+
+        Long campaignId = dto.getCampaignId();
+        List<String> userNoList = dto.getUserNos();
+        LocalDate startDate = dto.getEventPeriodStr(); // 예: "2026-01-19" -> LocalDate
+        LocalDate endDate = dto.getEventPeriodEnd();   // 예: "2026-01-21" -> LocalDate
+
+        List<LocalDate> datesInRange = Stream.iterate(startDate, date -> date.plusDays(1))
+            // startDate와 endDate 모두 포함
+            .limit(endDate.toEpochDay() - startDate.toEpochDay() + 1)
+            .collect(Collectors.toList());
+        
+        log.info("userNoList : " + userNoList);
+        log.info("datesInRange " + datesInRange);
+        // 4. 각 날짜별로 DB에 삽입할 DTO 객체 생성
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("campaignId", dto.getCampaignId());
+        paramMap.put("timeSegment", dto.getTimeSegment());
+        // paramMap.put("eventPeriodStr", dto.getEventPeriodStr());
+        // paramMap.put("eventPeriodEnd", dto.getEventPeriodEnd());
+
+        paramMap.put("userNoList", dto.getUserNos()); // [43, 34]
+        // paramMap.put("userIdList", dto.getUserIds()); // [admin123, test01]
+        paramMap.put("datesInRange", datesInRange);    // [2026-06-26]
+
+        log.info("paramMap + " + paramMap);
+
+        int result = campaignMapper.userCancel(paramMap);
+        log.info("result + " + result);
+
+        if(result > 0) {
+            campaignMapper.updateApplicantsNum(campaignId);
+        }
+
+        log.info("총 등록된 날짜별 데이터 건수: " + result);
+
+        // 모든 작업이 성공적으로 끝나면 성공 메시지 반환
+        return result;
+    }
 }

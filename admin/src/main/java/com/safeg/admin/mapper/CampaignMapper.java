@@ -63,10 +63,12 @@ public interface CampaignMapper {
 
     public void updateUcIsDeleted(@Param("campaignId") Long campaignId, @Param("exceedCount") int exceedCount) throws Exception;
 
-    public void updateApplicantsNum(@Param("campaignId") Long campaignId, @Param("newNum") int newNum) throws Exception;
+    public void updateApplicantsNum(@Param("campaignId") Long campaignId) throws Exception;
 
     public String overlapTitle(@Param("dto") CampaignVO dto, @Param("userNo") String userNo) throws Exception;
     
     public int userApply(Map<String, Object> paramMap) throws Exception;
+
+    public int userCancel(Map<String, Object> paramMap) throws Exception;
 
 }

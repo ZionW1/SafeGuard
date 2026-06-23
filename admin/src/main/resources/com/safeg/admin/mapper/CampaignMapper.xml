@@ -329,6 +329,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         )
     </update>
 
+    <update id="updateApplicantsNum">
+        UPDATE campaign 
+        SET applicants_num = (
+            SELECT t.cnt FROM (
+                SELECT COUNT(DISTINCT user_id) as cnt
+                FROM user_campaign 
+                WHERE campaign_id = #{campaignId}
+                AND is_deleted = 'N' -- 👈 탈락하거나 취소된(Y) 사람은 제외!
+            ) t
+        )
+        WHERE campaign_id = #{campaignId}
+    </update>
+
     <select id="applySelect" resultType="UserCampaignVO">
         select
             uc.is_leader,
@@ -470,6 +483,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             campaign_id,
             user_No,
             user_id,
+            lead_Apply,
             applied_str_date,
             applied_end_date,
             event_str_date,
@@ -484,6 +498,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{entry.campaignId},
             #{entry.userNo},
             #{entry.userId},
+            #{entry.leadApply},
             #{entry.appliedStrDate},
             #{entry.appliedEndDate},
             #{entry.eventPeriodStr},
@@ -587,7 +602,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             FROM user_campaign uc
             LEFT OUTER JOIN campaign c ON uc.campaign_id = c.campaign_id
             WHERE uc.user_no = #{userNo}
-            AND uc.campaign_id = #{dto.campaignId}
             AND uc.is_deleted = 'N'
             -- 1. 날짜 기간이 겹치는지 확인
             AND (
@@ -628,5 +642,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </foreach>
         </foreach>
     </insert>
+
+    <update id="userCancel">
+        UPDATE
+            user_campaign
+        SET
+            is_deleted = 'Y'
+        WHERE
+            campaign_id = #{campaignId}
+        AND
+            time_segment = #{timeSegment}
+        AND (
+            <foreach collection="userNoList" item="userNo" index="i" separator="OR">
+                
+                    user_no = #{userNo}
+                    AND apply_date IN 
+                    <foreach collection="datesInRange" item="date" open="(" close=")" separator=",">
+                        #{date}
+                    </foreach>
+                
+            </foreach>
+        )
+    </update>
 
 </mapper>

@@ -80,10 +80,7 @@ public class HomeController {
         model.addAttribute("pageUrl", pageUrl);
 
         if(authUser != null){
-            log.info("authUser : " + authUser);
             UserVO user = authUser.getUserVo();
-            log.info("user : " + user);
-
             model.addAttribute("user", user);
         }
         // return "/admin/list";

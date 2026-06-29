@@ -249,6 +249,7 @@ label {
     font-size: 14px;
     box-sizing: border-box;
 }
+
 input[type="text"],
 input[type="number"],
 select,
@@ -585,8 +586,13 @@ body {
 }
 
 .mrg16 {
-    margin: 16px 0 0 ;
+    margin: 16px 0 16px ;
 }
+
+.purpleFont {
+    color: #5b408b;
+}
+
 .error-msg {
     margin-bottom: 30px; /* 작은 여백 */
     color: red; /* 기존 스타일 유지 */

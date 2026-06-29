@@ -244,4 +244,12 @@ public class UserServiceImpl implements UserService{
         return userInfoList;
     }
 
+    @Override
+    public List<UserVO> userInfoDate(Long campaignId, String applyDate) throws Exception {
+        List<UserVO> userInfoDate = userMapper.userInfoDate(campaignId, applyDate);
+        log.info("userInfoDate : " + userInfoDate);
+
+        return userInfoDate;
+    }
+
 }

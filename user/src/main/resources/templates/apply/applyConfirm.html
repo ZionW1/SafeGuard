@@ -695,55 +695,55 @@
         }
 
         function significantInsert(campaignId, userNo, applyDate) {
-    // 모달창 내부에서 바뀐 클래스명(.modal-reason, .modal-amount)으로 요소를 정확히 찾아옵니다.
-    const reasonInput = document.querySelector('.modal-reason');
-    const amountInput = document.querySelector('.modal-amount');
-    
-    const reasonInfo = reasonInput ? reasonInput.value.trim() : "";
-    const amount = amountInput ? amountInput.value.trim() : "";
+            // 모달창 내부에서 바뀐 클래스명(.modal-reason, .modal-amount)으로 요소를 정확히 찾아옵니다.
+            const reasonInput = document.querySelector('.modal-reason');
+            const amountInput = document.querySelector('.modal-amount');
+            
+            const reasonInfo = reasonInput ? reasonInput.value.trim() : "";
+            const amount = amountInput ? amountInput.value.trim() : "";
 
-    console.log("실제 전송될 데이터 정보:", {campaignId, userNo, applyDate, reasonInfo, amount});
-    
-    if (!reasonInfo) {
-        alert('특이사항 내용을 입력해 주세요.');
-        return;
-    }
+            console.log("실제 전송될 데이터 정보:", {campaignId, userNo, applyDate, reasonInfo, amount});
+            
+            if (!reasonInfo) {
+                alert('특이사항 내용을 입력해 주세요.');
+                return;
+            }
 
-    const requestBody = {
-        campaignId: campaignId,
-        userId: userNo, // 이제 파라미터로 넘어온 정확한 대상(인솔자 혹은 유저)의 번호가 바인딩됩니다.
-        missionDate: applyDate,
-        amount: amount,
-        reasonInfo: reasonInfo,
-        category: "OVERPAY"
-    };
+            const requestBody = {
+                campaignId: campaignId,
+                userId: userNo, // 이제 파라미터로 넘어온 정확한 대상(인솔자 혹은 유저)의 번호가 바인딩됩니다.
+                missionDate: applyDate,
+                amount: amount,
+                reasonInfo: reasonInfo,
+                category: "OVERPAY"
+            };
 
-    fetch('/apply/significantInsert', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            [csrfHeader]: csrfToken
-        },
-        body: JSON.stringify(requestBody)
-    })
-    .then(response => {
-        if (!response.ok) { 
-            return response.json().then(errorData => {
-                throw new Error(errorData.message || '등록 중 오류가 발생했습니다.');
+            fetch('/apply/significantInsert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) { 
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || '등록 중 오류가 발생했습니다.');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                closeSignificantModal(); // 저장 완료 후 모달창 닫기
+                location.reload();       // 부모창 새로고침해서 결과 반영
+            })
+            .catch(error => {
+                console.error('에러 발생:', error);
+                alert('등록에 실패했습니다: ' + error.message);
             });
         }
-        return response.json();
-    })
-    .then(data => {
-        alert(data.message);
-        closeSignificantModal(); // 저장 완료 후 모달창 닫기
-        location.reload();       // 부모창 새로고침해서 결과 반영
-    })
-    .catch(error => {
-        console.error('에러 발생:', error);
-        alert('등록에 실패했습니다: ' + error.message);
-    });
-}
     </script>
 </body>
 </html>

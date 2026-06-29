@@ -40,26 +40,26 @@
                     <colgroup>
                         <col width="5%"></col>
                         <col width="*"></col>
-                        <col width="20%"></col>
-                        <col width="10%"></col>
-                        <col width="12%"></col>
-                        <col width="5%"></col>
-                        <col width="5%"></col>
                         <col width="10%"></col>
                         <col width="10%"></col>
                         <col width="10%"></col>
+                        <col width="8%"></col>
+                        <col width="8%"></col>
+                        <col width="7%"></col>
+                        <col width="15%"></col>
+                        <col width="15%"></col>
                     </colgroup>
                     <thead>
                         <th>ID</th>
-                        <th>지역</th>
                         <th>캠페인명</th>
-                        <th>인솔자</th>
-                        <th>일정</th>
-                        <th>신청자수</th>
-                        <th>모집인원</th>
+                        <th>캠페인신청</th>
                         <th>명단보기</th>
                         <th>상세보기</th>
-                        <th>캠페인신청</th>
+                        <th>신청자수</th>
+                        <th>모집인원</th>
+                        <th>인솔자</th>
+                        <th>일정</th>
+                        <th>지역</th>
                     </thead>
                     <tbody>
                         <th:block th:if="${campaignsList.isEmpty()}">
@@ -71,24 +71,24 @@
                         <th:block th:each="campaign, stat : ${campaignsList}">
                             <tr>
                                 <td><span th:text="${campaign.campaignId}"></span></td>
-                                <td><span th:text="${campaign.placeAddr}"></span></td>
-                                <td th:text="|${campaign.campaignTitle} (${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'})|"></td>                                <td><span th:text="${campaign.userNm}"></span></td>
-                                <td><span th:text="${campaign.eventPeriodStr != null ? #temporals.format(campaign.eventPeriodStr, 'yyyy.MM.dd') : ''}"></span>~<span th:text="${campaign.eventPeriodStr != null ? #temporals.format(campaign.eventPeriodEnd, 'yyyy.MM.dd') : ''}"></span></span></td>
-                                <td><span th:text="${campaign.applicantsNum}"></span></td>
-                                <td><span th:text="${campaign.recruitmentNum}"></span></td>
+                                <td th:text="|${campaign.campaignTitle} (${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'})|"></td>
+                                <td class="pointer">
+                                    <a th:class="|statusInfoChange applyConfirmButotn|" 
+                                    href="#" 
+                                    th:data-url="@{/campaignPopup01/{campaignId}(campaignId=${campaign.campaignId})}"
+                                    th:onclick="|openPopup(this.dataset.url, ${stat.index}); return false;|">캠페인신청</a>
+                                </td>
                                 <td class="pointer">
                                     <a th:href="|/apply/applyConfirm/${campaign.campaignId}|" target="_blank">명단보기</a>
                                 </td>
                                 <td class="pointer">
                                     <a th:href="@{/campaign02(id=${campaign.campaignId})}" target="_blank">상세보기</a>
                                 </td>
-                                <td class="pointer">
-                                    <!-- <a th:href="|/campaign02(id=${campaign.campaignId})|" target="_blank">신청하기</a> -->
-                                    
-                                    <a th:class="|statusInfoChange applyConfirmButotn|" 
-                                    href="#" 
-                                    th:data-url="@{/campaignPopup01/{campaignId}(campaignId=${campaign.campaignId})}"
-                                    th:onclick="|openPopup(this.dataset.url, ${stat.index}); return false;|">캠페인신청</a>                                </td>
+                                <td><span th:text="${campaign.applicantsNum}"></span></td>
+                                <td><span th:text="${campaign.recruitmentNum}"></span></td>
+                                <td><span th:text="${campaign.userNm}"></span></td>
+                                <td><span th:text="${campaign.eventPeriodStr != null ? #temporals.format(campaign.eventPeriodStr, 'yyyy.MM.dd') : ''}"></span>~<span th:text="${campaign.eventPeriodStr != null ? #temporals.format(campaign.eventPeriodEnd, 'yyyy.MM.dd') : ''}"></span></span></td>
+                                <td><span th:text="${campaign.placeAddr}"></span></td>
                             </tr>
                         </th:block>
                     </tbody>
@@ -133,14 +133,41 @@
         // // 리스트 전체를 한 번에 콘솔에 출력
         // console.log(campaign);
 
+        function chkBoxSelect() {
+            const checkboxes = document.querySelectorAll('.user_Chk');
+            const chkPcs = document.getElementById('chkPcs');
+            const recPcs = document.getElementById('recPcs');
+            const recNum = campaign[selectIndex].recruitmentNum;
+            // 💡 [추가] 팝업창이 뜨자마자 '현재 체크되어 있는 개수'를 바로 span에 집어넣습니다.
+            const initialCount = document.querySelectorAll('.user_Chk:checked').length;
+            if (chkPcs) {
+                chkPcs.textContent = initialCount;
+                recPcs.textContent = recNum;
+            }
+
+            // 그 이후에 유저가 클릭할 때마다 숫자가 바뀌도록 감시자를 붙입니다.
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const checkedCount = document.querySelectorAll('.user_Chk:checked').length;
+                    if (chkPcs) {
+                        chkPcs.textContent = checkedCount; // span에 값 갱신
+                    }
+                });
+            });
+        }
+
         function openPopup(url, index) {
             // const campaignTItle = document.getElementById("campaignTitle").value;
             selectIndex = index;
             var sendData = {
                 campaignTitle: campaign[index].campaignTitle,
                 recruitmentNum: campaign[index].recruitmentNum,
-                applicantsNum: campaign[index].applicantsNum
+                applicantsNum: campaign[index].applicantsNum,
+                eventPeriodStr: campaign[index].eventPeriodStr,
+                eventPeriodEnd: campaign[index].eventPeriodEnd
             };
+            
+            // console.log("sendDate" + JSON.stringify(sendData))
 
             // 1. 서버에 해당 url의 HTML 내용을 요청
             fetch(url, {
@@ -175,12 +202,35 @@
                         row.style.color = '#bbb';
                     }
                 });
+                chkBoxSelect();
             })
             .catch(error => {
                 console.error('모달 로드 중 에러 발생:', error);
                 alert('페이지를 불러오는 중 오류가 발생했습니다.');
             });
         }
+
+        // 💡 [여기에 추가] 한 번만 등록해 두면 팝업이 켜진 후 배경 클릭 시 언제든 작동합니다.
+        document.getElementById('modalPopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+
+
+            function inputDates(idx) {
+                const leaderList = /*[[${leaderList}]]*/ [];
+
+                const selectPhoneNumber = leaderList[idx].phoneNum;
+                const selectNo = leaderList[idx].id;
+                const leaderId = leaderList[idx].userId;
+
+                document.getElementById("leaderPhone").value = selectPhoneNumber;
+                document.getElementById("leaderNo").value = selectNo;
+                document.getElementById("leaderCode").value = leaderList[idx].id;
+                document.getElementById("leaderId").value = leaderId;
+            }
+
+        });
 
         function closeModal() {
             // 모달 닫기 및 컨텐츠 초기화
@@ -191,6 +241,101 @@
             $('#modalContent').html(''); // 닫을 때 내부 내용 초기화 (중복 방지 핵심!)
             // document.getElementById('significantModal').style.display = 'none';
             // document.getElementById('modalContent').innerHTML = '';
+        }
+
+        function changeDate(element) {
+            // 사용자가 선택한 option의 value 값을 가져옴 ('ALL' 또는 '2026-07-06' 등)
+            const campaignId = campaign[selectIndex].campaignId;
+            const selectedValue = element.value; 
+            let applyDate = "";
+
+            console.log("선택된 값:", selectedValue);
+            if(!selectedValue) 
+                return;
+
+            const url = `/admin/chgDate/${campaignId}`;
+            if (selectedValue === "ALL") {
+                applyDate = "ALL"; // 자바단에 'ALL'이라는 문자열을 그대로 전송
+            } else {
+                applyDate = selectedValue; // '2026-07-06' 같은 실제 날짜 전송
+            }
+            
+            var sendData = {
+                campaignTitle: campaign[selectIndex].campaignTitle,
+                recruitmentNum: campaign[selectIndex].recruitmentNum,
+                applicantsNum: campaign[selectIndex].applicantsNum,
+                eventPeriodStr: campaign[selectIndex].eventPeriodStr,
+                eventPeriodEnd: campaign[selectIndex].eventPeriodEnd,
+                applyDateS: applyDate
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(sendData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("네트워크 응답에 문제가 있습니다.");
+                }
+                // 서버에서 HTML 조각을 받아온다면 response.text(), JSON을 받아온다면 response.json()
+                return response.json(); 
+            })
+            .then(data => {
+                // 1. 데이터를 꽂아 넣을 대상(tbody) 가져오기
+                const tableBody = document.getElementById("userList");
+                
+                // 2. 누적할 HTML 문자열 초기화
+                let htmlRows = "";
+                
+                // 3. 만약 받아온 데이터가 비어있다면 처리
+                if (!data || data.length === 0) {
+                    htmlRows = `<tr><td colspan="3" style="text-align:center;">조회된 회원 정보가 없습니다.</td></tr>`;
+                } else {
+                    // 4. 데이터 배열(data)을 돌면서 기존 타임리프 구조 그대로 그리기
+                    data.forEach(userInfo => {
+                        // userInfo.isApplied가 'Y'이면 클래스명 추가하고 아니면 빈값
+                        const classAppend = (userInfo.isApplied === 'Y') ? 'already-applied' : '';
+                        const isChecked = (userInfo.isApplied === 'Y') ? 'checked' : '';
+                        htmlRows += `
+                            <tr>
+                                <td>
+                                    <input type="hidden" value="${userInfo.userId}" class="user_Id" name="userId">
+                                    <input type="checkbox" value="${userInfo.id}" 
+                                        class="user_Chk ${classAppend}" 
+                                        name="Attendance" ${isChecked}>
+                                </td>
+                                <td><span>${userInfo.userNm}</span></td>
+                                <td><span>${userInfo.phoneNum}</span></td>
+                            </tr>
+                        `;
+                    });
+                    const appliedBoxes = document.querySelectorAll('.user_Chk.already-applied');
+
+                    appliedBoxes.forEach(cb => {
+                        cb.checked = true;  // 자동으로 체크 표시 활성화
+                        // cb.disabled = true; // 유저가 임의로 체크 해제하지 못하도록 비활성화
+                        
+                        // (시각적 효과) 해당 행을 흐리게 만들어서 이미 신청 완료된 상태임을 표시
+                        const row = cb.closest('tr');
+                        if (row) {
+                            row.style.backgroundColor = '#f8f9fa';
+                            row.style.color = '#bbb';
+                        }
+                    });
+                    chkBoxSelect();
+                }
+                
+                // 5. 새로 만든 HTML 덩어리를 tbody에 덮어씌우기
+                tableBody.innerHTML = htmlRows;
+            })
+            .catch(error => {
+                console.error("데이터를 가져오는 중 오류 발생:", error);
+                alert("정보를 불러오는데 실패했습니다.");
+            });
         }
 
         async function applyCampaign(campaignId, id) {
@@ -219,7 +364,12 @@
                 return cb.closest('td').querySelector('.user_Id').value;
             });
 
-            // 콘솔 출력 확인
+            const workDate = document.querySelectorAll('.user_Chk.already-applied')
+
+            const applyDate = document.querySelector(".sync-nm"); 
+
+            console.log("applyDate: ", applyDate.value); // 이제 값이 잘 나옵니다!
+
             console.log("취소할 유저 번호 리스트:", usersToCancel);
             console.log("새로 등록할 유저 번호(id) 리스트:", usersToInsert);      
             console.log("새로 등록할 유저 아이디(userId) 리스트:", userIdList);
@@ -257,52 +407,121 @@
                 applicantsNum: campaign[selectIndex].applicantsNum,
                 eventPeriodStr: campaign[selectIndex].eventPeriodStr,
                 eventPeriodEnd: campaign[selectIndex].eventPeriodEnd,
-                timeSegment: campaign[selectIndex].timeSegment
+                timeSegment: campaign[selectIndex].timeSegment,
+                applyDate: applyDate.value
             };
+
+
+            // try {
+            //     // 🔥 STEP 1: 체크를 푼 유저가 있다면 취소(삭제) 프로세스 진행
+            //     if (usersToCancel.length > 0) {
+            //         const cancelData = { campaignId: campaignId, timeSegment: timeSegment, userNos: usersToCancel,
+            //         eventPeriodStr: campaign[selectIndex].eventPeriodStr,
+            //         eventPeriodEnd: campaign[selectIndex].eventPeriodEnd };
+            //         const res = await fetch('/admin/userCancel', { // 본인 URL 확인
+            //             method: 'POST',
+            //             headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+            //             body: JSON.stringify(cancelData)
+            //         });
+            //         if (!res.ok) throw new Error('취소 처리 실패');
+            //     }
+
+            //     // 🔥 STEP 2: 새로 체크한 유저가 있다면 등록(추가) 프로세스 진행
+            //     if (usersToInsert.length > 0) {
+            //         const insertData = { 
+            //             campaignId: campaignId,
+            //             userNos: usersToInsert, // [1, 2, 3] 형태의 배열
+            //             userIds: userIdList,
+            //             recruitmentNum: campaign[selectIndex].recruitmentNum,
+            //             applicantsNum: campaign[selectIndex].applicantsNum,
+            //             eventPeriodStr: campaign[selectIndex].eventPeriodStr,
+            //             eventPeriodEnd: campaign[selectIndex].eventPeriodEnd,
+            //             timeSegment: timeSegment
+            //         };
+            //         const res = await fetch('/admin/userApply', { // 본인의 등록 URL 확인
+            //             method: 'POST',
+            //             headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+            //             body: JSON.stringify(insertData)
+            //         });
+            //         alert("수정 사항이 성공적으로 반영되었습니다." + res.message);
+
+            //         if (!res.ok) {
+            //             const errorData = await response.json(); // 서버가 보낸 {message: "..."} 읽기
+            //             throw new Error(errorData.message || "알 수 없는 서버 오류가 발생했습니다.");
+            //         }
+            //         // if (!res.ok) throw new Error('신규 등록 실패');
+            //     }
+
+            //     // 3. 모두 성공 시 완료 알림 후 새로고침
+            //     location.reload();
+
+            // } catch (error) {
+            //     console.error("작업 중 오류 발생:", error);
+            //     alert("처리 중 오류가 발생했습니다: " + error.message);
+
+            // }
 
 
             try {
                 // 🔥 STEP 1: 체크를 푼 유저가 있다면 취소(삭제) 프로세스 진행
                 if (usersToCancel.length > 0) {
-                    const cancelData = { campaignId: campaignId, timeSegment: timeSegment, userNos: usersToCancel,
-                    eventPeriodStr: campaign[selectIndex].eventPeriodStr,
-                    eventPeriodEnd: campaign[selectIndex].eventPeriodEnd };
-                    const res = await fetch('/admin/userCancel', { // 본인 URL 확인
+                    const cancelData = { 
+                        campaignId: campaignId, 
+                        timeSegment: timeSegment, 
+                        userNos: usersToCancel,
+                        eventPeriodStr: campaign[selectIndex].eventPeriodStr,
+                        eventPeriodEnd: campaign[selectIndex].eventPeriodEnd 
+                    };
+                    const res = await fetch('/admin/userCancel', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
                         body: JSON.stringify(cancelData)
                     });
-                    if (!res.ok) throw new Error('취소 처리 실패');
+                    
+                    if (!res.ok) {
+                        const errorData = await res.json(); // 💡 response가 아니라 res
+                        throw new Error(errorData.message || '취소 처리 실패');
+                    }
                 }
 
                 // 🔥 STEP 2: 새로 체크한 유저가 있다면 등록(추가) 프로세스 진행
                 if (usersToInsert.length > 0) {
                     const insertData = { 
                         campaignId: campaignId,
-                        userNos: usersToInsert, // [1, 2, 3] 형태의 배열
+                        userNos: usersToInsert,
                         userIds: userIdList,
                         recruitmentNum: campaign[selectIndex].recruitmentNum,
                         applicantsNum: campaign[selectIndex].applicantsNum,
                         eventPeriodStr: campaign[selectIndex].eventPeriodStr,
                         eventPeriodEnd: campaign[selectIndex].eventPeriodEnd,
-                        timeSegment: timeSegment
+                        timeSegment: timeSegment,
+                        applyDateS: applyDate.value
                     };
-                    const res = await fetch('/admin/userApply', { // 본인의 등록 URL 확인
+                    console.log("insertData : " + JSON.stringify(insertData))
+                    const res = await fetch('/admin/userApply', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
                         body: JSON.stringify(insertData)
                     });
-                    if (!res.ok) throw new Error('신규 등록 실패');
-                }
 
-                // 3. 모두 성공 시 완료 알림 후 새로고침
-                alert("수정 사항이 성공적으로 반영되었습니다.");
-                location.reload();
+                    // 💡 [순서 변경] 성공 알림창을 띄우기 전에 서버가 에러(400 등)를 보냈는지 먼저 확인합니다!
+                    if (!res.ok) {
+                        const errorData = await res.json(); // 💡 response를 res로 수정하여 서버 에러 메시지 파싱
+                        throw new Error(errorData.message || "알 수 없는 서버 오류가 발생했습니다.");
+                    }
+                    const successData = await res.json();
+                    alert("수정 사항 " + successData.message + "건 성공적으로 반영되었습니다.");
+                }
+                // alert(successData.message); // 서버가 보낸 "성공" 문구 출력
+                // 💡 3. 모든 프로세스(취소/등록)가 에러 없이 안전하게 성공한 후 알림 및 새로고침
+                // location.reload();
 
             } catch (error) {
-                console.error("작업 중 오류 발생:", error);
-                alert("처리 중 오류가 발생했습니다: " + error.message);
+                // 🎯 이제 서버에서 던진 "이미 [...] 캠페인 일정이 있는 유저가 포함되어 있습니다." 메시지가 여기에 정확히 꽂힙니다.
+                // console.error("작업 중 오류 발생:", error);
+                alert(error.message); // 기존의 무의미한 문구 대신 error.message만 깔끔하게 띄웁니다.
             }
+
 
 
             // // 모달 닫기 및 컨텐츠 초기화
@@ -313,7 +532,7 @@
             // $('#modalContent').html(''); // 닫을 때 내부 내용 초기화 (중복 방지 핵심!)
             // document.getElementById('significantModal').style.display = 'none';
             // document.getElementById('modalContent').innerHTML = '';
-            console.log("sendData 값 확인:", sendData);
+            // console.log("sendData 값 확인:", sendData);
             // fetch(url, {
             //     method: 'POST',
             //     headers: {

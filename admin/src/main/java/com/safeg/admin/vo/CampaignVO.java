@@ -59,7 +59,7 @@ public class CampaignVO {
     private int leaderPoint;
     private int leaderPay;
     
-
+    private String applyDateS;
 
 
 
@@ -84,6 +84,7 @@ public class CampaignVO {
     private String workHour;
     private String wageChk;
     private String timeSegment;
+    
     //private List<CampaignFilesVO> campaignFilesList; //첨부 파일 정보
     
 }

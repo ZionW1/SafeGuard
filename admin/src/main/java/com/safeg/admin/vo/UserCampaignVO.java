@@ -1,6 +1,7 @@
 package com.safeg.admin.vo;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,9 +42,21 @@ public class UserCampaignVO {
     private String placeAddr;
     private String statusNm;
     private LocalDate applyDate;
+    private LocalDate beforeDate;
     private String timeSegment;
     private String leadApply;
 
+    private int leaderPay;
+
     private int recruitmentNum;
+    private int limitCount;
+
+    private List<Long> userNos;
+
     // private int applicantsNum;
+
+    public boolean isEmpty() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isEmpty'");
+    }
 }

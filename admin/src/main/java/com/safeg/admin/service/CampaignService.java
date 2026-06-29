@@ -7,6 +7,7 @@ import com.safeg.admin.vo.CampaignVO;
 import com.safeg.admin.vo.FilesVO;
 import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
+import com.safeg.admin.vo.UserCampaignVO;
 import com.safeg.admin.vo.UserVO;
 
 public interface CampaignService {
@@ -35,10 +36,10 @@ public interface CampaignService {
 
     public List<CampaignVO> closedCampaign() throws Exception;
 
-    public String overlapTitle(CampaignVO dto) throws Exception;
+    public UserCampaignVO overlapTitle(CampaignVO dto) throws Exception;
 
     public int userCancel(CampaignVO dto) throws Exception;
 
-    // public int userApply(Long campaignId, Long id) throws Exception;
+    public int userApply(CampaignVO dto) throws Exception;
 
 }

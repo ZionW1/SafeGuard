@@ -1,4 +1,4 @@
-<div class="modal-dialog modal-lg modal-dialog-scrollable">
+<div id="modalPop" class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="popup-content">
         
         <div class="modal-header">
@@ -6,7 +6,13 @@
             <h5 class="modal-title">캠페인명 : <span th:text="${campaignTitle}"></span></h5>
             <!-- <button type="button" class="btn-close" onclick="closePopup()">x</button> -->
         </div>
-        
+        <div class="form-group">
+            <label class="purpleFont" for="dates">캠페인 기간</label>
+            <select id="dates" name="applyDate" onchange="changeDate(this)" class="sync-nm mrg16 purpleFont">
+                <option value="ALL">전체</option>
+                <option th:each="date : ${dates}" th:value="${date}" th:text="${date}"></option>
+            </select>
+        </div>
         <div class="popup-body">
             <table class="user_info table table-hover">
                 <colgroup>
@@ -21,7 +27,7 @@
                         <th>휴대폰번호</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody Id="userList">
                     <!-- <tr th:each="user : ${userList}">
                         <td th:text="${user.name}">홍길동</td>
                         <td th:text="${user.email}">hong@test.com</td>
@@ -37,7 +43,7 @@
                                 <!-- <input th:value="${userInfo.id}" type="checkbox" class="user_Chk" name="Attendance"> -->
                                 <input th:value="${userInfo.id}" type="checkbox" 
                                     th:classappend="${userInfo.isApplied == 'Y'} ? 'already-applied' : ''"
-                                    class="user_Chk" name="Attendance">
+                                    class="user_Chk" name="Attendance" onclick="chkBoxSelect()">
                             </td>
                             <td><span th:text="${userInfo.userNm}"></span></td>
                             <td><span th:text="${userInfo.phoneNum}"></span></td>
@@ -47,13 +53,15 @@
                 </tbody>
             </table>
         </div>
-        <
         <div class="modal-footer">
+            <div>
+                <span id="chkPcs"></span> / <span id="recPcs"></span>
+            </div>
             <button type="button" class="btn btn-secondary" th:onclick="applyCampaign([[${campaignId}]])">신청하기</button>
             <button type="button" class="btn btn-secondary" th:onclick="cancelCampaign([[${campaignId}]])">취소하기</button>
 
-            <button type="button" class="btn btn-secondary" onclick="closePopup()">닫기</button>
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">닫기</button>
         </div>
-        
     </div>
 </div>
+

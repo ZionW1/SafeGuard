@@ -271,28 +271,78 @@ public class CampaignController {
     
     @PostMapping("/campaignPopup01/{campaignId}")
     public String userInfoList(@PathVariable("campaignId") Long campaignId, @RequestBody CampaignVO dto, Model model) throws Exception {
+        log.info("dto : " + dto);
         List<UserVO> userInfoList = userService.userInfoList(campaignId);
+        List<LocalDate> dates = dto.getEventPeriodStr().datesUntil(dto.getEventPeriodEnd().plusDays(1)).collect(Collectors.toList()); // 입력 날짜 List
 
+        log.info("Dates" + dates);
         model.addAttribute("campaignTitle", dto.getCampaignTitle());
         model.addAttribute("campaignId", campaignId);
         model.addAttribute("userInfoList", userInfoList);
+        model.addAttribute("dates", dates);
         
         return "campaign/campaignPopup01";
+    }
+
+    @PostMapping("/chgDate/{campaignId}")
+    @ResponseBody // 👈 HTML이 아니라 데이터(JSON)만 리턴하겠다는 선언!
+    public List<UserVO> chgDate(@PathVariable("campaignId") Long campaignId, @RequestBody Map<String, String> paramMap) throws Exception {
+        
+        String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
+
+        log.info("applyDate : " + applyDate);
+        
+        // 만약 'ALL' 이면 전체 조회, 특정 날짜면 해당 날짜만 조회하는 로직 필요
+        List<UserVO> updatedUserList = null;
+        if ("ALL".equals(applyDate)) {
+            updatedUserList = userService.userInfoList(campaignId); // 전체 조회
+        } else {
+            updatedUserList = userService.userInfoDate(campaignId, applyDate); // 👈 날짜별 조회 (서비스에 메서드 구현 필요)
+        }
+
+        log.info("updatedUserList : " + updatedUserList);
+        
+        return updatedUserList; // 자바스크립트로 유저 리스트 배열이 JSON 형태로 바로 넘어감
     }
 
     @PostMapping("/userApply")
     @ResponseBody
     public ResponseEntity<?> userApply(@RequestBody CampaignVO dto) throws Exception {
         Map<String, String> response = new HashMap<>();
-
-        if(dto.getRecruitmentNum() <= dto.getApplicantsNum()) {
-            response.put("message", "모집인과 신청인이 같거나 큽니다.");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-
+        int result = 0;
         try {
-            campaignService.overlapTitle(dto);
-            return ResponseEntity.ok().body("{\"message\": \"성공\"}");
+            UserCampaignVO overlapTitle = campaignService.overlapTitle(dto);
+            log.info("overlapTitle : " + overlapTitle);
+
+            // 중복된 타이틀이 존재한다면 안내 메시지와 함께 400 Bad Request 리턴
+            if (overlapTitle != null) {
+                // 중복이 발견되었더라도 사용자가 선택한 날짜가 'ALL'이 아니고, 
+                // 실제 중복된 날짜(applyDate)와 사용자가 선택한 날짜(applyDateS)가 다르다면 패스해야 함
+                if (!"ALL".equals(dto.getApplyDateS()) && !dto.getApplyDateS().equals("")) {
+                    log.info("dto.getApplyDateS(). " + dto.getApplyDateS());
+                    // 겹치는 날짜는 6,7일인데 사용자는 8일을 골랐으므로 신청 진행!
+                    result = campaignService.userApply(dto);
+                    response.put("message", "캠페인 신청이 완료되었습니다.");
+                    return ResponseEntity.ok().body(response);
+                }
+                
+                // 진짜로 날짜가 겹치거나 ALL인 경우엔 가차없이 튕기기
+                response.put("message", "이미 [" + overlapTitle.getCampaignTitle() + "] 캠페인 일정이 있는 '" + overlapTitle.getUserNm() + "' 유저가 포함되어 있습니다.");
+                return ResponseEntity.badRequest().body(response);
+            } else {
+                if (!"ALL".equals(dto.getApplyDateS()) && !dto.getApplyDateS().equals("")) {
+                    // 겹치는 날짜는 6,7일인데 사용자는 8일을 골랐으므로 신청 진행!
+                    result = campaignService.userApply(dto);
+                    response.put("message", "캠페인 신청이 완료되었습니다.");
+                    return ResponseEntity.ok().body(response);
+                }
+                result = campaignService.userApply(dto);
+                // response.put("message", "캠페인 신청이 완료되었습니다.");
+                // return ResponseEntity.ok().body(response);
+                response.put("message", String.valueOf(result));
+                return ResponseEntity.ok().body(response);
+            }
+            // return ResponseEntity.ok().body("{\"message\": \"성공\"}");
         } catch (IllegalArgumentException e) {
             // 서비스에서 throw한 에러 메시지를 그대로 프론트로 전달
             response.put("message", e.getMessage());

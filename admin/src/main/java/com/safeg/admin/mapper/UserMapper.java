@@ -66,4 +66,6 @@ public interface UserMapper {
 
     public List<UserVO> userInfoList(Long campaignId) throws Exception;
 
+    public List<UserVO> userInfoDate(@Param("campaignId") Long campaignId, @Param("applyDate") String applyDate) throws Exception;
+
 }

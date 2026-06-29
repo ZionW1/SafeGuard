@@ -53,9 +53,13 @@ public interface CampaignMapper {
 
     public void updateApplyDate(@Param("campaignId") Long campaignId, @Param("eventPeriodStr") LocalDate eventPeriodStr, @Param("eventPeriodEnd") LocalDate eventPeriodEnd, @Param("oldDate") LocalDate oldDate, @Param("newDate") LocalDate newDate) throws Exception;
 
+    public void reApplyUsers(UserCampaignVO campaignsVO) throws Exception;
+
     public void deleteApplyDate(@Param("campaignId") Long campaignId, @Param("leftoverDate") LocalDate leftoverDate) throws Exception;
 
-    public void copyApplyDate(@Param("campaignId") Long campaignId, @Param("status") String status, @Param("isLeader") String isLeader, @Param("sourceDate") LocalDate sourceDate, @Param("targetDate") LocalDate targetDate, @Param("newStrDate") LocalDate newStrDate, @Param("newEndDate") LocalDate newEndDate) throws Exception;
+    public void copyApplyDate(@Param("campaignId") Long campaignId, @Param("status") String status, @Param("isLeader") String isLeader, @Param("leadApply") String leadApply, @Param("sourceDate") LocalDate sourceDate, @Param("targetDate") LocalDate targetDate, @Param("newStrDate") LocalDate newStrDate, @Param("newEndDate") LocalDate newEndDate) throws Exception;
+
+    public void copyApplyDateInc(UserCampaignVO userCampaignVO) throws Exception;
 
     public void leaderUpdate(@Param("campaignId") Long campaignId, @Param("oldLeaderNo") Long oldLeaderNo, @Param("leaderNo") Long leaderNo, @Param("leaderId") String leaderId) throws Exception;
 
@@ -65,10 +69,22 @@ public interface CampaignMapper {
 
     public void updateApplicantsNum(@Param("campaignId") Long campaignId) throws Exception;
 
-    public String overlapTitle(@Param("dto") CampaignVO dto, @Param("userNo") String userNo) throws Exception;
+    public UserCampaignVO overlapTitle(@Param("dto") CampaignVO dto, @Param("userNo") String userNo) throws Exception;
     
     public int userApply(Map<String, Object> paramMap) throws Exception;
 
     public int userCancel(Map<String, Object> paramMap) throws Exception;
 
+    public int countApplicants(Long campaignId) throws Exception;
+
+    public void updateIsActive(@Param("campaignId") Long campaignId, @Param("isActive") String isActive) throws Exception;
+
+    public int updateLeadApply(@Param("campaignId") Long campaignId , @Param("leadApply")String leadApply) throws Exception;
+
+    public List<Long> targetUserNos(@Param("campaignId") Long campaignId, @Param("timeSegment") String timeSegment, @Param("vacantSeats") int vacantSeats, @Param("sourceDate") LocalDate sourceDate) throws Exception;
+
+    public List<UserCampaignVO> getActiveUserNos(@Param("campaignId") Long campaignId, @Param("timeSegment") String timeSegment) throws Exception;
+
+    public UserCampaignVO applyDateInfo(@Param("campaignId") Long campaignId, @Param("userNo") Long userNo, @Param("applyDate") LocalDate applyDate, @Param("timeSegment") String timeSegment) throws Exception;
+    
 }

@@ -269,7 +269,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             wage_chk = #{wageChk},
             place_addr = #{placeAddr},
             mission = #{mission},
-            is_active = 'Y',
             App_period_str = #{appPeriodStr},
             App_period_end = #{appPeriodEnd},
             event_Period_str = #{eventPeriodStr},
@@ -333,10 +332,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         UPDATE campaign 
         SET applicants_num = (
             SELECT t.cnt FROM (
-                SELECT COUNT(DISTINCT user_id) as cnt
-                FROM user_campaign 
-                WHERE campaign_id = #{campaignId}
-                AND is_deleted = 'N' -- 👈 탈락하거나 취소된(Y) 사람은 제외!
+                SELECT COUNT(DISTINCT uc.user_id) as cnt
+				FROM user_campaign uc
+				LEFT OUTER JOIN campaign c ON uc.CAMPAIGN_ID = c.CAMPAIGN_ID
+				WHERE uc.campaign_id = #{campaignId}
+                AND uc.is_deleted = 'N'
+                -- 🔥 일반 유저(NULL 포함)는 살리고, 인솔자(Y)라면 급여가 0원이 아닌 사람만 카운트!
+                AND (IFNULL(uc.lead_apply, 'N') != 'Y' OR IFNULL(c.leader_pay, 0) != 0)
             ) t
         )
         WHERE campaign_id = #{campaignId}
@@ -345,16 +347,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="applySelect" resultType="UserCampaignVO">
         select
             uc.is_leader,
+            uc.lead_apply,
             uc.user_id,
             uc.user_no,
             c.recruitment_num,
             c.applicants_num,
             uc.event_str_date,
             uc.event_end_date,
+            c.app_period_end,
             c.EVENT_PERIOD_STR,
             c.EVENT_PERIOD_END,
             uc.applied_str_date,
-            uc.applied_end_date
+            uc.applied_end_date,
+            c.leader_pay
         from campaign c
         LEFT OUTER JOIN user_campaign uc
         ON c.campaign_id = uc.campaign_id
@@ -545,7 +550,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <update id="updateApplyDate" parameterType="CampaignVO">
         UPDATE user_campaign
-        SET 
+        SET
             apply_date = #{newDate},
             event_str_date = #{eventPeriodStr},
             event_end_date = #{eventPeriodEnd},
@@ -554,6 +559,44 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND apply_date = #{oldDate}
         AND is_deleted = 'N'
     </update>
+
+    <update id="reApplyUsers" parameterType="UserCampaignVO">
+        UPDATE user_campaign
+        SET is_deleted = 'N'
+        WHERE campaign_id = #{campaignId}
+            AND apply_date = #{applyDate}
+            AND time_segment = #{timeSegment}
+            AND is_deleted = 'Y'
+            AND user_no IN 
+        <foreach collection="userNos" item="userNo" open="(" separator="," close=")">
+            #{userNo}
+        </foreach>
+    </update>
+
+    <select id="targetUserNos" resultType="Long">
+        SELECT user_no
+        FROM user_campaign
+        WHERE campaign_id = #{campaignId}
+            AND is_deleted = 'Y'
+            AND time_segment = #{timeSegment}
+        <if test="sourceDate != null">
+            AND apply_date = #{sourceDate}
+        </if>
+        GROUP BY user_no
+        ORDER BY MIN(created_at) ASC
+        <if test="vacantSeats != null and vacantSeats &gt; 0">
+            LIMIT #{vacantSeats}
+        </if>
+    </select>
+
+    <select id="getActiveUserNos" resultType="UserCampaignVO">
+        SELECT user_no, lead_apply
+        FROM user_campaign
+        WHERE campaign_id = #{campaignId}
+            AND time_segment = #{timeSegment}
+            AND is_deleted = 'N'
+        GROUP BY user_no, lead_apply
+    </select>
 
     <update id="deleteApplyDate">
         UPDATE user_campaign
@@ -569,10 +612,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             user_no,
             user_id,
             apply_date,
+            time_segment
             event_str_date,
             event_end_date,
             status,
             is_leader,
+            lead_apply,
             created_at,
             updated_at,
             is_deleted)
@@ -580,11 +625,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             campaign_id,
             user_No,
             user_id,
+            #{timeSegment},
             #{targetDate}, -- 새로 생성될 날짜
             #{newStrDate},
             #{newEndDate},
             #{status}, -- 상태는 매개변수로 전달받음 (예: '0' 또는 '8')
             #{isLeader}, -- 리더 여부도 매개변수로 전달받음 (예: 'Y' 또는 'N')
+            #{leadApply},
             now(),
             now(),
             'N'
@@ -595,13 +642,62 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         Limit 1
     </insert>
 
-    <select id="overlapTitle" resultType="String">
+    <insert id="copyApplyDateInc">
+        INSERT INTO user_campaign (
+            campaign_id,
+            user_no,
+            user_id,
+            time_segment,
+            apply_date,
+            event_str_date,
+            event_end_date,
+            status,
+            is_leader,
+            lead_apply,
+            created_at,
+            updated_at,
+            is_deleted
+        )
+        SELECT
+            campaign_id,
+            user_No,
+            user_id,
+            #{timeSegment},
+            #{applyDate}, -- 새로 생성될 날짜
+            #{eventPeriodStr},
+            #{eventPeriodEnd},
+            #{status}, -- 상태는 매개변수로 전달받음 (예: '0' 또는 '8')
+            #{isLeader}, -- 리더 여부도 매개변수로 전달받음 (예: 'Y' 또는 'N')
+            #{leadApply},
+            now(),
+            now(),
+            'N'
+        FROM user_campaign
+        WHERE campaign_id = #{campaignId}
+            AND apply_date = #{beforeDate} -- 복사 대상이 되는 원본 날짜
+            AND user_no = #{userNo}
+            AND is_deleted = 'N'
+
+            AND NOT EXISTS (
+                SELECT 1
+                FROM user_campaign uc_dup
+                WHERE uc_dup.campaign_id = #{campaignId}
+                    AND uc_dup.apply_date = #{applyDate}
+                    AND uc_dup.user_no = #{userNo}
+            )
+        -- Limit 1
+    </insert>
+
+    <select id="overlapTitle" resultType="UserCampaignVO">
         <![CDATA[
             SELECT 
-                c.campaign_title
+                c.campaign_title,
+                u.user_nm
             FROM user_campaign uc
             LEFT OUTER JOIN campaign c ON uc.campaign_id = c.campaign_id
+            LEFT OUTER JOIN user u ON uc.user_id = u.user_id
             WHERE uc.user_no = #{userNo}
+            AND uc.is_leader = 'N'
             AND uc.is_deleted = 'N'
             -- 1. 날짜 기간이 겹치는지 확인
             AND (
@@ -625,21 +721,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             event_end_date,
             time_segment,
             apply_date
-        ) VALUES 
-        <foreach collection="userNoList" item="userNo" index="i" separator=",">
-            <foreach collection="datesInRange" item="date" separator=",">
-                (
-                    #{campaignId},
-                    #{userNo},
-                    #{userIdList[${i}]}, 
-                    #{appPeriodStr},
-                    #{appPeriodEnd},
-                    #{eventPeriodStr},
-                    #{eventPeriodEnd},
-                    #{timeSegment},
-                    #{date}
-                )
-            </foreach>
+        ) VALUES
+        <foreach collection="insertList" item="item" separator=",">
+            (
+                #{campaignId},
+                #{item.userNo},    #{item.userId},    #{eventPeriodStr}, 
+                #{eventPeriodEnd},
+                #{eventPeriodStr},
+                #{eventPeriodEnd},
+                #{timeSegment},
+                #{item.applyDate}  )
         </foreach>
     </insert>
 
@@ -664,5 +755,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </foreach>
         )
     </update>
+
+    <select id="countApplicants" resultType="int">
+        SELECT count(DISTINCT (user_id)) count 
+        FROM user_campaign 
+        WHERE CAMPAIGN_ID = 135
+        AND is_deleted = 'N'
+    </select>
+
+    <update id="updateLeadApply">
+        UPDATE user_campaign
+        SET lead_apply = #{leadApply}
+        WHERE is_leader = 'Y'
+    </update>
+
+    <update id="updateIsActive">
+        UPDATE campaign
+        SET is_active = #{isActive}
+        WHERE campaign_id = #{campaignId}
+    </update>
+
+    <select id="applyDateInfo" resultType="UserCampaignVO">
+        SELECT apply_date FROM
+        user_campaign
+        WHERE campaign_id = #{campaignId}
+            AND apply_date = #{applyDate}
+            AND user_no = #{userNo}
+            AND time_segment = #{timeSegment}
+        group by apply_date
+    </select>
 
 </mapper>

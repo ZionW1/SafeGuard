@@ -43,4 +43,6 @@ public interface UserService {
 
     public List<UserVO> userInfoList(Long campaignId) throws Exception;
 
+    public List<UserVO> userInfoDate(Long campaignId, String applyDate) throws Exception;
+
 }

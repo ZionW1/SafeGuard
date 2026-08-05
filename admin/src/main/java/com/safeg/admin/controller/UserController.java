@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 @Slf4j
 public class UserController {
-    
+
     @Autowired
     UserService userService;
 
@@ -82,14 +82,14 @@ public class UserController {
                     "수행", "03",
                     "인솔자", "04"
                 );
-                
+
                 // 일치하는 한글 키워드가 있으면 코드값으로 변경, 없으면 원본 유지
                 String codeValue = typeMap.get(option.getKeyword());
                 if (codeValue != null) {
                     option.setKeyword(codeValue);
                 }
             }
-            
+
             List<UserVO> userList = userService.userList(option, page); // 해시된 키워드로 DB 조회
             if(userList != null){
                 List<UserVO> userAddressList = userService.userAddressList();
@@ -120,7 +120,7 @@ public class UserController {
         log.info("DEBUG: nickName value before passing to template: [{}]", userSelect.getNickname());
 
         List<FilesVO> profileImage = fileService.userImageFile(id);
-        
+
         String rawPhone = userSelect.getPhoneNum(); // ex: "01012345678"
         if (rawPhone != null) {
             // 10자리, 11자리 모두 자동으로 하이픈을 찌르는 정규식 적용
@@ -133,27 +133,28 @@ public class UserController {
         String rrn = "";
         // 1. 먼저 null 및 빈값 체크를 수행하여 안전성 확보
         if (ResidentNum != null && !ResidentNum.trim().isEmpty()) {
-            try { 
+            try {
                 // 2. 먼저 암호화된 주민번호를 평문(순수 숫자)으로 복호화
-                String decryptRrn = EncryptionUtil.decrypt(ResidentNum); 
-                
+                String decryptRrn = EncryptionUtil.decrypt(ResidentNum);
+
                 // 3. 복호화된 결과물에서 숫자만 추출
                 rrn = decryptRrn.replaceAll("[^0-9]", "");
-                
+
                 // 4. 정상적으로 13자리라면 6글자 뒤에 "-" 삽입
                 rrn = rrn.substring(0, 6) + "-" + rrn.substring(6);
                 String rrnSubstring = rrn.substring(8); // ""
                 userSelect.setResidentNum(rrn.substring(0, 8) + rrnSubstring.replaceAll(".", "*"));
-            } 
-            catch (Exception e) { 
+                // userSelect.setResidentNum(rrn);
+            }
+            catch (Exception e) {
                 log.error("주민등록번호 복호화 실패: {}", ResidentNum, e);
-                rrn = "복호화 실패"; 
+                rrn = "복호화 실패";
             }
         } else {
             // 5. 원래 값이 null이거나 비어있었다면 공백 처리
             rrn = "";
         }
-        
+
 
         log.info("profileImage.size() : " + profileImage.size());
         log.info("profileImage : " + profileImage.toString());
@@ -163,7 +164,7 @@ public class UserController {
                     model.addAttribute("profile", "N");
                     model.addAttribute("identification", "N");
                     model.addAttribute("certificate", "N");
-                } else if(profileImage.size() == 1) { 
+                } else if(profileImage.size() == 1) {
                     if("profile".equals(profileImage.get(0).getTargetType())) {
                         model.addAttribute("profile", "Y");
                         model.addAttribute("identification", "N");
@@ -196,7 +197,7 @@ public class UserController {
                     model.addAttribute("profile", "Y");
                     model.addAttribute("identification", "Y");
                     model.addAttribute("certificate", "Y");
-                } 
+                }
                     // if(i == 0 || i == 1 || i == 2 && profileImage.get(i).getTargetType() != null){
                     //     model.addAttribute("" + profileImage.get(i).getTargetType(), "Y");
                     // }
@@ -220,7 +221,7 @@ public class UserController {
                     for(int i = 0; i < profileImage.size(); i++) {
 
             }
-        
+
         model.addAttribute("userSelect", userSelect);
         if(file != null){
             model.addAttribute("file", file);
@@ -228,7 +229,7 @@ public class UserController {
         return "user/user02";
     }
     @PostMapping("/user03")
-    public String user03(@AuthenticationPrincipal CustomUser authUser, Model model, UserVO userVO, 
+    public String user03(@AuthenticationPrincipal CustomUser authUser, Model model, UserVO userVO,
         @RequestParam(value="keyword", required=false) String keyword,
         @RequestParam(value="code", required=false, defaultValue="0") int code,
         @RequestParam(value="orderCode", required=false, defaultValue="0") int orderCode,
@@ -249,10 +250,14 @@ public class UserController {
         log.info("getReferrerNo :::::::::: " + userVO.getReferrerNo());
         log.info("getReferrerId :::::::::: " + userVO.getReferrerId());
 
+        if ("on".equals(userVO.getPrivAgree())) {
+            userVO.setPrivAgree("Y");
+        }
+
         int result = userService.userInfoUpdate(userVO);
 
         FilesVO file = fileService.select(userId);
-        
+
         if(file != null){
             model.addAttribute("file", file);
         }
@@ -265,14 +270,14 @@ public class UserController {
         }
         return "redirect:/user01?page=" + page ;
     }
-    
+
     @PostMapping("/user04")
     public String user04(@RequestParam("id") String id) throws Exception {
         log.info(":::::::::: remove :::::::::: " + id);
         log.info(id);
 
         int result = userService.userRemove(id);
-        
+
         if(result > 0){
             log.info("user04 userRemove success");
         } else {
@@ -407,7 +412,7 @@ public class UserController {
         }
         return result; // 이 데이터가 다시 JS의 'result'로 돌아갑니다.
     }
-    
+
     @PostMapping("/updateUserInfo")
     @ResponseBody
     public Map<String, Object> updateUserInfo(UserVO userVO) throws Exception{
@@ -428,7 +433,7 @@ public class UserController {
             resultMap.put("message", "사용자 변경 중 오류가 발생했습니다");
             return resultMap;
         }
-        
+
         log.info("::::: 주민등록번호 암호화 성공 ::::: " + userVO.getResidentNum());
         try {
             int result = userService.updateUserInfo(userVO);
@@ -438,7 +443,7 @@ public class UserController {
             } else {
                 resultMap.put("success", false);
             }
-            
+
         } catch (Exception e) {
             resultMap.put("failed", false);
         }

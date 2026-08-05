@@ -26,10 +26,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="leaderPhone" column="leader_phone"
             typeHandler="com.safeg.user.util.CryptoTypeHandler" />
     </resultMap>
+
+    <resultMap id="campaignMap" type="CampaignVO">
+        <id property="campaignId" column="campaign_id" />
+        
+        <result property="companyNm" column="company_Nm" />
+        <result property="companyPh" column="company_Ph" />
+        <result property="campaignTitle" column="campaign_Title" />
+        <result property="recruitmentNum" column="recruitment_Num" />
+        <result property="applicantsNum" column="applicants_Num" />
+        <result property="campaignPay" column="campaign_pay" />
+        <result property="timeSegment" column="time_segment" />
+        <result property="workHour" column="work_hour" />
+        <result property="placeAddr" column="place_Addr" />
+        <result property="mission" column="mission" />
+        <result property="typeCode" column="type_code" />
+        <result property="typeNm" column="type_nm" />
+        <result property="leaderCode" column="leader_code" />
+        <result property="appPeriodStr" column="app_period_str" />
+        <result property="appPeriodEnd" column="app_period_end" />
+        <result property="eventPeriodStr" column="event_period_str" />
+        <result property="eventPeriodEnd" column="event_period_end" />
+        <result property="resultDate" column="result_date" />
+
+        <collection property="leaderList" ofType="CampLeaderVO">
+            <result property="leaderNm" column="user_nm" />
+            <result property="leaderPh" column="phone_Num" />
+            <result property="leaderId" column="user_id" />
+            <result property="leaderNo" column="user_no" />
+            <result property="leaderPay" column="leader_pay" />
+            <result property="leaderPoint" column="leader_point" />
+        </collection>
+    </resultMap>
     
-    <select id="campaignSelect" resultType="campaignVO">
+    <select id="campaignSelect" resultMap="campaignMap">
         select 
-            campaign_id,
+            c.campaign_id,
             company_Nm,
             company_Ph,
             campaign_Title,
@@ -48,7 +80,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 ELSE 'X'
             END) AS type_nm,
             leader_code,
-            u.user_nm,
+            <!-- u.user_nm, -->
             app_period_str,
             app_period_end,
             event_period_str,
@@ -57,13 +89,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.account_number,
             u.bank_nm,
             u.depositor,
-            phone_hash
+            u.phone_hash,
+            cl.user_no,
+            cl.user_id,
+            cl.user_nm
         from campaign c
+        left outer join camp_leader cl
+        on c.campaign_id = cl.campaign_id
         left outer join user u
-        on leader_code = id
-        where campaign_id = #{id}
+        on cl.user_no = u.id
+        where c.campaign_id = #{id}
         and c.is_deleted = 'N'
     </select>
+
     <select id="appliedCampaign" resultType="UserCampaignVO">
         SELECT
             campaign_id,
@@ -140,7 +178,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE campaign_id = #{id}
     </update>
 
-    <select id="closedCampaign" resultMap="closedCampaignMap">
+    <select id="closedCampaign" resultMap="campaignMap">
         <![CDATA[
         SELECT 
             c.campaign_id, 
@@ -161,15 +199,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             event_Period_str,
             event_Period_End,
             campaign_pay,
-            t.user_nm,
-            t.phone_num as leader_phone,
-            t.user_id,
-            t.id
+            cl.user_nm
             FROM campaign c
         LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN user t
-        on c.leader_code = t.id
+        LEFT OUTER JOIN camp_leader cl
+        on c.campaign_id = cl.campaign_id
         Where f.is_deleted = 'N'
         AND f.target_type = 'campaign'
         AND c.is_active = 'N'

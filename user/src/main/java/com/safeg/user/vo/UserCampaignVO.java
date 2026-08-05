@@ -1,6 +1,7 @@
 package com.safeg.user.vo;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -22,8 +23,10 @@ public class UserCampaignVO {
     private String invitation_url;
     private String isSelected;
     private Long campaignId;
+    private List<Long> userNos;
     private Long userNo;
     private String userId;
+    private String statusCode;
     private String status;
     private int extendPeriod;
     private boolean eventActive;
@@ -65,7 +68,7 @@ public class UserCampaignVO {
     private Long pointId;
     private int amount;
     private String pointType;
-    private Long sourceId;
+    private Long sourceNo;
     private LocalDate missionDate;
 
     private int totalAmount;

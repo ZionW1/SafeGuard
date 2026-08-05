@@ -20,8 +20,8 @@ public class CampaignVO {
     private Long id;
     private String campaignTitle;
     private String statusName;
-    private int applicantsNum;
-    private int recruitmentNum;
+    private Integer applicantsNum;
+    private Integer recruitmentNum;
     private List<String> userNos;
     private List<String> userIds;
     private Long campaignId;
@@ -58,10 +58,19 @@ public class CampaignVO {
     private int campaignPay;
     private int leaderPoint;
     private int leaderPay;
-    
+    private String leaderPays;
+
     private String applyDateS;
 
+    private List<CampLeaderVO> leaderList;
 
+//     // Getter, Setter
+//     public Long getCampaignId() { return campaignId; }
+//     public void setCampaignId(Long campaignId) { this.campaignId = campaignId; }
+    
+//     public List<CampaignLeaderVO> getLeaderList() { return leaderList; }
+//     public void setLeaderList(List<CampaignLeaderVO> leaderList) { this.leaderList = leaderList; }
+// }
 
 
     private String userNm;

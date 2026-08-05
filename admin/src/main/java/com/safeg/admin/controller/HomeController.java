@@ -82,6 +82,7 @@ public class HomeController {
         if(authUser != null){
             UserVO user = authUser.getUserVo();
             model.addAttribute("user", user);
+            return "campaign/campaign01";
         }
         // return "/admin/list";
         return "index";

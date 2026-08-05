@@ -14,10 +14,11 @@
         .textalign_left {
             text-align: left;
         }
-        
+
     </style>
     <title>Document</title>
 </head>
+<body>
     <main layout:fragment="content">
         <div class="main-side-content">
             <div class="container">
@@ -26,7 +27,7 @@
             <div class="mypage_title">
                 <span>포인트 내역</span>
             </div>
-            
+
             <div class="table_container">
                 <div class="content-area">
                     <!-- <h2>토탈 포인트 : <span th:text="${totalPoint}">0</span></h2> -->
@@ -36,7 +37,7 @@
                     <span> / 만근 포인트 : </span><span th:if="${attendAmount != 0}" th:text="${attendAmount != null ? #numbers.formatInteger(attendAmount, 3, 'COMMA') : 0}">0</span><span th:unless="${attendAmount != 0}">0</span>
                 </div>
                 <div class="tableTitle">
-                    완료된 행사 포인트 : 
+                    완료된 행사 포인트 :
                     <span th:if="${workAmount != 0}" th:text="${workAmount != null ? #numbers.formatInteger(workAmount, 3, 'COMMA') : 0}">0</span>
                     <span th:unless="${workAmount != 0}">0</span>
                 </div>
@@ -67,25 +68,28 @@
                         </th:block>
                     </tbody>
                 </table>
-            
+
                 <div class="tableTitle">
-                    추천인 포인트 : 
+                    추천인 포인트 :
                     <span th:if="${referrerAmount != 0}" th:text="${referrerAmount != null ? #numbers.formatInteger(referrerAmount, 3, 'COMMA') : 0}">0</span>
                     <span th:unless="${referrerAmount != 0}">0</span>
                 </div>
-            
+
                 <table class="point_List" style="border: 1px;">
                     <colgroup>
-                        <col style="width: 50px;"></col>
-                        <col style="width: 150px;"></col>
-                        <col style="width: 50px;"></col>
+                        <col style="width: 5%;"></col>
+                        <col style="width: 15%;"></col>
+                        <col style="width: 65%;"></col>
+                        <col style="width: 10%"></col>
+                        <col style="width: 5%;"></col>
                     </colgroup>
                     <thead>
                         <tr>
                             <th>번호</th>
                             <th>이름</th>
+                            <th>날짜</th>
                             <th>포인트</th>
-                            <!-- <th>횟수</th> -->
+                            <th>횟수</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,12 +97,14 @@
                             <tr th:each="giver, stat : ${referrerList}">
                                 <td th:text="${stat.index + 1}"></td>
                                 <td th:text="${giver.userNm}"></td>
+                                <td th:text="${giver.missionDate != null ? giver.missionDate : '날짜 없음'}">0</td>
                                 <td th:text="${giver.amount != null ? #numbers.formatInteger(giver.amount, 3, 'COMMA') : 0}">0</td>
+                                <td th:text="${giver.pointCnt != null ? giver.pointCnt: 0}">0</td>
                             </tr>
                         </th:block>
                         <th:block th:unless="${referrerList != null and !referrerList.isEmpty()}">
                             <tr>
-                                <td colspan="4" style="text-align:center;">추천인 포인트가 없습니다.</td>
+                                <td colspan="5" style="text-align:center;">추천인 포인트가 없습니다.</td>
                             </tr>
                         </th:block>
                     </tbody>
@@ -106,11 +112,11 @@
                 <th:block th:if="${authId == '03'}">
                     <!-- <th:block th:if="${leaderList != null and !leaderList.isEmpty()}"> -->
                         <div class="tableTitle">
-                            인솔자 포인트 : 
+                            인솔자 포인트 :
                             <span th:if="${leaderAmount != 0}" th:text="${leaderAmount != null ? #numbers.formatInteger(leaderAmount, 3, 'COMMA') : 0}">0</span>
                             <span th:unless="${leaderAmount != 0}">0</span>
                         </div>
-                    
+
                         <table class="point_List" style="border:1px solid #000; border-collapse: collapse;">
                             <colgroup>
                                 <col style="width: 10%;"></col>
@@ -147,7 +153,7 @@
                             </tbody>
                         </table>
                     <!-- </th:block> -->
-                    
+
                     <!-- <th:block th:unless="${(leaderList != null and !leaderList.isEmpty())}">
                         <div class="tableTitle">
                             인솔자 포인트 : 0
@@ -171,7 +177,7 @@
 
                 <!-- <th:block th:if="${overPayList != null and !overPayList.isEmpty()}"> -->
                     <div class="tableTitle">
-                        추가 지출 포인트 : 
+                        추가 지출 포인트 :
                         <span th:if="${overPayAmount != 0}" th:text="${overPayAmount != null ? #numbers.formatInteger(overPayAmount, 3, 'COMMA') : 0}">0</span>
                         <span th:unless="${overPayAmount != 0}">0</span>
                     </div>
@@ -217,4 +223,5 @@
     <th:block layout:fragment="script">
         <script src="/js/profile-upload.js"></script>
     </th:block>
+</body>
 </html>

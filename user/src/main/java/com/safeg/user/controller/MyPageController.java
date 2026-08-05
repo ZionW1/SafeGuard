@@ -9,9 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -31,7 +29,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safeg.user.service.FileService;
@@ -72,7 +69,7 @@ public class MyPageController {
     public String getUserPage(Model model, HttpServletRequest request) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserId = authentication.getName(); // 현재 로그인된 사용자의 ID
-        
+
         // ⭐ CustomUser로 캐스팅하여 id 값 가져오기 ⭐
         if (authentication.getPrincipal() instanceof CustomUser) { // CustomUser 클래스로 확인
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
@@ -261,7 +258,7 @@ public class MyPageController {
 
                         // 암호화된 텍스트(Base64 형태)를 다시 VO에 저장
                         userVO.setResidentNum(encryptedData);
-                        
+
                         log.info("::::: 주민등록번호 암호화 성공 :::::");
                     } catch (Exception e) {
                         log.error("::::: 주민등록번호 암호화 중 오류 발생 :::::", e);
@@ -304,7 +301,7 @@ public class MyPageController {
     //         Principal principal) throws Exception { // ⭐ 이렇게 Principal 객체를 받아서 userId를 가져올 수 있어
     //     log.info(":::::::::: getCalendarEvents 호출 :::::::::: + ");
 
-    //     String userId = principal.getName(); 
+    //     String userId = principal.getName();
     //     log.info("현재 로그인한 사용자 ID: " + userId);
     //     log.info(userId + "님의 " + start + " 부터 " + end + " 까지의 캘린더 이벤트를 조회합니다.");
     //     log.info(":::::::::: getCalendarEvents 호출 - userId: {}, start: {}, end: {} ::::::::::", userId, start, end);
@@ -352,12 +349,11 @@ public class MyPageController {
             @AuthenticationPrincipal CustomUser authUser) throws Exception { // ⭐ 이렇게 Principal 객체를 받아서 userId를 가져올 수 있어
         log.info(":::::::::: getCalendarEvents 호출 :::::::::: + ");
 
-        String userId = principal.getName(); 
+        String userId = principal.getName();
         String userNo = "";
         log.info("현재 로그인한 사용자 ID: " + userId);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        int result = 0;
 
         if(authentication.getPrincipal() instanceof CustomUser){
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
@@ -383,7 +379,7 @@ public class MyPageController {
             String displayTitle; // 화면에 보여줄 제목
             String color;        // 이벤트 색상
             String applyDate = eventVO.getApplyDate();
-            
+
             switch (status) {
                 case "0": // 'APPLIED' 상태일 때
                     displayTitle = "신청 중";
@@ -442,7 +438,7 @@ public class MyPageController {
             // return new CalendarEventVO(eventVO.getStart(), eventVO.getEnd(), displayTitle, color, eventVO.getStatus());
 
         })
-    
+
         .collect(Collectors.toList());
 
         log.info("events : " + events);
@@ -473,17 +469,17 @@ public class MyPageController {
 
         // CustomUser customUser = (CustomUser) authentication.getPrincipal();
         // Long userIdFromDb = customUser.getId(); // ⭐ 이 값이 실제 PK (id)
-        
+
         // // [중요!] 넘어온 객체에 현재 로그인한 사람의 ID를 세팅합니다.
-        // userVO.setId(userIdFromDb); 
-        
+        // userVO.setId(userIdFromDb);
+
         // // 만약 userId(아이디 문자열)도 필요하다면 세팅
         // userVO.setUserId(customUser.getUsername());
-    
+
         // try {
         //     // 이제 userVO 안에는 수정할 데이터와 'id=48' 같은 기준값이 모두 들어있습니다.
         //     result = myPageService.updateInfo(userVO);
-    
+
         //     if(result > 0) {
         //         response.put("success", true);
         //         response.put("message", "사용자의 정보가 성공적으로 변경되었습니다.");
@@ -492,18 +488,18 @@ public class MyPageController {
         //         response.put("success", false);
         //         response.put("message", "수정된 정보가 없습니다. ID를 확인해주세요.");
         //     }
-        
+
 
         log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + authUser.getUserVo().getUserId());
         log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + userVO);
-        log.info(":::::::::: userVO.getFullAddress() :::::::::: + " + userVO.getFullAddress());        
+        log.info(":::::::::: userVO.getFullAddress() :::::::::: + " + userVO.getFullAddress());
         Map<String, Object> response = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int result = 0;
 
         if(authentication.getPrincipal() instanceof CustomUser){
-            
-            
+
+
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
             Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
             String username = customUser.getUsername(); // 로그인 아이디 (userId)
@@ -518,12 +514,12 @@ public class MyPageController {
             //         "success", false,
             //         "message", "이미 가입된 휴대폰 번호입니다."
             //     );
-                
+
             //     return response1;
             // }
 
-            userVO.setId(userIdFromDb); 
-        
+            userVO.setId(userIdFromDb);
+
             // 만약 userId(아이디 문자열)도 필요하다면 세팅
             userVO.setUserId(customUser.getUsername());
             try {
@@ -533,7 +529,7 @@ public class MyPageController {
                 if (result > 0) {
                     // [여기에 추가!] 세션 정보 갱신 로직 시작
                     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                    
+
                     // customUser는 이미 위에서 선언하셨으므로 그대로 사용합니다.
                     // 주의: userVO에 담긴 최신 내용을 customUser 내부의 Vo에도 반영해줘야 합니다.
                     customUser.getUserVo().setPhoneNum(userVO.getPhoneNum());
@@ -545,8 +541,8 @@ public class MyPageController {
 
                     // 새로운 인증 객체 생성
                     Authentication newAuth = new UsernamePasswordAuthenticationToken(
-                        customUser, 
-                        auth.getCredentials(), 
+                        customUser,
+                        auth.getCredentials(),
                         auth.getAuthorities()
                     );
 
@@ -556,7 +552,7 @@ public class MyPageController {
 
                     response.put("success", true);
                     response.put("message", "사용자의 정보가 성공적으로 변경되었습니다.");
-                    
+
                 } else {
                     // 쿼리는 실행됐으나 수정된 행이 0개인 경우
                     response.put("success", false);
@@ -583,7 +579,7 @@ public class MyPageController {
         log.info(":::::::::: uploadImage :::::::::: + " + userVO);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof CustomUser) { // CustomUser 클래스로 확인
-            boolean result = myPageService.uploadImage(userVO);
+            myPageService.uploadImage(userVO);
         }
 
         // if (!userVO.isPasswordConfirmed()) {
@@ -638,7 +634,7 @@ public class MyPageController {
 
             log.info("pointList : id : " + id);
             log.info("pointList : username : " + username);
-            
+
             model.addAttribute("userId", id);
             model.addAttribute("username", username);
             model.addAttribute("file", file);
@@ -700,10 +696,10 @@ public class MyPageController {
 
             log.info("totalPoint: " + totalPoint);
             LocalDate today = LocalDate.now();
-            
+
             String todayStr = today.format(DateTimeFormatter.ofPattern("yyyy-MM"));
             log.info("todayStr: " + todayStr);
-            
+
             model.addAttribute("today", todayStr);
 
             model.addAttribute("pointList", pointList != null ? pointList : Collections.emptyList());
@@ -725,11 +721,11 @@ public class MyPageController {
     @GetMapping("/pointList")
     public String pointList(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception {
         // 1. 사용자 정보 확인 (SecurityContext 직접 접근 대신 매개변수 활용 권장)
-        if (authUser == null) return "redirect:/user01"; 
-        
+        if (authUser == null) return "redirect:/user01";
+
         Long userNo = authUser.getId();
         String username = authUser.getUsername();
-        
+
         log.info("pointList : userNo : " + userNo);
         log.info("pointList : username : " + username);
         // 프로필 이미지 및 기본 정보 설정
@@ -739,32 +735,32 @@ public class MyPageController {
         model.addAttribute("file", file);
         model.addAttribute("id", userNo);
         model.addAttribute("currentURI", request.getRequestURI());
-    
+
         // 2. 날짜 설정
         String targetMonth = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
-    
+
         // 3. 포인트 리스트 및 금액 조회 (기본 3종)
         List<PointHistoryVO> referrerList = myPageService.referrerList(userNo, targetMonth);
         List<PointHistoryVO> attendList = myPageService.attendList(userNo, targetMonth);
         List<PointHistoryVO> workList = myPageService.workList(userNo, targetMonth);
         List<PointHistoryVO> overPayList = myPageService.overPayList(userNo, targetMonth);
-
+        log.info("workList : " + workList);
         // 금액 문자열을 안전하게 정수로 변환 (null이면 0)
         int rAmt = parseAmount(myPageService.referrerAmount(userNo, targetMonth));
         int aAmt = parseAmount(myPageService.attendAmount(userNo, targetMonth));
         int wAmt = parseAmount(myPageService.workAmount(userNo, targetMonth));
         int lAmt = 0; // 리더 금액 초기화
         int opAmt = parseAmount(myPageService.overPayAmount(userNo, targetMonth));
-        
+
         // 4. 권한(authId)에 따른 추가 로직 처리
         String userAuth = myPageService.getUserAuth(userNo);
         if (userAuth != null && !userAuth.isEmpty()) {
             model.addAttribute("authId", userAuth);
-    
+
             if ("03".equals(userAuth)) {
                 List<PointHistoryVO> leaderList = myPageService.leaderList(userNo, targetMonth);
                 // lAmt = parseAmount(myPageService.leaderAmount(userNo, targetMonth));
-    
+
                 lAmt = leaderList.stream().mapToInt(PointHistoryVO::getAmount).sum();
                 log.info("totalAmount : " + lAmt);
 
@@ -773,7 +769,7 @@ public class MyPageController {
                 // model.addAttribute("leaderAmount", lAmt);
             }
         }
-    
+
         // 5. 공통 Model 설정
         model.addAttribute("referrerList", referrerList != null ? referrerList : Collections.emptyList());
         model.addAttribute("attendList", attendList != null ? attendList : Collections.emptyList());
@@ -785,14 +781,14 @@ public class MyPageController {
         model.addAttribute("workAmount", wAmt);
         model.addAttribute("overPayAmount", opAmt);
 
-        
-        
+
+
         // 최종 합계 계산 (리더 금액 포함)
         model.addAttribute("totalPoint", rAmt + wAmt + lAmt + opAmt);
-    
+
         return "mypage/pointList";
     }
-    
+
     /**
      * String 금액을 안전하게 int로 변환하는 유틸리티 메서드
      */
@@ -825,7 +821,7 @@ public class MyPageController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
     }
-    
+
     // @GetMapping("guardApply")
     // public String guardApply(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception {
     @GetMapping("/guardApply")
@@ -867,7 +863,7 @@ public class MyPageController {
             String username = customUser.getUsername(); // 로그인 아이디 (userId)
             UserVO user = authUser.getUserVo();
             FilesVO selectProfile = fileService.getMypageImage(String.valueOf(userIdFromDb), "profile");
-            
+
             int pointFull = myPageService.pointFull(userIdFromDb);
 
             model.addAttribute("currentURI", request.getRequestURI());
@@ -879,5 +875,5 @@ public class MyPageController {
         }
         return "mypage/mypageMenu";
     }
-    
+
 }

@@ -35,7 +35,6 @@
                 </div>
                 <!-- <input type="text" name="keyword"  th:value="${param.keyword}"> -->
                 <input class="optionSubmit" type="submit" value="검색">
-                
             </form>
             <table class="info_table campaign_Table" border="1">
                 <colgroup>
@@ -64,7 +63,7 @@
                 <tbody>
                     <th:block th:if="${userList.isEmpty()}">
                         <tr>
-                            <td colspan="9" align="center">조회된 데이터가 없습니다.</td>
+                            <td colspan="10" align="center">조회된 데이터가 없습니다.</td>
                         </tr>
                     </th:block>
                     <th:block th:each="user, stat: ${userList}">
@@ -128,6 +127,7 @@
                 // }
             }
         };
+
         function leaderUpdate(){
             console.log("${userList[0].createdAt}");
             if(!confirm('이 사용자를 인솔자로 변경하시겠습니까?')){

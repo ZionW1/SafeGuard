@@ -40,7 +40,7 @@
         <result property="savedName" column="saved_name" />
         <collection property="authList" resultMap="authMap"></collection>
     </resultMap>
-        
+
     <resultMap type="UserAuth" id="authMap">
         <result property="no" column="no" />
         <result property="id" column="id" />
@@ -51,7 +51,7 @@
 
     <!-- 회원 조회 - id -->
     <select id="select" resultMap="userMap">
-        SELECT 
+        SELECT
             u.id,
             u.user_id,
             u.password,
@@ -77,9 +77,9 @@
                 ELSE 'X'
             END) AS auth,
             f.saved_name
-        FROM 
-            user u 
-        LEFT OUTER JOIN 
+        FROM
+            user u
+        LEFT OUTER JOIN
             user_address ua
         ON u.id = ua.user_id
 		and ua.is_deleted ='N'
@@ -104,7 +104,7 @@
             auth_id, role,
             guard_type
         )
-        VALUES ( 
+        VALUES (
             #{userId},
             #{userNm},
             #{email, typeHandler=com.safeg.user.util.CryptoTypeHandler},
@@ -125,7 +125,7 @@
     </insert>
 
     <update id="updateProfile">
-        UPDATE user set 
+        UPDATE user set
             nickname = #{nickname},
             email = #{email},
             phone_num = #{phoneNum},
@@ -136,7 +136,7 @@
         WHERE id= #{id}
     </update>
 
-    
+
 
     <select id="totalUser" resultType="int">
         SELECT COUNT(*) FROM user WHERE role = 'USER'
@@ -154,8 +154,8 @@
         FROM
             user u
         LEFT OUTER JOIN
-            user_campaign uc 
-        ON 
+            user_campaign uc
+        ON
             u.user_id = uc.user_id
         AND
             uc.status in ('2','9')
@@ -163,6 +163,8 @@
             u.role in ('USER', 'LEADER')
         AND
             uc.is_deleted = 'N'
+        AND
+apply_date LIKE CONCAT('2026-07', '%')
         GROUP BY
             u.id, u.user_nm, u.email
         ORDER BY
@@ -176,66 +178,65 @@
             u.id AS user_id,
             u.user_nm,
             u.user_id AS id,
-            SUM(
-                CASE 
-                    -- 카테고리가 'LEADER_EXTRA'일 때만 서브쿼리에서 가져온 실시간 인원수(active_applicants)를 곱함
-                    WHEN ph.category = 'LEADER_EXTRA' THEN COALESCE(ph.amount, 0) * COALESCE(uc_count.active_applicants, 0)
-                    ELSE COALESCE(ph.amount, 0)
-                END
-            ) AS amount,
-            SUM(
-                CASE 
-                    WHEN ph.category = 'LEADER_EXTRA' THEN COALESCE(ph.amount, 0) * COALESCE(uc_count.active_applicants, 0)
-                    ELSE 0 
-                END
-            ) AS leader,
+            SUM(amount) AS amount,
             u.role
         FROM
             point_history ph
         LEFT OUTER JOIN
-            user u ON ph.user_id = u.id AND ph.is_deleted = 'N'
+            user u ON ph.user_no = u.id AND ph.is_deleted = 'N'
         LEFT OUTER JOIN
-            campaign c ON ph.campaign_id = c.CAMPAIGN_ID    
+            campaign c ON ph.campaign_id = c.CAMPAIGN_ID
         /*  실시간 인원수를 계산하는 서브쿼리 추가 */
+        -- 서브쿼리 부분 수정
         LEFT OUTER JOIN (
-            SELECT 
-                campaign_id, 
-                COUNT(*) AS active_applicants
-            FROM 
+            SELECT
+                campaign_id,
+                DATE(apply_date) AS work_date,       -- 💥 출근한 '날짜'를 추출
+                COUNT(DISTINCT user_id) AS active_applicants -- 당일 순수 출근 인원수
+            FROM
                 user_campaign
-            WHERE 
-                status = '2' -- 상태가 '2'인 인원만 카운트
-                AND is_deleted = 'N'
-            GROUP BY 
-                campaign_id
-        ) uc_count ON ph.campaign_id = uc_count.campaign_id
+            WHERE
+                status = '2' AND is_deleted = 'N'
+            GROUP BY
+                campaign_id, DATE(apply_date)        -- 💥 캠페인 번호와 날짜별로 그룹을 묶음
+        ) uc_count
+        ON ph.campaign_id = uc_count.campaign_id
+        AND ph.mission_date = uc_count.work_date    -- 💥 [중요] 포인트 날짜와 출근 날짜가 일치하는 것만 매칭!
         WHERE
             u.role IN ('USER', 'LEADER')
         AND
             ph.is_deleted = 'N'
+        AND
+        ph.mission_date LIKE CONCAT('2026-07', '%')
+            <!-- ph.mission_date LIKE CONCAT(DATE_FORMAT(now(), '%Y-%m'), '%') -->
         GROUP BY
             u.id, u.user_nm, u.user_id, u.role
-        ORDER BY 
+        ORDER BY
             amount DESC, u.id ASC
         LIMIT 10
     </select>
-    
+
     <select id="getReferrerNo" resultType="Long">
-        SELECT 
+        SELECT
             id
-        FROM 
-            user 
+        FROM
+            user
         WHERE
             user_id = #{referrerId}
     </select>
 
-    <select id="getReferrerNoById" resultType="Long">
-        SELECT 
-            referrer_no
-        FROM 
-            user 
+    <select id="getReferrerNoById" resultType="UserVO">
+        SELECT
+            me.id           AS user_no,
+            me.user_id      AS user_id,
+            me.referrer_no  AS referrer_no,      -- 내가 등록한 추천인 회원번호
+            ref.user_id     AS referrer_id  -- 추천인의 아이디!
+        FROM
+            user me
+        LEFT OUTER JOIN user ref
+            ON me.referrer_no = ref.id
         WHERE
-            id = #{userNo}
+            me.id = #{userNo};
     </select>
 
     <select id="phoneDuplicate" resultType="boolean">
@@ -244,18 +245,18 @@
         FROM user
         ]]>
         WHERE phone_hash = #{phoneHash}
-        
+
         <if test="userId != null and userId != ''">
             AND user_id != #{userId}
         </if>
-        
-    <!-- SELECT 
+
+    <!-- SELECT
     CONCAT(LEFT(phone, 3), '-****-', RIGHT(phone, 4)) AS masked_phone
 FROM member; -->
     </select>
 
     <select id="findUserId" resultType="String">
-        SELECT 
+        SELECT
             <!-- CONCAT(LEFT(user_id, 3), REPEAT('*', CHAR_LENGTH(user_id) - 3)) AS masked_id -->
             user_id
         FROM user

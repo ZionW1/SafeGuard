@@ -38,7 +38,7 @@
             line-height: 1.3;
             /* 두 줄 말줄임 설정 (가장 추천하는 모바일 방식) */
             display: -webkit-box;
-            -webkit-line-clamp: 2;    /* 보여줄 줄 수 (2줄) */
+            /* -webkit-line-clamp: 2;    보여줄 줄 수 (2줄) */
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -56,7 +56,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        /* -webkit-line-clamp: 2; */
         -webkit-box-orient: vertical;
         }
         
@@ -313,8 +313,7 @@
                         <div class="campaign-info-box">
                             <div class="campaign-tags">
                                 <span class="tag leader">
-                                    <span th:text="|${campaign.userNm}|"></span>
-                                    <span class="sub-text">인솔자</span>
+                                    <span th:text="${#lists.isEmpty(campaign.leaderList) ? '인솔자 없음' : campaign.leaderList[0].leaderNm + ' 인솔자'}"></span>
                                 </span> 
                                 <span class="card-badge"
                                 th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
@@ -343,8 +342,7 @@
                         <div class="campaign-info-box">
                             <div class="campaign-tags">
                                 <span class="tag leader">
-                                    <span th:text="|${campaign.userNm}|"></span>
-                                    <span class="sub-text">인솔자</span>
+                                    <span th:text="${#lists.isEmpty(campaign.leaderList) ? '인솔자 없음' : campaign.leaderList[0].leaderNm}"></span>
                                 </span> 
                                 <span class="card-badge" th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}" th:data-campaign-id="${campaign.campaignId}"></span>
                             </div>

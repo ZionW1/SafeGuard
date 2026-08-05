@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.safeg.user.vo.PointHistoryVO;
 import com.safeg.user.vo.UserAuth;
+import com.safeg.user.vo.UserCampaignVO;
 import com.safeg.user.vo.UserVO;
 import com.safeg.user.vo.Users;
 
@@ -39,7 +40,7 @@ public interface UserMapper {
 
     public Long getReferrerNo(UserVO userVo) throws Exception;
 
-    public Long getReferrerNoById(Long userNo) throws Exception;
+    public UserVO getReferrerNoById(Long userNo) throws Exception;
 
     public boolean phoneDuplicate(@Param("phoneHash") String phoneNumber, @Param("userId") String userId) throws Exception;
 

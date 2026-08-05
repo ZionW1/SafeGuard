@@ -173,6 +173,7 @@ public class AligoSmsService {
     @Async("taskExecutor")
     public CompletableFuture<Boolean> registrationAsync(
             String receiver, String type, String eventName, int count, String appPeriod, String eventPeriod, String link, String leaderPhone) {
+        System.out.println("registrationAsync");
         try {
             // 실제 알림톡 발송 로직 호출
             boolean result = registrationTalk(receiver, type, eventName, count, appPeriod, eventPeriod, link, leaderPhone);
@@ -184,7 +185,8 @@ public class AligoSmsService {
     }
 
     private boolean registrationTalk(String receiver, String type, String eventName, int count, String appPeriod, String eventPeriod, String link, String leaderPhone) {
-        log.info("sendAlimtalk : receiver : " + receiver + " type : " + type + " eventName : " + eventName + " appPeriod : " + appPeriod + " eventPeriod : " + eventPeriod + " link : " + link + "leaderPhone : " +leaderPhone);
+        System.out.println("registrationTalk");
+        log.warn("sendAlimtalk : receiver : " + receiver + " type : " + type + " eventName : " + eventName + " appPeriod : " + appPeriod + " eventPeriod : " + eventPeriod + " link : " + link + "leaderPhone : " +leaderPhone);
         String url = "https://kakaoapi.aligo.in/akv10/alimtalk/send/";
         String buttonJson = "{\"button\": [{\"name\": \"채널 추가\", \"linkType\": \"AC\"}]}";
 
@@ -219,10 +221,10 @@ public class AligoSmsService {
             appPeriod,     // %s 모집기간
             eventPeriod,   // %s 행사기간
             link,          // %s 모집링크
-            leaderPhone     // %s 담당자연락처
+            sender     // %s 담당자연락처
         );
     
-        log.info("apiKey : " + apiKey + " userId : " + userId + " sender : " + sender + " message : " + message);
+        log.warn("apiKey : " + apiKey + " userId : " + userId + " sender : " + sender + " message : " + message);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

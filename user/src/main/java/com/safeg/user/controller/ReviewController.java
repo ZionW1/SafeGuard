@@ -64,22 +64,27 @@ public class ReviewController {
     public String reviewInsertPage(@AuthenticationPrincipal CustomUser authUser, @PathVariable("campaignId") Long campaignId, ReviewVO reviewVO, BindingResult bindingResult, Model model) throws Exception {
         log.info("리뷰 등록 페이지");
         // reviewService.reviewList(campaignId);
-        
+        log.info("authUser 존재 여부: {}", authUser != null);
+        if (authUser != null) {
+            log.info("authUser.getUsername() : " + authUser.getUsername());
+        } else {
+            log.info("authUser.getUsername() : 로그인 안 함 (GUEST)");
+        }
 
-        log.info("authUser.getUsername() : "+ authUser.getUsername());
+        // log.info("authUser.getUsername() : "+ authUser.getUsername());
         ReviewVO reviewInfo = reviewService.reviewInfo(campaignId);
         
 
         log.info("▶▶▶ reviewInfo 존재 여부: {}", reviewInfo != null);
-        if (reviewInfo != null) {
-            log.info("▶▶▶ 캠페인 인솔자 ID: {}", reviewInfo.getLeaderId());
-            log.info("▶▶▶ 현재 로그인한 유저 ID: {}", authUser != null ? authUser.getUsername() : "null");
-        }
+        // if (reviewInfo != null) {
+        //     log.info("▶▶▶ 캠페인 인솔자 ID: {}", reviewInfo.getLeaderId());
+        //     log.info("▶▶▶ 현재 로그인한 유저 ID: {}", authUser != null ? authUser.getUsername() : "null");
+        // }
 
-        if (reviewInfo == null || authUser == null || !reviewInfo.getLeaderId().equals(authUser.getUsername())) {
-            log.warn("⚠️ 권한 불일치 또는 데이터 없음으로 인해 / 으로 리다이렉트 됩니다.");
-            return "redirect:/"; 
-        }
+        // if (reviewInfo == null || authUser == null || !reviewInfo.getLeaderId().equals(authUser.getUsername())) {
+        //     log.warn("⚠️ 권한 불일치 또는 데이터 없음으로 인해 / 으로 리다이렉트 됩니다.");
+        //     return "redirect:/"; 
+        // }
 
         String campaignTitle = reviewInfo.getCampaignTitle();
         String placeAddr = reviewInfo.getPlaceAddr();
@@ -87,7 +92,7 @@ public class ReviewController {
     
         // 2. [핵심 검증] 캠페인에 등록된 인솔자 ID와 현재 로그인한 유저 ID를 비교합니다.
         String leaderId = reviewInfo.getLeaderId(); // 캠페인 테이블에 저장된 인솔자 ID 컬럼명에 맞게 매칭
-        String currentUserId = authUser.getUsername();
+        // String currentUserId = authUser.getUsername();
         
         // if (leaderId == null || !leaderId.equals(currentUserId)) {
         //     // 일치하지 않으면 진입을 막고 경고 페이지나 메인으로 리다이렉트

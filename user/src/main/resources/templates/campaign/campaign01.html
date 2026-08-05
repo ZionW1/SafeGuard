@@ -565,8 +565,7 @@
                 <span class="d-Day d-Day-info"th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
                         th:data-campaign-id="${campaignSelect.campaignId}"></span>
             </div> -->
-            
-            <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile-img"/><br>
+            <img id="imgFile" th:src="${campaignSelect == null || #lists.isEmpty(campaignSelect.leaderList) ? '/images/not-image.png' : '/selectProfile?id=' + campaignSelect.leaderList[0].leaderNo + '&amp;args=profile'}" alt="파일이미지" class="profile-img"/><br>
         </div>
         <div>
             <span class="d-Day d-Day-info" th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
@@ -650,7 +649,7 @@
             <div class="campaign_mission">안내 사항</div>
             <div class="visit-info">
                 <div>
-                    <div th:text="${mission}" class="mission-box"></div>
+                    <div th:text="${campaignSelect.mission}" class="mission-box"></div>
                 </div>
             </div>
 
@@ -712,13 +711,14 @@
     </section>
 
     <section class="right-view">
-        <h1>인솔자 : <span th:text="${campaignSelect.userNm}"></span></h1>
+        <h1>인솔자 : <span th:text="${campaignSelect.leaderList[0].leaderNm}"></span></h1>
+
         <!-- <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
         <h2><span class="d-Day"th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
             th:data-campaign-id="${campaignSelect.campaignId}"></span></h2>
         <div class="period-info"> -->
         <img id="imgFile" 
-            th:src="${#strings.isEmpty(campaignSelect?.leaderCode) ? '/images/not-image.png' : '|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|'}" 
+        th:src="${campaignSelect == null || #lists.isEmpty(campaignSelect.leaderList) ? '/images/not-image.png' : '/selectProfile?id=' + campaignSelect.leaderList[0].leaderNo + '&amp;args=profile'}"
             alt="파일이미지" 
             class="profile_img"/><br>
         <br>
@@ -732,7 +732,7 @@
         <!-- <div class="image-row">
             <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
         </div> -->
-    </div>
+
     <!-- <span th:text="${user}"></span> -->
     <form id="form" class="" action="/apply" method="post">
         <div sec:authorize="!isAuthenticated()" class="guest-message">

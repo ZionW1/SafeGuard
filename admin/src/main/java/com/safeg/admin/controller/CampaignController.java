@@ -1,7 +1,6 @@
 package com.safeg.admin.controller;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +23,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.safeg.admin.service.CampaignService;
 import com.safeg.admin.service.FileService;
 import com.safeg.admin.service.UserService;
+import com.safeg.admin.util.EncryptionUtil;
+import com.safeg.admin.vo.CampLeaderVO;
 import com.safeg.admin.vo.CampaignVO;
 import com.safeg.admin.vo.CustomUser;
 import com.safeg.admin.vo.FilesVO;
@@ -85,15 +85,15 @@ public class CampaignController {
 
     // 상세보기 처리
     @GetMapping("/campaign02")
-    public String campaign02(Model model, @RequestParam("id") String id) throws Exception {
+    public String campaign02(Model model, @RequestParam("id") String campaignId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         String username = customUser.getUsername(); // 로그인 아이디 (userId)
 
-        CampaignVO campaignSelect = campaignService.campaignSelect(id);
+        CampaignVO campaignSelect = campaignService.campaignSelect(campaignId);
         List<UserVO> leaderList = campaignService.leaderList();
         List<CampaignVO> securityType = campaignService.securityType();
-        FilesVO file = fileService.select(id);
+        FilesVO file = fileService.select(campaignId);
         
         for(UserVO leader : leaderList){
             if(leader.getId().equals(campaignSelect.getLeaderCode())){
@@ -101,7 +101,7 @@ public class CampaignController {
                 campaignSelect.setLeaderNo(leader.getId());
                 campaignSelect.setPhoneNum(leader.getPhoneNum());
                 campaignSelect.setLeaderId(leader.getUserId());
-                break;
+                // break;
             }
         }
 
@@ -127,6 +127,8 @@ public class CampaignController {
         List<UserVO> leaderList = campaignService.leaderList();
         List<CampaignVO> securityType = campaignService.securityType();
 
+        log.info("leaderList : " + leaderList);
+
         model.addAttribute("leaderList", leaderList);
         model.addAttribute("securityType", securityType);
 
@@ -139,20 +141,40 @@ public class CampaignController {
     @PostMapping("/campaign04")
     public String campaign04(CampaignVO campaignVO) throws Exception {
         log.info("campaignVO.toString : " + campaignVO.toString());
-
-        // campaignVO.setLeaderPhone(campaignVO.getLeaderPhone().replace(",", ""));
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         String username = customUser.getUsername(); // 로그인 아이디 (userId)
-
         int result = campaignService.campaignInsert(campaignVO);
+        List<LocalDate> datesInRange = Stream.iterate(campaignVO.getEventPeriodStr(), date -> date.plusDays(1))
+            // startDate와 endDate 모두 포함
+            .limit(campaignVO.getEventPeriodEnd().toEpochDay() - campaignVO.getEventPeriodStr().toEpochDay() + 1)
+            .collect(Collectors.toList());
 
-        if(result > 0){
-            return "redirect:/campaign01";
+        log.info("datesInRange"+datesInRange);
+
+        if (campaignVO.getLeaderList() != null && !campaignVO.getLeaderList().isEmpty()) {
+            log.info("campaignVO.getLeaderList"+campaignVO.getLeaderList());
+            // 1. 추출된 각각의 날짜를 순회합니다.
+            for (LocalDate date : datesInRange) {
+                // 2. 발급된 campaignId를 모든 인솔자 데이터에 세팅
+                for (CampLeaderVO leader : campaignVO.getLeaderList()) {
+                    // 사용자가 선택하지 않아 빈 값으로 넘어온 항목은 제외하는 방어 코드
+                    if (leader.getLeaderId() != null && !leader.getLeaderId().isEmpty()) {
+                        leader.setCampaignId(campaignVO.getCampaignId());
+                        // ★ [핵심] 이 복사본 객체에 '현재 순회의 날짜'를 주입해 줍니다.
+                        leader.setApplyDate(date);
+                        log.info("leader after setting campaignId: " + leader.toString());
+                        campaignService.campLeaderInsert(leader); // 3. 인솔자 대량(Batch) 등록 실행
+                    }
+                }
+            }
         }
-        return "redirect:/insert?error";
-        // return "redirect:/board/insert?error";
+        // if(result > 0){
+        //     return "redirect:/campaign01";
+        // } else {
+        //     return "입력안됨";
+        // }
+        return "redirect:/campaign01";
     }
 
     // 수정 처리
@@ -270,8 +292,10 @@ public class CampaignController {
     }
     
     @PostMapping("/campaignPopup01/{campaignId}")
-    public String userInfoList(@PathVariable("campaignId") Long campaignId, @RequestBody CampaignVO dto, Model model) throws Exception {
+    public String userInfoList(@PathVariable("campaignId") Long campaignId, @RequestBody CampaignVO dto, Option option, Model model) throws Exception {
         log.info("dto : " + dto);
+        log.info("option : " + option);
+
         List<UserVO> userInfoList = userService.userInfoList(campaignId);
         List<LocalDate> dates = dto.getEventPeriodStr().datesUntil(dto.getEventPeriodEnd().plusDays(1)).collect(Collectors.toList()); // 입력 날짜 List
 
@@ -280,7 +304,8 @@ public class CampaignController {
         model.addAttribute("campaignId", campaignId);
         model.addAttribute("userInfoList", userInfoList);
         model.addAttribute("dates", dates);
-        
+        model.addAttribute("option", option);
+
         return "campaign/campaignPopup01";
     }
 
@@ -305,9 +330,31 @@ public class CampaignController {
         return updatedUserList; // 자바스크립트로 유저 리스트 배열이 JSON 형태로 바로 넘어감
     }
 
+    @PostMapping("/chgRole/{campaignId}")
+    @ResponseBody // 👈 HTML이 아니라 데이터(JSON)만 리턴하겠다는 선언!
+    public List<UserVO> chgRole(@PathVariable("campaignId") Long campaignId, @RequestBody Map<String, String> paramMap, Option option) throws Exception {
+        
+        String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
+
+        log.info("applyDate : " + applyDate);
+        
+        // 만약 'ALL' 이면 전체 조회, 특정 날짜면 해당 날짜만 조회하는 로직 필요
+        List<UserVO> updatedUserList = null;
+        if ("ALL".equals(applyDate)) {
+            updatedUserList = userService.userInfoList(campaignId); // 전체 조회
+        } else {
+            updatedUserList = userService.userInfoDate(campaignId, applyDate); // 👈 날짜별 조회 (서비스에 메서드 구현 필요)
+        }
+
+        log.info("updatedUserList : " + updatedUserList);
+        
+        return updatedUserList; // 자바스크립트로 유저 리스트 배열이 JSON 형태로 바로 넘어감
+    }
+
     @PostMapping("/userApply")
     @ResponseBody
     public ResponseEntity<?> userApply(@RequestBody CampaignVO dto) throws Exception {
+        log.info("userApply : " + dto);
         Map<String, String> response = new HashMap<>();
         int result = 0;
         try {

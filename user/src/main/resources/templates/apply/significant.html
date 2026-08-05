@@ -19,21 +19,23 @@
                 <div class="width100 mrg-b5 applicant-item">
                     <div class="btn-area">
                         <a class="statusInfoChange statusInfoChangeConfirm button_status" href="#" data-status="3" 
-                            th:onclick="updateSignificantStatus(this.dataset.status, [[${userNo}]], [[${campaignId}]], [[${applyDate}]]); return false;">지각</a>
+                            th:onclick="updateSignificantStatus(this.dataset.status, [[${userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]]); return false;">지각</a>
                         
                         <a class="statusInfoChange statusInfoChangeConfirm button_status" href="#" data-status="4" 
-                            th:onclick="updateSignificantStatus(this.dataset.status, [[${userNo}]], [[${campaignId}]], [[${applyDate}]]); return false;">결근</a>
+                            th:onclick="updateSignificantStatus(this.dataset.status, [[${userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]]); return false;">결근</a>
                         
                         <a class="statusInfoChange statusInfoChangeConfirm button_status" href="#" data-status="5" 
-                            th:onclick="updateSignificantStatus(this.dataset.status, [[${userNo}]], [[${campaignId}]], [[${applyDate}]]); return false;">무단</a>
+                            th:onclick="updateSignificantStatus(this.dataset.status, [[${userNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]]); return false;">무단</a>
                     </div>
                     
                     <div class="btn-area-significant">
-                        <input type="number" class="input-significant modal-amount" name="amount" step="100" placeholder="금액" >
-                        <input type="text" class="input-significant modal-reason" name="reasonInfo" placeholder="사유 입력">
-                        
+                        <input type="number" class="input-significant modal-amount" name="amount" step="100" placeholder="금액" 
+                                th:value="${getUserSgnf?.amount ?: ''}">
+                        <input type="text" class="input-significant modal-reason" name="reasonInfo" placeholder="사유 입력" 
+                                th:value="${getUserSgnf?.reasonInfo ?: ''}">
+                    
                         <button type="button" class="statusInfoChange statusInfoChangeConfirm button_status significant_btn"
-                                th:onclick="significantInsert([[${campaignId}]], [[${userNo}]], [[${applyDate}]])">
+                                th:onclick="significantInsert([[${campaignId}]], [[${userNo}]], [[${userId}]], [[${applyDate}]])">
                             특이사항 저장
                         </button>
                     </div>

@@ -48,8 +48,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
         <result column="result_date" property="resultDate"
                 jdbcType="DATE" typeHandler="com.safeg.admin.config.LocalDateTypeHandler"/>
-        <result property="leaderPhone" column="leader_Phone" 
+        <result property="leaderPhone" column="leader_Phone"
                 typeHandler="com.safeg.admin.util.CryptoTypeHandler"/>
+    </resultMap>
+
+    <resultMap id="campaignDetailMap" type="CampaignVO">
+        <id property="campaignId" column="campaign_id" />
+        
+        <result property="companyNm" column="company_Nm" />
+        <result property="companyPh" column="company_Ph" 
+            typeHandler="com.safeg.admin.util.CryptoTypeHandler"/>
+        <result property="campaignTitle" column="campaign_Title" />
+        <result property="recruitmentNum" column="recruitment_Num" />
+        <result property="applicantsNum" column="applicants_Num" />
+        <result property="campaignPay" column="campaign_pay" />
+        <result property="timeSegment" column="time_segment" />
+        <result property="workHour" column="work_hour" />
+        <result property="placeAddr" column="place_Addr" />
+        <result property="mission" column="mission" />
+        <result property="typeCode" column="type_code" />
+        <result property="typeNm" column="type_nm" />
+        <result property="leaderCode" column="leader_code" />
+        <result property="appPeriodStr" column="app_period_str" />
+        <result property="appPeriodEnd" column="app_period_end" />
+        <result property="eventPeriodStr" column="event_period_str" />
+        <result property="eventPeriodEnd" column="event_period_end" />
+        <result property="resultDate" column="result_date" />
+
+        <collection property="leaderList" ofType="CampLeaderVO">
+            <result property="leaderNm" column="user_nm" />
+            <result property="leaderPh" column="phone_Num"
+                typeHandler="com.safeg.admin.util.CryptoTypeHandler"/>
+            <result property="leaderId" column="user_id" />
+            <result property="leaderNo" column="user_no" />
+            <result property="leaderPay" column="leader_pay" />
+            <result property="leaderPoint" column="leader_point" />
+        </collection>
     </resultMap>
     <!-- 목록 -->
     <select id="campaignList" resultType="CampaignVO">
@@ -62,11 +96,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             type_code,
             applicants_Num,
             recruitment_Num,
-            time_segment,
-            u.user_nm
+            c.time_segment,
+            GROUP_CONCAT(distinct u.user_nm SEPARATOR ', ') as user_Nm,
+                -- 2. 급여들만 슬래시(/)나 쉼표로 묶기
+                GROUP_CONCAT(FORMAT(cl.leader_pay, 0) SEPARATOR ' / ') as leader_pays
+            <!-- GROUP_CONCAT(u.user_nm SEPARATOR ', ') as user_Nm -->
         from campaign c
+        left outer join camp_leader cl
+        on c.campaign_id = cl.campaign_id
         left outer join user u
-        on c.leader_code = u.id
+        on cl.user_no = u.id
         where 
         <if test="option.code == 0">
             (campaign_title like CONCAT('%', #{option.keyword}, '%')
@@ -82,6 +121,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             tl.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
         </if>
         and c.is_deleted = 'N'
+        GROUP BY c.campaign_Id,
+        c.place_addr,
+        c.campaign_title,
+        c.created_at,
+        c.event_Period_str,
+        c.event_Period_end,
+        c.type_code,
+        c.applicants_Num,
+        c.recruitment_Num,
+        c.time_segment
         <if test="option.orderCode == 0">
             order by campaign_Id desc
         </if>
@@ -126,6 +175,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM
             user
         WHERE role = 'LEADER';
+<!-- 
+        Select cl.no, cl.user_id, cl.user_no, u.phone_num u.user_nm
+        FROM camp_leader cl
+        LEFT OUTER JOIN user u 
+        ON cl.user_no = u.id
+        WHERE role = 'LEADER' AND cl.is_deleted = 'N'
+        and cl.campaign_id = #{campaignId} -->
     </select>
 
     <select id="securityType" resultType="CampaignVO">
@@ -148,17 +204,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             company_nm,
             company_ph,
             campaign_title,
-            leader_Code,
+            <!-- leader_Code, -->
             type_code,
             status_code,
             recruitment_num,
             applicants_Num,
-            leader_pay,
+            <!-- leader_pay, -->
             campaign_pay,
             time_segment,
             work_hour,
             wage_chk,
-            leader_point,
+            <!-- leader_point, -->
             place_addr,
             mission,
             App_period_str,
@@ -169,19 +225,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         )
         VALUES (
             #{companyNm},
-            #{companyPh},
+            #{companyPh, typeHandler=com.safeg.admin.util.CryptoTypeHandler},
             #{campaignTitle},
-            #{leaderNo},
+            <!-- #{leaderNo}, -->
             #{typeCode},
             '4',
             #{recruitmentNum},
-            CASE WHEN #{leaderPay} != 0 THEN 1 ELSE 0 END,
-            #{leaderPay},
+            #{applicantsNum},<!-- CASE WHEN #{leaderPay} != 0 THEN 1 ELSE 0 END,
+            #{leaderPay}, -->
             #{campaignPay},
             #{timeSegment},
             #{workHour},
             #{wageChk},
-            #{leaderPoint},
+            <!-- #{leaderPoint}, -->
             #{placeAddr},
             #{mission},
             #{appPeriodStr},
@@ -190,11 +246,75 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{eventPeriodEnd},
             #{resultDate}
         );
-        
+    </insert>
+    
+    <insert id="campLeaderInsert" parameterType="CampLeaderVO" useGeneratedKeys="true" keyProperty="no">
+    -- campLeaderInsert 호출됨. leaderList: CampLeaderVO(no=null, campaignId=160, leaderId=pringles, leaderNo=27, leaderNm=3, leaderPhone=01045558079, leaderPay=9000, leaderPays=null, leaderPoint=900, leaderCode=)
+        INSERT INTO camp_leader (
+            campaign_id,
+            user_No,
+            user_id,
+            user_nm,
+            phone_num,
+            leader_pay,
+            leader_point,
+            apply_date
+        )
+        VALUES 
+        /* 자바에서 List를 바로 넘겼을 때는 collection="list"로 고정합니다 */
+        (
+            #{campaignId},
+            #{leaderNo},
+            #{leaderId},
+            #{leaderNm},
+            #{leaderPh, typeHandler=com.safeg.admin.util.CryptoTypeHandler},
+            #{leaderPay},
+            #{leaderPoint},
+            #{applyDate}
+        )
     </insert>
 
-    <select id="campaignSelect" resultMap="campaignResultMap">
+    <select id="campaignSelect" resultMap="campaignDetailMap">
         SELECT 
+            c.campaign_id,
+            c.company_nm,
+            c.company_ph,
+            c.campaign_title, 
+            c.leader_code,
+            c.type_code,
+            c.status_code,
+            c.recruitment_num,
+            c.applicants_num,
+            <!-- c.leader_Pay, -->
+            c.campaign_pay,
+            c.time_segment,
+            c.place_addr,
+            <!-- c.leader_point, -->
+            work_hour,
+            WAGE_CHK,
+            DATE_FORMAT(c.App_period_str,'%Y-%m-%d') AS App_period_str,
+            DATE_FORMAT(c.App_period_end,'%Y-%m-%d') AS App_period_end,
+            DATE_FORMAT(c.event_Period_str,'%Y-%m-%d') AS event_Period_str,
+            DATE_FORMAT(c.event_Period_end,'%Y-%m-%d') AS event_Period_end,
+            DATE_FORMAT(c.result_date,'%Y-%m-%d') AS result_date,
+            c.mission,
+            cl.user_no,
+            cl.user_id,
+            cl.user_Nm,
+            cl.phone_num,
+            cl.leader_pay,
+            cl.leader_point,
+            cl.phone_num,
+            cc.code_name
+        FROM campaign c
+        LEFT OUTER JOIN camp_leader cl
+        on c.campaign_id = cl.campaign_id
+        left outer join common_codes cc
+        on cc.code_group = 'campaignType'
+        and c.type_code = cc.code
+        WHERE c.campaign_id = #{id}
+        AND c.is_deleted = 'N'
+        <!-- GROUP BY
             c.campaign_id,
             c.company_nm,
             c.company_ph,
@@ -208,28 +328,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.campaign_pay,
             c.time_segment,
             c.place_addr,
-            leader_point,
+            c.leader_point,
             work_hour,
             WAGE_CHK,
-            DATE_FORMAT(c.App_period_str,'%Y-%m-%d') AS App_period_str,
-            DATE_FORMAT(c.App_period_end,'%Y-%m-%d') AS App_period_end,
-            DATE_FORMAT(c.event_Period_str,'%Y-%m-%d') AS event_Period_str,
-            DATE_FORMAT(c.event_Period_end,'%Y-%m-%d') AS event_Period_end,
-            DATE_FORMAT(c.result_date,'%Y-%m-%d') AS result_date,
+            App_period_str,
+            App_period_end,
+            event_Period_str,
+            event_Period_end,
+            result_date,
             c.mission,
-            u.User_nm as leader_Name,
-            u.phone_num as leader_Phone,
-            u.id as leader_No,
-            cc.code_name
-        FROM campaign c
-        LEFT OUTER JOIN user u
-        on c.leader_Code = u.id
-        left outer join common_codes cc
-        on cc.code_group = 'campaignType'
-        and c.type_code = cc.code
-        WHERE c.campaign_id = #{id}
-        <!-- and c.status_code = '' -->
-        AND c.is_deleted = 'N'
+            cc.code_name -->
     </select>
     
     <update id="campaignUpdate" parameterType="CampaignVO" useGeneratedKeys="true" keyProperty="campaignId">
@@ -256,7 +364,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         c.id = #{id} -->
         update campaign set
             company_nm = #{companyNm},
-            company_ph = #{companyPh},
+            company_ph = #{companyPh, typeHandler=com.safeg.admin.util.CryptoTypeHandler},,
             campaign_title = #{campaignTitle},
             leader_Code = #{leaderNo},
             type_code = #{typeCode},
@@ -329,19 +437,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="updateApplicantsNum">
-        UPDATE campaign 
-        SET applicants_num = (
-            SELECT t.cnt FROM (
-                SELECT COUNT(DISTINCT uc.user_id) as cnt
-				FROM user_campaign uc
-				LEFT OUTER JOIN campaign c ON uc.CAMPAIGN_ID = c.CAMPAIGN_ID
-				WHERE uc.campaign_id = #{campaignId}
+        UPDATE campaign c
+        JOIN (
+            -- 💡 여기서 미리 캠페인별 인원수를 정확하게 계산해 둡니다.
+            SELECT uc.campaign_id, COUNT(DISTINCT uc.user_id) + count(DISTINCT cl.user_no) as cnt
+            FROM user_campaign uc
+            LEFT OUTER JOIN camp_leader cl ON uc.campaign_id = cl.campaign_id
+            WHERE uc.campaign_id = #{campaignId}
                 AND uc.is_deleted = 'N'
-                -- 🔥 일반 유저(NULL 포함)는 살리고, 인솔자(Y)라면 급여가 0원이 아닌 사람만 카운트!
-                AND (IFNULL(uc.lead_apply, 'N') != 'Y' OR IFNULL(c.leader_pay, 0) != 0)
-            ) t
-        )
-        WHERE campaign_id = #{campaignId}
+                AND (uc.lead_apply = 'Y' OR uc.lead_apply IS NULL)
+            GROUP BY uc.campaign_id
+        ) t ON c.campaign_id = t.campaign_id
+        SET c.applicants_num = t.cnt
+        WHERE c.campaign_id = #{campaignId};
     </update>
 
     <select id="applySelect" resultType="UserCampaignVO">
@@ -459,29 +567,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND is_active = 'Y'
         ]]>
     </update>
-
-    <!-- <insert id="insertCampaignLeaderApply">
-        INSERT INTO user_campaign(
-            campaign_id, 
-            user_No, 
-            user_id, 
-            applied_str_date, 
-            applied_end_date, 
-            event_str_date, 
-            event_end_date, 
-            apply_date
-        ) values 
-        ( 
-            #{campaignId}, 
-            #{leaderNo}, 
-            #{leaderCode}, 
-            #{AppPeriodStr}, 
-            #{AppPeriodEnd}, 
-            #{eventPeriodStr}, 
-            #{eventPeriodEnd}, 
-            #{applyDate} 
-        ) 
-    </insert> -->
 
     <insert id="insertCampaignLeaderApply" parameterType="java.util.List">
         INSERT INTO user_campaign(
@@ -757,10 +842,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <select id="countApplicants" resultType="int">
-        SELECT count(DISTINCT (user_id)) count 
-        FROM user_campaign 
-        WHERE CAMPAIGN_ID = 135
-        AND is_deleted = 'N'
+        <!-- SELECT count(DISTINCT (user_id)) count 
+        FROM user_campaign uc
+        WHERE uc.campaign_id = #{campaignId}
+            AND uc.is_deleted = 'N'
+            AND (uc.lead_apply = 'Y' OR uc.lead_apply IS NULL)
+            AND is_deleted = 'N'
+        GROUP BY uc.CAMPAIGN_ID  -->
+
+        SELECT COUNT(DISTINCT uc.user_id) as count
+        FROM user_campaign uc
+        WHERE uc.campaign_id = 138
+        AND uc.is_deleted = 'N'
+        -- 💡 NULL이거나 Y인 유저들을 빠짐없이 전부 집계 대상에 넣습니다.
+        AND (uc.lead_apply = 'Y' OR uc.lead_apply IS NULL);
     </select>
 
     <update id="updateLeadApply">

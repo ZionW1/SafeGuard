@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.safeg.admin.mapper.CampaignMapper;
+import com.safeg.admin.util.EncryptionUtil;
+import com.safeg.admin.vo.CampLeaderVO;
 import com.safeg.admin.vo.CampaignVO;
 import com.safeg.admin.vo.FilesVO;
 import com.safeg.admin.vo.Option;
@@ -36,7 +38,7 @@ public class CampaignServiceImpl implements CampaignService{
     @Autowired
     private CampaignMapper campaignMapper;
 
-    @Autowired 
+    @Autowired
     FileService fileService;
 
     @Autowired
@@ -46,13 +48,13 @@ public class CampaignServiceImpl implements CampaignService{
     public List<CampaignVO> campaignList(Option option, Page page) throws Exception {
         // TODO Auto-generated method stub
         log.info(":::::::::: CampaignsServiceImpl.list() ::::::::::");
-        
+
         int total = campaignCount(option, page);
         log.info(":::::::::: total :::::::::: " + total);
         page.setTotal(total);
-        
+
         List<CampaignVO> list = campaignMapper.campaignList(option, page);
-        
+
         return list;
     }
 
@@ -60,25 +62,44 @@ public class CampaignServiceImpl implements CampaignService{
     public int campaignCount(Option option, Page page) throws Exception {
         return campaignMapper.campaignCount(option, page);
     }
-    
+
     @Override
     @Transactional // 두 작업이 하나의 트랜잭션으로 묶이도록!
-    public int campaignInsert(CampaignVO campaignsVO) throws Exception {
+    public int campaignInsert(CampaignVO campaignVO) throws Exception {
+        log.info("등록 처리 impl : " + campaignVO);
         // 1. 캠페인 기본 정보 삽입
-        int result = campaignMapper.campaignInsert(campaignsVO);
-    
+        int activeLeaderCount = 0;
+
+        if (campaignVO.getLeaderList() != null) {
+            for (CampLeaderVO leader : campaignVO.getLeaderList()) {
+                // 인솔자 ID가 존재하고, 페이가 0보다 큰 경우 카운트 증가
+                if (leader.getLeaderNo() != null && !leader.getLeaderNo().isEmpty() && leader.getLeaderPay() > 0) {
+                    activeLeaderCount++;
+                }
+            }
+        }
+
+        // 계산된 카운트를 campaignVO의 applicantsNum 필드에 세팅!
+        campaignVO.setApplicantsNum(activeLeaderCount);
+
+        int result = campaignMapper.campaignInsert(campaignVO);
+
+        Long campaignId = campaignVO.getCampaignId(); // 데이터 타입에 맞게 getter 호출
+
+        log.info("캠페인 등록 후 생성된 ID: " + campaignId);
+
         LocalDate startDate;
         LocalDate endDate;
-    
-        log.info("등록 처리 impl : " + campaignsVO);
-        
-        MultipartFile file = campaignsVO.getImage();
-        if (campaignsVO.getCampaignId() == null) {
+
+        log.info("등록 처리 impl : " + campaignVO);
+
+        MultipartFile file = campaignVO.getImage();
+        if (campaignId == null) {
             throw new RuntimeException("캠페인 등록 실패: 캠페인 ID를 가져올 수 없습니다.");
         }
-    
-        System.out.println("캠페인 '" + campaignsVO.getCampaignTitle() + "' 등록 완료 및 인솔자 연결 완료!");
-    
+
+        System.out.println("캠페인 '" + campaignVO.getCampaignTitle() + "' 등록 완료 및 인솔자 연결 완료!");
+
         // 파일 업로드 로직
         if(file != null && !file.isEmpty()){
             FilesVO uploadFile = new FilesVO();
@@ -86,61 +107,61 @@ public class CampaignServiceImpl implements CampaignService{
             uploadFile.setFileSize(file.getSize());
             uploadFile.setFileType("campaign_File");
             uploadFile.setTargetType("campaign");
-            uploadFile.setTargetId(campaignsVO.getCampaignId());
+            uploadFile.setTargetId(campaignId);
             uploadFile.setMimeType("");
-            uploadFile.setId(campaignsVO.getCampaignId());
-            uploadFile.setStatusId(campaignsVO.getCampaignId());
+            uploadFile.setId(campaignId);
+            uploadFile.setStatusId(campaignId);
             uploadFile.setStatus("campaign");
             log.info("등록 처리 uploadFile : " + uploadFile);
-    
+
             fileService.upload(uploadFile);
         }
-    
+
         // 날짜 파싱
         try {
-            startDate = campaignsVO.getEventPeriodStr();
-            endDate = campaignsVO.getEventPeriodEnd();
+            startDate = campaignVO.getEventPeriodStr();
+            endDate = campaignVO.getEventPeriodEnd();
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("캠페인 기간 날짜 형식 오류: " + e.getMessage());
         }
-    
+
         // 3. 날짜 리스트 생성 (시작일~종료일이 같아도 최소 1개의 날짜 생성됨)
         List<LocalDate> datesInRange = Stream.iterate(startDate, date -> date.plusDays(1))
                                             .limit(endDate.toEpochDay() - startDate.toEpochDay() + 1)
                                             .collect(Collectors.toList());
         log.info("datesInRange " + datesInRange);
-        
+
         // 4. 각 날짜별로 DB에 삽입할 DTO 객체 생성
         List<UserCampaignVO> dailyEntriesToInsert = new ArrayList<>();
 
-        // ✨ LeaderId가 Null이 아니고 비어있지 않을 때만 진입하도록 수정!
-        if (campaignsVO.getLeaderId() != null && !campaignsVO.getLeaderId().isEmpty()) {
-            
-            for (LocalDate date : datesInRange) {
-                UserCampaignVO dailyEntry = new UserCampaignVO();
-                dailyEntry.setCampaignId(campaignsVO.getCampaignId());
-                
-                // 올바른 LeaderId와 LeaderNo 세팅
-                dailyEntry.setUserId(campaignsVO.getLeaderId()); 
-                dailyEntry.setUserNo(campaignsVO.getLeaderNo());
-                
-                // 급여가 0원인 4번 캠페인은 'N', 급여가 있는 5번 캠페인은 'Y'로 정상 분기
-                if(campaignsVO.getLeaderPay() == 0){
-                    dailyEntry.setLeadApply("N");
-                } else {
-                    dailyEntry.setLeadApply("Y");
-                }
-                
-                dailyEntry.setApplicantsNum(campaignsVO.getApplicantsNum());
-                dailyEntry.setEventPeriodStr(campaignsVO.getEventPeriodStr());
-                dailyEntry.setEventPeriodEnd(campaignsVO.getEventPeriodEnd());
-                dailyEntry.setTimeSegment(campaignsVO.getTimeSegment());
-                dailyEntry.setApplyDate(date);
-                
-                dailyEntriesToInsert.add(dailyEntry);
-            }
-        }
-    
+        // // ✨ LeaderId가 Null이 아니고 비어있지 않을 때만 진입하도록 수정!
+        // if (campaignsVO.getLeaderId() != null && !campaignsVO.getLeaderId().isEmpty()) {
+
+        //     for (LocalDate date : datesInRange) {
+        //         UserCampaignVO dailyEntry = new UserCampaignVO();
+        //         dailyEntry.setCampaignId(campaignId);
+
+        //         // 올바른 LeaderId와 LeaderNo 세팅
+        //         dailyEntry.setUserId(campaignsVO.getLeaderId());
+        //         dailyEntry.setUserNo(campaignsVO.getLeaderNo());
+
+        //         // 급여가 0원인 4번 캠페인은 'N', 급여가 있는 5번 캠페인은 'Y'로 정상 분기
+        //         if(campaignsVO.getLeaderPay() == 0){
+        //             dailyEntry.setLeadApply("N");
+        //         } else {
+        //             dailyEntry.setLeadApply("Y");
+        //         }
+
+        //         dailyEntry.setApplicantsNum(campaignsVO.getApplicantsNum());
+        //         dailyEntry.setEventPeriodStr(campaignsVO.getEventPeriodStr());
+        //         dailyEntry.setEventPeriodEnd(campaignsVO.getEventPeriodEnd());
+        //         dailyEntry.setTimeSegment(campaignsVO.getTimeSegment());
+        //         dailyEntry.setApplyDate(date);
+
+        //         dailyEntriesToInsert.add(dailyEntry);
+        //     }
+        // }
+
         // 5. 매퍼를 통해 DB에 배치 삽입
         if (!dailyEntriesToInsert.isEmpty()) {
             log.info("dailyEntriesToInsert 정보: " + dailyEntriesToInsert);
@@ -148,22 +169,62 @@ public class CampaignServiceImpl implements CampaignService{
         } else {
             log.warn("🚨 경고: 삽입할 인솔자 날짜별 리스트가 비어있습니다. (인솔자 정보 누락 의심)");
         }
-    
+
         // 코드 타입명 바인딩
-        if ("01".equals(campaignsVO.getTypeCode())) {
-            campaignsVO.setTypeNm("경호");
-        } else if ("02".equals(campaignsVO.getTypeCode())) {
-            campaignsVO.setTypeNm("진행");
-        } else if ("03".equals(campaignsVO.getTypeCode())) {
-            campaignsVO.setTypeNm("수행");
+        if ("01".equals(campaignVO.getTypeCode())) {
+            campaignVO.setTypeNm("경호");
+        } else if ("02".equals(campaignVO.getTypeCode())) {
+            campaignVO.setTypeNm("진행");
+        } else if ("03".equals(campaignVO.getTypeCode())) {
+            campaignVO.setTypeNm("수행");
         }
-    
+
         // 알리고 알림톡/SMS 발송
-        String AppPeriod = campaignsVO.getAppPeriodStr().toString() + " ~ "+ campaignsVO.getAppPeriodEnd().toString();
-        String EventPeriod = campaignsVO.getEventPeriodStr().toString() + " ~ "+ campaignsVO.getEventPeriodEnd().toString();
-        // aligoSmsService.registrationAsync(campaignsVO.getCompanyPh(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), AppPeriod, EventPeriod, "https://행집.com/campaign/" + campaignsVO.getCampaignId(), campaignsVO.getLeaderPhone());
-    
+        String AppPeriod = campaignVO.getAppPeriodStr().toString() + " ~ "+ campaignVO.getAppPeriodEnd().toString();
+        String EventPeriod = campaignVO.getEventPeriodStr().toString() + " ~ "+ campaignVO.getEventPeriodEnd().toString();
+
+        // 1. 방어막: leaderList가 비어있거나 인솔자가 없는 경우 안전하게 처리
+        String leaderPh = "";
+        if (campaignVO.getLeaderList() != null && !campaignVO.getLeaderList().isEmpty()) {
+            // 0번째 인솔자 번호 추출 (null이면 공백 처리)
+            leaderPh = campaignVO.getLeaderList().get(0).getLeaderPh();
+            if (leaderPh == null) leaderPh = "";
+        }
+
+        String companyPh = campaignVO.getCompanyPh();
+
+        // 2. 알림톡 발송 판단 로직
+        // 인솔자 번호가 없거나, 업체 번호와 인솔자 번호가 완전히 같은 경우 -> 업체에만 1번 발송
+        if (leaderPh.isEmpty() || companyPh.equals(leaderPh)) {
+            aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+                "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
+        }
+        // 업체 번호와 인솔자 번호가 서로 다른 경우 -> 각각 1번씩 총 2번 발송
+        else {
+            // 인솔자에게 발송 (💡 campaignVO.getLeaderPhone() 대신 통일성 있게 leaderPh 변수 사용을 권장합니다)
+            aligoSmsService.registrationAsync(leaderPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+                "https://행집.com/apply/userCampaignApply/" + campaignId, leaderPh);
+
+            // 업체에게 발송
+            aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+                "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
+        }
+
         return result;
+    }
+
+    public void campLeaderInsert(CampLeaderVO leader) throws Exception {
+        log.info("campLeaderInsert 호출됨. leaderList: " + leader);
+        campaignMapper.campLeaderInsert(leader);
+
+        if (leader != null) {
+            log.info("번째 인솔자 ID: " + leader.getLeaderId());
+            log.info("번째 인솔자 leaderNo: " + leader.getLeaderNo());
+            log.info("번째 인솔자 LEADER POINT: " + leader.getLeaderPoint());
+        }
     }
 
     @Override
@@ -175,7 +236,7 @@ public class CampaignServiceImpl implements CampaignService{
         return campaignDetail;
     }
 
-    
+
 
     @Override
     @Transactional // 두 작업이 하나의 트랜잭션으로 묶이도록!
@@ -205,10 +266,10 @@ public class CampaignServiceImpl implements CampaignService{
         List<LocalDate> oldDates = oldStartDate.datesUntil(oldEndDate.plusDays(1)).collect(Collectors.toList()); // 기존 날짜 List
         log.info("A oldDates :" + oldDates);
         List<LocalDate> newDates = campaignVO.getEventPeriodStr().datesUntil(campaignVO.getEventPeriodEnd().plusDays(1)).collect(Collectors.toList()); // 입력 날짜 List
-        
+
         int oldSize = oldDates.size(); // 기존 날짜 크기
         int newSize = newDates.size(); // 입력 날짜 크기
-        
+
         LocalDate sourceDate = null;
 
         UserCampaignVO param = new UserCampaignVO();
@@ -226,15 +287,15 @@ public class CampaignServiceImpl implements CampaignService{
 
                     List<Long> targetUserNos = campaignMapper.targetUserNos(campaignId, timeSegment, vacantSeats, sourceDate);
                     log.info("정원 확대로 인한 부활 시작! 빈자리: {}명, 시간대: {}", vacantSeats, timeSegment);
-                    
+
                     // 💡 1단계: 해당 시간대(timeSegment)에 탈락한 유저만 선착순 조회
                     // (이를 위해 campaignMapper.targetUserNos 호출 시 파라미터에 timeSegment를 함께 넘겨주거나 객체에 담아 보냅니다)
                     log.info("정원 확대로 인한 기존 신청자 부활 시작! 추가 가능 인원: {}명, 기존 일정 일수: {}일", vacantSeats, oldSize);
-                    
+
                     // 💡 2단계: 날짜별로 돌면서 '그 날짜'의 '그 시간대' 데이터만 정확히 부활
                     if (targetUserNos != null && !targetUserNos.isEmpty()) {
                         log.info("정원 확대로 인한 기존 신청자 부활 시작! 대상 유저: {}", targetUserNos);
-                        
+
                         param.setLimitCount(vacantSeats);
                         param.setUserNos(targetUserNos); // 유저 리스트 세팅
 
@@ -250,7 +311,7 @@ public class CampaignServiceImpl implements CampaignService{
                 campaignMapper.updateIsDeleted(campaignId, "N", "Y");
             }
             else { // 정원 축소 시
-                if (appNum >= newNum) { 
+                if (appNum >= newNum) {
                     // [상황 A] 진짜로 정원이 넘치거나 딱 꽉 찼을 때
                     log.info("정원 축소 상태 진입 - 새 정원: " + newNum);
                     campaignMapper.updateIsDeleted(campaignId, "N", "N");
@@ -264,10 +325,10 @@ public class CampaignServiceImpl implements CampaignService{
                     }
                 } else { // [상황 B] 정원을 줄였지만 여전히 정원에 여유가 있을 때
                     log.info("정원에 여유가 있음. 현재 인원: {}, 새 정원: {}", appNum, newNum);
-                    
+
                     // 여유 자리가 있으므로 캠페인은 계속 모집 중('Y') 상태여야 함
                     campaignMapper.updateIsDeleted(campaignId, "N", "Y");
-                    
+
                     if (vacantSeats > 0) {
                         // 억울하게 잘려 있는 사람 목록을 가져와서 다시 'N'으로 부활시킨다!
                         sourceDate = (oldSize > 0) ? newDates.get(oldSize - 1) : null;
@@ -289,7 +350,7 @@ public class CampaignServiceImpl implements CampaignService{
                 }
             }
         }
-    
+
         // ================================================================
         // 파트 2: [인솔자 및 마감일 변경 처리]
         // ================================================================
@@ -326,14 +387,14 @@ public class CampaignServiceImpl implements CampaignService{
                 campaignMapper.updateIsActive(campaignId, "N");
             }
         }
-        
+
         // ---------------------------------------------------------------
-        // 조건 B: 질문하신 내용! 마감일이 줄어들었거나 정원이 줄어들었는데, 
+        // 조건 B: 질문하신 내용! 마감일이 줄어들었거나 정원이 줄어들었는데,
         // 현재 인원이 새 정원 이상이거나 오늘 날짜 기준 마감일이 지나버렸다면 -> 마감('N')
         // 현재 날짜로 바꾸고 싶으면 isPeriodShortened 대신 campaignsVO.getAppPeriodEnd().isBefore(LocalDate.now())) {
         // ---------------------------------------------------------------
-        
-    
+
+
         // 원본 캠페인 마스터 테이블 업데이트
         result = campaignMapper.campaignUpdate(campaignVO);
         // ================================================================
@@ -361,19 +422,19 @@ public class CampaignServiceImpl implements CampaignService{
             for (int i = 0; i < oldSize; i++) {
                 campaignMapper.updateApplyDate(campaignId, campaignVO.getEventPeriodStr(), campaignVO.getEventPeriodEnd(), oldDates.get(i), newDates.get(i));
             }
-            
+
             // 💡 [핵심 추가] 현재 이 캠페인에 정상적으로 참여 중인('N') 유저들의 번호를 싹 긁어옵니다.
             // (이 유저들은 날짜가 늘어났으니 새로 늘어난 날짜에도 'N' 상태로 복구되거나 복사되어야 합니다.)
-            List<UserCampaignVO> activeUser = campaignMapper.getActiveUserNos(campaignId, timeSegment); 
-            
+            List<UserCampaignVO> activeUser = campaignMapper.getActiveUserNos(campaignId, timeSegment);
+
             // is_deleted의 값이 N
             List<Long> activeUserNos = activeUser.stream()
                                     .map(UserCampaignVO::getUserNo) // 혹은 user -> user.getUserNo()
                                     .collect(Collectors.toList());
-            
+
             log.info("activeUserNos" + activeUserNos);
 
-            sourceDate = newDates.get(oldSize - 1); 
+            sourceDate = newDates.get(oldSize - 1);
             log.info("sourceDate" + sourceDate);
             // 2. 늘어난 날짜 데이터를 처리하는 루프
             for (int i = oldSize; i < newSize; i++) {
@@ -384,9 +445,9 @@ public class CampaignServiceImpl implements CampaignService{
                 // ---------------------------------------------------------------
                 if (activeUserNos != null && !activeUserNos.isEmpty()) {
                     param.setApplyDate(targetDate);
-                    param.setUserNos(activeUserNos); 
+                    param.setUserNos(activeUserNos);
                     log.info("[부활 진행] 대상 날짜: {}, 유저목록: {}", targetDate, activeUserNos);
-                    campaignMapper.reApplyUsers(param); 
+                    campaignMapper.reApplyUsers(param);
                 }
 
                 // 수정 후 apply_date
@@ -394,14 +455,14 @@ public class CampaignServiceImpl implements CampaignService{
                 // 모집인보다 신청인이 더 많을때
                 if (increased) {
                     UserCampaignVO reSearchCampaign = campaignMapper.applySelect(campaignVO.getCampaignId());
-                    
+
                     // 수정할 날짜 갯수.
                     List<LocalDate> reSearchDate = reSearchCampaign.getEventPeriodStr().datesUntil(reSearchCampaign.getEventPeriodEnd().plusDays(1)).collect(Collectors.toList()); // 기존 날짜 List
 
                     if(reSearchDate.size() > 0) {
                         for(int j = 0 ; j < activeUser.size() ; j ++) {
                             log.info("activeUser.size() for 문" + activeUser.get(j).getUserNo());
-                            UserCampaignVO applyDateInfo = campaignMapper.applyDateInfo(campaignId, activeUser.get(j).getUserNo(), reSearchDate.get(j), timeSegment); 
+                            UserCampaignVO applyDateInfo = campaignMapper.applyDateInfo(campaignId, activeUser.get(j).getUserNo(), reSearchDate.get(j), timeSegment);
                             log.info("applyDateInfo for 문" + applyDateInfo);
                             log.info("newSize for 문" + newSize);
                             log.info("oldDates for 문" + oldDates);
@@ -416,13 +477,13 @@ public class CampaignServiceImpl implements CampaignService{
                                 log.info("C oldDates :" + oldDates);
                                 log.info("정원 확대로 기존 날짜 데이터를 새로운 날짜로 복사");
                                 UserCampaignVO paramInfo = new UserCampaignVO();
-            
+
                                 log.info("oldDates.get(0) A : " + oldDates.get(0));
                                 log.info("reSearchDate.get(i) A : " + reSearchDate.get(i));
                                 log.info("applyDateInfo.getApplyDate() A : " + applyDateInfo.getApplyDate());
 
                                 paramInfo.setCampaignId(campaignId);
-            
+
                                 paramInfo.setApplyDate(reSearchDate.get(i));
                                 paramInfo.setBeforeDate(oldDates.get(0));
                                 paramInfo.setEventPeriodStr(campaignVO.getEventPeriodStr());
@@ -433,7 +494,7 @@ public class CampaignServiceImpl implements CampaignService{
                                 // sourceDate - 복사 대상이 되는 원본 날짜
                                 // targetDate - 새로 생성될 날짜
                                 paramInfo.setUserNo(activeUser.get(j).getUserNo());
-        
+
                                 if ("Y".equals(activeUser.get(j).getLeadApply())) {
                                     paramInfo.setIsLeader("Y");
                                     paramInfo.setLeadApply(activeUser.get(j).getLeadApply());
@@ -473,18 +534,18 @@ public class CampaignServiceImpl implements CampaignService{
             uploadFile.setId(campaignId);
             uploadFile.setStatusId(campaignId);
             uploadFile.setStatus("campaign");
-            
+
             // 💡 주석 가이드: 실구현 시 실제 파일 테이블 인서트 매퍼를 여기에 호출하셔야 저장이 완결됩니다!
             fileService.upload(uploadFile);
         }
-    
+
         return result;
     }
 
     @Override
     public int campaignDelete(String id) throws Exception {
         int result = campaignMapper.campaignDelete(id);
-        
+
         // 삭제할 파일 처리
         // List<String> deleteFiles = board.getDeleteFiles();
         // if(deleteFiles != null && !deleteFiles.isEmpty()){
@@ -520,13 +581,13 @@ public class CampaignServiceImpl implements CampaignService{
     public List<CampaignVO> campaign07(Option option, Page page) throws Exception {
         // TODO Auto-generated method stub
         log.info(":::::::::: CampaignsServiceImpl.list() ::::::::::");
-        
+
         int total = campNotApplyCount(option, page);
         log.info(":::::::::: total :::::::::: " + total);
         page.setTotal(total);
-        
+
         List<CampaignVO> list = campaignMapper.campaign07(option, page);
-        
+
         return list;
     }
 
@@ -564,14 +625,19 @@ public class CampaignServiceImpl implements CampaignService{
     @Override
     @Transactional(rollbackFor = Exception.class) // 에러 발생 시 자동 롤백
     public UserCampaignVO overlapTitle(CampaignVO dto) throws Exception {
+        log.info("overlapTitle" + dto.getLeaderPay());
         Long campaignId = dto.getCampaignId();
         List<String> userNoList = dto.getUserNos();
         List<String> userIdList = dto.getUserIds();
 
+        int userNoSize = userNoList.size();
         int currentCount = campaignMapper.countApplicants(dto.getCampaignId());
         int maxRecruitment = dto.getRecruitmentNum(); // 모집 인원 (예: 4)
+        log.info("overlapTitle currentCount : " + currentCount);
+        log.info("overlapTitle maxRecruitment : " + maxRecruitment);
+        log.info("overlapTitle userNoSize : " + userNoSize);
 
-        if (currentCount >= maxRecruitment) {
+        if (userNoSize > maxRecruitment) {
             throw new IllegalArgumentException("이미 모집 인원(" + maxRecruitment + "명)이 마감되었습니다.");
         }
 
@@ -588,7 +654,7 @@ public class CampaignServiceImpl implements CampaignService{
                 return overlapTitle;
                 // 컨트롤러의 .catch(error => alert(error.message)) 로 전달될 에러 메시지
                 // throw new IllegalArgumentException("이미 [" + overlapTitle + "] 캠페인 일정이 있는 유저가 포함되어 있습니다.\n기간을 확인해 주세요.");
-                
+
             }
         }
         return null;
@@ -685,7 +751,7 @@ public class CampaignServiceImpl implements CampaignService{
             // startDate와 endDate 모두 포함
             .limit(endDate.toEpochDay() - startDate.toEpochDay() + 1)
             .collect(Collectors.toList());
-        
+
         log.info("userNoList : " + userNoList);
         log.info("datesInRange " + datesInRange);
         // 4. 각 날짜별로 DB에 삽입할 DTO 객체 생성

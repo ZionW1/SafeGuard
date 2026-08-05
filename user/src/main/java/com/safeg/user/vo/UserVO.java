@@ -210,4 +210,10 @@ public class UserVO {
     private String courseNum;
     private String residentNum;
     private String privAgree;
+
+    private String guardTypeNm;
+
+    private int pendingPoint;
+    private String isApplied;
+
 }

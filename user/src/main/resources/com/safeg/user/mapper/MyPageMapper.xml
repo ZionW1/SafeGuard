@@ -16,7 +16,7 @@
     </resultMap>
 
     <select id="getAppliedDatesForUser" resultType="java.time.LocalDate">
-        SELECT 
+        SELECT
             applied_str_date,
             applied_end_date
         FROM user_campaign
@@ -28,39 +28,75 @@
     </select>
 
     <select id="getCompletedDatesForUser" resultType="CalendarEventVO">
+        <!-- SELECT
+            uc.user_id,
+            DATE_FORMAT(uc.event_str_date, '%Y-%m-%d') start,
+            DATE_FORMAT(uc.event_end_date, '%Y-%m-%d') end,
+            uc.status,
+            DATE_FORMAT(uc.apply_date, '%Y-%m-%d') apply_date
+        FROM
+            user_campaign uc
+        LEFT OUTER JOIN campaign c
+        ON c.campaign_id = uc.campaign_id
+        WHERE uc.user_no = #{userId}
+        /*
+        uc.is_leader가 'Y'인 경우(인솔자)에는
+        campaign 테이블의 leader_pay가 반드시 있는 데이터만 조회
+        */
+        <![CDATA[
+        AND (
+            uc.is_leader != 'Y'
+            OR (uc.is_leader = 'Y' AND c.leader_pay IS NOT NULL AND c.leader_pay > 0)
+        )
+
+            AND uc.event_str_date <= #{endDate}
+            AND uc.event_end_date >= #{startDate}
+        ]]>
+        AND uc.is_deleted = 'N'
+
+
+ -->
+        <![CDATA[
         SELECT
             uc.user_id,
             DATE_FORMAT(uc.event_str_date, '%Y-%m-%d') start,
             DATE_FORMAT(uc.event_end_date, '%Y-%m-%d') end,
             uc.status,
             DATE_FORMAT(uc.apply_date, '%Y-%m-%d') apply_date
-        FROM 
+        FROM
             user_campaign uc
-        LEFT OUTER JOIN campaign c 
+        LEFT OUTER JOIN campaign c
         ON c.campaign_id = uc.campaign_id
         WHERE uc.user_no = #{userId}
-        /* 
-        uc.is_leader가 'Y'인 경우(인솔자)에는 
-        campaign 테이블의 leader_pay가 반드시 있는 데이터만 조회 
-        */
-        <![CDATA[
         AND (
-            uc.is_leader != 'Y' 
+            uc.is_leader != 'Y'
             OR (uc.is_leader = 'Y' AND c.leader_pay IS NOT NULL AND c.leader_pay > 0)
         )
-        
-            AND uc.event_str_date <= #{endDate}
-            AND uc.event_end_date >= #{startDate}
-        ]]>
+            AND apply_date between #{startDate} and #{endDate}
         AND uc.is_deleted = 'N'
+    union
+    SELECT
+            cl.user_id,
+            null,
+            null,
+            cl.status,
+            DATE_FORMAT(cl.apply_date, '%Y-%m-%d') apply_date
+        FROM
+            camp_leader cl
+        LEFT OUTER JOIN campaign c
+        ON c.campaign_id = cl.campaign_id
+        WHERE cl.user_no = #{userId}
+        AND cl.is_deleted = 'N'
+        AND apply_date between #{startDate} and #{endDate}
+        ]]>
     </select>
 
     <select id="getAddress" resultMap="UserAddressMap">
         SELECT
             full_address
-        FROM 
+        FROM
             user_address
-        WHERE 
+        WHERE
             user_id = #{id}
         AND
             is_deleted = 'N'
@@ -68,42 +104,42 @@
     </select>
 
     <update id="updateAddress">
-        UPDATE user_address 
-        SET 
+        UPDATE user_address
+        SET
             is_deleted = 'Y'
         WHERE user_id= #{id}
     </update>
     <insert id="insertAddress">
         INSERT INTO user_address (
-            user_id, 
-            zone_code, 
-            province, 
-            city, 
+            user_id,
+            zone_code,
+            province,
+            city,
             road_name,
-            road_address, 
+            road_address,
             jibun_Address,
             extra_address,
-            detail_address, 
+            detail_address,
             is_default,
             full_address
         )
         VALUES (
-            #{id}, 
-            #{zoneCode}, 
-            #{province}, 
-            #{city}, 
+            #{id},
+            #{zoneCode},
+            #{province},
+            #{city},
             #{roadName},
             #{roadAddress, typeHandler=com.safeg.user.util.CryptoTypeHandler},
             #{jibunAddress},
             #{extraAddress},
-            #{detailAddress, typeHandler=com.safeg.user.util.CryptoTypeHandler}, 
+            #{detailAddress, typeHandler=com.safeg.user.util.CryptoTypeHandler},
             #{isDefault},
             #{fullAddress, typeHandler=com.safeg.user.util.CryptoTypeHandler}
         )
     </insert>
 
     <update id="updateInfo">
-        UPDATE user set 
+        UPDATE user set
             nickname = #{nickname},
             email = #{email, typeHandler=com.safeg.user.util.CryptoTypeHandler},
             phone_num = #{phoneNum, typeHandler=com.safeg.user.util.CryptoTypeHandler},
@@ -116,7 +152,7 @@
     </update>
 
     <select id="pointList" resultType="UserCampaignVO">
-        SELECT 
+        SELECT
             uc.user_id,
             (CASE
                 WHEN uc.status = '0' THEN '대기'
@@ -136,7 +172,7 @@
             u.auth_id
             FROM user_campaign uc
         LEFT OUTER JOIN
-        campaign c 
+        campaign c
         ON uc.campaign_id = c.campaign_id
         LEFT OUTER JOIN
         user u
@@ -157,14 +193,14 @@
         FROM
             point_history ph
         JOIN
-            user u 
-        ON 
-            ph.source_id = u.id
+            user u
+        ON
+            ph.source_no = u.id
         WHERE
             ph.point_type = 'REFERRAL_REWARD'
         AND ph.user_id = #{id}
         GROUP BY
-            ph.source_id, u.user_id, u.user_nm
+            ph.source_no, u.user_id, u.user_nm
         ORDER BY
             referrer_count DESC
     </select>
@@ -176,10 +212,10 @@
             COUNT(uc.id) AS countUser,
             COUNT(*) * c.leader_point AS leader_point
         FROM user_campaign uc
-        LEFT OUTER JOIN campaign c 
+        LEFT OUTER JOIN campaign c
         ON uc.campaign_id = c.campaign_id
         WHERE uc.apply_date BETWEEN #{params.startDate} AND #{params.endDate}
-        AND uc.campaign_id IN 
+        AND uc.campaign_id IN
             <foreach collection="params.campaignIds" item="id" open="(" separator="," close=")">
                 #{id}
             </foreach>
@@ -199,7 +235,7 @@
     <!-- findUserById 쿼리: 사용자 ID로 비밀번호를 포함한 사용자 정보 조회 -->
     <!-- 여기서는 UserVO의 모든 필드를 가져와도 되고, id와 password만 가져와도 됨 -->
     <select id="findUserById" resultType="com.safeg.user.vo.UserVO">
-        SELECT 
+        SELECT
             id, password
         FROM user
         WHERE id = #{userId}
@@ -214,19 +250,19 @@
     </update>
 
     <select id="campaignId" resultType="com.safeg.user.vo.UserCampaignVO">
-        SELECT 
+        SELECT
             uc.campaign_id,
             uc.user_id,
             uc.user_no,
             uc.status,
             uc.apply_date,
             u.auth_id
-        FROM 
+        FROM
             user_campaign uc
         LEFT OUTER JOIN
             user u
         on uc.user_no = u.id
-        WHERE 
+        WHERE
             uc.user_no = #{id}
         AND uc.is_leader = 'Y'
         AND uc.is_deleted = 'N'
@@ -237,48 +273,48 @@
         SELECT
             IFNULL(
                 SUM(
-                    CASE 
+                    CASE
                         WHEN ph.category = 'LEADER_EXTRA' THEN COALESCE(ph.amount, 0) * COALESCE(uc_count.active_applicants, 0)
                         ELSE COALESCE(ph.amount, 0)
                     END
                 ), 0
             ) AS amount
-        FROM 
+        FROM
             point_history ph
         LEFT OUTER JOIN
-            campaign c ON ph.campaign_id = c.CAMPAIGN_ID    
+            campaign c ON ph.campaign_id = c.CAMPAIGN_ID
     	/*  실시간 인원수를 계산하는 서브쿼리 추가 */
             LEFT OUTER JOIN (
-            SELECT 
-                campaign_id, 
+            SELECT
+                campaign_id,
                 COUNT(*) AS active_applicants
-            FROM 
+            FROM
                 user_campaign
-            WHERE 
+            WHERE
                 status = '2'
                 AND is_deleted = 'N'
-            GROUP BY 
+            GROUP BY
                 campaign_id
         ) uc_count ON ph.campaign_id = uc_count.campaign_id
-        WHERE 
+        WHERE
             ph.user_id = #{userNo}
         AND
             ph.is_deleted= 'N'
     </select>
-    
+
     <select id="insertPointSettlement">
         INSERT INTO point_settlement (
-            user_id, 
-            target_month, 
-            total_work_amount, 
-            total_leader_amount, 
-            total_referral_amount, 
-            total_attend_amount, 
-            final_amount, 
+            user_id,
+            target_month,
+            total_work_amount,
+            total_leader_amount,
+            total_referral_amount,
+            total_attend_amount,
+            final_amount,
             status
         )
-        SELECT 
-            user_id, 
+        SELECT
+            user_id,
             #{targetMonth}, -- 예: '2026-03'
             SUM(CASE WHEN category = 'WORK' THEN amount ELSE 0 END),
             SUM(CASE WHEN category LIKE 'LEADER%' THEN amount ELSE 0 END),
@@ -286,46 +322,51 @@
             SUM(CASE WHEN category = 'FULL_ATTEND' THEN amount ELSE 0 END),
             SUM(amount), -- 전체 합계
             1 -- 상태값 (예: 1: 정산대기)
-        FROM 
+        FROM
             point_history
-        WHERE 
+        WHERE
             mission_date LIKE CONCAT(#{targetMonth}, '%')
             AND is_deleted = 'N'
             AND settlement_status = 'READY'
-        GROUP BY 
+        GROUP BY
             user_id;
     </select>
 
 
     <select id="referrerList" resultType="PointHistoryVO">
-        SELECT 
+        SELECT
             u.user_nm,
+            GROUP_CONCAT(DISTINCT ph.mission_date ORDER BY ph.mission_date ASC SEPARATOR ', ') AS mission_date,
             SUM(ph.amount) AS amount,
-            #{targetMonth} AS mission_month
-        FROM 
+            #{targetMonth} AS mission_month,
+            count(ph.point_id) point_cnt
+        FROM
             point_history ph
         LEFT OUTER JOIN user u
-            ON u.id = ph.source_id
-        WHERE 
+            ON u.id = ph.source_no
+        WHERE
             ph.mission_date LIKE CONCAT(#{targetMonth}, '%')
             AND ph.is_deleted = 'N'
             AND ph.settlement_status = 'READY'
-            AND ph.user_id = #{userNo}
+            AND ph.user_no = #{userNo}
             AND ph.category = 'REFERRAL'
-        GROUP BY 
+        GROUP BY
+            u.id,
             u.user_nm
+        ORDER BY
+            u.user_nm ASC
     </select>
 
     <select id="attendList" resultType="PointHistoryVO">
-        SELECT 
+        SELECT
             u.user_nm,
             amount,
             mission_date
-        FROM 
+        FROM
             point_history ph
         LEFT OUTER JOIN user u
             on u.id = ph.user_id
-        WHERE 
+        WHERE
             mission_date LIKE CONCAT(#{targetMonth}, '%')
             AND ph.is_deleted = 'N'
             AND settlement_status = 'READY'
@@ -340,35 +381,37 @@
             c.campaign_title,
             c.time_segment,
             MAX(uc_count.active_applicants) AS applicants_num,
-            SUM(ph.amount * COALESCE(uc_count.active_applicants, 0)) AS amount,
-            MAX(ph.mission_date) AS mission_date
-        FROM 
+            amount * MAX(uc_count.active_applicants) amount,
+            mission_date
+        FROM
             point_history ph
         LEFT OUTER JOIN campaign c
             ON c.campaign_id = ph.campaign_id
         LEFT OUTER JOIN (
-            SELECT 
-                campaign_id, 
+            SELECT
+                campaign_id,
+                apply_date,                         -- 💡 1. 날짜 컬럼 추가
                 COUNT(*) AS active_applicants
-            FROM 
+            FROM
                 user_campaign
-            WHERE 
+            WHERE
                 status IN ('2')
-                --  수정됨: 따옴표 위치 확인
                 AND apply_date LIKE CONCAT(#{targetMonth}, '%')
                 AND is_deleted = 'N'
-            GROUP BY 
-                campaign_id
-        ) uc_count ON ph.campaign_id = uc_count.campaign_id
-        WHERE 
+            GROUP BY
+                campaign_id,
+                apply_date                          -- 💡 2. 날짜별로 GROUP BY
+        ) uc_count
+            ON ph.campaign_id = uc_count.campaign_id
+        AND ph.mission_date = uc_count.apply_date -- 💡 3. 미션 날짜와 일치하는 데이터만 조인
+        WHERE
             ph.mission_date LIKE CONCAT(#{targetMonth}, '%')
             AND ph.is_deleted = 'N'
             AND ph.settlement_status = 'READY'
-            --  권장: $ 대신 # 사용
-            AND ph.user_id = #{userNo}
+            AND ph.user_no = #{userNo}
             AND ph.category = 'leader_extra'
-        GROUP BY 
-            ph.user_id, c.CAMPAIGN_ID, c.campaign_title, c.time_segment
+        GROUP BY
+            ph.user_id, c.CAMPAIGN_ID, c.campaign_title, c.time_segment, amount, mission_date
     </select>
 
     <select id="workList" resultType="PointHistoryVO">
@@ -382,27 +425,32 @@
                 WHEN uc.status = '3' THEN '지각'
                 WHEN uc.status = '4' THEN '결근'
                 WHEN uc.status = '5' THEN '무단'
-                WHEN uc.status = '8' THEN '등록'
-                WHEN uc.status = '9' THEN '퇴근'
+                WHEN cl.status = '8' THEN '등록'
+                WHEN cl.status = '9' THEN '퇴근'
                 ELSE '없음'
             END) as status_nm,
             ph.mission_date,
             amount
-        FROM 
+        FROM
             point_history ph
         LEFT OUTER JOIN campaign c
             on c.campaign_id = ph.campaign_id
         LEFT OUTER JOIN user_campaign uc
             on uc.campaign_id = ph.campaign_id
-            and uc.user_no = ph.user_Id
-            AND uc.apply_date = ph.mission_date 
-            and status = '9'
-        WHERE 
-            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            AND uc.user_no = ph.user_no
+            AND uc.apply_date = ph.mission_date
+            AND uc.status = '2'
+        LEFT OUTER JOIN camp_leader cl
+            on cl.campaign_id = ph.campaign_id
+            AND cl.user_no = ph.user_no
+            AND cl.apply_date = ph.mission_date
+            AND cl.status = '9'
+        WHERE
+            ph.mission_date LIKE CONCAT(#{targetMonth}, '%')
             AND ph.is_deleted = 'N'
-            AND settlement_status = 'READY'
-            and ph.user_id = #{userNo}
-            and category = 'WORK'
+            AND ph.settlement_status = 'READY'
+            AND ph.user_no = #{userNo}
+            AND ph.category = 'WORK'
     </select>
 
     <select id="overPayList" resultType="PointHistoryVO">
@@ -416,36 +464,41 @@
                 WHEN uc.status = '3' THEN '지각'
                 WHEN uc.status = '4' THEN '결근'
                 WHEN uc.status = '5' THEN '무단'
-                WHEN uc.status = '8' THEN '등록'
-                WHEN uc.status = '9' THEN '퇴근'
-                ELSE '없음'
+                WHEN lc.status = '8' THEN '등록'
+                WHEN lc.status = '9' THEN '퇴근'
+                ELSE '알 수 없음'
             END) as status_nm,
             ph.mission_date,
             amount
-        FROM 
+        FROM
             point_history ph
         LEFT OUTER JOIN campaign c
             on c.campaign_id = ph.campaign_id
         LEFT OUTER JOIN user_campaign uc
             on uc.campaign_id = ph.campaign_id
-            and uc.user_no = ph.user_Id
-            AND uc.apply_date = ph.mission_date 
-            and status = '9'
-        WHERE 
+            AND uc.user_no = ph.user_no
+            AND uc.apply_date = ph.mission_date
+            AND uc.status = '2'
+        LEFT OUTER JOIN camp_leader lc
+            on lc.campaign_id = ph.campaign_id
+            AND lc.user_no = ph.user_no
+            AND lc.apply_date = ph.mission_date
+            AND lc.status = '9'
+        WHERE
             mission_date LIKE CONCAT(#{targetMonth}, '%')
             AND ph.is_deleted = 'N'
             AND settlement_status = 'READY'
-            and ph.user_id = #{userNo}
-            and category = 'OVERPAY'
+            AND ph.user_no = #{userNo}
+            AND category = 'OVERPAY'
     </select>
 
     <select id="referrerAmount" resultType="String">
         SELECT
-            SUM(amount) AS referral_amount 
+            SUM(amount) AS referral_amount
         FROM
             point_history
         WHERE
-            user_id = #{userNo}
+            user_no = #{userNo}
         AND
             category = 'REFERRAL'
         AND
@@ -455,14 +508,14 @@
         AND
             mission_date LIKE CONCAT(#{targetMonth}, '%')
     </select>
-    
+
     <select id="attendAmount" resultType="String">
         SELECT
-            SUM(amount) AS attend_amount 
+            SUM(amount) AS attend_amount
         FROM
-            point_history 
+            point_history
         WHERE
-            user_id = #{userNo}
+            user_no = #{userNo}
         AND
             category = 'FULL_ATTEND'
         AND
@@ -475,11 +528,11 @@
 
     <select id="leaderAmount" resultType="String">
         SELECT
-            SUM(amount) AS leader_amount 
+            SUM(amount) AS leader_amount
         FROM
             point_history
         WHERE
-            user_id = #{userNo}
+            user_no = #{userNo}
         AND
             category = 'LEADER_EXTRA'
         AND
@@ -492,11 +545,11 @@
 
     <select id="workAmount" resultType="String">
         SELECT
-            SUM(amount) AS work_amount 
+            SUM(amount) AS work_amount
         FROM
             point_history
         WHERE
-            user_id = #{userNo}
+            user_no = #{userNo}
         AND
             category = 'WORK'
         AND
@@ -509,11 +562,11 @@
 
     <select id="overPayAmount" resultType="String">
         SELECT
-            SUM(amount) AS work_amount 
+            SUM(amount) AS work_amount
         FROM
             point_history
         WHERE
-            user_id = #{userNo}
+            user_no = #{userNo}
         AND
             category = 'OVERPAY'
         AND
@@ -532,11 +585,11 @@
     </select>
 
     <update id="updateApplicantsNum">
-        UPDATE campaign 
+        UPDATE campaign
         SET applicants_num = (
             SELECT t.cnt FROM (
                 SELECT COUNT(DISTINCT user_id) as cnt
-                FROM user_campaign 
+                FROM user_campaign
                 WHERE campaign_id = #{campaignId}
                 AND is_deleted = 'N' -- 👈 탈락하거나 취소된(Y) 사람은 제외!
             ) t

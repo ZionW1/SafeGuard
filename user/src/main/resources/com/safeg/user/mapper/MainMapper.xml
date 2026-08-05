@@ -23,6 +23,40 @@
         <result property="appliedStartDate" column="applied_start_date"/>
         <result property="appliedEndDate" column="applied_end_date"/>
     </resultMap>
+
+    <resultMap id="campaignMap" type="CampaignVO">
+        <id property="campaignId" column="campaign_id" />
+        
+        <result property="companyNm" column="company_Nm" />
+        <result property="companyPh" column="company_Ph" />
+        <result property="campaignTitle" column="campaign_Title" />
+        <result property="recruitmentNum" column="recruitment_Num" />
+        <result property="applicantsNum" column="applicants_Num" />
+        <result property="campaignPay" column="campaign_pay" />
+        <result property="timeSegment" column="time_segment" />
+        <result property="workHour" column="work_hour" />
+        <result property="placeAddr" column="place_Addr" />
+        <result property="mission" column="mission" />
+        <result property="filePath" column="file_path" />
+        <result property="savedName" column="saved_name" />
+        <result property="typeCode" column="type_code" />
+        <result property="typeNm" column="type_nm" />
+        <result property="leaderCode" column="leader_code" />
+        <result property="appPeriodStr" column="app_period_str" />
+        <result property="appPeriodEnd" column="app_period_end" />
+        <result property="eventPeriodStr" column="event_period_str" />
+        <result property="eventPeriodEnd" column="event_period_end" />
+        <result property="resultDate" column="result_date" />
+
+        <collection property="leaderList" ofType="CampLeaderVO">
+            <result property="leaderNm" column="user_nm" />
+            <result property="leaderPh" column="phone_Num" />
+            <result property="leaderId" column="user_id" />
+            <result property="leaderNo" column="user_no" />
+            <result property="leaderPay" column="leader_pay" />
+            <result property="leaderPoint" column="leader_point" />
+        </collection>
+    </resultMap>
     <!-- <resultMap type="Users" id="userMap">
         <id property="no" column="no" />
         
@@ -44,7 +78,7 @@
         <result property="auth" column="auth" />
     </resultMap> -->
     
-    <select id="campaignFavorite" resultType="CampaignVO">
+    <select id="campaignFavorite" resultMap="campaignMap">
         <![CDATA[
         SELECT 
             c.campaign_id,
@@ -66,12 +100,12 @@
             event_Period_str,
             event_Period_End,
             time_segment,
-            t.user_nm
-            FROM campaign c 
+            cl.user_nm
+        FROM campaign c 
         LEFT OUTER JOIN files f 
         ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN user t
-        on c.leader_code = t.id
+        LEFT OUTER JOIN camp_leader cl
+        on c.campaign_id = cl.campaign_id
         Where f.is_deleted = 'N'
         and f.target_type = 'campaign'
         and c.is_deleted = 'N'
@@ -84,7 +118,7 @@
             DATE_FORMAT(c.event_Period_End, '%Y.%m.%d') as event_Period_End -->
     </select>
 
-    <select id="campaignWorkable" resultType="CampaignVO">
+    <select id="campaignWorkable" resultMap="campaignMap">
         <![CDATA[
         SELECT 
             c.campaign_id,
@@ -106,23 +140,23 @@
             event_Period_str,
             event_Period_End,
             time_segment,
-            t.user_nm
+            cl.user_nm
             FROM campaign c 
         LEFT OUTER JOIN files f 
         ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN user t
-        on c.leader_code = t.id
+        LEFT OUTER JOIN camp_leader cl
+        on c.campaign_id = cl.campaign_id
         Where f.is_deleted = 'N'
         and f.target_type = 'campaign'
         and c.is_deleted = 'N'
         and c.app_Period_End > CURDATE()
-        and c.applicants_Num = 0
+        and c.applicants_Num <= 1
         and c.is_active = 'Y'
         ORDER BY campaign_id asc
         ]]>
     </select>
 
-    <select id="campaignNew" resultType="CampaignVO">
+    <select id="campaignNew" resultMap="campaignMap">
         <![CDATA[
         SELECT 
             c.campaign_id,
@@ -144,12 +178,12 @@
             event_Period_str,
             event_Period_End,
             time_segment,
-            t.user_nm
+            cl.user_nm
             FROM campaign c 
         LEFT OUTER JOIN files f 
         ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN user t
-        on c.leader_code = t.id
+        LEFT OUTER JOIN camp_leader cl
+        on c.campaign_id = cl.campaign_id
         Where f.is_deleted = 'N'
         and f.target_type = 'campaign'
         and c.app_Period_End > CURDATE()
@@ -209,7 +243,7 @@
         WHERE user_id = #{userId}
     </select>
 
-    <select id="allView" resultType="CampaignVO">
+    <select id="allView" resultMap="campaignMap">
         <![CDATA[
         SELECT
             c.campaign_id, 
@@ -229,14 +263,14 @@
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
             END) as type_nm,
-            t.user_nm,
+            cl.user_nm,
             c.campaign_pay,
             DATE_FORMAT(c.created_at, '%Y.%m.%d') as created_at
         FROM campaign c 
         LEFT OUTER JOIN files f 
         ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN user t
-        on c.leader_code = t.id
+        LEFT OUTER JOIN camp_leader cl
+        on c.campaign_id = cl.campaign_id
         and c.is_deleted = 'N'
         Where f.is_deleted = 'N'
         and c.app_Period_End >= CURDATE()

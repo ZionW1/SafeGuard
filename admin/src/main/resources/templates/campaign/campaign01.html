@@ -6,7 +6,7 @@
         <link rel="stylesheet" th:href="@{/css/style.css}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="_csrf" th:content="${_csrf.token}"/>
-        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>    
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
         <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
     </head>
@@ -19,7 +19,7 @@
                 <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
             </div>
             <div class="main-content">
-                
+
                 <h1><a th:href="@{/campaign01}">캠페인 목록 요약</a></h1>
                 <form class="optionForm" th:action="@{/campaign01}" method="get" id="form">
                     <div th:replace="~{fragments/csrfFragments :: inputCsrf}"></div>
@@ -64,7 +64,7 @@
                     <tbody>
                         <th:block th:if="${campaignsList.isEmpty()}">
                             <tr>
-                                <td colspan="9" align="center">조회된 데이터가 없습니다.</td>
+                                <td colspan="10" align="center">조회된 데이터가 없습니다.</td>
                             </tr>
                         </th:block>
                     </div>
@@ -73,8 +73,8 @@
                                 <td><span th:text="${campaign.campaignId}"></span></td>
                                 <td th:text="|${campaign.campaignTitle} (${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'})|"></td>
                                 <td class="pointer">
-                                    <a th:class="|statusInfoChange applyConfirmButotn|" 
-                                    href="#" 
+                                    <a th:class="|statusInfoChange applyConfirmButotn|"
+                                    href="#"
                                     th:data-url="@{/campaignPopup01/{campaignId}(campaignId=${campaign.campaignId})}"
                                     th:onclick="|openPopup(this.dataset.url, ${stat.index}); return false;|">캠페인신청</a>
                                 </td>
@@ -166,7 +166,7 @@
                 eventPeriodStr: campaign[index].eventPeriodStr,
                 eventPeriodEnd: campaign[index].eventPeriodEnd
             };
-            
+
             // console.log("sendDate" + JSON.stringify(sendData))
 
             // 1. 서버에 해당 url의 HTML 내용을 요청
@@ -187,14 +187,14 @@
                 document.getElementById('modalContent').innerHTML = html;
                 // // 3. 모달 display를 flex로 바꿔서 화면에 노출
                 document.getElementById('modalPopup').style.display = 'flex';
-                
+
                 // 🔥 [추가] 이미 신청한 유저 체크박스 자동 선택 및 비활성화 로직
                 const appliedBoxes = document.querySelectorAll('.user_Chk.already-applied');
 
                 appliedBoxes.forEach(cb => {
                     cb.checked = true;  // 자동으로 체크 표시 활성화
                     // cb.disabled = true; // 유저가 임의로 체크 해제하지 못하도록 비활성화
-                    
+
                     // (시각적 효과) 해당 행을 흐리게 만들어서 이미 신청 완료된 상태임을 표시
                     const row = cb.closest('tr');
                     if (row) {
@@ -235,7 +235,7 @@
         function closeModal() {
             // 모달 닫기 및 컨텐츠 초기화
             const modal = document.getElementById('modalPopup');
-            if(modal) 
+            if(modal)
                 modal.style.display = 'none';
 
             $('#modalContent').html(''); // 닫을 때 내부 내용 초기화 (중복 방지 핵심!)
@@ -246,11 +246,11 @@
         function changeDate(element) {
             // 사용자가 선택한 option의 value 값을 가져옴 ('ALL' 또는 '2026-07-06' 등)
             const campaignId = campaign[selectIndex].campaignId;
-            const selectedValue = element.value; 
+            const selectedValue = element.value;
             let applyDate = "";
 
             console.log("선택된 값:", selectedValue);
-            if(!selectedValue) 
+            if(!selectedValue)
                 return;
 
             const url = `/admin/chgDate/${campaignId}`;
@@ -259,7 +259,7 @@
             } else {
                 applyDate = selectedValue; // '2026-07-06' 같은 실제 날짜 전송
             }
-            
+
             var sendData = {
                 campaignTitle: campaign[selectIndex].campaignTitle,
                 recruitmentNum: campaign[selectIndex].recruitmentNum,
@@ -282,15 +282,15 @@
                     throw new Error("네트워크 응답에 문제가 있습니다.");
                 }
                 // 서버에서 HTML 조각을 받아온다면 response.text(), JSON을 받아온다면 response.json()
-                return response.json(); 
+                return response.json();
             })
             .then(data => {
                 // 1. 데이터를 꽂아 넣을 대상(tbody) 가져오기
                 const tableBody = document.getElementById("userList");
-                
+
                 // 2. 누적할 HTML 문자열 초기화
                 let htmlRows = "";
-                
+
                 // 3. 만약 받아온 데이터가 비어있다면 처리
                 if (!data || data.length === 0) {
                     htmlRows = `<tr><td colspan="3" style="text-align:center;">조회된 회원 정보가 없습니다.</td></tr>`;
@@ -304,8 +304,8 @@
                             <tr>
                                 <td>
                                     <input type="hidden" value="${userInfo.userId}" class="user_Id" name="userId">
-                                    <input type="checkbox" value="${userInfo.id}" 
-                                        class="user_Chk ${classAppend}" 
+                                    <input type="checkbox" value="${userInfo.id}"
+                                        class="user_Chk ${classAppend}"
                                         name="Attendance" ${isChecked}>
                                 </td>
                                 <td><span>${userInfo.userNm}</span></td>
@@ -318,7 +318,7 @@
                     appliedBoxes.forEach(cb => {
                         cb.checked = true;  // 자동으로 체크 표시 활성화
                         // cb.disabled = true; // 유저가 임의로 체크 해제하지 못하도록 비활성화
-                        
+
                         // (시각적 효과) 해당 행을 흐리게 만들어서 이미 신청 완료된 상태임을 표시
                         const row = cb.closest('tr');
                         if (row) {
@@ -328,7 +328,169 @@
                     });
                     chkBoxSelect();
                 }
-                
+
+                // 5. 새로 만든 HTML 덩어리를 tbody에 덮어씌우기
+                tableBody.innerHTML = htmlRows;
+            })
+            .catch(error => {
+                console.error("데이터를 가져오는 중 오류 발생:", error);
+                alert("정보를 불러오는데 실패했습니다.");
+            });
+        }
+
+        function searchUser(element) {
+            console.log("a : " + element);
+            const campaignId = campaign[selectIndex].campaignId;
+            const searchValue = document.getElementById("keyword").value;
+            console.log("a : " + campaignId);
+            console.log("b : " + searchValue);
+
+            const url = `/admin/searchUser/${campaignId}?keyword=${encodeURIComponent(searchValue)}`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("네트워크 응답에 문제가 있습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tableBody = document.getElementById("userList");
+                let htmlRows = "";
+                if (!data || data.length === 0) {
+                    htmlRows = `<tr><td colspan="3" style="text-align:center;">조회된 회원 정보가 없습니다.</td></tr>`;
+                } else {
+                    data.forEach(userInfo => {
+                        const classAppend = (userInfo.isApplied === 'Y') ? 'already-applied' : '';
+                        const isChecked = (userInfo.isApplied === 'Y') ? 'checked' : '';
+                        htmlRows += `
+                            <tr>
+                                <td>
+                                    <input type="hidden" value="${userInfo.userId}" class="user_Id" name="userId">
+                                    <input type="checkbox" value="${userInfo.id}"
+                                        class="user_Chk ${classAppend}"
+                                        name="Attendance" ${isChecked}>
+                                </td>
+                                <td><span>${userInfo.userNm}</span></td>
+                                <td><span>${userInfo.phoneNum}</span></td>
+                            </tr>
+                        `;
+                    });
+                    const appliedBoxes = document.querySelectorAll('.user_Chk.already-applied');
+
+                    appliedBoxes.forEach(cb => {
+                        cb.checked = true;  // 자동으로 체크 표시 활성화
+                        // cb.disabled = true; // 유저가 임의로 체크 해제하지 못하도록 비활성화
+
+                        // (시각적 효과) 해당 행을 흐리게 만들어서 이미 신청 완료된 상태임을 표시
+                        const row = cb.closest('tr');
+                        if (row) {
+                            row.style.backgroundColor = '#f8f9fa';
+                            row.style.color = '#bbb';
+                        }
+                    });
+                    chkBoxSelect();
+                }
+                tableBody.innerHTML = htmlRows;
+            })
+            .catch(error => {
+                console.error("데이터를 가져오는 중 오류 발생:", error);
+                alert("정보를 불러오는데 실패했습니다.");
+            });
+        }
+
+        function changeRole(element) {
+            // 사용자가 선택한 option의 value 값을 가져옴 ('ALL' 또는 '2026-07-06' 등)
+            const campaignId = campaign[selectIndex].campaignId;
+            const selectedValue = element.value;
+            let applyDate = "";
+
+            console.log("선택된 값:", selectedValue);
+            if(!selectedValue)
+                return;
+
+            const url = `/admin/chgRole/${campaignId}`;
+            if (selectedValue === "ALL") {
+                applyDate = "ALL"; // 자바단에 'ALL'이라는 문자열을 그대로 전송
+            } else {
+                applyDate = selectedValue; // '2026-07-06' 같은 실제 날짜 전송
+            }
+
+            var sendData = {
+                campaignTitle: campaign[selectIndex].campaignTitle,
+                recruitmentNum: campaign[selectIndex].recruitmentNum,
+                applicantsNum: campaign[selectIndex].applicantsNum,
+                eventPeriodStr: campaign[selectIndex].eventPeriodStr,
+                eventPeriodEnd: campaign[selectIndex].eventPeriodEnd,
+                applyDateS: applyDate
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(sendData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("네트워크 응답에 문제가 있습니다.");
+                }
+                // 서버에서 HTML 조각을 받아온다면 response.text(), JSON을 받아온다면 response.json()
+                return response.json();
+            })
+            .then(data => {
+                // 1. 데이터를 꽂아 넣을 대상(tbody) 가져오기
+                const tableBody = document.getElementById("userList");
+
+                // 2. 누적할 HTML 문자열 초기화
+                let htmlRows = "";
+
+                // 3. 만약 받아온 데이터가 비어있다면 처리
+                if (!data || data.length === 0) {
+                    htmlRows = `<tr><td colspan="3" style="text-align:center;">조회된 회원 정보가 없습니다.</td></tr>`;
+                } else {
+                    // 4. 데이터 배열(data)을 돌면서 기존 타임리프 구조 그대로 그리기
+                    data.forEach(userInfo => {
+                        // userInfo.isApplied가 'Y'이면 클래스명 추가하고 아니면 빈값
+                        const classAppend = (userInfo.isApplied === 'Y') ? 'already-applied' : '';
+                        const isChecked = (userInfo.isApplied === 'Y') ? 'checked' : '';
+                        htmlRows += `
+                            <tr>
+                                <td>
+                                    <input type="hidden" value="${userInfo.userId}" class="user_Id" name="userId">
+                                    <input type="checkbox" value="${userInfo.id}"
+                                        class="user_Chk ${classAppend}"
+                                        name="Attendance" ${isChecked}>
+                                </td>
+                                <td><span>${userInfo.userNm}</span></td>
+                                <td><span>${userInfo.phoneNum}</span></td>
+                            </tr>
+                        `;
+                    });
+                    const appliedBoxes = document.querySelectorAll('.user_Chk.already-applied');
+
+                    appliedBoxes.forEach(cb => {
+                        cb.checked = true;  // 자동으로 체크 표시 활성화
+                        // cb.disabled = true; // 유저가 임의로 체크 해제하지 못하도록 비활성화
+
+                        // (시각적 효과) 해당 행을 흐리게 만들어서 이미 신청 완료된 상태임을 표시
+                        const row = cb.closest('tr');
+                        if (row) {
+                            row.style.backgroundColor = '#f8f9fa';
+                            row.style.color = '#bbb';
+                        }
+                    });
+                    chkBoxSelect();
+                }
+
                 // 5. 새로 만든 HTML 덩어리를 tbody에 덮어씌우기
                 tableBody.innerHTML = htmlRows;
             })
@@ -366,43 +528,15 @@
 
             const workDate = document.querySelectorAll('.user_Chk.already-applied')
 
-            const applyDate = document.querySelector(".sync-nm"); 
+            const applyDate = document.querySelector(".sync-nm");
 
-            console.log("applyDate: ", applyDate.value); // 이제 값이 잘 나옵니다!
-
-            console.log("취소할 유저 번호 리스트:", usersToCancel);
-            console.log("새로 등록할 유저 번호(id) 리스트:", usersToInsert);      
-            console.log("새로 등록할 유저 아이디(userId) 리스트:", userIdList);
-
-
-
-
-
-
-
-
-
-
-
-            // // 4. 새롭게 체크된 유저 골라내기 (신규 등록 대상자 - 필요시 사용)
-            // const usersToInsert = checkedUsers.filter(userNo => !appliedUsers.includes(userNo));
-
-            // // const userNoList = Array.from(userChk).map(cb => cb.value);
-            // // // 3. 🔥 [추가] 체크된 체크박스와 '같은 칸(td)'에 숨겨져 있는 userId 문자열 값 배열
-            // const userIdList = Array.from(usersToInsert).map(cb => {
-            //     // 체크박스(cb)의 부모 태그(td)를 찾은 후, 그 안에서 .user_Id 클래스를 가진 hidden 값을 가져옴
-            //     return cb.closest('td').querySelector('.user_Id').value;
-            // });
-            
-            console.log("선택된 유저 일련번호(id) 리스트:", usersToInsert);      // 예: ["43", "34"]
-            console.log("선택된 유저 아이디(userId) 리스트:", userIdList); // 예: ["admin123", "test01"]
-            
             const url = "/admin/userApply";
-            
+
             const sendData = {
                 campaignId: campaignId,
                 userNos: usersToInsert, // [1, 2, 3] 형태의 배열
                 userIds: userIdList,
+                // leaderPay: campaign[selectIndex].leaderPay,
                 recruitmentNum: campaign[selectIndex].recruitmentNum,
                 applicantsNum: campaign[selectIndex].applicantsNum,
                 eventPeriodStr: campaign[selectIndex].eventPeriodStr,
@@ -411,73 +545,22 @@
                 applyDate: applyDate.value
             };
 
-
-            // try {
-            //     // 🔥 STEP 1: 체크를 푼 유저가 있다면 취소(삭제) 프로세스 진행
-            //     if (usersToCancel.length > 0) {
-            //         const cancelData = { campaignId: campaignId, timeSegment: timeSegment, userNos: usersToCancel,
-            //         eventPeriodStr: campaign[selectIndex].eventPeriodStr,
-            //         eventPeriodEnd: campaign[selectIndex].eventPeriodEnd };
-            //         const res = await fetch('/admin/userCancel', { // 본인 URL 확인
-            //             method: 'POST',
-            //             headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
-            //             body: JSON.stringify(cancelData)
-            //         });
-            //         if (!res.ok) throw new Error('취소 처리 실패');
-            //     }
-
-            //     // 🔥 STEP 2: 새로 체크한 유저가 있다면 등록(추가) 프로세스 진행
-            //     if (usersToInsert.length > 0) {
-            //         const insertData = { 
-            //             campaignId: campaignId,
-            //             userNos: usersToInsert, // [1, 2, 3] 형태의 배열
-            //             userIds: userIdList,
-            //             recruitmentNum: campaign[selectIndex].recruitmentNum,
-            //             applicantsNum: campaign[selectIndex].applicantsNum,
-            //             eventPeriodStr: campaign[selectIndex].eventPeriodStr,
-            //             eventPeriodEnd: campaign[selectIndex].eventPeriodEnd,
-            //             timeSegment: timeSegment
-            //         };
-            //         const res = await fetch('/admin/userApply', { // 본인의 등록 URL 확인
-            //             method: 'POST',
-            //             headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
-            //             body: JSON.stringify(insertData)
-            //         });
-            //         alert("수정 사항이 성공적으로 반영되었습니다." + res.message);
-
-            //         if (!res.ok) {
-            //             const errorData = await response.json(); // 서버가 보낸 {message: "..."} 읽기
-            //             throw new Error(errorData.message || "알 수 없는 서버 오류가 발생했습니다.");
-            //         }
-            //         // if (!res.ok) throw new Error('신규 등록 실패');
-            //     }
-
-            //     // 3. 모두 성공 시 완료 알림 후 새로고침
-            //     location.reload();
-
-            // } catch (error) {
-            //     console.error("작업 중 오류 발생:", error);
-            //     alert("처리 중 오류가 발생했습니다: " + error.message);
-
-            // }
-
-
             try {
                 // 🔥 STEP 1: 체크를 푼 유저가 있다면 취소(삭제) 프로세스 진행
                 if (usersToCancel.length > 0) {
-                    const cancelData = { 
-                        campaignId: campaignId, 
-                        timeSegment: timeSegment, 
+                    const cancelData = {
+                        campaignId: campaignId,
+                        timeSegment: timeSegment,
                         userNos: usersToCancel,
                         eventPeriodStr: campaign[selectIndex].eventPeriodStr,
-                        eventPeriodEnd: campaign[selectIndex].eventPeriodEnd 
+                        eventPeriodEnd: campaign[selectIndex].eventPeriodEnd
                     };
                     const res = await fetch('/admin/userCancel', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
                         body: JSON.stringify(cancelData)
                     });
-                    
+
                     if (!res.ok) {
                         const errorData = await res.json(); // 💡 response가 아니라 res
                         throw new Error(errorData.message || '취소 처리 실패');
@@ -486,7 +569,7 @@
 
                 // 🔥 STEP 2: 새로 체크한 유저가 있다면 등록(추가) 프로세스 진행
                 if (usersToInsert.length > 0) {
-                    const insertData = { 
+                    const insertData = {
                         campaignId: campaignId,
                         userNos: usersToInsert,
                         userIds: userIdList,
@@ -512,58 +595,9 @@
                     const successData = await res.json();
                     alert("수정 사항 " + successData.message + "건 성공적으로 반영되었습니다.");
                 }
-                // alert(successData.message); // 서버가 보낸 "성공" 문구 출력
-                // 💡 3. 모든 프로세스(취소/등록)가 에러 없이 안전하게 성공한 후 알림 및 새로고침
-                // location.reload();
-
             } catch (error) {
-                // 🎯 이제 서버에서 던진 "이미 [...] 캠페인 일정이 있는 유저가 포함되어 있습니다." 메시지가 여기에 정확히 꽂힙니다.
-                // console.error("작업 중 오류 발생:", error);
                 alert(error.message); // 기존의 무의미한 문구 대신 error.message만 깔끔하게 띄웁니다.
             }
-
-
-
-            // // 모달 닫기 및 컨텐츠 초기화
-            // const modal = document.getElementById('modalPopup');
-            // if(modal) 
-            //     modal.style.display = 'none';
-
-            // $('#modalContent').html(''); // 닫을 때 내부 내용 초기화 (중복 방지 핵심!)
-            // document.getElementById('significantModal').style.display = 'none';
-            // document.getElementById('modalContent').innerHTML = '';
-            // console.log("sendData 값 확인:", sendData);
-            // fetch(url, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         [csrfHeader]: csrfToken
-            //     },
-            //     body: JSON.stringify(sendData)
-            // })
-            // .then(response => {
-            //     // 성공(200 OK)인 경우
-            //     if (response.ok) {
-            //         alert('신청이 완료되었습니다!');
-            //         // currentBtn.innerText = '신청완료';
-            //         // currentBtn.disabled = true;
-            //         // currentBtn.classList.add('completed');
-            //         location.reload();
-            //         closeModal();
-            //         return; // 성공 시 여기서 종료
-            //     }
-                
-            //     // 실패(400, 500 등)인 경우 서버가 보낸 JSON 에러 메시지 추출
-            //     return response.json().then(errData => {
-            //         // 서버에서 ResponseEntity.badRequest().body("{\"message\": \"...\"}") 로 보낸 내용
-            //         throw new Error(errData.message || '신청 중 알 수 없는 오류가 발생했습니다.');
-            //     });
-            // })
-            // .catch(error => {
-            //     // 위에서 throw한 에러나 네트워크 에러를 여기서 처리
-            //     console.error('Error:', error);
-            //     alert(error.message); // "이미 해당 기간에 신청된 다른 일정이 있습니다." 등이 출력됨
-            // });
         }
 
         function cancelCampaign(campaignId) {
@@ -582,7 +616,7 @@
 
             console.log("appliedUsers : " + appliedUsers);
             console.log("checkedUsers : " + checkedUsers);
-            
+
             // 3. 🔥 핵심: 기존에 신청했었는데(original), 현재 체크가 풀린(current에 없는) 유저 골라내기 (취소 대상자)
             const usersToCancel = appliedUsers.filter(userNo => !checkedUsers.includes(userNo));
 
@@ -627,5 +661,5 @@
             }
         }
     </script>
-    
+
 </html>

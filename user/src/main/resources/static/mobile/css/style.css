@@ -66,7 +66,7 @@ body {
     font-size: 16px;
     border-bottom: 2px solid #6b27e0;
     padding-bottom: 5px;
-    margin-bottom: 10px;
+    margin: 10px 0;
 }
 .applicant-item {
     display: flex;
@@ -136,7 +136,7 @@ body {
 
 }
 .statusInfoChange.choice_status {
-    background-color: white; /* 배경색 더 어둡게 */
+    background-color: white;
     color: black;
     border: 1px solid #6b27e0;
 }
@@ -147,6 +147,7 @@ body {
     border-radius: 6px;
     font-size: 14px;
     outline: none;
+    margin: 0 0 15px;
     cursor: pointer;
 }
 
@@ -201,22 +202,22 @@ body {
     font-size: 14px;
 }
 .btn-info {
-    background-color: rgb(101, 35, 245);
-    color: #fff;
+    background-color: azure;
+    color: black;
     font-weight: 700;
     width: 100%;
-    /* width: 49.8883686%; */
     padding: 12px;
     margin-top: 5px;
     font-size: 14px;
-    border: 0;
+    border: 1px solid rgba(0, 0, 0, 0.21);
     text-align: center;
+    border-radius: 5px;
 }
 
 .review_btn {
     display: block;
     border-radius: 5px;
-    background-color: rgb(101, 35, 245);
+    background-color: rgb(255, 125, 0);
     color: #fff;
     font-weight: 700;
 
@@ -238,6 +239,7 @@ body {
     border: 0;
     text-align: center;
     text-decoration: none;
+    border-radius: 5px;
 }
 
 .applicant-info {
@@ -302,8 +304,8 @@ body {
 
 .pd-b20 {
     padding: 0px 0 20px;
-    display: flex; 
-    gap: 10px; 
+    display: flex;
+    gap: 10px;
     width: 100%;
 }
 
@@ -343,6 +345,141 @@ body {
     padding: 15px;
     font-size: 16px;
     box-sizing: border-box;
+}
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.8); /* 배경 어둡게 */
+}
+
+  .modal-content {
+    margin: auto;
+    display: block;
+    max-width: 80%;
+    max-height: 80%;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .close {
+    position: absolute;
+    top: 20px; right: 35px;
+    color: #fff;
+    font-size: 40px;
+    cursor: pointer;
+  }
+
+.popup-content {
+    width: 100%;
+    max-width: 750px; /* 대형 팝업 크기 */
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 팝업 내부 바디 (여기에 스크롤 핵심 속성 부여) */
+.popup-body {
+    max-height: 40vh; /* 화면 높이의 60%까지만 자람 */
+    overflow-y: auto; /* 데이터가 넘치면 세로 스크롤바 자동 생성 */
+}
+
+.user_info {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+.modal-title {
+    font-size: 1.5em;
+}
+
+.user_info th,
+.user_info td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    font-size: 1.2em;
+}
+.user_info th {
+    background-color: #f3ecff;
+    color: #5e4b8b;
+}
+.user_info th.title {
+    width: 30%;
+}
+
+.user_info tr:hover {
+    background-color: #f9f3ff;
+}
+
+.modal-title {
+    font-size: 1.5em;
+}
+
+
+.mrg16 {
+    margin: 5px 0 16px ;
+}
+
+.purpleFont {
+    color: #5b408b;
+}
+
+.sync-nm {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.sync-nm-box {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.search_keyword {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.optionSubmit {
+    background-color: #c3acf4;
+    width: 90px;
+    height: 42px;
+    border: none;
+    padding: 12px 10px;
+    font-size: 20px;
+    color: #7552c1;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.inputArea {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
 @media (max-width: 768px) {
@@ -478,5 +615,5 @@ body {
 }
 /* 모바일 대응 */
 @media (max-width: 480px) {
-    
+
 }

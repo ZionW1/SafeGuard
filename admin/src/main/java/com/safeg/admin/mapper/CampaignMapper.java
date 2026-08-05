@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.safeg.admin.vo.CampLeaderVO;
 import com.safeg.admin.vo.CampaignVO;
 import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
@@ -24,6 +25,8 @@ public interface CampaignMapper {
     public CampaignVO campaignSelect(@Param("id") String id) throws Exception;
 
     public int campaignInsert(CampaignVO campaignsVO) throws Exception;
+
+    public int campLeaderInsert(CampLeaderVO leaderList) throws Exception;
 
     public List<UserVO> leaderList() throws Exception;
 
@@ -86,5 +89,6 @@ public interface CampaignMapper {
     public List<UserCampaignVO> getActiveUserNos(@Param("campaignId") Long campaignId, @Param("timeSegment") String timeSegment) throws Exception;
 
     public UserCampaignVO applyDateInfo(@Param("campaignId") Long campaignId, @Param("userNo") Long userNo, @Param("applyDate") LocalDate applyDate, @Param("timeSegment") String timeSegment) throws Exception;
+
     
 }

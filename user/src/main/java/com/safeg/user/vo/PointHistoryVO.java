@@ -1,6 +1,7 @@
 package com.safeg.user.vo;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.Builder;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PointHistoryVO {
     private Long pointId;
-    private Long userId;
+    private Long userNo;
+    private List<Long> userNos;
+    private List<String> userIds;
+
+    private String userId;
     private Long campaignId;
     private int amount;
     private String pointType;
@@ -22,7 +27,7 @@ public class PointHistoryVO {
     private String category;
     private String settlementStatus;
     private String afterBalance;
-    private Long sourceId;
+    private Long sourceNo;
     private String missionDate;
 
     private int totalAmount;
@@ -32,6 +37,7 @@ public class PointHistoryVO {
     private String reasonInfo;
     private String userNm;
     private String id;
+    private int pointCnt;
 
     private int totalPoint;
 
@@ -46,5 +52,13 @@ public class PointHistoryVO {
 
     private String campaignTitle;
     private String statusNm;
+    private LocalDate applyDate;
     private String timeSegment;
+    private int wageChk;
+    private int workHour;
+
+    public boolean empty() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'empty'");
+    }
 }

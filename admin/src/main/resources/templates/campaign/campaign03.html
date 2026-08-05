@@ -65,18 +65,22 @@
                 document.getElementById("typeCode").value = typeCode;
             }
 
-            function inputLeaderPhoneNumber(idx) {
-                const leaderList = /*[[${leaderList}]]*/ [];
+            // function inputLeaderPhoneNumber(idx) {
+            //     const leaderList = /*[[${leaderList}]]*/ [];
                 
-                const selectPhoneNumber = leaderList[idx].phoneNum;
-                const selectNo = leaderList[idx].id;
-                const leaderId = leaderList[idx].userId;
+            //     const selectPhoneNumber = leaderList[idx].phoneNum;
+            //     const selectNo = leaderList[idx].id;
+            //     const leaderId = leaderList[idx].userId;
 
-                document.getElementById("leaderPhone").value = selectPhoneNumber;
-                document.getElementById("leaderNo").value = selectNo;
-                document.getElementById("leaderCode").value = leaderList[idx].id;
-                document.getElementById("leaderId").value = leaderId;
-            }
+            //     console.log("선택된 인솔자 연락처: " + selectPhoneNumber);
+            //     console.log("선택된 인솔자 번호: " + selectNo);
+            //     console.log("선택된 인솔자 ID: " + leaderId);
+
+            //     document.getElementById("leaderPhone").value = selectPhoneNumber;
+            //     document.getElementById("leaderNo").value = selectNo;
+            //     document.getElementById("leaderCode").value = leaderList[idx].id;
+            //     document.getElementById("leaderId").value = leaderId;
+            // }
         </script>
     </head>
     <body>
@@ -105,48 +109,62 @@
                         <input type="text" id="companyPh" name="companyPh" />
                     </div>
                 </div>
-                <input type="hidden" id="leaderCode" name="leaderCode" />
-                <input type="hidden" id="leaderId" name="leaderId" />
-                <input type="hidden" id="leaderNo" name="leaderNo" />
-                
-                <input type="hidden" name="leaderPay" id="leaderPay" />
-                <input type="hidden" name="leaderPoint" id="leaderPoint" />
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="leaderNm_pc">인솔자 선택</label>
-                        <select id="leaderNm_pc" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)" class="sync-nm" >
-                            <option value="">-- 선택하세요 --</option>
-                            <option th:each="leader, stat : ${leaderList}" 
-                                    th:value="${stat.index}" 
-                                    th:text="${leader.userNm}">
-                            </option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="leaderPhone">인솔자 연락처</label>
-                        <input type="text" id="leaderPhone" name="leaderPhone" class="sync-phone" readonly/>
-                    </div>
-                    <div class="form-group pc">
-                        <label for="leaderPay_pc">인솔자 급여</label>
-                        <input type="text" id="leaderPay_pc" class="sync-pay" />
-                    </div>
-                    <div class="form-group pc">
-                        <label for="leaderPoint_pc">인솔자 포인트</label>
-                        <input type="text" id="leaderPoint_pc" class="sync-point" />
-                    </div>
-                </div>
-                <div class="form-row mobile">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="leaderPay_mo">인솔자 급여</label>
-                            <input type="number" id="leaderPay_mo" class="sync-pay" />
+
+                <button type="button" onclick="addLeaderForm()">+ 인솔자 추가하기</button>
+                <template id="leaderTemplate">
+                    <div class="leader-form-group mgt16">
+                        <input type="hidden" class="leaderCode" name="leaderList[].leaderCode" />
+                        <input type="hidden" class="leaderNo" name="leaderList[].leaderNo" />
+                        <input type="hidden" class="leaderId" name="leaderList[].leaderId" />
+                        <input type="hidden" class="leaderNm" name="leaderList[].leaderNm" />
+                        <input type="hidden" class="leaderPay" name="leaderList[].leaderPay" />
+                        <input type="hidden" class="leaderPoint" name="leaderList[].leaderPoint" />
+
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>인솔자 선택</label>
+                                <select name="leaderList[].leaderSelect" onchange="inputLeaderPhoneNumber(this)" class="sync-nm">
+                                    <option value="">-- 선택하세요 --</option>
+                                    <option th:each="leader, stat : ${leaderList}" 
+                                            th:value="${stat.index}" 
+                                            th:text="${leader.userNm}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>인솔자 연락처</label>
+                                <input type="text" name="leaderList[].leaderPh" class="sync-phone" readonly/>
+                            </div>
+                            <div class="form-group pc">
+                                <label>인솔자 급여</label>
+                                <input type="text" class="sync-pay-pc" oninput="syncPay(this)" />
+                            </div>
+                            <div class="form-group pc">
+                                <label>인솔자 포인트</label>
+                                <input type="text" class="sync-point-pc" oninput="syncPoint(this)" />
+                            </div>
+                            <div class="form-group pc">
+                                <button type="button" class="remove_leader" onclick="removeLeaderForm(this)">삭제</button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="leaderPoint_mo">인솔자 포인트</label>
-                            <input type="text" id="leaderPoint_mo" class="sync-point" />
+                        <div class="form-row mobile">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>인솔자 급여</label>
+                                    <input type="number" class="sync-pay-mo" oninput="syncPay(this)" />
+                                </div>
+                                <div class="form-group">
+                                    <label>인솔자 포인트</label>
+                                    <input type="text" class="sync-point-mo" oninput="syncPoint(this)" />
+                                </div>
+                                <button type="button" class="remove_leader" onclick="removeLeaderForm(this)">삭제</button>
+                            </div>
                         </div>
                     </div>
+                </template>
+
+                <div id="leaderContainer">
                 </div>
                 <!-- 캠페인 정보 -->
                 <div class="form-row">
@@ -279,10 +297,12 @@
         </div>
         </div>
         <!-- ✅ 드래그앤드롭 스크립트 -->
-        <script>
+        <script th:inline="javascript">
             const dropArea = document.getElementById("drop-area");
             const imageInput = document.getElementById("image");
             const preview = document.getElementById("preview");
+            const globalLeaderList = /*[[${leaderList}]]*/ [];
+            console.log("전체 인솔자 리스트 로드 완료: ", globalLeaderList);
 
             dropArea.addEventListener("click", () => imageInput.click());
 
@@ -321,6 +341,89 @@
                 reader.readAsDataURL(file);
             }
 
+            // 2. 인솔자 선택 변경 시 실행될 함수
+            function inputLeaderPhoneNumber(selectElement) {
+                console.log("선택된 select 태그 엘리먼트: ", selectElement);
+                
+                // 선택된 <option>의 value 값(즉, stat.index 숫자)을 가져옴
+                const idx = selectElement.value; 
+                
+                // 현재 이벤트가 발생한 select 태그가 속한 가장 가까운 폼 한 세트(.leader-form-group)를 찾음
+                const formGroup = selectElement.closest('.leader-form-group');
+                
+                // 폼 내부의 입력창 필드들을 선택
+                const phoneInput = formGroup.querySelector('.sync-phone');
+                const noInput = formGroup.querySelector('.leaderNo');
+                const idInput = formGroup.querySelector('.leaderId');
+                const nmInput = formGroup.querySelector('.leaderNm');
+                const phInput = formGroup.querySelector('.leaderPh');
+                
+                // "-- 선택하세요 --" (빈값)을 선택한 경우 초기화
+                if (idx === "") {
+                    phoneInput.value = "";
+                    if(noInput) noInput.value = "";
+                    if(idInput) idInput.value = "";
+                    return;
+                }
+                
+                // 전역 변수에서 인덱스로 해당 인솔자 데이터 추출
+                const selectedLeader = globalLeaderList[idx];
+                
+                if (selectedLeader) {
+                    console.log("선택된 인솔자 상세정보: ", selectedLeader);
+                    
+                    // 화면의 각 input창에 값 매핑
+                    phoneInput.value = selectedLeader.phoneNum || '';
+                    
+                    // hidden 필드가 존재한다면 hidden 필드에도 데이터 세팅
+                    if(noInput) noInput.value = selectedLeader.id || '';
+                    if(idInput) idInput.value = selectedLeader.userId || '';
+                    if(nmInput) nmInput.value = selectedLeader.userNm || '';
+                    console.log("인솔자 번호(hidden): ", noInput ? noInput.value : "hidden 필드 없음");
+                    console.log("인솔자 ID(hidden): ", idInput ? idInput.value : "hidden 필드 없음");
+                }
+            }
+
+            // function inputLeaderPhoneNumber(idx) {
+            //     const leaderList = /*[[${leaderList}]]*/ [];
+                
+            //     const selectPhoneNumber = leaderList[idx].phoneNum;
+            //     const selectNo = leaderList[idx].id;
+            //     const leaderId = leaderList[idx].userId;
+
+            //     console.log("선택된 인솔자 연락처: " + selectPhoneNumber);
+            //     console.log("선택된 인솔자 번호: " + selectNo);
+            //     console.log("선택된 인솔자 ID: " + leaderId);
+
+            //     document.getElementById("leaderPhone").value = selectPhoneNumber;
+            //     document.getElementById("leaderNo").value = selectNo;
+            //     document.getElementById("leaderCode").value = leaderList[idx].id;
+            //     document.getElementById("leaderId").value = leaderId;
+            // }
+
+            // PC / 모바일 급여 및 포인트 동기화 함수 예시
+            function syncPoint(inputElement) {
+                const formGroup = inputElement.closest('.leader-form-group');
+                const value = inputElement.value;
+                
+                // PC와 모바일 입력창 둘 다에 값을 적어줌
+                formGroup.querySelector('.sync-point-pc').value = value;
+                formGroup.querySelector('.sync-point-mo').value = value;
+                // Hidden 필드에도 저장
+                formGroup.querySelector('.leaderPoint').value = value;
+            }
+
+            function syncPay(inputElement) {
+                const formGroup = inputElement.closest('.leader-form-group');
+                const value = inputElement.value;
+                
+                // PC와 모바일 입력창 둘 다에 값을 적어줌
+                formGroup.querySelector('.sync-pay-pc').value = value;
+                formGroup.querySelector('.sync-pay-mo').value = value;
+                // Hidden 필드에도 저장
+                formGroup.querySelector('.leaderPay').value = value;
+            }
+
             document.addEventListener("input", function(e) {
                 // 급여(Pay) 입력 시 동기화
 
@@ -357,6 +460,90 @@
                     document.querySelectorAll(".sync-event-rst").forEach(el => el.value = val);
                 }
             });
+
+            // 페이지 로드 시 기본으로 1개 생성하고 시작
+            document.addEventListener("DOMContentLoaded", function() {
+                addLeaderForm();
+            });
+
+            // 인솔자 폼 추가 함수
+            function addLeaderForm() {
+                const template = document.getElementById('leaderTemplate');
+                const container = document.getElementById('leaderContainer');
+                
+                // 템플릿 복사
+                const clone = document.importNode(template.content, true);
+                
+                // 컨테이너에 추가
+                container.appendChild(clone);
+                
+                // 추가된 후 name 속성의 인덱스([])를 재정렬
+                reIndexLeaderForms();
+            }
+
+            // 인솔자 폼 삭제 함수
+            // function removeLeaderForm(button) {
+            //     console.log("삭제 버튼 클릭됨. 삭제할 폼: ", button.closest('.leader-form-group').length);
+            //     // 삭제 버튼이 속한 .leader-form-group 자체를 삭제
+            //     if(confirm("정말로 이 인솔자 정보를 삭제하시겠습니까?")) {
+            //         if(button.closest('.leader-form-group').length < 1) {
+            //             alert("삭제할 인솔자 정보가 없습니다.");
+            //             return;
+            //         } else {
+            //             button.closest('.leader-form-group').remove();
+            //             reIndexLeaderForms();
+            //         }
+            //     } else {
+            //         return; // 취소 시 아무 동작도 하지 않음
+            //     }
+                
+            //     // 삭제 후 인덱스 재정렬
+                
+            // }
+            function removeLeaderForm(button) {
+                // 1. 현재 화면에 남아있는 전체 인솔자 폼의 개수를 구합니다.
+                const currentFormCount = document.querySelectorAll('.leader-form-group').length;
+                console.log("현재 남은 인솔자 폼 개수: ", currentFormCount);
+
+                // 2. 폼이 1개 이하로 남았다면 삭제를 막습니다.
+                if (currentFormCount <= 1) {
+                    alert("최소 1명의 인솔자 정보는 입력해야 합니다.");
+                    return; // 함수를 즉시 종료하여 아래 삭제 로직이 실행되지 않게 합니다.
+                }
+
+                // 3. 2개 이상일 때만 기존 삭제 로직 진행
+                const formGroup = button.closest('.leader-form-group');
+                
+                if(confirm("정말로 이 인솔자 정보를 삭제하시겠습니까?")) {
+                    if (!formGroup) {
+                        alert("삭제할 인솔자 정보가 없습니다.");
+                        return;
+                    } else {
+                        formGroup.remove();
+                        // 삭제 후 인덱스 재정렬
+                        reIndexLeaderForms();
+                    }
+                } else {
+                    return; // 취소 시 아무 동작도 하지 않음
+                }
+            }
+
+            // Spring Controller에서 List<VO>로 받을 수 있게 name="leaderList[인덱스].필드명" 세팅
+            function reIndexLeaderForms() {
+                const forms = document.querySelectorAll('#leaderContainer .leader-form-group');
+                
+                forms.forEach((form, index) => {
+                    // 해당 폼 안의 name 속성을 가진 모든 input, select 태그를 찾음
+                    const inputs = form.querySelectorAll('[name]');
+                    
+                    inputs.forEach(input => {
+                        const currentName = input.getAttribute('name');
+                        // 'leaderList[].필드명' 또는 'leaderList[0].필드명'을 'leaderList[현재인덱스].필드명'으로 치환
+                        const newName = currentName.replace(/leaderList\[\d*\]/, `leaderList[${index}]`);
+                        input.setAttribute('name', newName);
+                    });
+                });
+            }
         </script>
     </body>
 </html>

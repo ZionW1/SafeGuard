@@ -74,11 +74,11 @@ public class UserController {
     * @return
     */
     @GetMapping("/user01")
-    public String login(HttpServletRequest request, 
+    public String login(HttpServletRequest request,
                         @RequestParam(value = "target", required = false) String target, // 💡 주소창에서 target 받아오기
-                        @CookieValue(value="remember-id", required = false) Cookie cookie, 
+                        @CookieValue(value="remember-id", required = false) Cookie cookie,
                         Model model ) {
-        
+
         log.info(":::::::::: 로그인 페이지 :::::::::: " + cookie);
 
         String username = "";
@@ -139,7 +139,7 @@ public class UserController {
         }
 
         // String hashedPhone = EncryptionUtil.hash(userVO.getPhoneNum());
-    
+
         // // 2. 중복 체크 (DB의 phone_hash 컬럼과 비교)
         // if (userService.phoneDuplicate(hashedPhone)) {
         //     throw new RuntimeException("이미 사용 중인 번호입니다.");
@@ -150,17 +150,17 @@ public class UserController {
         // 3. 비밀번호 암호화 및 저장
         String rawPassword = userVO.getPassword();
         userVO.setPassword(passwordEncoder.encode(rawPassword));
-        
+
         int result = userService.join(userVO);
-        
+
         if (result > 0) {
             // 4. 자동 로그인 시도
             UserVO loginUser = new UserVO();
             loginUser.setUserId(userVO.getUserId());
             loginUser.setPassword(rawPassword);
-            
+
             boolean loginResult = userService.login(loginUser, request);
-            
+
             if (loginResult) {
                 return ResponseEntity.ok(Map.of("success", true, "url", "/"));
             }
@@ -175,7 +175,7 @@ public class UserController {
         log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + authUser);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    
+
         // ⭐⭐ 이 조건문이 굉장히 중요해! ⭐⭐
         if (authentication.getPrincipal() instanceof CustomUser) {
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
@@ -261,19 +261,19 @@ public class UserController {
     //         // 혹은 throw new IllegalArgumentException("사용자 ID가 필요합니다.");
     //     }
     //     // id를 이용한 로직...
-        
-    //     return "/user/user04"; 
+
+    //     return "/user/user04";
     // }
 
     // @GetMapping("/user04")
     // public String getUserPage(Model model) {
     //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     //     String currentUserId = authentication.getName(); // 현재 로그인된 사용자의 ID
-        
+
     //     log.info(":::::::::: user04 호출 :::::::::: + " + currentUserId);
     //     // currentUserId를 이용해서 필요한 데이터 조회 및 모델에 추가
     //     // ...
-        
+
     //     model.addAttribute("userId", currentUserId); // 뷰에서 사용할 수도 있도록 모델에 추가
     //     return "/user/user04";
     // }
@@ -299,11 +299,11 @@ public class UserController {
 
         //     // 기본적으로 현재 캠페인 신청이 '가능'하다고 가정
         //     // 하지만 아래 로직을 통해 신청 불가능할 수 있음
-        //     boolean canApply = true; 
+        //     boolean canApply = true;
 
         //     // 만약 사용자가 이 캠페인을 이미 신청했다면 신청 불가능
         //     if (campaignApply != null) {
-        //         canApply = false; 
+        //         canApply = false;
         //         campaignApply.setEventActive(false); // 신청 내역이 있으면 '활성화' 상태를 false로
         //     } else {
         //         // 사용자가 이 캠페인을 신청하지 않았다면, 다른 캠페인과의 기간 중복 여부 확인
@@ -334,14 +334,14 @@ public class UserController {
         //                 // 현재 캠페인의 시작일이 기존 캠페인의 종료일보다 빠르거나 같고 (겹치는 시작점),
         //                 // 현재 캠페인의 종료일이 기존 캠페인의 시작일보다 늦거나 같으면 (겹치는 종료점)
         //                 // 즉, `(Start1 <= End2) AND (End1 >= Start2)` 이면 기간이 겹침.
-        //                 boolean isOverlap = 
-        //                     !currentCampaignStartDate.isAfter(existingEndDate) && 
+        //                 boolean isOverlap =
+        //                     !currentCampaignStartDate.isAfter(existingEndDate) &&
         //                     !currentCampaignEndDate.isBefore(existingStartDate);
 
         //                 // 또는 더 직관적인 표현:
         //                 // (!currentCampaignStartDate.isAfter(existingEndDate)) : 현재 캠페인 시작일이 기존 캠페인 종료일보다 뒤가 아니다 (즉, 같거나 빠르다)
         //                 // (!currentCampaignEndDate.isBefore(existingStartDate)) : 현재 캠페인 종료일이 기존 캠페인 시작일보다 앞이 아니다 (즉, 같거나 뒤다)
-                        
+
         //                 if (isOverlap) {
         //                     canApply = false; // 기간이 겹치므로 현재 캠페인은 신청 불가능
         //                     log.info("캠페인 ID: {} 이 기존 신청 캠페인 ID: {} 와 기간이 겹침. 시작일: {}, 종료일: {} vs 시작일: {}, 종료일: {}",
@@ -352,17 +352,17 @@ public class UserController {
         //             }
         //         }
         //     }
-        
+
         //     // 최종적으로 이 캠페인이 신청 가능한지 여부를 model에 추가
         //     // `campaignSelect` VO 내에 `setCanApply` 같은 필드를 추가해서 사용하면 뷰에서 편리
         //     if(campaignSelect != null){
         //         campaignSelect.setApplyPossible(canApply); // CampaignVO에 `canApply` 필드를 추가해야 함
         //     }
-        
+
         //     // `campaignApply`가 null이더라도 model에 넣어서 뷰에서 null 체크하도록
-        //     model.addAttribute("campaignApply", campaignApply); 
+        //     model.addAttribute("campaignApply", campaignApply);
         // }
-    
+
         // // `currentURI`도 여전히 모델에 추가해야 해! (사이드바 active 클래스 때문)
         // // model.addAttribute("currentURI", request.getRequestURI());
         model.addAttribute("currentURI", request.getRequestURI());
@@ -385,9 +385,9 @@ public class UserController {
     public ResponseEntity<?> findIdPost(@RequestParam("userNm") String userNm, @RequestParam("phoneNum") String phoneNumber, HttpServletRequest request) throws Exception {
         log.info("아이디 찾기 요청: 이름={}, 번호={}", userNm, phoneNumber);
         // // 2. 유효성 검사 에러 처리
-        
+
         String userId = userService.findUserId(userNm, phoneNumber);
-        
+
         if (userId != null) {
                 return ResponseEntity.ok(Map.of("success", true, "userId", userId));
         }
@@ -429,7 +429,7 @@ public class UserController {
         String rawPassword = userVO.getPassword();
         userVO.setPassword(passwordEncoder.encode(rawPassword));
         int result = userService.reRegPw(userVO);
-        
+
         if (result > 0) {
                 return ResponseEntity.ok(Map.of("success", true));
         }
@@ -445,7 +445,7 @@ public class UserController {
     }
     // public boolean isPhoneNumberDuplicate(String phoneNumber) {
     //     // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
-    //     return userMapper.existsByPhoneNumber(phoneNumber); 
+    //     return userMapper.existsByPhoneNumber(phoneNumber);
     // }
 
     @GetMapping("/check-id")

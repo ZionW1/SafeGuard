@@ -36,17 +36,17 @@
             <p class="hidden" id="resultMessage"></p>
 
             <button type="submit" id="reRegPw" class="mrg-top10">비밀번호 재등록</button>
-        
-        
+
+
             <div class="links">
                 <a href="/findId">아이디 찾기</a> |
                 <a href="/findPassword">비밀번호 찾기</a>
             </div>
-        
+
             <div class="signup">
                 아직 회원이 아니신가요? <a href="/user02">회원가입 하기</a>
             </div>
-        
+
             <div class="homepage-link">
                 <a href="/">메인 홈페이지로 돌아가기</a>
             </div>
@@ -67,9 +67,9 @@
         let verifyBtnCode = false; // 인증번호 확인 버튼 클릭 여부를 추적하는 변수
         const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
         const csrfToken = /*[[${_csrf.token}]]*/ '';
-    
+
         const requestHeaders = {};
-    
+
         if (csrfHeader && csrfToken) {
             requestHeaders[csrfHeader] = csrfToken;
         }
@@ -78,7 +78,7 @@
             if (e.target.classList.contains('max-check')) {
                 const el = e.target;
                 const maxlength = parseInt(el.getAttribute('maxlength'));
-                
+
                 // 1. 숫자가 아닌 문자가 들어왔는지 체크
                 if (/[^0-9]/.test(el.value)) {
                     alert("숫자만 입력 가능합니다.");
@@ -96,11 +96,11 @@
                     }
                 }
             }
-            
+
             if (e.target.classList.contains('max-check-auth')) {
                 const el = e.target;
                 const maxlength = parseInt(el.getAttribute('maxlength'));
-                
+
                 // 1. 숫자가 아닌 문자가 들어왔는지 체크
                 if (/[^0-9]/.test(el.value)) {
                     alert("숫자만 입력 가능합니다.");
@@ -119,15 +119,15 @@
                 }
             }
         });
-        
+
         sendBtn.addEventListener('click', function() {
             const phoneNumber = document.getElementById('phoneNum').value;
-    
+
             if(!phoneNumber) {
                 alert("번호를 입력해주세요.");
                 return;
             }
-            
+
             fetch('/auth/sendCodeFindId', {
                 method: 'POST',
                 headers: {
@@ -145,7 +145,7 @@
                     resultMessage.style.color = 'blue';
                     resultMessage.textContent = '인증번호가 발송되었습니다.';
                     document.getElementById('resultMessage').style.display = 'block';
-                    startTimer(); 
+                    startTimer();
                 } else {
                     resultMessage.style.color = 'red';
                     resultMessage.textContent = '발송 실패: ' + data;
@@ -161,21 +161,21 @@
             document.getElementById('resultMessage').style.display = 'block';
             startTimer();
         });
-    
+
         let timeLeft = 180; // 3분
         let timerInterval;
-    
+
         function startTimer() {
             const authCodeGroup = document.getElementById('authCodeGroup');
-    
+
             clearInterval(timerInterval);
             authCodeGroup.classList.remove('hidden');
             timerInterval = setInterval(() => {
                 let minutes = Math.floor(timeLeft / 60);
                 let seconds = timeLeft % 60;
-                document.getElementById('timer').textContent = 
+                document.getElementById('timer').textContent =
                     `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                
+
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     alert("인증 시간이 만료되었습니다. 다시 시도해주세요.");
@@ -183,7 +183,7 @@
                 timeLeft--;
             }, 1000);
         }
-    
+
         // 인증확인 버튼 클릭 이벤트
         document.getElementById('verifyBtn').addEventListener('click', () => {
             const inputCode = document.getElementById('authCode').value;
@@ -209,7 +209,7 @@
                 }
             });
         });
-        
+
         const reRegPw = document.getElementById("reRegPw");
         const loginForm = document.getElementById("loginForm");
 
@@ -247,7 +247,7 @@
                     } else {
                         alert(data.errors);
                     }
-                    
+
                 }
             })
             .catch(error => {

@@ -77,7 +77,7 @@ public class HomeController {
     public String home(@AuthenticationPrincipal CustomUser authUser, Model model) throws Exception{
         // log.info(":::::::::: 메인 화면 :::::::::: + " + authUser);
         // log.info(":::::::::: 메인 화면 :::::::::: + " + authUser.getGuardType());
-
+        log.info("aAbBcCdD");
         List<BannerVO> bannerImage = mainService.bannerImage();
         List<CampaignVO> campaignFavorite = mainService.campaignFavorite();
         List<CampaignVO> campaignWorkable = mainService.campaignWorkable();

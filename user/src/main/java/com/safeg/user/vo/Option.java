@@ -14,7 +14,7 @@ public class Option {
     @Builder.Default // 빌더 사용 시 기본값 설정
     private String keyword = ""; // 검색어
     
-    private int code; // 검색 옵션 코드
+    private String code; // 검색 옵션 코드
     private int orderCode; // 순서 옵션 코드
 
     // 직접 작성하셨던 생성자는 지우거나 아래처럼 유지해도 되지만, 

@@ -15,7 +15,7 @@ public class CampLeaderVO {
     private Long no; // 상위 캠페인 ID
     private Long campaignId; // 상위 캠페인 ID
     private String leaderId;
-    private String leaderNo;
+    private Long leaderNo;
     private String leaderNm;
     private String leaderPh;
     private Integer leaderPay;
@@ -23,5 +23,11 @@ public class CampLeaderVO {
     private Integer leaderPoint;
     private String leaderCode;
     private LocalDate applyDate;
+
+    private Long userNo;
+    private String userId;
+    private String userNm;
+    private String userPhone;
+
     // Getter, Setter ...
 }

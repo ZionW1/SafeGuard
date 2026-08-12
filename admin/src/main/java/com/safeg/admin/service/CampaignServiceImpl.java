@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -73,7 +75,7 @@ public class CampaignServiceImpl implements CampaignService{
         if (campaignVO.getLeaderList() != null) {
             for (CampLeaderVO leader : campaignVO.getLeaderList()) {
                 // 인솔자 ID가 존재하고, 페이가 0보다 큰 경우 카운트 증가
-                if (leader.getLeaderNo() != null && !leader.getLeaderNo().isEmpty() && leader.getLeaderPay() > 0) {
+                if (leader.getLeaderNo() != null && !leader.getLeaderPay().equals(0)) {
                     activeLeaderCount++;
                 }
             }
@@ -236,312 +238,6 @@ public class CampaignServiceImpl implements CampaignService{
         return campaignDetail;
     }
 
-
-
-    @Override
-    @Transactional // 두 작업이 하나의 트랜잭션으로 묶이도록!
-    public int campaignUpdate(CampaignVO campaignVO) throws Exception {
-        log.info("수정 처리 impl : " + campaignVO);
-        int result = 0;
-
-        // 기존 데이터 세팅 조회
-        UserCampaignVO oldCampaign = campaignMapper.applySelect(campaignVO.getCampaignId());
-
-        int oldNum = oldCampaign.getRecruitmentNum(); // 기존 모집인
-        int newNum = campaignVO.getRecruitmentNum(); // 입력 모집인
-        int appNum = oldCampaign.getApplicantsNum(); // 기존 신청자
-        LocalDate oldAppEnd = oldCampaign.getAppPeriodEnd(); // 기존 신청 시작일
-
-        LocalDate oldStartDate = oldCampaign.getEventPeriodStr(); // 기존 행사 시작 일
-        LocalDate oldEndDate = oldCampaign.getEventPeriodEnd(); // 기존 행사 마지막 날
-        String isLeader = oldCampaign.getIsLeader(); // 인솔자 Y/N
-        String leadApply = oldCampaign.getLeadApply(); // 인솔자 신청 Y/N
-
-        Long campaignId = campaignVO.getCampaignId();
-        String timeSegment = campaignVO.getTimeSegment();
-
-        int vacantSeats = newNum - appNum; // 확대 시 빈자리 계산
-
-        // 기존/신규 날짜 리스트 생성
-        List<LocalDate> oldDates = oldStartDate.datesUntil(oldEndDate.plusDays(1)).collect(Collectors.toList()); // 기존 날짜 List
-        log.info("A oldDates :" + oldDates);
-        List<LocalDate> newDates = campaignVO.getEventPeriodStr().datesUntil(campaignVO.getEventPeriodEnd().plusDays(1)).collect(Collectors.toList()); // 입력 날짜 List
-
-        int oldSize = oldDates.size(); // 기존 날짜 크기
-        int newSize = newDates.size(); // 입력 날짜 크기
-
-        LocalDate sourceDate = null;
-
-        UserCampaignVO param = new UserCampaignVO();
-        param.setCampaignId(campaignId);
-        param.setTimeSegment(timeSegment);
-
-        // ================================================================
-        // 파트 1: [정원 변동 관리] - 최상단에서 완벽하게 처리
-        // ================================================================
-        if (oldNum != newNum) {
-            if (oldNum < newNum) { // 정원 확대 시
-                if (vacantSeats > 0) {
-                    sourceDate = (oldSize > 0) ? newDates.get(oldSize - 1) : null;
-                    log.info("A sourceDate {}", sourceDate);
-
-                    List<Long> targetUserNos = campaignMapper.targetUserNos(campaignId, timeSegment, vacantSeats, sourceDate);
-                    log.info("정원 확대로 인한 부활 시작! 빈자리: {}명, 시간대: {}", vacantSeats, timeSegment);
-
-                    // 💡 1단계: 해당 시간대(timeSegment)에 탈락한 유저만 선착순 조회
-                    // (이를 위해 campaignMapper.targetUserNos 호출 시 파라미터에 timeSegment를 함께 넘겨주거나 객체에 담아 보냅니다)
-                    log.info("정원 확대로 인한 기존 신청자 부활 시작! 추가 가능 인원: {}명, 기존 일정 일수: {}일", vacantSeats, oldSize);
-
-                    // 💡 2단계: 날짜별로 돌면서 '그 날짜'의 '그 시간대' 데이터만 정확히 부활
-                    if (targetUserNos != null && !targetUserNos.isEmpty()) {
-                        log.info("정원 확대로 인한 기존 신청자 부활 시작! 대상 유저: {}", targetUserNos);
-
-                        param.setLimitCount(vacantSeats);
-                        param.setUserNos(targetUserNos); // 유저 리스트 세팅
-
-                        for (int i = 0; i < oldSize; i++) {
-                            log.info("[부활 진행] 날짜: {}, 제한 인원(LIMIT): {}명", oldDates.get(i), vacantSeats);
-
-                            param.setApplyDate(oldDates.get(i));
-                            campaignMapper.reApplyUsers(param);
-                            campaignMapper.updateApplicantsNum(campaignId);
-                        }
-                    }
-                }
-                campaignMapper.updateIsDeleted(campaignId, "N", "Y");
-            }
-            else { // 정원 축소 시
-                if (appNum >= newNum) {
-                    // [상황 A] 진짜로 정원이 넘치거나 딱 꽉 찼을 때
-                    log.info("정원 축소 상태 진입 - 새 정원: " + newNum);
-                    campaignMapper.updateIsDeleted(campaignId, "N", "N");
-                    int exceedCount = appNum - newNum;
-                    if (exceedCount > 0) {
-                        log.info("정원 초과로 인한 신청자 탈락 처리! 인원: {}명", exceedCount);
-                        campaignMapper.updateUcIsDeleted(campaignId, exceedCount);
-                        campaignMapper.updateApplicantsNum(campaignId);
-                    } else {
-
-                    }
-                } else { // [상황 B] 정원을 줄였지만 여전히 정원에 여유가 있을 때
-                    log.info("정원에 여유가 있음. 현재 인원: {}, 새 정원: {}", appNum, newNum);
-
-                    // 여유 자리가 있으므로 캠페인은 계속 모집 중('Y') 상태여야 함
-                    campaignMapper.updateIsDeleted(campaignId, "N", "Y");
-
-                    if (vacantSeats > 0) {
-                        // 억울하게 잘려 있는 사람 목록을 가져와서 다시 'N'으로 부활시킨다!
-                        sourceDate = (oldSize > 0) ? newDates.get(oldSize - 1) : null;
-                        List<Long> targetUserNos = campaignMapper.targetUserNos(campaignId, timeSegment, vacantSeats, sourceDate);
-
-                        if (targetUserNos != null && !targetUserNos.isEmpty()) {
-                            log.info("정원 축소/유지 중 빈자리 발견으로 인한 기존 탈락자 복구('N'): {}", targetUserNos);
-                            param.setLimitCount(vacantSeats);
-                            param.setUserNos(targetUserNos); // 유저 리스트 세팅
-
-                            // 💡 [리팩토링] 외부로 빠진 param 오브젝트 재활용
-                            for (int i = 0; i < oldSize; i++) {
-                                param.setApplyDate(oldDates.get(i));
-                                campaignMapper.reApplyUsers(param);
-                                campaignMapper.updateApplicantsNum(campaignId);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // ================================================================
-        // 파트 2: [인솔자 및 마감일 변경 처리]
-        // ================================================================
-        if (oldCampaign != null && campaignVO.getLeaderPay() != oldCampaign.getLeaderPay()) {
-            String leadApplyStatus = (campaignVO.getLeaderPay() == 0) ? "N" : "Y";
-            campaignMapper.updateLeadApply(campaignId, leadApplyStatus);
-        }
-
-        if (oldCampaign != null && !campaignVO.getLeaderId().equals(oldCampaign.getUserId())) {
-            campaignMapper.leaderUpdate(campaignId, oldCampaign.getUserNo(), campaignVO.getLeaderNo(), campaignVO.getLeaderId());
-        }
-
-        boolean isPeriodChanged = !oldAppEnd.equals(campaignVO.getAppPeriodEnd());
-        boolean isPeriodShortened = campaignVO.getAppPeriodEnd().isBefore(oldAppEnd); // 마감일이 앞으로 당겨짐(단축)
-        boolean isCapacityIncreased = newNum > oldNum;
-        boolean increased = newNum > appNum;
-
-        log.info("isPeriodChanged : " + isPeriodChanged);
-        log.info("isPeriodShortened : " + isPeriodShortened);
-        log.info("isCapacityIncreased : " + isCapacityIncreased);
-
-        // ---------------------------------------------------------------
-        // 조건 A: 마감일이 늘어났거나, 정원이 늘어나서 빈자리가 생겼을 때 -> 활성화('Y')
-        // && !isPeriodShortened
-        // ---------------------------------------------------------------
-        if (isCapacityIncreased || (isPeriodChanged)) {
-            // 단, 기간이 남아있고 인원도 널널할 때만 켜야 하므로 안전장치 조건을 추가해 줍니다.
-            if (appNum < newNum && !campaignVO.getAppPeriodEnd().isBefore(LocalDate.now())) {
-                log.info("정원 확대 또는 기간 연장으로 인한 캠페인 활성화('Y')");
-                campaignMapper.updateIsActive(campaignId, "Y");
-            } else if (appNum >= newNum || isPeriodChanged) {
-                log.info("캠페인 상태 변경 시도 -> ID: {}, 상태: {}", campaignId, "N");
-                log.info("정원 초과 또는 기간 만료(단축 포함)로 인한 캠페인 마감 처리('N')");
-                campaignMapper.updateIsActive(campaignId, "N");
-            }
-        }
-
-        // ---------------------------------------------------------------
-        // 조건 B: 질문하신 내용! 마감일이 줄어들었거나 정원이 줄어들었는데,
-        // 현재 인원이 새 정원 이상이거나 오늘 날짜 기준 마감일이 지나버렸다면 -> 마감('N')
-        // 현재 날짜로 바꾸고 싶으면 isPeriodShortened 대신 campaignsVO.getAppPeriodEnd().isBefore(LocalDate.now())) {
-        // ---------------------------------------------------------------
-
-
-        // 원본 캠페인 마스터 테이블 업데이트
-        result = campaignMapper.campaignUpdate(campaignVO);
-        // ================================================================
-        // 파트 3: [날짜 일수 조정 처리]
-        // ================================================================
-        // 조건 1: 수정한 날짜 크기(일수)가 같을 때 -> 실제 날짜 값이 변했을 때만 변경
-        if (newSize == oldSize && (!oldStartDate.equals(campaignVO.getEventPeriodStr()) || !oldEndDate.equals(campaignVO.getEventPeriodEnd()))) {
-            for (int i = 0; i < oldSize; i++) {
-                log.info("조건 1: 수정한 날짜 크기(일수)가 같을 때 -> 실제 날짜 값이 변했을 때만 변경");
-                campaignMapper.updateApplyDate(campaignId, campaignVO.getEventPeriodStr(), campaignVO.getEventPeriodEnd(), oldDates.get(i), newDates.get(i));
-            }
-        }
-        // 조건 2: 수정한 날짜 크기(일수)가 줄어들었을 때 (3일 -> 2일)
-        else if (newSize < oldSize) {
-            for (int i = 0; i < newSize; i++) {
-                campaignMapper.updateApplyDate(campaignId, campaignVO.getEventPeriodStr(), campaignVO.getEventPeriodEnd(), oldDates.get(i), newDates.get(i));
-            }
-            for (int i = newSize; i < oldSize; i++) {
-                campaignMapper.deleteApplyDate(campaignId, oldDates.get(i));
-            }
-        }
-        // 조건 3: 수정한 날짜 크기(일수)가 늘어났을 때 (2일 -> 3일)
-        else if (newSize > oldSize) {
-            // 1. 기존 일정 분량 우선 이동
-            for (int i = 0; i < oldSize; i++) {
-                campaignMapper.updateApplyDate(campaignId, campaignVO.getEventPeriodStr(), campaignVO.getEventPeriodEnd(), oldDates.get(i), newDates.get(i));
-            }
-
-            // 💡 [핵심 추가] 현재 이 캠페인에 정상적으로 참여 중인('N') 유저들의 번호를 싹 긁어옵니다.
-            // (이 유저들은 날짜가 늘어났으니 새로 늘어난 날짜에도 'N' 상태로 복구되거나 복사되어야 합니다.)
-            List<UserCampaignVO> activeUser = campaignMapper.getActiveUserNos(campaignId, timeSegment);
-
-            // is_deleted의 값이 N
-            List<Long> activeUserNos = activeUser.stream()
-                                    .map(UserCampaignVO::getUserNo) // 혹은 user -> user.getUserNo()
-                                    .collect(Collectors.toList());
-
-            log.info("activeUserNos" + activeUserNos);
-
-            sourceDate = newDates.get(oldSize - 1);
-            log.info("sourceDate" + sourceDate);
-            // 2. 늘어난 날짜 데이터를 처리하는 루프
-            for (int i = oldSize; i < newSize; i++) {
-                LocalDate targetDate = newDates.get(i);
-                log.info("targetDate" + targetDate);
-                // ---------------------------------------------------------------
-                // 새로 늘어난 날짜(targetDate)에 과거 탈락 기록('Y')이 있는 유저들을 먼저 'N'으로 부활!
-                // ---------------------------------------------------------------
-                if (activeUserNos != null && !activeUserNos.isEmpty()) {
-                    param.setApplyDate(targetDate);
-                    param.setUserNos(activeUserNos);
-                    log.info("[부활 진행] 대상 날짜: {}, 유저목록: {}", targetDate, activeUserNos);
-                    campaignMapper.reApplyUsers(param);
-                }
-
-                // 수정 후 apply_date
-                // 3. 기존에 데이터가 아예 없던 유저들은 새로 복사(INSERT) 처리 진행
-                // 모집인보다 신청인이 더 많을때
-                if (increased) {
-                    UserCampaignVO reSearchCampaign = campaignMapper.applySelect(campaignVO.getCampaignId());
-
-                    // 수정할 날짜 갯수.
-                    List<LocalDate> reSearchDate = reSearchCampaign.getEventPeriodStr().datesUntil(reSearchCampaign.getEventPeriodEnd().plusDays(1)).collect(Collectors.toList()); // 기존 날짜 List
-
-                    if(reSearchDate.size() > 0) {
-                        for(int j = 0 ; j < activeUser.size() ; j ++) {
-                            log.info("activeUser.size() for 문" + activeUser.get(j).getUserNo());
-                            UserCampaignVO applyDateInfo = campaignMapper.applyDateInfo(campaignId, activeUser.get(j).getUserNo(), reSearchDate.get(j), timeSegment);
-                            log.info("applyDateInfo for 문" + applyDateInfo);
-                            log.info("newSize for 문" + newSize);
-                            log.info("oldDates for 문" + oldDates);
-                            log.info("oldDates for 문" + oldDates.size());
-
-
-                            log.info("C reSearchDate :" + reSearchDate.get(newSize-oldDates.size()));
-
-                            // int dates = newDates - oldDates;
-
-                            if(applyDateInfo != null ) {
-                                log.info("C oldDates :" + oldDates);
-                                log.info("정원 확대로 기존 날짜 데이터를 새로운 날짜로 복사");
-                                UserCampaignVO paramInfo = new UserCampaignVO();
-
-                                log.info("oldDates.get(0) A : " + oldDates.get(0));
-                                log.info("reSearchDate.get(i) A : " + reSearchDate.get(i));
-                                log.info("applyDateInfo.getApplyDate() A : " + applyDateInfo.getApplyDate());
-
-                                paramInfo.setCampaignId(campaignId);
-
-                                paramInfo.setApplyDate(reSearchDate.get(i));
-                                paramInfo.setBeforeDate(oldDates.get(0));
-                                paramInfo.setEventPeriodStr(campaignVO.getEventPeriodStr());
-                                paramInfo.setEventPeriodEnd(campaignVO.getEventPeriodEnd());
-                                paramInfo.setTimeSegment(timeSegment);
-
-                                log.info("paramInfo A: " + paramInfo);
-                                // sourceDate - 복사 대상이 되는 원본 날짜
-                                // targetDate - 새로 생성될 날짜
-                                paramInfo.setUserNo(activeUser.get(j).getUserNo());
-
-                                if ("Y".equals(activeUser.get(j).getLeadApply())) {
-                                    paramInfo.setIsLeader("Y");
-                                    paramInfo.setLeadApply(activeUser.get(j).getLeadApply());
-                                    paramInfo.setStatus("8");
-                                    log.info("paramInfo B: " + paramInfo);
-                                    // increased - 증가
-                                    campaignMapper.copyApplyDateInc(paramInfo);
-                                } else {
-                                    paramInfo.setIsLeader("N");
-                                    paramInfo.setLeadApply(activeUser.get(j).getLeadApply());
-                                    paramInfo.setStatus("0");
-                                    log.info("paramInfo C: " + paramInfo);
-                                    // increased - 증가
-                                    campaignMapper.copyApplyDateInc(paramInfo);
-                                }
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-            // 4. 날짜별 최종 신청자 수 최신화
-            campaignMapper.updateApplicantsNum(campaignId);
-        }
-
-        // ================================================================
-        // 파트 4: [이미지 처리 파일 업로드]
-        // ================================================================
-        MultipartFile file = campaignVO.getImage();
-        if (file != null && !file.isEmpty()) {
-            FilesVO uploadFile = new FilesVO();
-            uploadFile.setFile(file);
-            uploadFile.setFileSize(file.getSize());
-            uploadFile.setFileType("campaign_File");
-            uploadFile.setTargetType("campaign");
-            uploadFile.setTargetId(campaignId);
-            uploadFile.setId(campaignId);
-            uploadFile.setStatusId(campaignId);
-            uploadFile.setStatus("campaign");
-
-            // 💡 주석 가이드: 실구현 시 실제 파일 테이블 인서트 매퍼를 여기에 호출하셔야 저장이 완결됩니다!
-            fileService.upload(uploadFile);
-        }
-
-        return result;
-    }
-
     @Override
     public int campaignDelete(String id) throws Exception {
         int result = campaignMapper.campaignDelete(id);
@@ -660,6 +356,8 @@ public class CampaignServiceImpl implements CampaignService{
         return null;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class) // 에러 발생 시 자동 롤백
     public int userApply(CampaignVO dto) throws Exception {
         // 2단계: [등록] 위의 for문(검증)을 에러 없이 '완전히' 통과했다면 중복이 없는 것입니다.
         // 이제 안전하게 하나씩 insert를 진행합니다.
@@ -778,5 +476,507 @@ public class CampaignServiceImpl implements CampaignService{
 
         // 모든 작업이 성공적으로 끝나면 성공 메시지 반환
         return result;
+    }
+
+    public UserCampaignVO applySelect(Long campaignId) throws Exception {
+        UserCampaignVO applySelect = campaignMapper.applySelect(campaignId);
+        return applySelect;
+    }
+
+    @Override
+    @Transactional
+    public int leaderUpdate(CampaignVO dto) throws Exception {
+        Long campaignId = dto.getCampaignId();
+        List<CampLeaderVO> newList = dto.getLeaderList() != null ? dto.getLeaderList() : Collections.emptyList();
+        CampaignVO oldCampaign = campaignMapper.campaignSelect(String.valueOf(campaignId));
+
+        boolean isSamePeriod = Objects.equals(oldCampaign.getEventPeriodStr(), dto.getEventPeriodStr())
+                        && Objects.equals(oldCampaign.getEventPeriodEnd(), dto.getEventPeriodEnd());
+
+        // 1. 전체 행사 기간 날짜 리스트 (신규 추가 시 INSERT 할 용도)
+        List<LocalDate> campaignDates = Stream.iterate(dto.getEventPeriodStr(), date -> date.plusDays(1))
+            .limit(dto.getEventPeriodEnd().toEpochDay() - dto.getEventPeriodStr().toEpochDay() + 1)
+            .collect(Collectors.toList());
+        log.info(campaignDates.toString());
+        log.info("행사 기간이 변경되었는지 여부: {}", isSamePeriod);
+        log.info(" 행사 기간: {}", campaignDates.get(0));
+        log.info(" 행사 기간: {}", campaignDates.get(campaignDates.size() - 1));
+        log.info("행사 기간이 변경되어 캠페인 날짜를 업데이트했습니다. 새로운 행사 기간: {} ~ {}", campaignDates.get(0), campaignDates.get(campaignDates.size() - 1));
+        // 2. DB에 저장된 기존 인솔자 목록 조회
+        List<CampLeaderVO> dbList = campaignMapper.campaignLeader(campaignId);
+
+        if(!isSamePeriod) {
+            log.warn("행사 기간이 변경되었습니다. 인솔자 정보를 업데이트하기 전에 행사 기간을 먼저 확인해주세요.");
+            campaignMapper.updateCampaignDate(dto);
+
+            for (LocalDate date : campaignDates) {
+                campaignMapper.updateApplyDate(campaignId, date);
+                // campaignMapper.deleteLeader(dbLeader);
+            }
+
+            // 3. [삭제 처리] DB엔 있지만 프론트 목록에서 사라진 인솔자 DELETE
+            for (CampLeaderVO dbLeader : dbList) {
+                boolean existsInNew = newList.stream().anyMatch(n ->
+                    Objects.equals(n.getLeaderNo(), dbLeader.getLeaderNo())
+                );
+
+                if (!existsInNew) {
+                    campaignMapper.deleteLeader(dbLeader);
+                }
+            }
+
+            // 4. [업데이트 / 삽입 처리] 프론트에서 넘어온 인솔자 목록 처리
+            for (CampLeaderVO newLeader : newList) {
+                newLeader.setCampaignId(campaignId); // FK 세팅
+                boolean isExistInDb = dbList.stream().anyMatch(db ->
+                    newLeader.getLeaderNo() != null && Objects.equals(db.getLeaderNo(), newLeader.getLeaderNo())
+                );
+
+                if (isExistInDb) {
+                    // 기존 인솔자 -> 모든 날짜 행 UPDATE (금액/포인트 반영)
+                    campaignMapper.updateLeader(newLeader);
+                } else {
+                    // 신규 인솔자 -> 행사 전체 날짜 수만큼 반복 INSERT
+                    for (LocalDate date : campaignDates) {
+                        newLeader.setApplyDate(date);
+                        campaignMapper.insertLeader(newLeader);
+                    }
+                }
+            }
+        } else {
+
+        }
+
+
+
+
+
+        return 1;
+    }
+    // 1. 기존 인솔자 목록과 신규 인솔자 목록 비교
+    // 2. 행사 기간이 변경되었는지 확인
+    // 3. DB에만 존재하는 인솔자 삭제
+    // 4. 신규 인솔자 삽입 및 기존 인솔자 업데이트
+    // 5. 인솔자 신청 여부 업데이트
+    // 6. 캠페인 활성화/마감 처리
+    // 7. 캠페인 마스터 테이블 업데이트
+    // 8. 날짜 일수 조정 처리
+    // 9. 이미지 처리 파일 업로드
+    // ================================================================
+    public int campaignUpdate(CampaignVO dto) throws Exception {
+        // 일정이 추가가 아닌 전부 바뀌면 insert가 아니라 update가 됨.
+        log.info("수정 처리 impl : {}", dto);
+        int result = 0;
+
+        // 1. 기존 데이터 조회
+        UserCampaignVO oldCampaign = campaignMapper.applySelect(dto.getCampaignId());
+
+        int oldRecNum = oldCampaign.getRecruitmentNum(); // 기존 모집인
+        int appNum = oldCampaign.getApplicantsNum(); // 기존 신청자
+        int newRecNum = dto.getRecruitmentNum(); // 입력 모집인
+
+        LocalDate oldAppEnd = oldCampaign.getAppPeriodEnd(); // 기존 신청 마지막일
+        LocalDate oldStartDate = oldCampaign.getEventPeriodStr(); // 기존 행사 시작 일
+        LocalDate oldEndDate = oldCampaign.getEventPeriodEnd(); // 기존 행사 마지막 날
+
+        Long campaignId = dto.getCampaignId();
+        String timeSegment = dto.getTimeSegment();
+
+        int vacantSeats = newRecNum - appNum; // 확대 시 빈자리 계산
+
+        // 기존/신규 날짜 리스트 생성
+        // oldDates : [2026-08-20, 2026-08-21, 2026-08-22, 2026-08-23]
+        List<LocalDate> oldDates = oldStartDate.datesUntil(oldEndDate.plusDays(1)).collect(Collectors.toList()); // 기존 날짜 List
+        // newDates : [2026-08-20, 2026-08-21, 2026-08-22, 2026-08-23]
+        List<LocalDate> newDates = dto.getEventPeriodStr().datesUntil(dto.getEventPeriodEnd().plusDays(1)).collect(Collectors.toList()); // 입력 날짜 List
+
+        int oldDateSize = oldDates.size(); // 기존 날짜 크기
+        int newDateSize = newDates.size(); // 입력 날짜 크기
+
+        LocalDate sourceDate = null;
+
+        UserCampaignVO param = new UserCampaignVO();
+        param.setCampaignId(campaignId);
+        param.setTimeSegment(timeSegment);
+
+        // ---------------------------------------------------------------
+        // [STEP 1] 캠페인 상태값(Y/N) 판단 및 세팅
+        // ---------------------------------------------------------------
+        boolean isExpired = dto.getAppPeriodEnd().isBefore(LocalDate.now()); // 오늘 날짜보다 마감일이 이전이면 만료
+        boolean isFull = appNum >= newRecNum; // 신청자가 정원 이상인지 여부
+
+        log.info("isExpired(만료 여부): {}, isFull(정원 초과 여부): {}", isExpired, isFull);
+
+        // 2. 상태값 단일 조건 분기
+        if (!isExpired && !isFull) {
+            // 기간도 남아있고 잔여석도 있는 경우 -> 활성화('Y')
+            log.info("정원 여유 및 기간 유효로 인한 캠페인 활성화('Y')");
+            campaignMapper.updateIsActive(campaignId, "Y");
+        } else {
+            // 2. 그 외 모든 케이스 (정원 초과 OR 기간 만료) -> 마감('N')
+            log.info("[캠페인 마감] 사유 - 정원초과(isFull): {}, 기간만료(isExpired): {} -> ID: {}", isFull, isExpired, campaignId);
+            campaignMapper.updateIsActive(campaignId, "N");
+        }
+
+        // boolean isPeriodChanged = !oldAppEnd.equals(dto.getAppPeriodEnd()); // 모집일
+        // boolean isPeriodShortened = dto.getAppPeriodEnd().isBefore(oldAppEnd); // 마감일이 앞으로 당겨짐(단축)
+        // boolean isCapacityIncreased = newRecNum > oldRecNum; // 모집인 증가 여부
+        // boolean increased = newRecNum > appNum; // 모집인보다 신청인이 더 많을때
+
+        // log.info("isPeriodChanged : " + isPeriodChanged);
+        // log.info("isPeriodShortened : " + isPeriodShortened);
+        // log.info("isCapacityIncreased : " + isCapacityIncreased);
+
+        // // ---------------------------------------------------------------
+        // // 조건 A: 마감일이 늘어났거나, 정원이 늘어나서 빈자리가 생겼을 때 -> 활성화('Y')
+        // // && !isPeriodShortened
+        // // ---------------------------------------------------------------
+        // // if (!isPeriodShortened || (isPeriodChanged)) {
+        // //     // 단, 기간이 남아있고 인원도 널널할 때만 켜야 하므로 안전장치 조건을 추가해 줍니다.
+        // //     if (appNum < newRecNum && !campaignVO.getAppPeriodEnd().isBefore(LocalDate.now())) {
+        // //         log.info("정원 확대 또는 기간 연장으로 인한 캠페인 활성화('Y')");
+        // //         campaignMapper.updateIsActive(campaignId, "Y");
+        // //     } else if (appNum >= newRecNum || isPeriodChanged) {
+        // //         log.info("캠페인 상태 변경 시도 -> ID: {}, 상태: {}", campaignId, "N");
+        // //         log.info("정원 초과 또는 기간 만료(단축 포함)로 인한 캠페인 마감 처리('N')");
+        // //         campaignMapper.updateIsActive(campaignId, "N");
+        // //     }
+        // // }
+
+        // ---------------------------------------------------------------
+        // [STEP 2] 날짜 변경(일수 조정) 처리
+        // ---------------------------------------------------------------
+        // 조건 1: 수정한 날짜 크기(일수)와 기존 날짜 크기 같을 때
+        if (newDateSize == oldDateSize && (!oldStartDate.equals(dto.getEventPeriodStr()) || !oldEndDate.equals(dto.getEventPeriodEnd()))) {
+            // 일수는 같으나 날짜 자체가 이동한 경우
+            log.info("조건 1: 수정한 날짜 크기(일수)가 같을 때 -> 실제 날짜 값이 변했을 때만 변경");
+            for (int i = 0; i < oldDateSize; i++) {
+                log.info("조건 1: 수정한 날짜 크기(일수)가 같을 때 -> 실제 날짜 값이 변했을 때만 변경");
+                campaignMapper.updateUserDate(dto, oldDates.get(i), newDates.get(i));
+                campaignMapper.updateLeaderDate(dto, oldDates.get(i), newDates.get(i));
+            }
+        }
+        // 조건 2: 수정한 날짜 크기(일수)가 줄어들었을 때 (3일 -> 2일)
+        else if (newDateSize < oldDateSize) {
+            // 일수가 줄어든 경우
+            for (int i = 0; i < newDateSize; i++) {
+                campaignMapper.updateUserDate(dto, oldDates.get(i), newDates.get(i));
+                campaignMapper.updateLeaderDate(dto, oldDates.get(i), newDates.get(i));
+            }
+            for (int i = newDateSize; i < oldDateSize; i++) {
+                campaignMapper.deleteApplyDate(campaignId, oldDates.get(i));
+                campaignMapper.deleteApplyDateLeader(campaignId, oldDates.get(i));
+            }
+        }
+        // 조건 3: 수정한 날짜 크기(일수)가 늘어났을 때 (2일 -> 3일)
+        else if (newDateSize > oldDateSize) {
+            // 일수가 늘어난 경우 (기존 일수 이동 + 신규 날짜에 데이터 복사)
+            log.info("조건 3: 수정한 날짜 크기(일수)가 늘어났을 때 (2일 -> 3일)");
+            // 1. 기존 일정 분량 우선 이동
+            for (int i = 0; i < oldDateSize; i++) {
+                campaignMapper.updateUserDate(dto, oldDates.get(i), newDates.get(i));
+                campaignMapper.updateLeaderDate(dto, oldDates.get(i), newDates.get(i));
+            }
+
+            sourceDate = newDates.get(oldDateSize - 1); // 복사 대상 원본 날짜
+            log.info("sourceDate: {}", sourceDate);
+
+            // 2-1. 유저 날짜 확장 처리
+            List<Long> activeUserNos = campaignMapper.getActiveUserNos(campaignId, timeSegment); // is_deleted의 값이 N
+            log.info("activeUserNos: {}", activeUserNos);
+
+
+            // 기존 전체 날짜 리스트
+            List<LocalDate> reSearchDate = oldCampaign.getEventPeriodStr().datesUntil(oldCampaign.getEventPeriodEnd().plusDays(1)).collect(Collectors.toList()); // 기존 날짜 List
+            log.info("reSearchDate" + reSearchDate);
+
+            if (activeUserNos != null && !activeUserNos.isEmpty()) {
+                // 2-2. 늘어난 날짜 데이터를 처리하는 루프
+                for (int i = oldDateSize; i < newDateSize; i++) {
+                    LocalDate targetDate = newDates.get(i); // 새로 늘어난 대상 날짜
+                    log.info("[늘어난 날짜 처리] i = {}, 대상 날짜(targetDate) = {}", i, targetDate);
+                    // ---------------------------------------------------------------
+                    // 새로 늘어난 날짜(targetDate)에 과거 탈락 기록('Y')이 있는 유저들을 먼저 'N'으로 부활!
+                    // ---------------------------------------------------------------
+                    // 2-3. 과거 삭제 기록('Y')이 있던 유저들 일괄 부활('N')
+                    param.setApplyDate(targetDate);
+                    param.setUserNos(activeUserNos);
+                    param.setAppliedStrDate(dto.getAppPeriodStr());
+                    param.setAppliedEndDate(dto.getAppPeriodEnd());
+                    param.setEventPeriodStr(dto.getEventPeriodStr());
+                    param.setEventPeriodEnd(dto.getEventPeriodEnd());
+                    param.setTimeSegment(timeSegment);
+
+                    log.info("[부활 진행] 대상 날짜: {}, 유저목록: {}", targetDate, activeUserNos);
+                    campaignMapper.reApplyUser(param); // UPDATE user_campaign SET is_deleted = 'N'
+
+                    // 날짜가 확장되었으므로 기존 활성 유저는 무조건 신규 날짜로 복사
+                    for (Long userNo : activeUserNos) {
+                        // 원본 날짜(sourceDate)의 신청 정보 조회
+                        UserCampaignVO applyDateInfo = campaignMapper.applyDateInfo(campaignId, userNo, sourceDate, timeSegment);
+                        if(applyDateInfo != null ) {
+                            UserCampaignVO paramInfo = new UserCampaignVO();
+                            paramInfo.setCampaignId(campaignId);
+                            paramInfo.setUserNo(userNo);
+
+                            // ★ [핵심 수정] 복사 destination은 새로 늘어난 targetDate가 되어야 합니다!
+                            paramInfo.setApplyDate(targetDate);
+                            paramInfo.setBeforeDate(sourceDate); // 원본 날짜 전달
+
+                            paramInfo.setEventPeriodStr(dto.getEventPeriodStr());
+                            paramInfo.setEventPeriodEnd(dto.getEventPeriodEnd());
+                            paramInfo.setTimeSegment(timeSegment);
+                            paramInfo.setStatus("0");
+
+                            log.info("[신규 날짜 데이터 복사/INSERT] 유저: {}, 적용날짜: {}", userNo, targetDate);
+                            campaignMapper.copyUser(paramInfo);
+                        }
+                    }
+                }
+            }
+
+            // 2-4. 인솔자 날짜 확장 처리 (★ return 0 버그 수정: null/empty 체크 후 내부 실행)
+            List<Long> activeLeaderNos = campaignMapper.getActiveLeaderNos(campaignId); // is_deleted의 값이 N
+            log.info("activeLeaderNos: {}", activeLeaderNos);
+            // 복사 원본이 될 기존의 마지막 날짜 (sourceDate)
+
+            if (activeLeaderNos != null && !activeLeaderNos.isEmpty()) {
+                for (int i = oldDateSize; i < newDateSize; i++) {
+                    LocalDate targetDate = newDates.get(i); // 새로 늘어난 대상 날짜
+                    log.info("[늘어난 날짜 처리] i = {}, 대상 날짜(targetDate) = {}", i, targetDate);
+                    // ---------------------------------------------------------------
+                    // 새로 늘어난 날짜(targetDate)에 과거 탈락 기록('Y')이 있는 유저들을 먼저 'N'으로 부활!
+                    // ---------------------------------------------------------------
+
+                    // 2-1. 과거 삭제 기록('Y')이 있던 유저들 일괄 부활('N')
+                    param.setApplyDate(targetDate);
+                    param.setUserNos(activeLeaderNos);
+                    param.setAppliedStrDate(dto.getAppPeriodStr());
+                    param.setAppliedEndDate(dto.getAppPeriodEnd());
+                    param.setEventPeriodStr(dto.getEventPeriodStr());
+                    param.setEventPeriodEnd(dto.getEventPeriodEnd());
+                    param.setTimeSegment(timeSegment);
+
+                    log.info("[부활 진행] 대상 날짜: {}, 유저목록: {}", targetDate, activeLeaderNos);
+                    campaignMapper.reApplyLeader(param); // UPDATE user_campaign SET is_deleted = 'N'
+
+                    for (Long userNo : activeLeaderNos) {
+                        // 원본 날짜(sourceDate)의 신청 정보 조회
+                        UserCampaignVO applyDateInfo = campaignMapper.applyDateInfoLeader(campaignId, userNo, sourceDate, timeSegment);
+                        if(applyDateInfo != null ) {
+                            UserCampaignVO paramInfo = new UserCampaignVO();
+                            paramInfo.setCampaignId(campaignId);
+                            paramInfo.setUserNo(userNo);
+
+                            // ★ [핵심 수정] 복사 destination은 새로 늘어난 targetDate가 되어야 합니다!
+                            paramInfo.setApplyDate(targetDate);
+                            paramInfo.setBeforeDate(sourceDate); // 원본 날짜 전달
+                            paramInfo.setAppliedStrDate(dto.getAppPeriodStr());
+                            paramInfo.setAppliedEndDate(dto.getAppPeriodEnd());
+                            paramInfo.setEventPeriodStr(dto.getEventPeriodStr());
+                            paramInfo.setEventPeriodEnd(dto.getEventPeriodEnd());
+                            paramInfo.setTimeSegment(timeSegment);
+                            paramInfo.setStatus("8");
+
+                            log.info("[신규 날짜 데이터 복사/INSERT] 유저: {}, 적용날짜: {}", userNo, targetDate);
+                            campaignMapper.copyLeader(paramInfo);
+                        }
+                    }
+                }
+            }
+            // 4. 날짜별 최종 신청자 수 최신화
+            campaignMapper.updateApplicantsNum(campaignId);
+        }
+
+
+        // ---------------------------------------------------------------
+        // [STEP 3] 정원 변동 처리 (확대 / 축소)
+        // ---------------------------------------------------------------
+        List<LocalDate> retainDates = new ArrayList<>(oldDates);
+        retainDates.retainAll(newDates); // 교집합(유지되는 날짜)
+        List<LocalDate> targetDates = retainDates.isEmpty() ? newDates : retainDates;
+
+        if (oldRecNum < newRecNum) { // 정원 확대 시
+            if (vacantSeats > 0) {
+                // 1. 날짜가 늘어났거나 그대로일 때 (oldSize <= newSize 그리고 oldSize > 0)
+                // 결과: newDates 리스트에서 기존 일정의 마지막 위치(인덱스 oldSize - 1)에 해당하는 날짜를 가져옵니다.
+                // 예시:oldSize = 2, newSize = 4 인 경우:
+                // 조건: 2 > 0 && 2 <= 4 -> True 실행: newDates.get(1) -> newDates의
+                // 2번째 날짜 반환
+                // 2. 날짜가 줄어들었을 때 (oldSize > newSize)
+                // 결과: null
+                // 예시:oldSize = 4, newSize = 2 인 경우:
+                // 조건: 4 > 0 && 4 <= 2 -> False 실행: null 반환
+                // 3. 기존 날짜가 아예 없었을 때 (oldSize = 0)
+                // 결과: null
+                // 예시:oldSize = 0, newSize = 3 인 경우:
+                // 조건: 0 > 0 -> False 실행: null 반환
+                sourceDate = (oldDateSize > 0 && oldDateSize <= newDateSize) ? newDates.get(oldDateSize - 1) : null;
+                // 정원 확대로 인해 기존 탈락자 중에서 부활시킬 대상 유저를 조회 (is_deleted = 'Y'인 유저 중에서 선착순으로 vacantSeats만큼 조회)
+                List<Long> targetUserNos = campaignMapper.targetUserNos(campaignId, timeSegment, vacantSeats, sourceDate);
+                List<Long> targetLeaderNos = campaignMapper.targetLeaderNos(campaignId, sourceDate);
+                log.info("정원 확대로 인한 기존 탈락자 부활 대상 유저 조회 완료! sourceDate: {}, targetUserNos: {}, targetLeaderNos: {}", sourceDate, targetUserNos, targetLeaderNos);
+
+                if (targetUserNos != null && !targetUserNos.isEmpty()) {
+                    // 💡 1단계: 날짜별로 돌면서 '그 날짜'의 '그 시간대' 데이터만 정확히 부활
+                    log.info("정원 확대로 인한 기존 신청자 부활 시작! 대상 유저: {}", targetUserNos);
+                    param.setUserNos(targetUserNos);
+                    for (int i = 0; i < newDateSize; i++) {
+                        LocalDate currentDate = newDates.get(i); // ★ oldDates가 아니라 newDates 사용!
+
+                        param.setLimitCount(vacantSeats);
+                        param.setAppliedStrDate(dto.getAppPeriodStr());
+                        param.setAppliedEndDate(dto.getAppPeriodEnd());
+                        param.setEventPeriodStr(dto.getEventPeriodStr());
+                        param.setEventPeriodEnd(dto.getEventPeriodEnd());
+
+                        param.setApplyDate(currentDate);
+
+                        log.info("[부활 진행] 적용 날짜: {}, 대상 유저: {}", currentDate, targetUserNos);
+
+                        int count = campaignMapper.reApplyUser(param);
+                        log.info("날짜 [{}] 부활 처리 완료 건수: {}", currentDate, count);
+                    }
+                }
+                // ★ 인솔자 부활 루프
+                if (targetLeaderNos != null && !targetLeaderNos.isEmpty()) {
+                    param.setUserNos(targetLeaderNos);
+                    for (int i = 0; i < newDateSize; i++) {
+                        param.setApplyDate(newDates.get(i));
+                        campaignMapper.reApplyLeader(param);
+                    }
+                }
+                campaignMapper.updateApplicantsNum(campaignId);
+            }
+            if (oldRecNum < newRecNum && oldDateSize < newDateSize) {
+                campaignMapper.updateIsDeleted(campaignId, "N", "Y");
+            }
+        } else { // 정원 축소 시
+            // 문제점 : 모집인 줄고, 일정이 늘어나면 > 유저와 인솔자 날짜 복구 안 됨 (해당 apply_date에 데이터가 있는데 UPDATE가 안 됨)
+            if (appNum >= newRecNum) {
+                // [상황 A] 진짜로 정원이 넘치거나 딱 꽉 찼을 때
+                campaignMapper.updateIsDeleted(campaignId, "N", "N");
+
+                int exceedCount = appNum - newRecNum;
+
+                if (exceedCount > 0) {
+                    log.info("정원 초과로 인한 신청자 탈락 처리! 인원: {}명", exceedCount);
+                    campaignMapper.updateUcIsDeleted(campaignId, exceedCount);
+                    campaignMapper.updateApplicantsNum(campaignId);
+                }
+            } else { // [상황 B] 정원을 줄였지만 여전히 정원에 여유가 있을 때
+                // 여유 자리가 있으므로 캠페인은 계속 모집 중('Y') 상태여야 함
+                campaignMapper.updateIsDeleted(campaignId, "N", "Y");
+
+                if (vacantSeats > 0) {
+                    // 억울하게 잘려 있는 사람 목록을 가져와서 다시 'N'으로 부활시킨다!
+                    sourceDate = (oldDateSize > 0) ? newDates.get(oldDateSize - 1) : null;
+
+                    List<Long> targetUserNos = campaignMapper.targetUserNos(campaignId, timeSegment, vacantSeats, sourceDate);
+
+                    if (targetUserNos != null && !targetUserNos.isEmpty()) {
+                        param.setLimitCount(vacantSeats);
+                        param.setUserNos(targetUserNos); // 유저 리스트 세팅
+
+                        // 💡 [리팩토링] 외부로 빠진 param 오브젝트 재활용
+                        for (LocalDate curDate : newDates) { // ★ oldDates 대신 newDates 기준
+                            param.setApplyDate(curDate);
+                            campaignMapper.reApplyUser(param);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // ---------------------------------------------------------------
+        // [STEP 4] 인솔자(CampLeader) 목록 수정/삭제/신규 추가
+        // ---------------------------------------------------------------
+        // 프론트에서 받은 인솔자 목록
+        List<CampLeaderVO> newList = dto.getLeaderList() != null ? dto.getLeaderList() : Collections.emptyList();
+        // 기존 DB에 저장된 인솔자 목록
+        List<CampLeaderVO> dbLeaderList = campaignMapper.campaignLeader(campaignId);
+
+        // 3. [삭제 처리] DB엔 있지만 프론트 목록에서 사라진 인솔자 DELETE
+        for (CampLeaderVO dbLeader : dbLeaderList) {
+            boolean existsInNew = newList.stream().anyMatch(n ->
+                Objects.equals(n.getLeaderNo(), dbLeader.getUserNo())
+            );
+
+            if (!existsInNew) {
+                log.info("삭제 처리: DB에만 존재하는 인솔자 감지! 삭제 진행: " + dbLeader);
+                campaignMapper.deleteLeader(dbLeader);
+            }
+        }
+
+        // 4. [업데이트 / 삽입 처리] 프론트에서 넘어온 인솔자 목록 처리
+        for (CampLeaderVO newLeader : newList) {
+            log.info("Processing newLeader: " + newLeader);
+            newLeader.setCampaignId(campaignId);
+
+            // 타입 차이 방지를 위해 String.valueOf() 사용
+            boolean isExistInDb = dbLeaderList.stream().anyMatch(db ->
+                db.getUserNo() != null && newLeader.getLeaderNo() != null &&
+                Objects.equals(String.valueOf(db.getUserNo()), String.valueOf(newLeader.getLeaderNo()))
+            );
+            log.info("인솔자 No [{}] -> DB 존재 여부: {}", newLeader.getLeaderNo(), isExistInDb);
+
+            if (isExistInDb) {
+                // [기존 인솔자] 행사 기간 전체 날짜에 대해 UPDATE 실행
+                for (LocalDate date : newDates) {
+                    newLeader.setApplyDate(date);
+                    // 날짜별로 이미 존재하는 행은 UPDATE (금액/포인트 변경 반영)
+                    // updateLeader의 쿼리가 (WHERE campaign_id = #{campaignId} AND user_no = #{leaderNo} AND apply_date = #{applyDate}) 인지 확인
+                    int updatedRows = campaignMapper.updateLeader(newLeader);
+                    log.info("기존 인솔자 날짜별 UPDATE 시도: " + newLeader + ", 날짜: " + date + ", 업데이트된 행 수: " + updatedRows);
+                    // 만약 해당 날짜에 데이터가 없어서 UPDATE된 행이 0개라면 새로 INSERT
+                    if (updatedRows == 0) {
+                        log.info("해당 날짜에 데이터가 없어 신규 INSERT 진행: " + newLeader + ", 날짜: " + date);
+                        campaignMapper.insertLeader(newLeader);
+                    } else {
+                        log.info("기존 인솔자 날짜별 UPDATE 완료: " + newLeader + ", 날짜: " + date);
+                    }
+                }
+            } else {
+                log.info("신규 인솔자 감지! INSERT 진행: " + newLeader);
+                // [신규 인솔자] 행사 기간 전체 날짜 수만큼 반복 INSERT
+                for (LocalDate date : newDates) {
+                    newLeader.setApplyDate(date);
+                    // newLeader.setIsDeleted("N");
+                    log.info("신규 인솔자 INSERT 진행: " + newLeader + ", 날짜: " + date);
+                    campaignMapper.insertLeader(newLeader);
+                }
+            }
+        }
+
+        // ---------------------------------------------------------------
+        // [STEP 5] 데이터 동기화 & 원본 마스터 테이블 최종 업데이트 & 파일 업로드
+        // ---------------------------------------------------------------
+        // 1. 신청자 수 최종 재계산
+        campaignMapper.updateApplicantsNum(campaignId);
+
+        // 2. 캠페인 마스터 테이블 최종 업데이트
+        result = campaignMapper.campaignUpdate(dto);
+
+        // ================================================================
+        // 파트 4: [이미지 처리 파일 업로드]
+        // ================================================================
+        MultipartFile file = dto.getImage();
+        if (file != null && !file.isEmpty()) {
+            FilesVO uploadFile = new FilesVO();
+            uploadFile.setFile(file);
+            uploadFile.setFileSize(file.getSize());
+            uploadFile.setFileType("campaign_File");
+            uploadFile.setTargetType("campaign");
+            uploadFile.setTargetId(campaignId);
+            uploadFile.setId(campaignId);
+            uploadFile.setStatusId(campaignId);
+            uploadFile.setStatus("campaign");
+
+            fileService.upload(uploadFile);
+        }
+
+        return result;
+
     }
 }

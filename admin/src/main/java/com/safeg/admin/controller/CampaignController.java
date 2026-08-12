@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -94,7 +95,7 @@ public class CampaignController {
         List<UserVO> leaderList = campaignService.leaderList();
         List<CampaignVO> securityType = campaignService.securityType();
         FilesVO file = fileService.select(campaignId);
-        
+
         for(UserVO leader : leaderList){
             if(leader.getId().equals(campaignSelect.getLeaderCode())){
                 campaignSelect.setLeaderName(leader.getUserNm());
@@ -203,10 +204,34 @@ public class CampaignController {
     // }
     @PostMapping("/campaign05")
     public ResponseEntity<String> campaign05(@ModelAttribute CampaignVO campaignVO) throws Exception {
-        
+        log.info("수정 campaign05.toString : " + campaignVO.toString());
         // 1. 수정 서비스 로직 수행
         campaignService.campaignUpdate(campaignVO);
-        
+        List<LocalDate> datesInRange = Stream.iterate(campaignVO.getEventPeriodStr(), date -> date.plusDays(1))
+            // startDate와 endDate 모두 포함
+            .limit(campaignVO.getEventPeriodEnd().toEpochDay() - campaignVO.getEventPeriodStr().toEpochDay() + 1)
+            .collect(Collectors.toList());
+
+        log.info("datesInRange"+datesInRange);
+
+        // if (campaignVO.getLeaderList() != null && !campaignVO.getLeaderList().isEmpty()) {
+        //     log.info("campaignVO.getLeaderList"+campaignVO.getLeaderList());
+        //     // 1. 추출된 각각의 날짜를 순회합니다.
+        //     for (LocalDate date : datesInRange) {
+        //         // 2. 발급된 campaignId를 모든 인솔자 데이터에 세팅
+        //         for (CampLeaderVO leader : campaignVO.getLeaderList()) {
+        //             // 사용자가 선택하지 않아 빈 값으로 넘어온 항목은 제외하는 방어 코드
+        //             if (leader.getLeaderId() != null && !leader.getLeaderId().isEmpty()) {
+        //                 leader.setCampaignId(campaignVO.getCampaignId());
+        //                 // ★ [핵심] 이 복사본 객체에 '현재 순회의 날짜'를 주입해 줍니다.
+        //                 leader.setApplyDate(date);
+        //                 log.info("leader after setting campaignId: " + leader.toString());
+        //                 campaignService.campLeaderInsert(leader); // 3. 인솔자 대량(Batch) 등록 실행
+        //             }
+        //         }
+        //     }
+        // }
+
         // 2. 부모 창을 새로고침하고 현재 팝업창을 닫는 스크립트 작성
         String script = "<script>" +
                         "   alert('수정이 완료되었습니다.');" +
@@ -215,11 +240,11 @@ public class CampaignController {
                         "   }" +
                         "   window.close();" +                       // 현재 팝업창 닫기
                         "</script>";
-        
+
         // 3. 브라우저가 스크립트로 인식할 수 있도록 Content-Type 설정 후 응답
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "text/html; charset=UTF-8");
-        
+
         return new ResponseEntity<>(script, headers, HttpStatus.OK);
     }
 
@@ -258,10 +283,10 @@ public class CampaignController {
                         .toUriString();
 
         model.addAttribute("pageUrl", pageUrl);
-        
+
         return "campaign/campaign07";
     }
-    
+
     @GetMapping("/campaign09")
     public String campaign09(@AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {
         log.info("campaign09");
@@ -290,7 +315,7 @@ public class CampaignController {
 
         return "campaign/campaign09";
     }
-    
+
     @PostMapping("/campaignPopup01/{campaignId}")
     public String userInfoList(@PathVariable("campaignId") Long campaignId, @RequestBody CampaignVO dto, Option option, Model model) throws Exception {
         log.info("dto : " + dto);
@@ -312,11 +337,11 @@ public class CampaignController {
     @PostMapping("/chgDate/{campaignId}")
     @ResponseBody // 👈 HTML이 아니라 데이터(JSON)만 리턴하겠다는 선언!
     public List<UserVO> chgDate(@PathVariable("campaignId") Long campaignId, @RequestBody Map<String, String> paramMap) throws Exception {
-        
+
         String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
 
         log.info("applyDate : " + applyDate);
-        
+
         // 만약 'ALL' 이면 전체 조회, 특정 날짜면 해당 날짜만 조회하는 로직 필요
         List<UserVO> updatedUserList = null;
         if ("ALL".equals(applyDate)) {
@@ -326,18 +351,18 @@ public class CampaignController {
         }
 
         log.info("updatedUserList : " + updatedUserList);
-        
+
         return updatedUserList; // 자바스크립트로 유저 리스트 배열이 JSON 형태로 바로 넘어감
     }
 
     @PostMapping("/chgRole/{campaignId}")
     @ResponseBody // 👈 HTML이 아니라 데이터(JSON)만 리턴하겠다는 선언!
     public List<UserVO> chgRole(@PathVariable("campaignId") Long campaignId, @RequestBody Map<String, String> paramMap, Option option) throws Exception {
-        
+
         String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
 
         log.info("applyDate : " + applyDate);
-        
+
         // 만약 'ALL' 이면 전체 조회, 특정 날짜면 해당 날짜만 조회하는 로직 필요
         List<UserVO> updatedUserList = null;
         if ("ALL".equals(applyDate)) {
@@ -347,7 +372,7 @@ public class CampaignController {
         }
 
         log.info("updatedUserList : " + updatedUserList);
-        
+
         return updatedUserList; // 자바스크립트로 유저 리스트 배열이 JSON 형태로 바로 넘어감
     }
 
@@ -363,7 +388,7 @@ public class CampaignController {
 
             // 중복된 타이틀이 존재한다면 안내 메시지와 함께 400 Bad Request 리턴
             if (overlapTitle != null) {
-                // 중복이 발견되었더라도 사용자가 선택한 날짜가 'ALL'이 아니고, 
+                // 중복이 발견되었더라도 사용자가 선택한 날짜가 'ALL'이 아니고,
                 // 실제 중복된 날짜(applyDate)와 사용자가 선택한 날짜(applyDateS)가 다르다면 패스해야 함
                 if (!"ALL".equals(dto.getApplyDateS()) && !dto.getApplyDateS().equals("")) {
                     log.info("dto.getApplyDateS(). " + dto.getApplyDateS());
@@ -372,7 +397,7 @@ public class CampaignController {
                     response.put("message", "캠페인 신청이 완료되었습니다.");
                     return ResponseEntity.ok().body(response);
                 }
-                
+
                 // 진짜로 날짜가 겹치거나 ALL인 경우엔 가차없이 튕기기
                 response.put("message", "이미 [" + overlapTitle.getCampaignTitle() + "] 캠페인 일정이 있는 '" + overlapTitle.getUserNm() + "' 유저가 포함되어 있습니다.");
                 return ResponseEntity.badRequest().body(response);
@@ -393,7 +418,7 @@ public class CampaignController {
         } catch (IllegalArgumentException e) {
             // 서비스에서 throw한 에러 메시지를 그대로 프론트로 전달
             response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response); 
+            return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
             response.put("message", "서버 오류가 발생했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -408,11 +433,30 @@ public class CampaignController {
         try {
             // 앞서 질문하셨던 Map 리턴 방식을 활용하여 화면에 결과 건수를 줍니다.
             int result = campaignService.userCancel(dto);
-            response.put("message", String.valueOf(result)); 
-            
+            response.put("message", String.valueOf(result));
+
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PostMapping("/leaderUpdate")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> leaderUpdate(@RequestBody CampaignVO dto) {
+        log.info("dto : " + dto);
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            int result = campaignService.leaderUpdate(dto);
+            response.put("success", result > 0);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error during leader update: ", e);
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
 }

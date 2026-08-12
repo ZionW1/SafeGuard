@@ -45,4 +45,8 @@ public interface CampaignService {
 
     public void campLeaderInsert(CampLeaderVO leaderList) throws Exception;
 
+    public int leaderUpdate(CampaignVO dto) throws Exception;
+
+    public UserCampaignVO applySelect(Long campaignId) throws Exception;
+
 }

@@ -6,255 +6,6 @@
         <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
         <title>캠페인 수정</title>
         <link rel="stylesheet" th:href="@{/css/style.css}">
-        
-        <script th:inline="javascript">
-            document.addEventListener("DOMContentLoaded", function() {
-                let file = /*[[${file}]]*/ null;
-                console.log("DOM이 준비되었습니다!");
-                // 여기에 실행하고 싶은 코드 작성
-                const campaignSelect = /*[[${campaignSelect}]]*/ [];
-                
-                
-                // 2. 인솔자 급여 및 포인트 초기값 세팅 (가장 중요!)
-                // 서버에서 받은 값을 화면용(sync-pay, sync-point) input들에 넣어줍니다.
-                let initialPay = campaignSelect.leaderPay || "";
-                let initialPoint = campaignSelect.leaderPoint || "";
-
-                if(initialPay == 0) {
-                    initialPay = 0;
-                }
-                // 화면용 input 채우기
-                document.querySelectorAll(".sync-pay").forEach(el => el.value = initialPay);
-                document.querySelectorAll(".sync-point").forEach(el => el.value = initialPoint);
-
-                // 전송용 hidden 필드 채우기 (이미 HTML에서 th:value로 채웠다면 생략 가능)
-                if(document.getElementById("leaderPay")) document.getElementById("leaderPay").value = initialPay;
-                if(document.getElementById("leaderPoint")) document.getElementById("leaderPoint").value = initialPoint;
-
-                // 3. 경호타입 초기화
-                if(campaignSelect.typeCode){
-                    document.getElementById("securityType").value = campaignSelect.typeCode;
-                    document.getElementById("typeCode").value = campaignSelect.typeCode;
-                }
-
-                const initialEventStr = campaignSelect.eventPeriodStr || "";
-                const initialEventEnd = campaignSelect.eventPeriodEnd || "";
-                const initialRstDate = campaignSelect.resultDate || "";
-                
-                document.querySelectorAll(".sync-event-str").forEach(el => el.value = initialEventStr);
-                document.querySelectorAll(".sync-event-end").forEach(el => el.value = initialEventEnd);
-                document.querySelectorAll(".sync-event-rst").forEach(el => el.value = initialRstDate);
-                
-                if(document.getElementById("eventPeriodStr")) document.getElementById("eventPeriodStr").value = initialEventStr;
-                if(document.getElementById("eventPeriodEnd")) document.getElementById("eventPeriodEnd").value = initialEventEnd;
-                if(document.getElementById("resultDate")) document.getElementById("resultDate").value = initialRstDate;
-
-                // if(leaderList != null){
-                //     console.log("leaderCode")
-                //     if(campaignSelect.leaderPhone == null){
-                //         document.getElementById("leader_contact").value = "";
-                //     }
-                //     else{
-                //         document.getElementById("leaderPhone").value = campaignSelect.leaderPhone;
-                //     }
-                //     document.getElementById("leaderCode").value = campaignSelect.leaderCode;
-                //     document.getElementById("leaderNo").value = campaignSelect.leaderNo;
-                    
-                //     // const selectElement = document.getElementById('leaderNm');
-                    
-                //     selectElement.value = campaignSelect.leaderCode;
-                //     for(let i = 0; i < selectElement.options.length; i++) {
-                //         selectElement.options[i].value = leaderList[i].id;
-                //     }
-                    
-                // }
-
-                if(campaignSelect.typeCode != null){
-                    console.log("typeCode")
-                    document.getElementById("typeCode").value = campaignSelect.typeCode;
-                    
-                    const selectElement = document.getElementById('securityType');
-                    
-                    selectElement.value = campaignSelect.typeCode;
-                    
-                    selectElement.selectedIndex = campaignSelect.typeCode;
-                }
-                
-                const securityTypeSelect = document.getElementById("securityType");
-                
-                if (securityTypeSelect) {
-                    // 1. 기존 함수 그대로 호출해서 라디오 버튼 보이기 + 이벤트 바인딩하기
-                    securityTypeChange(securityTypeSelect.value);
-                    
-                    // 2. 💡 [핵심] 현재 체크되어 있는 라디오 버튼을 찾아서 강제로 'change' 이벤트 실행시키기
-                    const checkedRadio = document.querySelector('input[name="wageChk"]:checked');
-                    if (checkedRadio) {
-                        checkedRadio.dispatchEvent(new Event('change'));
-                    }
-                }
-                for(  i = 0; i < campaignSelect.leaderList.length; i++ ) {
-                    addLeaderForm(campaignSelect.leaderList[i]);
-                }
-            });
-
-            function deleteCampaign() {
-                if (!confirm("정말로 이 캠페인을 삭제하시겠습니까?")) {
-                    return;
-                }
-            }
-
-            function securityTypeChange(typeCode) {
-                console.log("선택된 경호/진행/수행 구분: " + typeCode);
-                document.getElementById("typeCode").value = typeCode;
-            }
-
-            function inputLeaderPhoneNumber(selectElement) {
-                const leaderList = /*[[${leaderList}]]*/ [];
-                // console.log(JSON.stringify(leaderList))
-                // const selectPhoneNumber = leaderList[idx].phoneNum;
-                // const selectNo = leaderList[idx].id;
-                // const leaderId = leaderList[idx].userId;
-
-                // document.getElementById("leaderPhone").value = selectPhoneNumber;
-                // document.getElementById("leaderNo").value = selectNo;
-                // document.getElementById("leaderCode").value = leaderList[idx].id;
-                // document.getElementById("leaderId").value = leaderId;
-
-                const idx = selectElement.value; 
-                
-                // 현재 이벤트가 발생한 select 태그가 속한 가장 가까운 폼 한 세트(.leader-form-group)를 찾음
-                const formGroup = selectElement.closest('.leader-form-group');
-                
-                // 폼 내부의 입력창 필드들을 선택
-                const phoneInput = formGroup.querySelector('.sync-phone');
-                const noInput = formGroup.querySelector('.leaderNo');
-                const idInput = formGroup.querySelector('.leaderId');
-                const nmInput = formGroup.querySelector('.leaderNm');
-                const phInput = formGroup.querySelector('.leaderPh');
-                
-                // "-- 선택하세요 --" (빈값)을 선택한 경우 초기화
-                if (idx === "") {
-                    phoneInput.value = "";
-                    if(noInput) noInput.value = "";
-                    if(idInput) idInput.value = "";
-                    return;
-                }
-                
-                // 전역 변수에서 인덱스로 해당 인솔자 데이터 추출
-                const selectedLeader = leaderList[idx];
-                
-                if (selectedLeader) {
-                    console.log("선택된 인솔자 상세정보: ", selectedLeader);
-                    
-                    // 화면의 각 input창에 값 매핑
-                    phoneInput.value = selectedLeader.phoneNum || '';
-                    
-                    // hidden 필드가 존재한다면 hidden 필드에도 데이터 세팅
-                    if(noInput) noInput.value = selectedLeader.id || '';
-                    if(idInput) idInput.value = selectedLeader.userId || '';
-                    if(nmInput) nmInput.value = selectedLeader.userNm || '';
-                    console.log("인솔자 번호(hidden): ", noInput ? noInput.value : "hidden 필드 없음");
-                    console.log("인솔자 ID(hidden): ", idInput ? idInput.value : "hidden 필드 없음");
-                }
-            }
-
-            function removeFile(element, id){
-                console.log("campaign: " + id);
-                let request = new XMLHttpRequest();
-
-                // ⭐️ CSRF 토큰 가져오기 시작 ⭐️
-                // hidden input 태그에서 name과 value를 가져와.
-                const csrfToken = document.querySelector('input[name="_csrf"]').value;
-                // const csrfHeader = document.querySelector('input[name="_csrf"]').name; // 스프링 기본은 "_csrf"야
-                const csrfHeaderToSend = "X-CSRF-TOKEN"; // 👈 Spring Security가 기본으로 기대하는 헤더 이름!
-                // 만약 parameterName이 다르게 설정되어 있다면, 다음과 같이도 가능해:
-                // const csrfHeader = document.querySelector('input[name="_csrf"]').getAttribute('name');
-
-                // meta 태그로 CSRF 토큰을 저장했다면 이렇게 가져올 수도 있어:
-                // const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
-                // const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
-                // ⭐️ CSRF 토큰 가져오기 끝 ⭐️
-                request.onreadystatechange = function(){
-                    if(request.readyState == request.DONE && request.status == 200) {
-                        let response = request.responseText;
-                        if(response == 'SUCCESS'){
-                            alert('파일 삭제(상태 변경) 성공');
-
-                            // ⭐️ 클래스를 사용하여 섹션 숨기기/보이기 ⭐️
-                            document.getElementById("existing-file-section").classList.add('hidden');    // 기존 파일 섹션 숨기기
-                            document.getElementById("drop-area").classList.remove('hidden');             // 드롭 영역 보이기
-
-                            // 이미지 업로드 <input> 태그의 값을 비워서 파일 선택 상태 초기화
-                            document.getElementById("image").value = '';
-                            // 미리보기 이미지도 초기 상태로 (src 비우고 hidden 클래스 추가하여 숨김)
-                            document.getElementById("preview").classList.add('hidden'); // 미리보기 img 태그 숨기기
-                            document.getElementById("preview").src = ""; // 미리보기 이미지 src 비우기
-
-                        }else{
-                            alert('파일 삭제(상태 변경) 실패');
-                        }
-                    } else if (request.readyState == request.DONE && request.status != 200) {
-                        alert('파일 삭제(상태 변경) 요청 처리 중 오류 발생: ' + request.responseText);
-                    }
-                }
-
-                const url = `/admin/file/markDeleted/${id}`;
-                console.log("mark deleted url : " + url);
-                request.open('POST', url, true);
-                request.setRequestHeader(csrfHeaderToSend, csrfToken);
-                request.send();
-            }
-
-            function securityTypeChange(typeCode) {
-                const wageRadio = document.getElementById("wageRadio");
-                const hourlyPay = document.getElementById("hourlyPay");
-                const hourlyPayInput = document.getElementById("hourlyPayInput");
-                const dailyPay = document.getElementById("dailyPay");
-                const dailyPayInput = document.getElementById("dailyPayInput");
-                const workHours = document.getElementById("workHour"); // HTML에 id="workHour"로 되어있어서 수정
-                const timeInput = document.getElementById("timeInput");
-
-                console.log("선택된 경호/진행/수행 구분: " + typeCode);
-
-                if (typeCode === "02") {
-                    console.log("02 선택됨 -> 보이기");
-                    wageRadio.classList.remove("hidden"); 
-
-                    // 이벤트 리스너 중복 등록 방지를 위해 기존 이벤트를 한 번 제거하거나 새로 바인딩
-                    document.querySelectorAll('input[name="wageChk"]').forEach((radio) => {
-                        radio.onchange = function() {
-                            if (this.value === "01") { // 📅 일급 선택 시
-                                dailyPay.classList.remove("hidden");
-                                hourlyPay.classList.add("hidden");
-                                timeInput.classList.add("hidden");
-                                
-                                // 💡 순수 JS 문법으로 정확하게 제어
-                                dailyPayInput.setAttribute("name", "campaignPay"); // 내 name은 살리고
-                                hourlyPayInput.removeAttribute("name");            // 상대 name은 지우고
-                                workHour.value = ""; // 근무 시간 초기화
-                                workHours.required = false;               
-                            } else if (this.value === "02") { // ⏰ 시급 선택 시
-                                dailyPay.classList.add("hidden");
-                                hourlyPay.classList.remove("hidden");
-                                timeInput.classList.remove("hidden");
-                                
-                                // 💡 순수 JS 문법으로 정확하게 제어
-                                hourlyPayInput.setAttribute("name", "campaignPay"); // 내 name은 살리고
-                                dailyPayInput.removeAttribute("name");             // 상대 name은 지우고
-                                
-                                workHours.required = true;                
-                                // workHours.value = "";
-                            }
-                        };
-                    });
-                } else {
-                    console.log("다른 값 선택됨 -> 숨기기");
-                    wageRadio.classList.add("hidden");    
-                }
-                
-                document.getElementById("typeCode").value = typeCode;
-            }
-        </script>
     </head>
     <body>
         <div class="admin-container">
@@ -268,8 +19,9 @@
                 <h1>캠페인 수정</h1>
                 <form class="form" th:action="@{/campaign05}" method="post" id="form" enctype="multipart/form-data">
                     <div th:replace="~{fragments/csrfFragments :: inputCsrf}"></div>
-                    
+
                     <input type="hidden" name="campaignId" id="campaignId" th:value="${campaignSelect.campaignId}" />
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="businessName">업체명</label>
@@ -280,104 +32,63 @@
                             <input type="text" name="companyPh" id="companyPh" th:value="${campaignSelect.companyPh}" />
                         </div>
                     </div>
-                
-                    <button type="button" onclick="addLeaderForm()">+ 인솔자 추가하기</button>
-                    <template id="leaderTemplate">
-                        <div class="leader-form-group mgt16">
-                            <input type="hidden" class="leaderCode" name="leaderList[].leaderCode" />
-                            <input type="hidden" class="leaderId" name="leaderList[].leaderId" />
-                            <input type="hidden" class="leaderNo" name="leaderList[].leaderNo" />
-                            <input type="hidden" class="leaderPay" name="leaderList[].leaderPay" />
-                            <input type="hidden" class="leaderPoint" name="leaderList[].leaderPoint" />
-    
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>인솔자 선택</label>
-                                    <select id="leaderNm_pc" name="leaderList[].leaderNm" onchange="inputLeaderPhoneNumber(this)" class="sync-nm">
-                                        <option value="">-- 선택하세요 --</option>
-                                        <option th:each="leader, stat : ${leaderList}" 
-                                                th:value="${stat.index}" 
-                                                th:text="${leader.userNm}">
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>인솔자 연락처</label>
-                                    <input type="text" name="leaderList[].leaderPhone" class="sync-phone" readonly/>
-                                </div>
-                                <div class="form-group pc">
-                                    <label>인솔자 급여</label>
-                                    <input type="text" class="sync-pay" oninput="syncPay(this)" />
-                                </div>
-                                <div class="form-group pc">
-                                    <label>인솔자 포인트</label>
-                                    <input type="text" class="sync-point" oninput="syncPoint(this)" />
-                                </div>
-                                <div class="form-group pc">
-                                    <button type="button" class="remove_leader" onclick="removeLeaderForm(this)">삭제</button>
-                                </div>
-                            </div>
-                            <div class="form-row mobile">
+
+                    <!-- ⭐️ form 대신 div로 변경하여 중첩 폼 문제 해결 ⭐️ -->
+                    <div id="leaderSection" class="form-row" style="flex-direction: column; width: 100%;">
+                        <button type="button" onclick="addLeaderForm()">+ 인솔자 추가하기</button>
+                        <template id="leaderTemplate">
+                            <div class="leader-form-group mgt16">
+                                <input type="hidden" class="leaderCode" name="leaderList[].leaderCode" />
+                                <input type="hidden" class="leaderId" name="leaderList[].leaderId" />
+                                <input type="hidden" class="leaderNo" name="leaderList[].leaderNo" />
+                                <input type="hidden" class="leaderPay" name="leaderList[].leaderPay" />
+                                <input type="hidden" class="leaderPoint" name="leaderList[].leaderPoint" />
+
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label>인솔자 급여</label>
-                                        <input type="number" class="sync-pay" oninput="syncPay(this)" />
+                                        <label>인솔자 선택</label>
+                                        <select id="leaderNm_pc" name="leaderList[].leaderNm" onchange="inputLeaderPhoneNumber(this)" class="sync-nm">
+                                            <option value="">-- 선택하세요 --</option>
+                                            <option th:each="leader, stat : ${leaderList}"
+                                                    th:value="${stat.index}"
+                                                    th:text="${leader.userNm}">
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
-                                        <label>인솔자 포인트</label>
-                                        <input type="text" class="sync-point" oninput="syncPoint(this)" />
+                                        <label>인솔자 연락처</label>
+                                        <input type="text" name="leaderList[].leaderPh" class="sync-phone" readonly/>
                                     </div>
-                                    <button type="button" class="remove_leader" onclick="removeLeaderForm(this)">삭제</button>
+                                    <div class="form-group pc">
+                                        <label>인솔자 급여</label>
+                                        <input type="text" class="sync-pay-pc" oninput="syncPay(this)" />
+                                    </div>
+                                    <div class="form-group pc">
+                                        <label>인솔자 포인트</label>
+                                        <input type="text" class="sync-point-pc" oninput="syncPoint(this)" />
+                                    </div>
+                                    <div class="form-group pc">
+                                        <button type="button" class="remove_leader" onclick="removeLeaderForm(this)">삭제</button>
+                                    </div>
+                                </div>
+                                <div class="form-row mobile">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>인솔자 급여</label>
+                                            <input type="number" class="sync-pay-mo" oninput="syncPay(this)" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>인솔자 포인트</label>
+                                            <input type="text" class="sync-point-mo" oninput="syncPoint(this)" />
+                                        </div>
+                                        <button type="button" class="remove_leader" onclick="removeLeaderForm(this)">삭제</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </template>
-                    <div id="leaderContainer">
+                        </template>
+                        <div id="leaderContainer"></div>
                     </div>
-<!-- 
-                <input type="hidden" id="leaderCode" name="leaderCode" />
-                <input type="hidden" id="leaderId" name="leaderId" />
-                <input type="hidden" id="leaderNo" name="leaderNo" />
-                
-                <input type="hidden" name="leaderPay" id="leaderPay" />
-                <input type="hidden" name="leaderPoint" id="leaderPoint" />
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="leaderNm_pc">인솔자 선택</label>
-                            <select id="leaderNm_pc" name="leaderNm" onchange="inputLeaderPhoneNumber(this.value)" class="sync-nm" >
-                                <option value="">-- 선택하세요 --</option>
-                                <option th:each="leader, stat : ${leaderList}" 
-                                        th:value="${stat.index}" 
-                                        th:text="${leader.userNm}">
-                                </option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="leaderPhone">인솔자 연락처</label>
-                            <input type="text" id="leaderPhone" name="leaderPhone" class="sync-phone" readonly/>
-                        </div>
-                        <div class="form-group pc">
-                            <label for="leaderPay_pc">인솔자 급여</label>
-                            <input type="text" id="leaderPay_pc" class="sync-pay" />
-                        </div>
-                        <div class="form-group pc">
-                            <label for="leaderPoint_pc">인솔자 포인트</label>
-                            <input type="text" id="leaderPoint_pc" class="sync-point" />
-                        </div>
-                    </div>
-                    <div class="form-row mobile">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="leaderPay_mo">인솔자 급여</label>
-                                <input type="number" id="leaderPay_mo" class="sync-pay" />
-                            </div>
-                            <div class="form-group">
-                                <label for="leaderPoint_mo">인솔자 포인트</label>
-                                <input type="text" id="leaderPoint_mo" class="sync-point" />
-                            </div>
-                        </div>
-                    </div> -->
+
                     <div class="form-row">
                         <div class="form-group">
                             <label>캠페인명</label>
@@ -385,57 +96,37 @@
                         </div>
                         <div class="form-group">
                             <label>주간 / 야간</label>
-                            <!-- <input type="text" id="campaignTitle" name="campaignTitle" /> -->
-                            <div class="radio-group"> 
+                            <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="timeSegment" id="timeSegmentDay" value="DAY" th:checked="${campaignSelect?.timeSegment == null || campaignSelect?.timeSegment == 'DAY'}">주간
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="timeSegment" id="timeSegmentNight" value="NIGHT" th:checked="${campaignSelect?.timeSegment == 'NIGHT'}">야간
                                 </label>
-                                <!-- <label class="radio-label">
-                                    <input type="radio" name="timeSegment" id="timeSegmentDawn" value="DAWN">야간
-                                </label> -->
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="form-row">
-                        <div class="form-group">
-                            <label for="campaignPay">캡페인 급여</label>
-                            <input type="number" name="campaignPay" id="campaignPay" th:value="${campaignSelect.campaignPay}" />
-                        </div>
-                        <div class="form-group">
-                            <label for="securityType">경호/진행/수행 구분</label>
-                            <select id="securityType" name="securityType" th:field="*{securityType}" onchange="securityTypeChange(this.value)">
-                                <option value="">-- 선택하세요 --</option>
-                                <option name="" th:each="type : ${securityType}" th:value="${type.code}" th:text="${type.codeName}"></option>
-                            </select>
-                            <input type="hidden" id="typeCode" name="typeCode" />
-                        </div>
-                    </div> -->
+
                     <div class="form-row">
-                        <!-- <div style="color: red; font-size: 0.9em;">* 경호/진행/수행 구분이 '경호'인 경우에만 시급/일급 선택과 급여 입력이 가능합니다.</div>
-                        <span style="color: red; font-size: 0.9em;">* '시급' 선택 시 하루 근무 시간 입력이 필수입니다.</span> -->
-                        <!-- <span th:text="${campaignSelect.workHour}"></span> -->
                         <div class="form-group">
                             <label for="securityType">경호/진행/수행 구분</label>
                             <select id="securityType" name="securityType" onchange="securityTypeChange(this.value)">
                                 <option value="">-- 선택하세요 --</option>
-                                <option th:each="type : ${securityType}" 
-                                        th:value="${type.code}" 
+                                <option th:each="type : ${securityType}"
+                                        th:value="${type.code}"
                                         th:text="${type.codeName}"></option>
                             </select>
                             <input type="hidden" id="typeCode" name="typeCode" />
                         </div>
                         <div class="form-group hidden" id="wageRadio">
                             <label for="">시급 일급</label>
-                            <div class="radio-group"> 
+                            <div class="radio-group">
                                 <label class="radio-label">
-                                    <input type="radio" name="wageChk" id="dailyWage" value="01" 
+                                    <input type="radio" name="wageChk" id="dailyWage" value="01"
                                         th:checked="${campaignSelect?.wageChk == '01'}">일급
                                 </label>
                                 <label class="radio-label">
-                                    <input type="radio" name="wageChk" id="hourlyWage" value="02" 
+                                    <input type="radio" name="wageChk" id="hourlyWage" value="02"
                                         th:checked="${campaignSelect?.wageChk == '02'}">시급
                                 </label>
                             </div>
@@ -453,65 +144,44 @@
                             <input type="number" name="workHour" id="workHour" placeholder="예: 8" min="1" th:value="${campaignSelect.workHour}">
                         </div>
                     </div>
+
                     <div class="form-group">
                         <div class="form-group">
                             <label>캠페인 이미지</label>
-
-                            <!-- <div th:if="${file == null}" id="drop-area" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px" >
-                                <p>이미지를 클릭하거나 끌어다 놓으세요</p>
-                                
-                                <div th:if="${file == null}">
-                                    <input type="file" name="image" id="image" accept="image/*" style="display: none" />
-                                    <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin-top: 10px; display: none" />
-                                </div>
-                            </div>
-                            <div th:if="${file != null}">
-                                <div class="mrg_auto">
-                                    <img class="campaign_image" id="imgFile"th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" />
-                                </div>
-                                <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" 
-                                th:onclick="removeFile(this, [[${campaignSelect.campaignId}]])">기존 이미지 삭제</button>
-                            </div> -->
-
                             <div id="existing-file-section" th:classappend="${file == null} ? 'hidden'">
                                 <div class="mrg_auto">
-                                    <img class="campaign_image" id="imgFile" th:src="@{/img(id=${campaignSelect.campaignId})}"
-                                    alt="파일이미지" />
+                                    <img class="campaign_image" id="imgFile" th:src="@{/img(id=${campaignSelect.campaignId})}" alt="파일이미지" />
                                 </div>
                                 <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
                                         th:onclick="removeFile(this, [[${campaignSelect.campaignId}]])">기존 이미지 삭제</button>
                             </div>
-                            
-                            <!-- ⭐️ 파일 업로드 영역: ID 추가 및 hidden 클래스 조건부 추가 ⭐️ -->
-                            <!-- file 객체가 null이 아니면 hidden 클래스를 추가해서 숨기고, null이면 hidden 클래스 없이 보여줌 -->
+
                             <div id="drop-area" th:classappend="${file != null} ? 'hidden'" style="border: 2px dashed #b594ff; padding: 20px; text-align: center; border-radius: 8px;">
                                 <p>이미지를 클릭하거나 끌어다 놓으세요</p>
                                 <div>
                                     <input type="file" name="image" id="image" accept="image/*" style="display: none" />
-                                    <!-- ⭐️ 여기 hidden 클래스 추가 ⭐️ -->
                                     <img id="preview" src="" alt="미리보기" class="hidden" style="max-width: 100%; margin-top: 10px;" />
                                 </div>
                             </div>
-                            
                         </div>
-                        
                     </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label>모집 인원 수</label>
-                                <input type="number" name="recruitmentNum" id="recruitmentNum" th:value="${campaignSelect.recruitmentNum}" />
+                            <input type="number" name="recruitmentNum" id="recruitmentNum" th:value="${campaignSelect.recruitmentNum}" />
                         </div>
                         <div class="form-group">
                             <label for="placeAddr">주소</label>
                             <input type="text" name="placeAddr" id="placeAddr" th:value="${campaignSelect.placeAddr}" />
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>안내사항</label>
                         <textarea class="memo" name="mission" id="mission" rows="12" th:text="${campaignSelect.mission}"></textarea>
                     </div>
-                    
+
                     <input type="hidden" name="eventPeriodStr" id="eventPeriodStr" />
                     <input type="hidden" name="eventPeriodEnd" id="eventPeriodEnd" />
                     <input type="hidden" name="resultDate" id="resultDate" />
@@ -528,7 +198,7 @@
                             <label>행사기간</label>
                             <div class="form-row">
                                 <input class="dateInsert sync-event-str" type="date" id="eventPeriodStr_pc" />
-                                <input class="dateInsert sync-event-end" type="date" id="eventPeriodStr_pc" />
+                                <input class="dateInsert sync-event-end" type="date" id="eventPeriodEnd_pc" />
                             </div>
                         </div>
                         <div class="form-group pc">
@@ -538,6 +208,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="form-row mobile">
                         <div class="form-group">
                             <label>행사기간</label>
@@ -553,164 +224,228 @@
                             <input class="dateInsert sync-event-rst" type="date" name="resultDate_mo" id="resultDate_mo" />
                         </div>
                     </div>
-                    <button type="submit">캠페인 수정</button>
-                    <button type="button" class="delete-btn" onclick="campaignRemove()">캠페인 삭제</button>
+
+                    <!-- ⭐️ 하단 버튼 3개 배치 (방법 B 적용) ⭐️ -->
+                    <div class="form-row" style="margin-top: 24px; gap: 12px;">
+                        <!-- <button type="button" class="btn-leader" onclick="fn_updateLeader()" style="flex: 1; height: 48px; background-color: #a582e8; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">인솔자 변경</button> -->
+                        <button type="submit" class="btn-update" style="flex: 1; height: 48px; background-color: #bfa2db; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">캠페인 수정</button>
+                        <button type="button" class="btn-delete" onclick="campaignRemove()" style="flex: 1; height: 48px; background-color: #d8b4e2; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">캠페인 삭제</button>
+                    </div>
                 </form>
             </div>
         </div>
 
         <script th:inline="javascript">
+            // 전역 변수 설정
             const params = new URLSearchParams(location.search);
             const id = params.get("id");
             const form = document.getElementById("form");
             const leaderList = /*[[${leaderList}]]*/ [];
+            const campaignSelect = /*[[${campaignSelect}]]*/ {};
 
-            function campaignRemove(){
-                console.log(id);
-                if(!confirm('정말로 이 캠페인을 삭제하시겠습니까?')){
+            // DOM 이 로드된 후 실행할 초기화 작업 모음
+            document.addEventListener("DOMContentLoaded", function() {
+                console.log("DOM이 준비되었습니다!");
+
+                // 1. 인솔자 급여 및 포인트 초기값 세팅
+                let initialPay = campaignSelect.leaderPay || "";
+                let initialPoint = campaignSelect.leaderPoint || "";
+
+                document.querySelectorAll(".sync-pay-pc").forEach(el => el.value = initialPay);
+                document.querySelectorAll(".sync-point-pc").forEach(el => el.value = initialPoint);
+                document.querySelectorAll(".sync-pay-mo").forEach(el => el.value = initialPay);
+                document.querySelectorAll(".sync-point-mo").forEach(el => el.value = initialPoint);
+
+                if(document.getElementById("leaderPay")) document.getElementById("leaderPay").value = initialPay;
+                if(document.getElementById("leaderPoint")) document.getElementById("leaderPoint").value = initialPoint;
+
+                // 2. 경호타입 및 기간 날짜 초기화
+                if(campaignSelect.typeCode){
+                    document.getElementById("securityType").value = campaignSelect.typeCode;
+                    document.getElementById("typeCode").value = campaignSelect.typeCode;
+                }
+
+                const initialEventStr = campaignSelect.eventPeriodStr || "";
+                const initialEventEnd = campaignSelect.eventPeriodEnd || "";
+                const initialRstDate = campaignSelect.resultDate || "";
+
+                document.querySelectorAll(".sync-event-str").forEach(el => el.value = initialEventStr);
+                document.querySelectorAll(".sync-event-end").forEach(el => el.value = initialEventEnd);
+                document.querySelectorAll(".sync-event-rst").forEach(el => el.value = initialRstDate);
+
+                if(document.getElementById("eventPeriodStr")) document.getElementById("eventPeriodStr").value = initialEventStr;
+                if(document.getElementById("eventPeriodEnd")) document.getElementById("eventPeriodEnd").value = initialEventEnd;
+                if(document.getElementById("resultDate")) document.getElementById("resultDate").value = initialRstDate;
+
+                // 3. 경호/진행/수행 및 시급/일급 라디오 버튼 초기화
+                const securityTypeSelect = document.getElementById("securityType");
+                if (securityTypeSelect) {
+                    securityTypeChange(securityTypeSelect.value);
+                    const checkedRadio = document.querySelector('input[name="wageChk"]:checked');
+                    if (checkedRadio) {
+                        checkedRadio.dispatchEvent(new Event('change'));
+                    }
+                }
+
+                // 4. 기존 인솔자 목록 불러오기 (수정 모드)
+                if (campaignSelect.leaderList && campaignSelect.leaderList.length > 0) {
+                    for (let i = 0; i < campaignSelect.leaderList.length; i++) {
+                        addLeaderForm(campaignSelect.leaderList[i]);
+                    }
+                } else {
+                    // 기존 인솔자가 없으면 기본 빈 폼 1개 생성
+                    addLeaderForm(null);
+                }
+
+                // 5. 드래그 앤 드롭 및 파일 업로드 이벤트 바인딩
+                initImageUploadEvents();
+            });
+
+            function syncPay(inputElement) {
+                const formGroup = inputElement.closest('.leader-form-group');
+                const value = inputElement.value;
+
+                // PC와 모바일 입력창 둘 다에 값을 적어줌
+                formGroup.querySelector('.sync-pay-pc').value = value;
+                formGroup.querySelector('.sync-pay-mo').value = value;
+                // Hidden 필드에도 저장
+                formGroup.querySelector('.leaderPay').value = value;
+            }
+
+            function syncPoint(inputElement) {
+                const formGroup = inputElement.closest('.leader-form-group');
+                const value = inputElement.value;
+                console.log("syncPoint 호출됨, 값: ", value);
+                // PC와 모바일 입력창 둘 다에 값을 적어줌
+                formGroup.querySelector('.sync-point-pc').value = value;
+                formGroup.querySelector('.sync-point-mo').value = value;
+                // Hidden 필드에도 저장
+                formGroup.querySelector('.leaderPoint').value = value;
+            }
+            // ==========================================
+            // 1. 인솔자 관련 기능 함수들
+            // ==========================================
+
+            // [인솔자 변경] 버튼 클릭 시 AJAX 전송 (POST / @RequestBody 대응)
+            function fn_updateLeader() {
+                if (!confirm("인솔자 정보를 변경하시겠습니까?")) return;
+
+                const csrfInput = document.querySelector('input[name="_csrf"]');
+                const csrfToken = csrfInput ? csrfInput.value : '';
+                const campaignId = document.getElementById("campaignId").value;
+
+                const strDate = document.querySelector(".sync-event-str")?.value || "";
+                const endDate = document.querySelector(".sync-event-end")?.value || "";
+                const resultDate = document.querySelector(".sync-event-rst")?.value || "";
+
+                console.log("기간 정보 : ", strDate, endDate, resultDate);
+
+                const leaderSelect = [];
+                document.querySelectorAll("#leaderContainer .leader-form-group").forEach((group) => {
+                    const selectEl = group.querySelector(".sync-nm");
+                    const idx = selectEl ? selectEl.value : "";
+
+                    // '-- 선택하세요 --'가 아닌 경우
+                    if (idx !== "") {
+                        const leaderInfo = leaderList[idx]; // 전역 leaderList 참조
+                        const leaderPh = group.querySelector(".sync-phone")?.value || "";
+                        const leaderPay = group.querySelector(".sync-pay")?.value || "0";
+                        const leaderPoint = group.querySelector(".sync-point")?.value || "0";
+
+                        const leaderNo = group.querySelector(".leaderNo")?.value || (leaderInfo ? leaderInfo.id : "");
+                        const leaderId = group.querySelector(".leaderId")?.value || (leaderInfo ? leaderInfo.userId : "");
+
+                        leaderSelect.push({
+                            campaignId: parseInt(campaignId),
+                            leaderNo: leaderNo ? String(leaderNo) : "",
+                            leaderId: leaderId ? String(leaderId) : "",
+                            leaderNm: leaderInfo ? leaderInfo.userNm : "",
+                            leaderPay: parseInt(leaderPay),
+                            leaderPh: leaderPh,
+                            leaderPoint: parseInt(leaderPoint)
+                        });
+                    }
+                });
+
+                if (leaderSelect.length === 0) {
+                    alert("선택된 인솔자 정보가 없습니다.");
                     return;
                 }
 
-                form.action = '/admin/campaign06?id=' + id; // action 속성 변경
-                form.submit(); // 요청 전송
+                console.log("전송할 인솔자 목록:", leaderSelect);
+
+                fetch("/admin/leaderUpdate", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken
+                    },
+                    body: JSON.stringify({
+                        campaignId: parseInt(campaignId),
+                        eventPeriodStr : strDate,
+                        eventPeriodEnd : endDate,
+                        resultDate : resultDate,
+                        leaderList: leaderSelect
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error("네트워크 응답 오류");
+                    return response.json();
+                })
+                .then(data => {
+                    if (data > 0 || data.success) {
+                        alert("인솔자 정보가 성공적으로 변경되었습니다.");
+                        location.reload();
+                    } else {
+                        alert("인솔자 변경 실패");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("처리 중 오류가 발생했습니다.");
+                });
             }
 
-            const dropArea = document.getElementById("drop-area");
-            const imageInput = document.getElementById("image");
-            const preview = document.getElementById("preview");
+            // 인솔자 선택 시 셀렉트박스 및 연락처/hidden 자동 채움
+            function inputLeaderPhoneNumber(selectElement) {
+                const idx = selectElement.value;
+                const formGroup = selectElement.closest('.leader-form-group');
 
-            dropArea.addEventListener("click", () => imageInput.click());
+                const phoneInput = formGroup.querySelector('.sync-phone');
+                const noInput = formGroup.querySelector('.leaderNo');
+                const idInput = formGroup.querySelector('.leaderId');
 
-            dropArea.addEventListener("dragover", (e) => {
-                e.preventDefault();
-                dropArea.style.backgroundColor = "#f3e7ff";
-            });
-
-            dropArea.addEventListener("dragleave", () => {
-                dropArea.style.backgroundColor = "transparent";
-            });
-
-            dropArea.addEventListener("drop", (e) => {
-                e.preventDefault();
-                dropArea.style.backgroundColor = "transparent";
-                const file = e.dataTransfer.files[0];
-                if (file && file.type.startsWith("image/")) {
-                    imageInput.files = e.dataTransfer.files;
-                    showPreview(file);
+                if (idx === "") {
+                    phoneInput.value = "";
+                    if (noInput) noInput.value = "";
+                    if (idInput) idInput.value = "";
+                    return;
                 }
-            });
 
-            imageInput.addEventListener("change", () => {
-                const file = imageInput.files[0];
-                if (file) {
-                    showPreview(file);
+                const selectedLeader = leaderList[idx];
+                if (selectedLeader) {
+                    phoneInput.value = selectedLeader.phoneNum || '';
+                    if (noInput) noInput.value = selectedLeader.id || '';
+                    if (idInput) idInput.value = selectedLeader.userId || '';
                 }
-            });
-
-            function showPreview(file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    preview.src = e.target.result;
-                    preview.style.display = "block";
-                };
-                reader.readAsDataURL(file);
             }
-            
-            document.addEventListener("DOMContentLoaded", () => {
-                const fileInput = document.getElementById('image');
-                const previewImage = document.getElementById('preview');
 
-                if (fileInput && previewImage) {
-                    // 파일 선택 시 change 이벤트 감지
-                    fileInput.addEventListener('change', function(event) {
-                        const file = event.target.files[0]; // 선택된 파일 중 첫 번째 파일 가져오기
-
-                        if (file) {
-                            const reader = new FileReader(); // 파일을 읽기 위한 FileReader 객체 생성
-
-                            // 파일 읽기가 완료되면 실행될 콜백 함수
-                            reader.onload = function(e) {
-                                previewImage.src = e.target.result; // 읽은 데이터를 img 태그의 src로 설정
-                                previewImage.classList.remove('hidden'); // 미리보기 이미지 보이게 하기 (hidden 클래스 제거)
-                                // previewImage.style.display = 'block'; // 만약 hidden 클래스 대신 style.display를 썼다면 이걸로!
-                            };
-
-                            reader.readAsDataURL(file); // 파일을 Data URL 형식으로 읽기 (Base64 인코딩된 이미지 데이터)
-                        } else {
-                            // 파일이 선택되지 않았거나 취소되었을 경우 미리보기 초기화
-                            previewImage.src = "";
-                            previewImage.classList.add('hidden'); // 미리보기 이미지 숨기기 (hidden 클래스 추가)
-                            // previewImage.style.display = 'none'; // 만약 hidden 클래스 대신 style.display를 썼다면 이걸로!
-                        }
-                    });
-                }
-            });
-
-    
-            document.addEventListener("input", function(e) {
-                // 급여(Pay) 입력 시 동기화
-
-                if (e.target.classList.contains('sync-pay')) {
-                    const val = e.target.value;
-                    document.getElementById("leaderPay").value = val;
-                    document.querySelectorAll(".sync-pay").forEach(el => el.value = val);
-                }
-
-                // 포인트(Point) 입력 시 동기화
-                if (e.target.classList.contains('sync-point')) {
-                    const val = e.target.value;
-                    document.getElementById("leaderPoint").value = val;
-                    document.querySelectorAll(".sync-point").forEach(el => el.value = val);
-                }
-
-                if (e.target.classList.contains('sync-event-str')) {
-                    const val = e.target.value;
-                    document.getElementById("eventPeriodStr").value = val;
-                    document.querySelectorAll(".sync-event-str").forEach(el => el.value = val);
-                }
-
-                // 포인트(Point) 입력 시 동기화
-                if (e.target.classList.contains('sync-event-end')) {
-                    const val = e.target.value;
-                    document.getElementById("eventPeriodEnd").value = val;
-                    document.querySelectorAll(".sync-event-end").forEach(el => el.value = val);
-                }
-
-                // 포인트(Point) 입력 시 동기화
-                if (e.target.classList.contains('sync-event-rst')) {
-                    const val = e.target.value;
-                    document.getElementById("resultDate").value = val;
-                    document.querySelectorAll(".sync-event-rst").forEach(el => el.value = val);
-                }
-            });
-
-            // 인솔자 폼 추가 함수
+            // 인솔자 폼 추가
             function addLeaderForm(leaderInfo) {
-                console.log("leaderList Data: " + JSON.stringify(leaderInfo));
                 const template = document.getElementById('leaderTemplate');
                 const container = document.getElementById('leaderContainer');
-                
-                // 템플릿 복사
                 const clone = document.importNode(template.content, true);
-                
-                // [기존 코드 반영] 데이터가 있을 때만 (수정 모드일 때만) 값 채우기
+
                 if (leaderInfo != null) {
-                    const selectElement = clone.querySelector('.sync-nm'); 
+                    const selectElement = clone.querySelector('.sync-nm');
                     const phoneInput = clone.querySelector('.sync-phone');
-                    const payInput = clone.querySelectorAll('.sync-pay');
-                    const pointInput = clone.querySelectorAll('.sync-point');
+                    const payInput = clone.querySelectorAll('.sync-pay-pc, .sync-pay-mo');
+                    const pointInput = clone.querySelectorAll('.sync-point-pc, .sync-point-mo');
 
-                    // 1. 일반 입력창 값 세팅
                     if (phoneInput) phoneInput.value = leaderInfo.leaderPh || "";
-                    payInput.forEach(input => {
-                        input.value = leaderInfo.leaderPay || "";
-                    });
+                    payInput.forEach(input => input.value = leaderInfo.leaderPay || "");
+                    pointInput.forEach(input => input.value = leaderInfo.leaderPoint || "");
 
-                    pointInput.forEach(input => {
-                        input.value = leaderInfo.leaderPoint || "";
-                    });
-
-                    // 2. ★ hidden 필드 값 세팅 (서버 전송용 데이터 유지를 위해 중요!)
                     const hCode = clone.querySelector('.leaderCode');
                     const hId = clone.querySelector('.leaderId');
                     const hNo = clone.querySelector('.leaderNo');
@@ -723,72 +458,219 @@
                     if (hPay) hPay.value = leaderInfo.leaderPay || "0";
                     if (hPoint) hPoint.value = leaderInfo.leaderPoint || "0";
 
-                    // 3. select 박스 자동 선택
                     if (selectElement && leaderInfo.leaderNo) {
                         const targetIdx = leaderList.findIndex(l => l.id == leaderInfo.leaderNo);
-                        if (targetIdx !== -1) {
-                            selectElement.value = targetIdx;
-                        }
+                        if (targetIdx !== -1) selectElement.value = targetIdx;
                     }
                 }
-                
-                // 값이 전부 채워진 clone을 최종적으로 컨테이너에 추가
+
                 container.appendChild(clone);
-                    
-                // 추가된 후 name 속성의 인덱스([])를 재정렬 (빈 폼이든 찬 폼이든 무조건 실행 필요)
                 reIndexLeaderForms();
             }
 
+            // 인솔자 폼 삭제
             function removeLeaderForm(button) {
-                // 1. 현재 화면에 남아있는 전체 인솔자 폼의 개수를 구합니다.
                 const currentFormCount = document.querySelectorAll('.leader-form-group').length;
-                console.log("현재 남은 인솔자 폼 개수: ", currentFormCount);
-
-                // 2. 폼이 1개 이하로 남았다면 삭제를 막습니다.
                 if (currentFormCount <= 1) {
                     alert("최소 1명의 인솔자 정보는 입력해야 합니다.");
-                    return; // 함수를 즉시 종료하여 아래 삭제 로직이 실행되지 않게 합니다.
+                    return;
                 }
 
-                // 3. 2개 이상일 때만 기존 삭제 로직 진행
                 const formGroup = button.closest('.leader-form-group');
-                
-                if(confirm("정말로 이 인솔자 정보를 삭제하시겠습니까?")) {
-                    if (!formGroup) {
-                        alert("삭제할 인솔자 정보가 없습니다.");
-                        return;
-                    } else {
+                if (confirm("정말로 이 인솔자 정보를 삭제하시겠습니까?")) {
+                    if (formGroup) {
                         formGroup.remove();
-                        // 삭제 후 인덱스 재정렬
                         reIndexLeaderForms();
                     }
-                } else {
-                    return; // 취소 시 아무 동작도 하지 않음
                 }
             }
 
-            // Spring Controller에서 List<VO>로 받을 수 있게 name="leaderList[인덱스].필드명" 세팅
+            // name="leaderList[i].필드명" 인덱스 재정렬
             function reIndexLeaderForms() {
                 const forms = document.querySelectorAll('#leaderContainer .leader-form-group');
-                
                 forms.forEach((form, index) => {
-                    // 해당 폼 안의 name 속성을 가진 모든 input, select 태그를 찾음
                     const inputs = form.querySelectorAll('[name]');
-                    
                     inputs.forEach(input => {
                         const currentName = input.getAttribute('name');
-                        // 'leaderList[].필드명' 또는 'leaderList[0].필드명'을 'leaderList[현재인덱스].필드명'으로 치환
-                        const newName = currentName.replace(/leaderList\[\d*\]/, `leaderList[${index}]`);
-                        input.setAttribute('name', newName);
+                        if (currentName) {
+                            const newName = currentName.replace(/leaderList\[\d*\]/, `leaderList[${index}]`);
+                            input.setAttribute('name', newName);
+                        }
                     });
                 });
             }
-            document.querySelector('form').addEventListener('submit', function() {
-                const recruitInput = document.querySelector('input[name="recruitmentNum"]');
-                if (recruitInput && recruitInput.value === "") {
-                    recruitInput.value = "0";
+
+            // ==========================================
+            // 2. 캠페인 수정 / 삭제 / 공통 기능 함수들
+            // ==========================================
+
+            function campaignRemove() {
+                if (!confirm('정말로 이 캠페인을 삭제하시겠습니까?')) return;
+                form.action = '/admin/campaign06?id=' + id;
+                form.submit();
+            }
+
+            function securityTypeChange(typeCode) {
+                const wageRadio = document.getElementById("wageRadio");
+                const hourlyPay = document.getElementById("hourlyPay");
+                const hourlyPayInput = document.getElementById("hourlyPayInput");
+                const dailyPay = document.getElementById("dailyPay");
+                const dailyPayInput = document.getElementById("dailyPayInput");
+                const workHours = document.getElementById("workHour");
+                const timeInput = document.getElementById("timeInput");
+
+                if (typeCode === "02") {
+                    wageRadio.classList.remove("hidden");
+                    document.querySelectorAll('input[name="wageChk"]').forEach((radio) => {
+                        radio.onchange = function() {
+                            if (this.value === "01") {
+                                dailyPay.classList.remove("hidden");
+                                hourlyPay.classList.add("hidden");
+                                timeInput.classList.add("hidden");
+
+                                dailyPayInput.setAttribute("name", "campaignPay");
+                                hourlyPayInput.removeAttribute("name");
+                                workHours.value = "";
+                                workHours.required = false;
+                            } else if (this.value === "02") {
+                                dailyPay.classList.add("hidden");
+                                hourlyPay.classList.remove("hidden");
+                                timeInput.classList.remove("hidden");
+
+                                hourlyPayInput.setAttribute("name", "campaignPay");
+                                dailyPayInput.removeAttribute("name");
+                                workHours.required = true;
+                            }
+                        };
+                    });
+                } else {
+                    wageRadio.classList.add("hidden");
+                }
+                document.getElementById("typeCode").value = typeCode;
+            }
+
+            function removeFile(element, fileId) {
+                const csrfToken = document.querySelector('input[name="_csrf"]').value;
+                const csrfHeaderToSend = "X-CSRF-TOKEN";
+
+                let request = new XMLHttpRequest();
+                request.onreadystatechange = function() {
+                    if (request.readyState == request.DONE) {
+                        if (request.status == 200 && request.responseText == 'SUCCESS') {
+                            alert('파일 삭제 성공');
+                            document.getElementById("existing-file-section").classList.add('hidden');
+                            document.getElementById("drop-area").classList.remove('hidden');
+                            document.getElementById("image").value = '';
+                            document.getElementById("preview").classList.add('hidden');
+                            document.getElementById("preview").src = "";
+                        } else {
+                            alert('파일 삭제 실패');
+                        }
+                    }
+                };
+
+                const url = `/admin/file/markDeleted/${fileId}`;
+                request.open('POST', url, true);
+                request.setRequestHeader(csrfHeaderToSend, csrfToken);
+                request.send();
+            }
+
+            // 이미지 업로드 드래그앤드롭 이벤트 바인딩
+            function initImageUploadEvents() {
+                const dropArea = document.getElementById("drop-area");
+                const imageInput = document.getElementById("image");
+                const preview = document.getElementById("preview");
+
+                if (!dropArea || !imageInput) return;
+
+                dropArea.addEventListener("click", () => imageInput.click());
+                dropArea.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    dropArea.style.backgroundColor = "#f3e7ff";
+                });
+                dropArea.addEventListener("dragleave", () => {
+                    dropArea.style.backgroundColor = "transparent";
+                });
+                dropArea.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    dropArea.style.backgroundColor = "transparent";
+                    const file = e.dataTransfer.files[0];
+                    if (file && file.type.startsWith("image/")) {
+                        imageInput.files = e.dataTransfer.files;
+                        showPreview(file);
+                    }
+                });
+
+                imageInput.addEventListener("change", () => {
+                    const file = imageInput.files[0];
+                    if (file) showPreview(file);
+                });
+
+                function showPreview(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            // 실시간 인풋 동기화 (이벤트 위임)
+            document.addEventListener("input", function(e) {
+                // 1. 급여 동기화 (PC <-> Mobile 동일 인솔자 내부)
+                if (e.target.classList.contains('sync-pay-pc') || e.target.classList.contains('sync-pay-mo')) {
+                    const val = e.target.value;
+                    const row = e.target.closest('.leader-row'); // ★ 인솔자 감싸는 부모 클래스명으로 변경해주세요
+
+                    if (row) {
+                        row.querySelectorAll('.sync-pay-pc, .sync-pay-mo').forEach(el => el.value = val);
+                    } else {
+                        // 부모 행을 못 찾을 경우(단일 입력창) 처리
+                        if (document.getElementById("leaderPay")) document.getElementById("leaderPay").value = val;
+                    }
+                }
+
+                // 2. 포인트 동기화 (PC <-> Mobile 동일 인솔자 내부)
+                if (e.target.classList.contains('sync-point-pc') || e.target.classList.contains('sync-point-mo')) {
+                    const val = e.target.value;
+                    const row = e.target.closest('.leader-row'); // ★ 인솔자 감싸는 부모 클래스명으로 변경해주세요
+
+                    if (row) {
+                        row.querySelectorAll('.sync-point-pc, .sync-point-mo').forEach(el => el.value = val);
+                    } else {
+                        if (document.getElementById("leaderPoint")) document.getElementById("leaderPoint").value = val;
+                    }
+                }
+
+                if (e.target.classList.contains('sync-event-str')) {
+                    const val = e.target.value;
+                    if(document.getElementById("eventPeriodStr")) document.getElementById("eventPeriodStr").value = val;
+                    document.querySelectorAll(".sync-event-str").forEach(el => el.value = val);
+                }
+
+                if (e.target.classList.contains('sync-event-end')) {
+                    const val = e.target.value;
+                    if(document.getElementById("eventPeriodEnd")) document.getElementById("eventPeriodEnd").value = val;
+                    document.querySelectorAll(".sync-event-end").forEach(el => el.value = val);
+                }
+
+                if (e.target.classList.contains('sync-event-rst')) {
+                    const val = e.target.value;
+                    if(document.getElementById("resultDate")) document.getElementById("resultDate").value = val;
+                    document.querySelectorAll(".sync-event-rst").forEach(el => el.value = val);
                 }
             });
+
+            // 폼 제출 전 검증/보정
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const recruitInput = document.querySelector('input[name="recruitmentNum"]');
+                    if (recruitInput && recruitInput.value === "") {
+                        recruitInput.value = "0";
+                    }
+                });
+            }
         </script>
     </body>
 </html>

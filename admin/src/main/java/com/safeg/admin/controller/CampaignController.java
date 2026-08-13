@@ -355,12 +355,11 @@ public class CampaignController {
     @GetMapping("/campPopupS/{campaignId}/search")
     @ResponseBody
     public List<UserVO> searchPopupUsers(@PathVariable("campaignId") Long campaignId, Option option) throws Exception {
-        log.info("팝업 실시간 검색 - campaignId: {}, option: {}", campaignId, option.getKeyword().substring(0,3));
-        if("010".equals(option.getKeyword().substring(0, 3))) {
-            log.info("searchPopupUsers : getK : " + option.getKeyword());
+        String keyword = option.getKeyword();
+
+        if (keyword != null && keyword.startsWith("010")) {
             option.setKeyword(EncryptionUtil.hash(option.getKeyword()));
         }
-        log.info("option.keyword : " + option.getKeyword());
         // SQL에서 option(role, keyword 등)을 조건으로 조회한 리스트 반환
         return userService.userInfoList(campaignId, option);
     }

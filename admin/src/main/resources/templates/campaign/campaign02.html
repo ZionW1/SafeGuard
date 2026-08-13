@@ -110,7 +110,8 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="securityType">경호/진행/수행 구분</label>
+                            <th:if></th:if>
+                            <label for="securityType" id="roleType">경호/진행/수행</label>
                             <select id="securityType" name="securityType" onchange="securityTypeChange(this.value)">
                                 <option value="">-- 선택하세요 --</option>
                                 <option th:each="type : ${securityType}"
@@ -136,6 +137,9 @@
                             <label for="campaignPay">캠페인 급여</label>
                             <input type="text" id="dailyPayInput" name="campaignPay" th:value="${campaignSelect.campaignPay}" />
                         </div>
+
+                    </div>
+                    <div class="form-row">
                         <div class="form-group hidden" id="hourlyPay">
                             <label for="campaignPay">캠페인 시급여</label>
                             <input type="text" id="hourlyPayInput" th:value="${campaignSelect.campaignPay}"/>
@@ -145,7 +149,6 @@
                             <input type="number" name="workHour" id="workHour" placeholder="예: 8" min="1" th:value="${campaignSelect.workHour}">
                         </div>
                     </div>
-
                     <div class="form-group">
                         <div class="form-group">
                             <label>캠페인 이미지</label>
@@ -222,7 +225,7 @@
                     <div class="form-row mobile">
                         <div class="form-group">
                             <label>명단발표기간</label>
-                            <input class="dateInsert sync-event-rst" type="date" name="resultDate_mo" id="resultDate_mo" />
+                            <input class="dateInsertRst sync-event-rst" type="date" name="resultDate_mo" id="resultDate_mo" />
                         </div>
                     </div>
 
@@ -522,6 +525,7 @@
 
                 if (typeCode === "02") {
                     wageRadio.classList.remove("hidden");
+                    document.getElementById("roleType").innerText = '진행'
                     document.querySelectorAll('input[name="wageChk"]').forEach((radio) => {
                         radio.onchange = function() {
                             if (this.value === "01") {

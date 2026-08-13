@@ -168,7 +168,7 @@ footer {
 }
 .main-content {
     flex: 1;
-    padding: 20px;
+    padding: 10px;
     margin-top: 40px;
     overflow-y: auto;
     flex-grow: 1;
@@ -181,7 +181,7 @@ footer {
 }
 form.form {
     background: white;
-    padding: 30px;
+    padding: 15px;
     border-radius: 12px;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
     max-width: 950px;

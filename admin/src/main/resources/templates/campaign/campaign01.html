@@ -211,26 +211,26 @@
         }
 
         // 💡 [여기에 추가] 한 번만 등록해 두면 팝업이 켜진 후 배경 클릭 시 언제든 작동합니다.
-        document.getElementById('modalPopup').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-            }
+        // document.getElementById('modalPopup').addEventListener('click', function(e) {
+        //     if (e.target === this) {
+        //         this.style.display = 'none';
+        //     }
 
 
-            function inputDates(idx) {
-                const leaderList = /*[[${leaderList}]]*/ [];
+        //     function inputDates(idx) {
+        //         const leaderList = /*[[${leaderList}]]*/ [];
 
-                const selectPhoneNumber = leaderList[idx].phoneNum;
-                const selectNo = leaderList[idx].id;
-                const leaderId = leaderList[idx].userId;
+        //         const selectPhoneNumber = leaderList[idx].phoneNum;
+        //         const selectNo = leaderList[idx].id;
+        //         const leaderId = leaderList[idx].userId;
 
-                document.getElementById("leaderPhone").value = selectPhoneNumber;
-                document.getElementById("leaderNo").value = selectNo;
-                document.getElementById("leaderCode").value = leaderList[idx].id;
-                document.getElementById("leaderId").value = leaderId;
-            }
+        //         document.getElementById("leaderPhone").value = selectPhoneNumber;
+        //         document.getElementById("leaderNo").value = selectNo;
+        //         document.getElementById("leaderCode").value = leaderList[idx].id;
+        //         document.getElementById("leaderId").value = leaderId;
+        //     }
 
-        });
+        // });
 
         function closeModal() {
             // 모달 닫기 및 컨텐츠 초기화
@@ -594,6 +594,7 @@
                     }
                     const successData = await res.json();
                     alert("수정 사항 " + successData.message + "건 성공적으로 반영되었습니다.");
+                    closeModal()
                 }
             } catch (error) {
                 alert(error.message); // 기존의 무의미한 문구 대신 error.message만 깔끔하게 띄웁니다.

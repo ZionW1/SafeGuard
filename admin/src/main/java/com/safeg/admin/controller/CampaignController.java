@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -491,4 +492,55 @@ public class CampaignController {
         }
     }
 
+    @PostMapping("/migrate")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> migratePhoneNumbers() {
+        log.info("migratePhoneNumbers");
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            int updatedCount = userService.migrateNumber();
+            log.info("updatedCount : " + updatedCount);
+
+            result.put("status", "SUCCESS");
+            result.put("message", updatedCount + "건의 전화번호 데이터를 정상적으로 업데이트했습니다.");
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            log.error("전화번호 마이그레이션 실행 중 에러 발생", e);
+            result.put("status", "ERROR");
+            result.put("message", "마이그레이션 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+        // result.put("status", "SUCCESS");
+        // result.put("message", "아직 0건의 전화번호 데이터를 정상적으로 업데이트했습니다.");
+        // return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/migrateConfirm")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> migrateConfirm() throws Exception {
+        log.info("migrateConfirm");
+        Map<String, Object> result = new HashMap<>();
+        int updatedCount = userService.migrateConfirm();
+        log.info("updated : " + updatedCount);
+        // try {
+        //     int updatedCount = userService.migrateConfirm();
+        //     log.info("updatedCount : " + updatedCount);
+
+        //     result.put("status", "SUCCESS");
+        //     result.put("message", updatedCount + "건의 전화번호 데이터를 정상적으로 업데이트했습니다.");
+        //     return ResponseEntity.ok(result);
+
+        // } catch (Exception e) {
+        //     log.error("전화번호 마이그레이션 실행 중 에러 발생", e);
+        //     result.put("status", "ERROR");
+        //     result.put("message", "마이그레이션 실패: " + e.getMessage());
+        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        // }
+        result.put("status", "SUCCESS");
+        result.put("message", "아직 0건의 전화번호 데이터를 정상적으로 업데이트했습니다.");
+        return ResponseEntity.ok(result);
+    }
 }
+

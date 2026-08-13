@@ -56,9 +56,17 @@
                     <option th:each="date : ${dates}" th:value="${date}" th:text="${date}"></option>
                 </select> -->
                 <div id="inputArea" class="inputArea">
-                    <input type="text" class="search_keyword" id="searchKeyword" name="keyword" th:value="${option.keyword}" placeholder="검색어를 입력해 주세요.">
+                    <!-- 🔥 input 태그에 onkeydown 연결 및 Enter 처리 -->
+                    <input type="text" class="search_keyword" id="searchKeyword" name="keyword" th:value="${option != null ? option.keyword : ''}" placeholder="검색어를 입력해 주세요." th:onkeydown="if(event.key === 'Enter') { event.preventDefault(); filterUserList(this, [[${campaignId}]]); }">
+                    <!-- 🔥 button 태그 오타 수정 및 onclick 유지 -->
                     <button class="optionSubmit" id="btnSearch" type="button" th:onclick="filterUserList(this, [[${campaignId}]])">검색</button>
                 </div>
+                <button type="button" class="btn btn-warning" onclick="runPhoneMigration()">
+                    전화번호 DB 하이픈 제거 실행
+                </button>
+                <button type="button" class="btn btn-warning" onclick="confirmP()">
+                    전화번호 DB 하이픈 제거 확인
+                </button>
                 <!-- <input type="text" name="keyword"  th:value="${param.keyword}"> -->
             <!-- </form> -->
         </div>

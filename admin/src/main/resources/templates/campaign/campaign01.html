@@ -713,5 +713,58 @@
                 })
                 .catch(err => console.error("Search failed:", err));
         }
+
+        function runPhoneMigration() {
+            if (!confirm("전체 회원의 전화번호 데이터(암호화/해시)를 하이픈(-) 없는 형태로 업데이트하시겠습니까?\n실행 전 DB 백업을 권장합니다.")) {
+                return;
+            }
+
+            // CSRF 토큰 설정이 필요한 경우 포함
+            fetch('/admin/migrate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'SUCCESS') {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert("실패: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('마이그레이션 요청 중 에러가 발생했습니다.');
+            });
+        }
+
+        function confirmP() {
+
+            // CSRF 토큰 설정이 필요한 경우 포함
+            fetch('/admin/migrateConfirm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'SUCCESS') {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert("실패: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('마이그레이션 요청 중 에러가 발생했습니다.');
+            });
+        }
     </script>
 </html>

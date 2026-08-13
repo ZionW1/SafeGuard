@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.safeg.admin.mapper.UserMapper;
+import com.safeg.admin.util.EncryptionUtil;
 import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
 import com.safeg.admin.vo.UserAuth;
@@ -239,7 +240,6 @@ public class UserServiceImpl implements UserService{
     @Override
     public List<UserVO> userInfoList(Long campaignId, Option option) throws Exception {
         List<UserVO> userInfoList = userMapper.userInfoList(campaignId, option);
-        log.info("userInfoList : " + userInfoList);
 
         return userInfoList;
     }
@@ -252,4 +252,85 @@ public class UserServiceImpl implements UserService{
         return userInfoDate;
     }
 
+    @Override
+    @Transactional
+    public int migrateNumber() throws Exception {
+        List<UserVO> userList = userMapper.userListAll();
+        int count = 0;
+        for(int i = 0; i < userList.size(); i++) {
+            log.info("userList : {}, userNo {}" , userList.get(i).getPhoneNum(), userList.get(i).getId());
+        }
+
+        for (UserVO user : userList) {
+            String rawPhone = user.getPhoneNum(); // DB에서 가져온 컬럼 값
+
+            // 1. null이거나 빈 값은 스킵
+            if (rawPhone == null || rawPhone.trim().isEmpty()) {
+                continue;
+            }
+
+            String cleanPhone = null;
+
+            try {
+                // Case A: 암호화가 안 된 평문 데이터인 경우 ("010"으로 시작)
+                if (rawPhone.startsWith("010")) {
+                    cleanPhone = rawPhone.replace("-", ""); // "-"가 있으면 떼고, 없으면 그대로 유지
+                }
+                // Case B: 암호화되어 있는 데이터인 경우
+                else {
+                    String decrypted = EncryptionUtil.decrypt(rawPhone);
+                    if (decrypted != null) {
+                        cleanPhone = decrypted.replace("-", ""); // 복호화 후 "-" 제거
+                    }
+                }
+
+                log.info("cleanPhone : {}, user.getPhoneNum() {}", cleanPhone, user.getPhoneNum());
+
+                // 2. 하이픈이 제거된 11자리 평문 번호로 양방향 암호문 및 단방향 해시 재생성
+                if (cleanPhone != null && !cleanPhone.isEmpty()) {
+                    String newEnc = EncryptionUtil.encrypt(cleanPhone);
+                    String newHash = EncryptionUtil.hash(cleanPhone);
+                    log.info("newEnc : {}, newHash : {}", newEnc, newHash);
+                    // 3. DB 일괄 업데이트
+                    userMapper.updateUserPhoneData(user.getId(), newEnc, newHash);
+                    count++;
+                }
+
+            } catch (Exception e) {
+                // 혹시라도 복호화에 실패한 이상한 값이 섞여있어도 에러 로그만 남기고 다음 유저로 진행
+                log.error("마이그레이션 실패 (userId: {}, rawData: {}) - 원인: {}",
+                        user.getId(), rawPhone, e.getMessage());
+            }
+        }
+
+        log.info("=== 전화번호 데이터 정제 및 마이그레이션 완료 : 총 {}건 ===", count);
+        return count;
+    }
+
+    public int migrateConfirm() throws Exception {
+        List<UserVO> userList = userMapper.userListAll();
+        log.info("userList : " + userList.size());
+
+        int count = 0;
+        for(int i = 0; i < userList.size(); i++) {
+            log.info("userList : " + userList.get(i).getPhoneNum());
+        }
+        for (UserVO user : userList) {
+            // 암호화된 번호 존재 여부 확인
+            if (user.getPhoneNum() != null && !user.getPhoneNum().isEmpty()) {
+                try {
+                    // ① 기존 양방향 암호화 컬럼 복호화 (예: "010-1234-5678")
+                    String decrypted = EncryptionUtil.decrypt(user.getPhoneNum());
+                    log.info("decrypted : {}, user : {}", decrypted, user.getUserNm());
+
+                    if (decrypted != null && decrypted.contains("-")) {
+                        log.info("decrypted : {}, user : {}", decrypted, user.getUserNm());
+                    }
+                } catch (Exception e) {
+                    log.error("마이그레이션 실패 - userId: {}", user.getId(), e);
+                }
+            }
+        }
+        return count;
+    }
 }

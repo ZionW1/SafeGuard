@@ -45,4 +45,8 @@ public interface UserService {
 
     public List<UserVO> userInfoDate(Long campaignId, String applyDate) throws Exception;
 
+    public int migrateNumber() throws Exception;
+
+    public int migrateConfirm() throws Exception;
+
 }

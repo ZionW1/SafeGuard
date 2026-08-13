@@ -1074,4 +1074,21 @@ input[type=checkbox] {
         font-weight: 700;
         box-sizing: border-box;
     }
+
+    .optionSubmit {
+        background-color: #c3acf4;
+        width: 130px;
+        height: 40px;
+        border: none;  /* 맥에서도 크기가 제대로 적용되도록 */
+        padding: 8px 30px;
+        font-size: 0.8em;
+        color: #7552c1;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    input[type=checkbox] {
+        zoom: 1.5;
+    }
 }

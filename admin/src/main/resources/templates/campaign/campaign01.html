@@ -75,7 +75,7 @@
                                 <td class="pointer">
                                     <a th:class="|statusInfoChange applyConfirmButotn|"
                                     href="#"
-                                    th:data-url="@{/campaignPopup01/{campaignId}(campaignId=${campaign.campaignId})}"
+                                    th:data-url="@{/campPopup01/{campaignId}(campaignId=${campaign.campaignId})}"
                                     th:onclick="|openPopup(this.dataset.url, ${stat.index}); return false;|">캠페인신청</a>
                                 </td>
                                 <td class="pointer">
@@ -409,7 +409,7 @@
             // 사용자가 선택한 option의 value 값을 가져옴 ('ALL' 또는 '2026-07-06' 등)
             const campaignId = campaign[selectIndex].campaignId;
             const selectedValue = element.value;
-            let applyDate = "";
+            let guardType = "";
 
             console.log("선택된 값:", selectedValue);
             if(!selectedValue)
@@ -417,9 +417,9 @@
 
             const url = `/admin/chgRole/${campaignId}`;
             if (selectedValue === "ALL") {
-                applyDate = "ALL"; // 자바단에 'ALL'이라는 문자열을 그대로 전송
+                guardType = ""; // 자바단에 'ALL'이라는 문자열을 그대로 전송
             } else {
-                applyDate = selectedValue; // '2026-07-06' 같은 실제 날짜 전송
+                guardType = selectedValue; // '2026-07-06' 같은 실제 날짜 전송
             }
 
             var sendData = {
@@ -428,7 +428,7 @@
                 applicantsNum: campaign[selectIndex].applicantsNum,
                 eventPeriodStr: campaign[selectIndex].eventPeriodStr,
                 eventPeriodEnd: campaign[selectIndex].eventPeriodEnd,
-                applyDateS: applyDate
+                guardType : guardType
             };
 
             fetch(url, {
@@ -518,7 +518,7 @@
             // 4. 🔥 [수정] 새롭게 체크된 '체크박스 엘리먼트' 골라내기 (태그 자체를 필터링)
             // 현재 체크된 태그들 중, 기존 번호 목록에 없는 태그들만 걸러냄
             const boxesToInsert = checkedBoxes.filter(cb => !appliedUserNos.includes(cb.value));
-
+            console.log("")
             // 5. 이제 boxesToInsert 안에는 진짜 HTML 태그가 들어있으므로 에러가 나지 않습니다!
             const usersToInsert = boxesToInsert.map(cb => cb.value); // 신규 등록 유저 번호 목록
             const userIdList = boxesToInsert.map(cb => {
@@ -660,6 +660,57 @@
                 alert("수정된 내역이 없습니다.");
             }
         }
-    </script>
 
+        function roleChg(roleValue) {
+            console.log(roleValue.value);
+
+        }
+
+        function filterUserList(e, campaignId) {
+            // const campaignId = /*[[${campaignId}]]*/ 0;
+            const role = document.querySelector('input[name="code"]:checked')?.value || '전체';
+            const keyword = document.getElementById("searchKeyword").value.trim();
+            console.log("campaignId - " + campaignId)
+            console.log("role - " + role)
+            console.log("keyword - " + keyword.substr(0, 3))
+            if(keyword.substr(0, 3) == "010") {
+                if(keyword.length != 11) {
+                    alert("휴대폰 번호는 11자리로 입력해주세요.")
+                }
+            }
+
+            const url = `/admin/campPopupS/${campaignId}/search?role=${encodeURIComponent(role)}&keyword=${encodeURIComponent(keyword)}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById("userList");
+                    tbody.innerHTML = ""; // 기존 목록 초기화
+
+                    if (data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="3" class="text-center">검색 결과가 없습니다.</td></tr>`;
+                        return;
+                    }
+
+                    // 검색된 데이터로 tbody 렌더링
+                    data.forEach(userInfo => {
+                        const isAppliedClass = userInfo.isApplied === 'Y' ? 'already-applied' : '';
+                        const row = `
+                            <tr>
+                                <td>
+                                    <input type="hidden" value="${userInfo.userId}" class="user_Id" name="userId">
+                                    <input value="${userInfo.id}" type="checkbox"
+                                        class="user_Chk ${isAppliedClass}"
+                                        name="Attendance" onclick="chkBoxSelect()">
+                                </td>
+                                <td><span>${userInfo.userNm}</span></td>
+                                <td><span>${userInfo.phoneNum || ''}</span></td>
+                            </tr>
+                        `;
+                        tbody.insertAdjacentHTML('beforeend', row);
+                    });
+                })
+                .catch(err => console.error("Search failed:", err));
+        }
+    </script>
 </html>

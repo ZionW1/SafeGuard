@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- namespace="매퍼 인터페이스 경로" --> 
+<!-- namespace="매퍼 인터페이스 경로" -->
 <mapper namespace="com.safeg.admin.mapper.UserMapper">
     <resultMap type="UserVO" id="userMap">
         <id property="id" column="id" />
@@ -57,21 +57,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <!-- 목록 -->
     <!-- <select id="userList" resultType="UserVO"> -->
     <select id="userList" resultMap="userMap">
-        SELECT 
+        SELECT
             u.*,
             auth.auth,
             ua.full_Address,
             r.user_id AS referrer_id
         FROM (
             /* 1. 검색과 페이징이 적용된 핵심 유저 추출 */
-            SELECT 
+            SELECT
                 usr.id, usr.user_id, usr.user_nm, usr.email, usr.phone_num, usr.address_id, usr.point_id,
                 usr.referrer_no, usr.guard_type, usr.role, usr.is_stopped, usr.created_at, usr.phone_hash, usr.course_num,
                 /* 포인트 합계 (스칼라 서브쿼리가 조인보다 안전하고 빠릅니다) */
-                (SELECT COALESCE(SUM(amount), 0) 
-                FROM point_history 
-                WHERE user_id = usr.id 
-                AND settlement_status = 'READY' 
+                (SELECT COALESCE(SUM(amount), 0)
+                FROM point_history
+                WHERE user_id = usr.id
+                AND settlement_status = 'READY'
                 AND is_deleted = 'N') AS pending_point,
                 (CASE
                     WHEN usr.guard_type = '00' THEN '스텝'
@@ -84,10 +84,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             FROM user usr
             WHERE usr.is_deleted = 'N'
             AND usr.role != 'Admin'
-            
+
             /* 검색 조건은 안쪽에서 처리해야 페이징이 정확합니다 */
             <if test="option.keyword != null and option.keyword != ''">
-                AND 
+                AND
                 <choose>
                     <when test="option.code == 0">
                         (usr.user_id LIKE CONCAT('%', #{option.keyword}, '%') OR
@@ -110,7 +110,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 <when test="option.orderCode == 3">ORDER BY usr.guard_type ASC, usr.id DESC</when>
                 <otherwise>ORDER BY usr.id DESC</otherwise>
             </choose>
-            
+
             /* 페이징 처리 */
             LIMIT #{page.index}, #{page.rows}
         ) u
@@ -118,7 +118,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         LEFT OUTER JOIN user_address ua ON ua.address_id = u.address_id
         LEFT OUTER JOIN user_auth auth ON u.id = auth.no
         LEFT OUTER JOIN user r ON u.referrer_no = r.id
-        
+
         /* 추천인 검색(code 4)은 조인된 결과에서 필터링이 필요할 수 있으나 성능상 위 구조를 유지하는 것이 좋습니다 */
         <if test="option.code == 4 and option.keyword != null and option.keyword != ''">
             WHERE r.user_id LIKE CONCAT('%', #{option.keyword}, '%')
@@ -126,9 +126,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="userCount" resultType="int">
-        select count(*) 
+        select count(*)
         from user u
-        where 
+        where
             is_Deleted = 'N'
         <if test="option.keyword != null and option.keyword != ''">
         AND
@@ -194,7 +194,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <insert id="userJoin" parameterType="UserVO" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO 
+        INSERT INTO
             user (user_id, user_nm, password, email, auth_id, role)
         VALUES
             (#{userId}, #{userNm}, #{password}, #{email}, '01', 'Admin')
@@ -211,7 +211,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <update id="userInfoUpdate" parameterType="UserVO">
         UPDATE user
-        SET 
+        SET
             <!-- user_nm = #{userNm}, -->
             email = #{email},
             phone_num = #{phoneNum},
@@ -233,7 +233,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <update id="userRemove">
         UPDATE user
-        SET 
+        SET
             is_deleted = 'Y',
             updated_at = NOW()
         WHERE id = #{id}
@@ -259,7 +259,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <update id="userLeaderUpdate">
         UPDATE user
-        SET 
+        SET
             role = 'LEADER',
             auth_id = '03',
             guard_type = '04'
@@ -269,7 +269,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <update id="userStop">
         UPDATE user
-        SET 
+        SET
             is_stopped = 'Y',
             stop_date = NOW(),
             updated_at = NOW()
@@ -278,7 +278,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <update id="userUnstop">
         UPDATE user
-        SET 
+        SET
             is_stopped = 'N',
             stop_date = null,
             updated_at = NOW()
@@ -291,7 +291,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SET
             settlement_status = 'COMPLETED',
             is_deleted = 'Y'
-        WHERE 
+        WHERE
             is_deleted = 'N'
     </update>
 
@@ -308,9 +308,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="resetPointHistory">
-        UPDATE 
-            point_history 
-        SET 
+        UPDATE
+            point_history
+        SET
             settlement_status = 'COMPLETED',
             is_deleted = 'Y'
         WHERE
@@ -323,13 +323,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT
             full_Address
             user_id
-        FROM 
+        FROM
             user_address
     </select>
 
     <update id="guardTypeChange" parameterType="UserVO">
         UPDATE user
-        SET 
+        SET
             guard_type = #{guardType},
             updated_at = NOW()
         WHERE id = #{id}
@@ -337,7 +337,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <update id="settlementAll">
         <![CDATA[
-        INSERT INTO point_settlement 
+        INSERT INTO point_settlement
         (
             user_id,
             target_month,
@@ -349,7 +349,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             status,
             processed_at
         )
-        SELECT 
+        SELECT
             user_id,
             DATE_FORMAT(NOW(), '%Y-%m'),
             /* DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH), '%Y-%m') */
@@ -386,24 +386,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.phone_num,
             u.role,
             CASE WHEN sub.user_no IS NOT NULL THEN 'Y' ELSE 'N' END AS is_applied
-        FROM 
+        FROM
             user u
         LEFT OUTER JOIN (
-            -- 🔥 122번 캠페인을 신청한 유저 번호를 딱 1줄씩만 뽑아내는 가상 가방
+            -- 122번 캠페인을 신청한 유저 번호를 딱 1줄씩만 뽑아내는 가상 가방
             SELECT DISTINCT user_no
             FROM user_campaign
             WHERE CAMPAIGN_ID = #{campaignId}
             AND is_deleted = 'N'
-            UNION -- 💡 두 테이블의 유저 번호를 합치고 중복은 자동 제거
-            -- 2. 인솔자 배정 명단
+            UNION
+            -- 인솔자 배정 명단
             SELECT DISTINCT user_no
             FROM camp_leader
             WHERE campaign_id = #{campaignId}
             AND is_deleted = 'N'
         ) sub ON u.id = sub.user_no
-        WHERE 
+        WHERE
             u.is_deleted = 'N'
             AND u.role != 'Admin'
+
+            <!-- 🔥 역할(경호/진행/수행/스탭/인솔자) 필터 -->
+            <if test="option.role != null and option.role != '' and option.role != 'ALL'">
+                AND u.guard_type = #{option.role}
+            </if>
+
+            <!-- 🔥 이름 및 전화번호 검색어 필터 -->
+            <if test="option.keyword != null and option.keyword != ''">
+                AND (
+                    u.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
+                    OR u.phone_hash LIKE CONCAT('%', #{option.keyword}, '%')
+                )
+            </if>
         ORDER BY
             u.user_nm, u.id;
     </select>
@@ -415,7 +428,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.user_nm,
             u.phone_num,
             CASE WHEN sub.user_no IS NOT NULL THEN 'Y' ELSE 'N' END AS is_applied
-        FROM 
+        FROM
             user u
         LEFT OUTER JOIN (
             -- 🔥 122번 캠페인을 신청한 유저 번호를 딱 1줄씩만 뽑아내는 가상 가방

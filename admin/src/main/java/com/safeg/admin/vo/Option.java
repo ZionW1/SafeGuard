@@ -12,7 +12,7 @@ import lombok.Data;
  * 2 : 내용
  * 3 : 제목 + 내용
  * 4 : 작성자
- * 
+ *
  * - orderCode : 순서 옵션 코드
  * 0 : 최신순 (등록일자)
  * 1 : 제목순
@@ -23,8 +23,10 @@ public class Option {
     String keyword; // 검색어
     int code; // 검색 옵션 코드
     int orderCode; // 순서 옵션 코드
+    String role;
     public Option() {
         this.keyword = "";
         this.code = 0;
+        this.role = "";
     }
 }

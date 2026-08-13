@@ -1,6 +1,7 @@
 package com.safeg.admin.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -316,15 +317,26 @@ public class CampaignController {
         return "campaign/campaign09";
     }
 
-    @PostMapping("/campaignPopup01/{campaignId}")
+    @PostMapping("/campPopup01/{campaignId}")
     public String userInfoList(@PathVariable("campaignId") Long campaignId, @RequestBody CampaignVO dto, Option option, Model model) throws Exception {
+        try {
         log.info("dto : " + dto);
         log.info("option : " + option);
 
-        List<UserVO> userInfoList = userService.userInfoList(campaignId);
-        List<LocalDate> dates = dto.getEventPeriodStr().datesUntil(dto.getEventPeriodEnd().plusDays(1)).collect(Collectors.toList()); // 입력 날짜 List
+        if (option == null) {
+            option = new Option();
+        }
 
-        log.info("Dates" + dates);
+        List<UserVO> userInfoList = userService.userInfoList(campaignId, option);
+
+        List<LocalDate> dates = new ArrayList<>();
+        if (dto.getEventPeriodStr() != null && dto.getEventPeriodEnd() != null) {
+            dates = dto.getEventPeriodStr()
+                       .datesUntil(dto.getEventPeriodEnd().plusDays(1))
+                       .collect(Collectors.toList());
+        }
+
+        log.info("Dates : " + dates);
         model.addAttribute("campaignTitle", dto.getCampaignTitle());
         model.addAttribute("campaignId", campaignId);
         model.addAttribute("userInfoList", userInfoList);
@@ -332,11 +344,30 @@ public class CampaignController {
         model.addAttribute("option", option);
 
         return "campaign/campaignPopup01";
+
+    } catch (Exception e) {
+        log.error("=== campPopup01 500 ERROR 발생 ===", e); // 콘솔에 상세 에러 원인 출력
+        throw e;
+    }
+    }
+
+    // 팝업 내부 실시간 검색/필터링 전용 (JSON 반환)
+    @GetMapping("/campPopupS/{campaignId}/search")
+    @ResponseBody
+    public List<UserVO> searchPopupUsers(@PathVariable("campaignId") Long campaignId, Option option) throws Exception {
+        log.info("팝업 실시간 검색 - campaignId: {}, option: {}", campaignId, option.getKeyword().substring(0,3));
+        if("010".equals(option.getKeyword().substring(0, 3))) {
+            log.info("searchPopupUsers : getK : " + option.getKeyword());
+            option.setKeyword(EncryptionUtil.hash(option.getKeyword()));
+        }
+        log.info("option.keyword : " + option.getKeyword());
+        // SQL에서 option(role, keyword 등)을 조건으로 조회한 리스트 반환
+        return userService.userInfoList(campaignId, option);
     }
 
     @PostMapping("/chgDate/{campaignId}")
     @ResponseBody // 👈 HTML이 아니라 데이터(JSON)만 리턴하겠다는 선언!
-    public List<UserVO> chgDate(@PathVariable("campaignId") Long campaignId, @RequestBody Map<String, String> paramMap) throws Exception {
+    public List<UserVO> chgDate(@PathVariable("campaignId") Long campaignId, Option option, @RequestBody Map<String, String> paramMap) throws Exception {
 
         String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
 
@@ -345,7 +376,7 @@ public class CampaignController {
         // 만약 'ALL' 이면 전체 조회, 특정 날짜면 해당 날짜만 조회하는 로직 필요
         List<UserVO> updatedUserList = null;
         if ("ALL".equals(applyDate)) {
-            updatedUserList = userService.userInfoList(campaignId); // 전체 조회
+            updatedUserList = userService.userInfoList(campaignId, option); // 전체 조회
         } else {
             updatedUserList = userService.userInfoDate(campaignId, applyDate); // 👈 날짜별 조회 (서비스에 메서드 구현 필요)
         }
@@ -358,20 +389,22 @@ public class CampaignController {
     @PostMapping("/chgRole/{campaignId}")
     @ResponseBody // 👈 HTML이 아니라 데이터(JSON)만 리턴하겠다는 선언!
     public List<UserVO> chgRole(@PathVariable("campaignId") Long campaignId, @RequestBody Map<String, String> paramMap, Option option) throws Exception {
+        log.info("campaignId : {} ", campaignId);
 
+        log.info("paramMap : {} ", paramMap);
         String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
 
         log.info("applyDate : " + applyDate);
 
         // 만약 'ALL' 이면 전체 조회, 특정 날짜면 해당 날짜만 조회하는 로직 필요
         List<UserVO> updatedUserList = null;
-        if ("ALL".equals(applyDate)) {
-            updatedUserList = userService.userInfoList(campaignId); // 전체 조회
-        } else {
-            updatedUserList = userService.userInfoDate(campaignId, applyDate); // 👈 날짜별 조회 (서비스에 메서드 구현 필요)
-        }
+        // if ("ALL".equals(applyDate)) {
+        //     updatedUserList = userService.userInfoList(campaignId); // 전체 조회
+        // } else {
+        //     updatedUserList = userService.userInfoDate(campaignId, applyDate); // 👈 날짜별 조회 (서비스에 메서드 구현 필요)
+        // }
 
-        log.info("updatedUserList : " + updatedUserList);
+        // log.info("updatedUserList : " + updatedUserList);
 
         return updatedUserList; // 자바스크립트로 유저 리스트 배열이 JSON 형태로 바로 넘어감
     }

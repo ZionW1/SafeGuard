@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService{
 
     // @Autowired
     // UserMapper userMapper;
-    
+
     private final UserMapper userMapper; // User 저장 로직 (DB 접근)
     private final PasswordEncoder passwordEncoder; // BCryptPasswordEncoder가 주입될 거야
 
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService{
             result = userMapper.insertAuth(userAuth);
             log.info("result1 : " + result);
         }
-        
+
         return result;
     }
 
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public List<UserVO> userList(Option option, Page page) throws Exception {
         // TODO Auto-generated method stub
-        
+
         int total = userCount(option);
         page.setTotal(total);
         List<UserVO> userList = userMapper.userList(option, page);
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService{
         return userList;
     }
 
-    // 유저 카운트 
+    // 유저 카운트
     public int userCount(Option option) throws Exception {
         return userMapper.userCount(option);
     }
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService{
         // TODO Auto-generated method stub
         UserVO userSelect = userMapper.userSelect(id);
 
-        return userSelect;    
+        return userSelect;
     }
 
     // 유저 업데이트
@@ -189,7 +189,7 @@ public class UserServiceImpl implements UserService{
     public List<UserVO> userAddressList() throws Exception {
         // TODO Auto-generated method stub
         List<UserVO> userAddressList = userMapper.userAddressList();
-        
+
         return userAddressList;
     }
 
@@ -237,8 +237,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<UserVO> userInfoList(Long campaignId) throws Exception {
-        List<UserVO> userInfoList = userMapper.userInfoList(campaignId);
+    public List<UserVO> userInfoList(Long campaignId, Option option) throws Exception {
+        List<UserVO> userInfoList = userMapper.userInfoList(campaignId, option);
         log.info("userInfoList : " + userInfoList);
 
         return userInfoList;

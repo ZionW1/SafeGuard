@@ -10,7 +10,7 @@ import com.safeg.admin.vo.UserVO;
 public interface UserService {
 
     public int userJoin(UserVO userVO) throws Exception;
-    
+
     public List<UserVO> userList(Option option, Page page) throws Exception;
 
     public UserVO userSelect(String id) throws Exception;
@@ -41,7 +41,7 @@ public interface UserService {
 
     public int updateUserInfo(UserVO userVO) throws Exception;
 
-    public List<UserVO> userInfoList(Long campaignId) throws Exception;
+    public List<UserVO> userInfoList(Long campaignId, Option option) throws Exception;
 
     public List<UserVO> userInfoDate(Long campaignId, String applyDate) throws Exception;
 

@@ -1,4 +1,4 @@
-package com.safeg.user.util;
+package com.safeg.admin.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

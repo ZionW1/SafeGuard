@@ -450,8 +450,5 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 phone_hash = #{phoneHash}   <!-- 단방향 해시 컬럼명 -->
             WHERE id = #{id}                  <!-- PK 컬럼명 (예: user_id 등) -->
     </update>
-
-    <select id="userListAll">
-        select * from user
-    </select>
+`````````````
 </mapper>

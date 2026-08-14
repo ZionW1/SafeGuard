@@ -197,23 +197,23 @@ public class CampaignServiceImpl implements CampaignService{
 
         // 2. 알림톡 발송 판단 로직
         // 인솔자 번호가 없거나, 업체 번호와 인솔자 번호가 완전히 같은 경우 -> 업체에만 1번 발송
-        if (leaderPh.isEmpty() || companyPh.equals(leaderPh)) {
-            aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
-                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
-                "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
-        }
-        // 업체 번호와 인솔자 번호가 서로 다른 경우 -> 각각 1번씩 총 2번 발송
-        else {
-            // 인솔자에게 발송 (💡 campaignVO.getLeaderPhone() 대신 통일성 있게 leaderPh 변수 사용을 권장합니다)
-            aligoSmsService.registrationAsync(leaderPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
-                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
-                "https://행집.com/apply/userCampaignApply/" + campaignId, leaderPh);
+        // if (leaderPh.isEmpty() || companyPh.equals(leaderPh)) {
+        //     aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+        //         campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+        //         "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
+        // }
+        // // 업체 번호와 인솔자 번호가 서로 다른 경우 -> 각각 1번씩 총 2번 발송
+        // else {
+        //     // 인솔자에게 발송 (💡 campaignVO.getLeaderPhone() 대신 통일성 있게 leaderPh 변수 사용을 권장합니다)
+        //     aligoSmsService.registrationAsync(leaderPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+        //         campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+        //         "https://행집.com/apply/userCampaignApply/" + campaignId, leaderPh);
 
-            // 업체에게 발송
-            aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
-                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
-                "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
-        }
+        //     // 업체에게 발송
+        //     aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+        //         campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+        //         "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
+        // }
 
         return result;
     }

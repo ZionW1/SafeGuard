@@ -443,12 +443,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.user_nm, u.id;
     </select>
 
-    <!-- 전화번호 암호화 및 해시 데이터 업데이트 -->
-    <update id="updateUserPhoneData">
-        UPDATE user
-            SET phone_num = #{phoneEnc},   <!-- 양방향 암호화 컬럼명 -->
-                phone_hash = #{phoneHash}   <!-- 단방향 해시 컬럼명 -->
-            WHERE id = #{id}                  <!-- PK 컬럼명 (예: user_id 등) -->
-    </update>
-`````````````
 </mapper>

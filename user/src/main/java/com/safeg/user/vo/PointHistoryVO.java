@@ -57,6 +57,8 @@ public class PointHistoryVO {
     private int wageChk;
     private int workHour;
 
+    private String ucChoice;
+
     public boolean empty() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'empty'");

@@ -133,7 +133,10 @@
         // // 리스트 전체를 한 번에 콘솔에 출력
         // console.log(campaign);
 
+        let chkInfo = new Set();
+
         function chkBoxSelect() {
+            chkInfo.clear(); // 기존 Set 초기화 후 현재 체크된 요소들 재수집
             const checkboxes = document.querySelectorAll('.user_Chk');
             const chkPcs = document.getElementById('chkPcs');
             const recPcs = document.getElementById('recPcs');
@@ -152,6 +155,7 @@
                     if (chkPcs) {
                         chkPcs.textContent = checkedCount; // span에 값 갱신
                     }
+                    chkInfo.add(chk.value);
                 });
             });
         }
@@ -202,7 +206,8 @@
                         row.style.color = '#bbb';
                     }
                 });
-                chkBoxSelect();
+                updateChkCount()
+                // chkBoxSelect();
             })
             .catch(error => {
                 console.error('모달 로드 중 에러 발생:', error);
@@ -326,7 +331,7 @@
                             row.style.color = '#bbb';
                         }
                     });
-                    chkBoxSelect();
+                    updateChkCount();
                 }
 
                 // 5. 새로 만든 HTML 덩어리를 tbody에 덮어씌우기
@@ -395,7 +400,7 @@
                             row.style.color = '#bbb';
                         }
                     });
-                    chkBoxSelect();
+                    updateChkCount();
                 }
                 tableBody.innerHTML = htmlRows;
             })
@@ -488,7 +493,7 @@
                             row.style.color = '#bbb';
                         }
                     });
-                    chkBoxSelect();
+                    updateChkCount();
                 }
 
                 // 5. 새로 만든 HTML 덩어리를 tbody에 덮어씌우기
@@ -667,17 +672,50 @@
 
         }
 
+        // 1. 전역 변수로 체크된 유저 ID 보관 (Set 구조)
+        const selectedUserIds = new Set();
+
+        // 2. 체크 개수 및 모집 인원 화면 갱신 함수 (없던 함수 정의!)
+        function updateChkCount() {
+            const chkPcs = document.getElementById('chkPcs');
+            const recPcs = document.getElementById('recPcs');
+
+            if (chkPcs) {
+                chkPcs.textContent = selectedUserIds.size; // Set에 들어있는 전체 개수로 표시
+            }
+            if (recPcs && campaign && campaign[selectIndex]) {
+                recPcs.textContent = campaign[selectIndex].recruitmentNum;
+            }
+        }
+
+        // 3. 체크박스 클릭/변경 시 실행할 함수 (inline onchange에 연결)
+        function handleChkChange(checkbox) {
+            if (checkbox.checked) {
+                selectedUserIds.add(checkbox.value);   // 체크하면 Set에 추가
+            } else {
+                selectedUserIds.delete(checkbox.value); // 체크 해제하면 Set에서 삭제
+            }
+            updateChkCount(); // 카운트 갱신
+        }
+
+        // 4. 검색 후 그려진 목록에 기존 체크 상태 복원하는 함수
+        function resChk() {
+            document.querySelectorAll('.user_Chk').forEach(chk => {
+                // 보관된 Set에 ID가 있으면 체크, 없으면 체크 해제
+                chk.checked = selectedUserIds.has(chk.value);
+            });
+            updateChkCount(); // 카운트 갱신
+        }
+
+        // 5. 유저 검색 및 테이블 렌더링 함수
         function filterUserList(e, campaignId) {
-            // const campaignId = /*[[${campaignId}]]*/ 0;
             const role = document.querySelector('input[name="code"]:checked')?.value || '전체';
             const keyword = document.getElementById("searchKeyword").value.trim();
-            console.log("campaignId - " + campaignId)
-            console.log("role - " + role)
-            console.log("keyword - " + keyword.substr(0, 3))
-            if(keyword.substr(0, 3) == "010") {
-                if(keyword.length != 11) {
-                    alert("휴대폰 번호는 11자리로 입력해주세요.")
-                }
+
+            // 010 검색 시 11자리가 아니면 검색 중단
+            if (keyword.startsWith("010") && !keyword.includes("-") && keyword.length !== 11) {
+                alert("휴대폰 번호는 11자리로 입력해주세요.");
+                return; // 🔥 [추가] 잘못된 검색어일 때 fetch 실행 방지
             }
 
             const url = `/admin/campPopupS/${campaignId}/search?role=${encodeURIComponent(role)}&keyword=${encodeURIComponent(keyword)}`;
@@ -690,6 +728,7 @@
 
                     if (data.length === 0) {
                         tbody.innerHTML = `<tr><td colspan="3" class="text-center">검색 결과가 없습니다.</td></tr>`;
+                        updateChkCount();
                         return;
                     }
 
@@ -700,9 +739,10 @@
                             <tr>
                                 <td>
                                     <input type="hidden" value="${userInfo.userId}" class="user_Id" name="userId">
+                                    <!-- 🔥 onclick 대신 onchange="handleChkChange(this)"로 간단하게 처리 -->
                                     <input value="${userInfo.id}" type="checkbox"
                                         class="user_Chk ${isAppliedClass}"
-                                        name="Attendance" onclick="chkBoxSelect()">
+                                        name="Attendance" onchange="handleChkChange(this)">
                                 </td>
                                 <td><span>${userInfo.userNm}</span></td>
                                 <td><span>${userInfo.phoneNum || ''}</span></td>
@@ -710,9 +750,11 @@
                         `;
                         tbody.insertAdjacentHTML('beforeend', row);
                     });
+
+                    // 🔥 data.forEach 밖으로 이동 (목록을 다 그린 뒤 '딱 1번만' 실행)
+                    resChk();
                 })
                 .catch(err => console.error("Search failed:", err));
         }
-
     </script>
 </html>

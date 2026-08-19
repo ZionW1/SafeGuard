@@ -646,7 +646,7 @@ body {
     display: inline-flex;
     align-items: center;      /* 세로 방향 가운데 정렬 (핵심!) */
     gap: 8px;                 /* 동그라미 버튼과 글자 사이 간격 */
-    font-size: 16px;          /* 글씨 크기 키우기 (원하시는 크기로 조절) */
+    font-size: 1.2em;          /* 글씨 크기 키우기 (원하시는 크기로 조절) */
     cursor: pointer;
     margin-right: 15px;       /* '일급'과 '시급' 사이의 간격 */
 }
@@ -1018,6 +1018,8 @@ input[type=checkbox] {
 
     .radio-label {
         gap: 0px;
+        margin-right: 0px;       /* '일급'과 '시급' 사이의 간격 */
+        font-size: small;
     }
 
     .remove_leader {
@@ -1090,5 +1092,9 @@ input[type=checkbox] {
 
     input[type=checkbox] {
         zoom: 1.5;
+    }
+
+    .campaign-title {
+        width: 100px;
     }
 }

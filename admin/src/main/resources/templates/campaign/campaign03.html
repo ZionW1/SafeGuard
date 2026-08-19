@@ -27,7 +27,7 @@
 
                 if (typeCode === "02") {
                     console.log("02 선택됨 -> 보이기");
-                    wageRadio.classList.remove("hidden"); 
+                    wageRadio.classList.remove("hidden");
 
                     // 이벤트 리스너 중복 등록 방지를 위해 기존 이벤트를 한 번 제거하거나 새로 바인딩
                     document.querySelectorAll('input[name="wageChk"]').forEach((radio) => {
@@ -36,22 +36,22 @@
                                 dailyPay.classList.remove("hidden");
                                 hourlyPay.classList.add("hidden");
                                 timeInput.classList.add("hidden");
-                                
+
                                 // 💡 순수 JS 문법으로 정확하게 제어
                                 dailyPayInput.setAttribute("name", "campaignPay"); // 내 name은 살리고
                                 hourlyPayInput.removeAttribute("name");            // 상대 name은 지우고
-                                
-                                workHour.required = false;               
+
+                                workHour.required = false;
                             } else if (this.value === "02") { // ⏰ 시급 선택 시
                                 console.log("시급 선택됨 -> 시급 입력 보이기");
                                 dailyPay.classList.add("hidden");
                                 hourlyPay.classList.remove("hidden");
                                 timeInput.classList.remove("hidden");
-                                
+
                                 // 💡 순수 JS 문법으로 정확하게 제어
                                 hourlyPayInput.setAttribute("name", "campaignPay"); // 내 name은 살리고
                                 dailyPayInput.removeAttribute("name");             // 상대 name은 지우고
-                                
+
                                 workHour.required = true;
                                 workHour.value = "";
                             }
@@ -61,13 +61,13 @@
                     console.log("다른 값 선택됨 -> 숨기기");
                     wageRadio.classList.add("hidden");
                 }
-                
+
                 document.getElementById("typeCode").value = typeCode;
             }
 
             // function inputLeaderPhoneNumber(idx) {
             //     const leaderList = /*[[${leaderList}]]*/ [];
-                
+
             //     const selectPhoneNumber = leaderList[idx].phoneNum;
             //     const selectNo = leaderList[idx].id;
             //     const leaderId = leaderList[idx].userId;
@@ -109,7 +109,10 @@
                         <input type="text" id="companyPh" name="companyPh" />
                     </div>
                 </div>
-
+                    <div class="form-group">
+                        <label>캠페인명</label>
+                        <input type="text" class="campaign-title" id="campaignTitle" name="campaignTitle" />
+                    </div>
                 <button type="button" onclick="addLeaderForm()">+ 인솔자 추가하기</button>
                 <template id="leaderTemplate">
                     <div class="leader-form-group mgt16">
@@ -120,14 +123,14 @@
                         <input type="hidden" class="leaderPay" name="leaderList[].leaderPay" />
                         <input type="hidden" class="leaderPoint" name="leaderList[].leaderPoint" />
 
-                        
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label>인솔자 선택</label>
                                 <select name="leaderList[].leaderSelect" onchange="inputLeaderPhoneNumber(this)" class="sync-nm">
                                     <option value="">-- 선택하세요 --</option>
-                                    <option th:each="leader, stat : ${leaderList}" 
-                                            th:value="${stat.index}" 
+                                    <option th:each="leader, stat : ${leaderList}"
+                                            th:value="${stat.index}"
                                             th:text="${leader.userNm}">
                                     </option>
                                 </select>
@@ -166,16 +169,25 @@
 
                 <div id="leaderContainer">
                 </div>
+                <div class="form-row mobile" style="border: black;border: solid;border-bottom: 1px; margin: 0px;"></div>
                 <!-- 캠페인 정보 -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label>캠페인명</label>
-                        <input type="text" id="campaignTitle" name="campaignTitle" />
+                        <label>포인트 유형</label>
+                        <!-- <input type="text" id="campaignTitle" name="campaignTitle" /> -->
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="ucChoice" id="campPay" value="01" checked="checked">캠페인
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="ucChoice" id="userPay" value="02">유저
+                            </label>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>주간 / 야간</label>
                         <!-- <input type="text" id="campaignTitle" name="campaignTitle" /> -->
-                        <div class="radio-group"> 
+                        <div class="radio-group">
                             <label class="radio-label">
                                 <input type="radio" name="timeSegment" id="timeSegmentDay" value="DAY" checked="checked">주간
                             </label>
@@ -193,15 +205,15 @@
                         <label for="securityType">경호/진행/수행 구분</label>
                         <select id="securityType" name="securityType" onchange="securityTypeChange(this.value)">
                             <option value="">-- 선택하세요 --</option>
-                            <option th:each="type : ${securityType}" 
-                                    th:value="${type.code}" 
+                            <option th:each="type : ${securityType}"
+                                    th:value="${type.code}"
                                     th:text="${type.codeName}"></option>
                         </select>
                         <input type="hidden" id="typeCode" name="typeCode" />
                     </div>
                     <div class="form-group hidden" id="wageRadio">
                         <label for="">시급 일급</label>
-                        <div class="radio-group"> 
+                        <div class="radio-group">
                             <label class="radio-label">
                                 <input type="radio" name="wageChk" id="dailyWage" value="01" checked>일급
                             </label>
@@ -214,12 +226,22 @@
                         <label for="campaignPay">캠페인 급여</label>
                         <input type="text" id="dailyPayInput" name="campaignPay" />
                     </div>
+                    <!-- <div class="form-group hidden" id="hourlyPay">
+                        <label for="campaignPay">캠페인 시 급여</label>
+                        <input type="text" id="hourlyPayInput"/>
+                    </div>
+                    <div class="form-group hidden" id="timeInput">
+                        <label for="WorkHour">하루 근무 시간 (시간)</label>
+                        <input type="number" name="workHour" id="workHour" placeholder="예: 8" min="1">
+                    </div> -->
+                </div>
+                <div class="form-row">
                     <div class="form-group hidden" id="hourlyPay">
                         <label for="campaignPay">캠페인 시급여</label>
                         <input type="text" id="hourlyPayInput"/>
                     </div>
                     <div class="form-group hidden" id="timeInput">
-                        <label for="WorkHour">하루 근무 시간 (시간)</label>
+                        <label for="WorkHour">하루 근무 시간</label>
                         <input type="number" name="workHour" id="workHour" placeholder="예: 8" min="1">
                     </div>
                 </div>
@@ -231,8 +253,6 @@
                         <img id="preview" src="" alt="미리보기" style="max-width: 100%; margin-top: 10px; display: none" />
                     </div>
                 </div>
-                
-                <!-- 주소 -->
                 <div class="form-row">
                     <div class="form-group">
                         <label>모집 인원 수</label>
@@ -344,20 +364,20 @@
             // 2. 인솔자 선택 변경 시 실행될 함수
             function inputLeaderPhoneNumber(selectElement) {
                 console.log("선택된 select 태그 엘리먼트: ", selectElement);
-                
+
                 // 선택된 <option>의 value 값(즉, stat.index 숫자)을 가져옴
-                const idx = selectElement.value; 
-                
+                const idx = selectElement.value;
+
                 // 현재 이벤트가 발생한 select 태그가 속한 가장 가까운 폼 한 세트(.leader-form-group)를 찾음
                 const formGroup = selectElement.closest('.leader-form-group');
-                
+
                 // 폼 내부의 입력창 필드들을 선택
                 const phoneInput = formGroup.querySelector('.sync-phone');
                 const noInput = formGroup.querySelector('.leaderNo');
                 const idInput = formGroup.querySelector('.leaderId');
                 const nmInput = formGroup.querySelector('.leaderNm');
                 const phInput = formGroup.querySelector('.leaderPh');
-                
+
                 // "-- 선택하세요 --" (빈값)을 선택한 경우 초기화
                 if (idx === "") {
                     phoneInput.value = "";
@@ -365,16 +385,16 @@
                     if(idInput) idInput.value = "";
                     return;
                 }
-                
+
                 // 전역 변수에서 인덱스로 해당 인솔자 데이터 추출
                 const selectedLeader = globalLeaderList[idx];
-                
+
                 if (selectedLeader) {
                     console.log("선택된 인솔자 상세정보: ", selectedLeader);
-                    
+
                     // 화면의 각 input창에 값 매핑
                     phoneInput.value = selectedLeader.phoneNum || '';
-                    
+
                     // hidden 필드가 존재한다면 hidden 필드에도 데이터 세팅
                     if(noInput) noInput.value = selectedLeader.id || '';
                     if(idInput) idInput.value = selectedLeader.userId || '';
@@ -386,7 +406,7 @@
 
             // function inputLeaderPhoneNumber(idx) {
             //     const leaderList = /*[[${leaderList}]]*/ [];
-                
+
             //     const selectPhoneNumber = leaderList[idx].phoneNum;
             //     const selectNo = leaderList[idx].id;
             //     const leaderId = leaderList[idx].userId;
@@ -405,7 +425,7 @@
             function syncPoint(inputElement) {
                 const formGroup = inputElement.closest('.leader-form-group');
                 const value = inputElement.value;
-                
+
                 // PC와 모바일 입력창 둘 다에 값을 적어줌
                 formGroup.querySelector('.sync-point-pc').value = value;
                 formGroup.querySelector('.sync-point-mo').value = value;
@@ -416,7 +436,7 @@
             function syncPay(inputElement) {
                 const formGroup = inputElement.closest('.leader-form-group');
                 const value = inputElement.value;
-                
+
                 // PC와 모바일 입력창 둘 다에 값을 적어줌
                 formGroup.querySelector('.sync-pay-pc').value = value;
                 formGroup.querySelector('.sync-pay-mo').value = value;
@@ -470,13 +490,13 @@
             function addLeaderForm() {
                 const template = document.getElementById('leaderTemplate');
                 const container = document.getElementById('leaderContainer');
-                
+
                 // 템플릿 복사
                 const clone = document.importNode(template.content, true);
-                
+
                 // 컨테이너에 추가
                 container.appendChild(clone);
-                
+
                 // 추가된 후 name 속성의 인덱스([])를 재정렬
                 reIndexLeaderForms();
             }
@@ -496,9 +516,9 @@
             //     } else {
             //         return; // 취소 시 아무 동작도 하지 않음
             //     }
-                
+
             //     // 삭제 후 인덱스 재정렬
-                
+
             // }
             function removeLeaderForm(button) {
                 // 1. 현재 화면에 남아있는 전체 인솔자 폼의 개수를 구합니다.
@@ -513,7 +533,7 @@
 
                 // 3. 2개 이상일 때만 기존 삭제 로직 진행
                 const formGroup = button.closest('.leader-form-group');
-                
+
                 if(confirm("정말로 이 인솔자 정보를 삭제하시겠습니까?")) {
                     if (!formGroup) {
                         alert("삭제할 인솔자 정보가 없습니다.");
@@ -531,11 +551,11 @@
             // Spring Controller에서 List<VO>로 받을 수 있게 name="leaderList[인덱스].필드명" 세팅
             function reIndexLeaderForms() {
                 const forms = document.querySelectorAll('#leaderContainer .leader-form-group');
-                
+
                 forms.forEach((form, index) => {
                     // 해당 폼 안의 name 속성을 가진 모든 input, select 태그를 찾음
                     const inputs = form.querySelectorAll('[name]');
-                    
+
                     inputs.forEach(input => {
                         const currentName = input.getAttribute('name');
                         // 'leaderList[].필드명' 또는 'leaderList[0].필드명'을 'leaderList[현재인덱스].필드명'으로 치환

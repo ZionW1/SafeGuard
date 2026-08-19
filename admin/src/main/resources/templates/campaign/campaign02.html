@@ -33,6 +33,12 @@
                         </div>
                     </div>
 
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>캠페인명</label>
+                            <input type="text" id="campaignTitle" name="campaignTitle" th:value="${campaignSelect.campaignTitle}"/>
+                        </div>
+                    </div>
                     <!-- ⭐️ form 대신 div로 변경하여 중첩 폼 문제 해결 ⭐️ -->
                     <div id="leaderSection" class="form-row" style="flex-direction: column; width: 100%;">
                         <button type="button" onclick="addLeaderForm()">+ 인솔자 추가하기</button>
@@ -88,15 +94,21 @@
                         </template>
                         <div id="leaderContainer"></div>
                     </div>
-                    <div class="form-row mobile" style="border: black;border: solid;border-bottom: 1px; margin: 0px;">
-
-                    </div>
+                    <div class="form-row mobile" style="border: black;border: solid;border-bottom: 1px; margin: 0px;"></div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>캠페인명</label>
-                            <input type="text" id="campaignTitle" name="campaignTitle" th:value="${campaignSelect.campaignTitle}"/>
+                            <label>포인트 유형</label>
+                            <!-- <input type="text" id="campaignTitle" name="campaignTitle" /> -->
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="ucChoice" id="campPay" value="01" th:checked="${campaignSelect?.ucChoice == null || campaignSelect?.ucChoice == '01'}">캠페인
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="ucChoice" id="userPay" value="02" th:checked="${campaignSelect?.ucChoice == '02'}">유저
+                                </label>
+                            </div>
                         </div>
-                        <div class="form-group">
+                    <div class="form-group">
                             <label>주간 / 야간</label>
                             <div class="radio-group">
                                 <label class="radio-label">
@@ -125,7 +137,7 @@
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="wageChk" id="dailyWage" value="01"
-                                        th:checked="${campaignSelect?.wageChk == '01'}">일급
+                                        th:checked="${campaignSelect?.wageChk == null || campaignSelect?.wageChk == '01'}">일급
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="wageChk" id="hourlyWage" value="02"
@@ -145,7 +157,7 @@
                             <input type="text" id="hourlyPayInput" th:value="${campaignSelect.campaignPay}"/>
                         </div>
                         <div class="form-group hidden" id="timeInput">
-                            <label for="WorkHour">하루 근무 시간 (시간)</label>
+                            <label for="WorkHour">하루 근무 시간</label>
                             <input type="number" name="workHour" id="workHour" placeholder="예: 8" min="1" th:value="${campaignSelect.workHour}">
                         </div>
                     </div>
@@ -246,7 +258,7 @@
             const form = document.getElementById("form");
             const leaderList = /*[[${leaderList}]]*/ [];
             const campaignSelect = /*[[${campaignSelect}]]*/ {};
-
+            console.log("campaignSelect" + JSON.stringify(campaignSelect))
             // DOM 이 로드된 후 실행할 초기화 작업 모음
             document.addEventListener("DOMContentLoaded", function() {
                 console.log("DOM이 준비되었습니다!");
@@ -525,7 +537,7 @@
 
                 if (typeCode === "02") {
                     wageRadio.classList.remove("hidden");
-                    document.getElementById("roleType").innerText = '진행'
+                    // document.getElementById("roleType").innerText = '진행'
                     document.querySelectorAll('input[name="wageChk"]').forEach((radio) => {
                         radio.onchange = function() {
                             if (this.value === "01") {

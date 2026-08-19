@@ -235,6 +235,8 @@ public class CampaignServiceImpl implements CampaignService{
         String status = "1";
         log.info("campaignSelectDetail");
         CampaignVO campaignDetail = campaignMapper.campaignSelect(id);
+        log.info("campaignSelectDetail" + campaignDetail) ;
+
         return campaignDetail;
     }
 

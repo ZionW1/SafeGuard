@@ -86,7 +86,7 @@ public class CampaignController {
         return "campaign/campaign01";
     }
 
-    // 상세보기 처리
+    // 상세보기 페이지
     @GetMapping("/campaign02")
     public String campaign02(Model model, @RequestParam("id") String campaignId) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -121,6 +121,7 @@ public class CampaignController {
         return "campaign/campaign02";
     }
 
+    // 등록 페이지
     @GetMapping("/campaign03")
     public String campaign03(Model model) throws Exception{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

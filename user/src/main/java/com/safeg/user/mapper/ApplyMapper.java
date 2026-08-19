@@ -80,15 +80,17 @@ public interface ApplyMapper {
 
     public int countApplicants(Long campaignId) throws Exception;
 
-    public UserCampaignVO overlapTitle(@Param("dto") CampaignVO dto, @Param("userNo") String userNo);
+    public UserCampaignVO overlapTitle(@Param("dto") CampaignVO dto, @Param("userNo") String userNo) throws Exception;
 
-    public CampaignVO campaignSelect(String valueOf);
+    public CampaignVO campaignSelect(String valueOf) throws Exception;
 
     public int userApply(Map<String, Object> paramMap) throws Exception;
 
-    public void updateApplicantsNum(Long campaignId);
+    public void updateApplicantsNum(Long campaignId) throws Exception;
 
     public int userCancel(Map<String, Object> paramMap) throws Exception;
+
+    public int getPay(@Param("ucChoice") String ucChoice, @Param("campaignId") Long campaignId, @Param("userNo") Long userNo, @Param("wageChk") String wageChk) throws Exception;
 
 
 }

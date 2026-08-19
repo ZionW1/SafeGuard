@@ -195,10 +195,12 @@ public class ApplyServiceImpl implements ApplyService {
         log.info("pointInsert : " + getUserInfo);
         // TODO Auto-generated method stub
         int result = 0;
+        int getPay = 0;
         for (UserCampaignVO dto : getUserInfo) {
             Long campaignId = dto.getCampaignId();
             Long userNo = dto.getUserNo();
             String userId = dto.getUserId();
+            String ucChoice = dto.getUcChoice();
 
             if (dto.getApplyDate() == null) {
                 throw new IllegalArgumentException("🚨 유저번호 [" + userNo + "]의 신청 날짜가 누락되어 작업을 전면 취소합니다.");
@@ -221,6 +223,7 @@ public class ApplyServiceImpl implements ApplyService {
             myPoint.setUserId(userId);
             myPoint.setSourceNo(userNo);
             myPoint.setMissionDate(applyDate);
+            myPoint.setUcChoice(ucChoice);
             myPoint.setSettlementStatus("READY");
 
             // --------------------------------------------------------
@@ -230,11 +233,14 @@ public class ApplyServiceImpl implements ApplyService {
                 log.info("status 2 : " + status);
                 // 일반 근무 포인트
                 if(wageChk.equals("02")) {
+                    getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
                     myPoint.setAmount(dto.getCampaignPay() * workHour);
                 } else if(wageChk.equals("01")) {
-                    myPoint.setAmount(dto.getCampaignPay());
+                    getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
+                    myPoint.setAmount(getPay);
                 }else {
-                    myPoint.setAmount(dto.getCampaignPay());
+                    getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
+                    myPoint.setAmount(getPay);
                 }
                 myPoint.setCategory("WORK");
 
@@ -247,7 +253,8 @@ public class ApplyServiceImpl implements ApplyService {
                 log.info("status 9 : " + status);
                 // 👑 인솔자 기본 급여 적립
                 if (dto.getCampaignPay() > 0) {
-                    myPoint.setAmount(dto.getCampaignPay());
+                    getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
+                    myPoint.setAmount(getPay);
                     myPoint.setCategory("WORK");
                     applyMapper.insertPointHistory(myPoint);
                 } else {

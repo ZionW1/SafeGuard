@@ -74,7 +74,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="eventPeriodStr" column="event_period_str" />
         <result property="eventPeriodEnd" column="event_period_end" />
         <result property="resultDate" column="result_date" />
-
+        <result property="wageChk" column="wage_chk" />
+        <result property="ucChoice" column="uc_choice"/>
         <collection property="leaderList" ofType="CampLeaderVO">
             <result property="leaderNm" column="user_nm" />
             <result property="leaderPh" column="phone_Num"
@@ -130,6 +131,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         c.type_code,
         c.applicants_Num,
         c.recruitment_Num,
+        c.uc_choice,
         c.time_segment
         <if test="option.orderCode == 0">
             order by campaign_Id desc
@@ -211,6 +213,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             applicants_Num,
             <!-- leader_pay, -->
             campaign_pay,
+            uc_choice,
             time_segment,
             work_hour,
             wage_chk,
@@ -234,6 +237,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{applicantsNum},<!-- CASE WHEN #{leaderPay} != 0 THEN 1 ELSE 0 END,
             #{leaderPay}, -->
             #{campaignPay},
+            #{ucChoice},
             #{timeSegment},
             #{workHour},
             #{wageChk},
@@ -285,13 +289,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.status_code,
             c.recruitment_num,
             c.applicants_num,
-            <!-- c.leader_Pay, -->
             c.campaign_pay,
             c.time_segment,
             c.place_addr,
-            <!-- c.leader_point, -->
             work_hour,
-            WAGE_CHK,
+            wage_chk,
             DATE_FORMAT(c.App_period_str,'%Y-%m-%d') AS App_period_str,
             DATE_FORMAT(c.App_period_end,'%Y-%m-%d') AS App_period_end,
             DATE_FORMAT(c.event_Period_str,'%Y-%m-%d') AS event_Period_str,
@@ -305,6 +307,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             cl.leader_pay,
             cl.leader_point,
             cl.phone_num,
+            c.uc_choice,
             cc.code_name
         FROM campaign c
         LEFT OUTER JOIN camp_leader cl

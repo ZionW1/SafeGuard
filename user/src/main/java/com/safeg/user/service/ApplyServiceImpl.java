@@ -242,6 +242,19 @@ public class ApplyServiceImpl implements ApplyService {
                     getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
                     myPoint.setAmount(getPay);
                 }
+
+                if("01".equals(ucChoice)) { // 캠페인 페이
+                    if(wageChk.equals("01")) { // 일급
+                        getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
+                        myPoint.setAmount(getPay);
+                    } else { // 시급
+                        getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
+                        myPoint.setAmount(dto.getCampaignPay() * workHour);
+                    }
+                }else { // 유저 페이
+                    getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
+                    myPoint.setAmount(getPay);
+                }
                 myPoint.setCategory("WORK");
 
                 log.info("myPoint : " + myPoint);

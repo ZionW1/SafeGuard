@@ -387,6 +387,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             event_Period_end = #{eventPeriodEnd},
             result_date = #{resultDate},
             leader_point = #{leaderPoint},
+            uc_choice = #{ucChoice},
             updated_at = CURRENT_TIMESTAMP
         where
         campaign_id = #{campaignId};

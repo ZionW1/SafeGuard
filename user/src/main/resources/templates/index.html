@@ -53,15 +53,15 @@
 
         .modal-body {
     /* ❗ position: relative 추가 (X 버튼 배치의 기준점) */
-    position: relative; 
+    position: relative;
     padding: 0; /* 이미지가 팝업 가득 차게 패딩 제거 */
     border-radius: 8px 8px 0 0; /* 팝업 윗부분 라운드 처리 */
     overflow: hidden; /* 이미지 라운드 처리 */
 }
 
-.modal-body img { 
-    width: 100%; 
-    display: block; 
+.modal-body img {
+    width: 100%;
+    display: block;
 }
 
 /* ❗ [핵심] 이미지 위에 겹쳐지는 X 버튼 스타일 */
@@ -70,23 +70,23 @@
     top: 15px;      /* 이미지 위쪽 모서리에서 15px */
     right: 15px;    /* 이미지 오른쪽 모서리에서 15px */
     z-index: 10;     /* 이미지보다 위에 오도록 */
-    
+
     background: rgba(0, 0, 0, 0.5); /* 반투명 검은 배경 (이미지 위에서 잘 보이게) */
     color: white;               /* 글자색 흰색 */
     border: none;               /* 테두리 제거 */
     width: 30px;                /* 너비 */
     height: 30px;               /* 높이 */
     border-radius: 50%;         /* 동그란 버튼 */
-    
+
     font-size: 18px;            /* 글자 크기 */
     font-family: Arial, sans-serif; /* 글자체 */
     font-weight: bold;          /* 글자 굵기 */
     cursor: pointer;            /* 마우스 포인터 표시 */
-    
+
     display: flex;              /* 글자 중앙 정렬 */
     align-items: center;        /* 세로 중앙 */
     justify-content: center;    /* 가로 중앙 */
-    
+
     transition: background 0.3s; /* 마우스 오버 시 효과 */
 }
 
@@ -102,7 +102,7 @@
         z-index: 9998; /* 첫 번째 팝업은 아래에 */
     }
 
-    #popup2 { 
+    #popup2 {
         width: 90% !important;
         left: 5% !important; /* 첫 번째보다 오른쪽으로 5% 이동 */
         top: 80px !important; /* 첫 번째보다 아래로 30px 이동 */
@@ -158,13 +158,16 @@
                     <div sec:authorize="!isAuthenticated()" class="guest-message">
                         <a th:href="@{/campaign/{id}(id=${campaign.campaignId})}">
                             <div class="campaign-card">
+                                <div class="pointCtgr">
+                                    <span class="sub-text" th:text="|${campaign.ucChoice}|"></span>
+                                </div>
                                 <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                                 <div class="campaign-info-box">
                                     <div class="campaign-tags">
                                         <span class="tag leader">
                                             <span th:text="|${campaign.userNm}|"></span>
                                             <span class="sub-text">인솔자</span>
-                                        </span> 
+                                        </span>
                                         <span class="card-badge"
                                         th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
                                         th:data-campaign-id="${campaign.campaignId}"></span>
@@ -177,12 +180,6 @@
                                             <span th:text="${campaign.campaignTitle}">캠페인 제목이 여기에 들어갑니다.</span> (<span th:text="${campaign.timeSegment == 'DAY' || campaign.timeSegment == null ? '주간' : '야간'}"></span>)
                                         </div>
                                     </div>
-                                    <!-- <div class="title-overlay">
-                                        <div class="card-point">
-                                            <span>포인트 : </span>
-                                            <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
-                                        </div>
-                                    </div> -->
                                     <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                 </div>
                             </div>
@@ -197,7 +194,7 @@
                                         <span class="tag leader">
                                             <span th:text="|${campaign.userNm}|"></span>
                                             <span class="sub-text">인솔자</span>
-                                        </span> 
+                                        </span>
                                         <span class="card-badge"
                                         th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
                                         th:data-campaign-id="${campaign.campaignId}"></span>
@@ -280,7 +277,7 @@
                                             <span class="tag leader">
                                                 <span th:text="|${campaign.userNm}|"></span>
                                                 <span class="sub-text">인솔자</span>
-                                            </span> 
+                                            </span>
                                             <span class="card-badge"
                                             th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
                                             th:data-campaign-id="${campaign.campaignId}"></span>
@@ -299,7 +296,7 @@
                                                 <span th:text="${#numbers.formatInteger(campaign.campaignPay + 10000, 3, 'COMMA')}"></span>
                                             </div>
                                         </div> -->
-                                        
+
                                         <div class="campaign-stats">신청 <span th:text="${campaign.applicantsNum}"></span> / <span class="recruitment-num">모집 <span th:text="${campaign.recruitmentNum}"></span></span></div>
                                     </div>
                                 </div>
@@ -314,7 +311,7 @@
                                             <span class="tag leader">
                                                 <span th:text="|${campaign.userNm}|"></span>
                                                 <span class="sub-text">인솔자</span>
-                                            </span> 
+                                            </span>
                                             <span class="card-badge"
                                             th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
                                             th:data-campaign-id="${campaign.campaignId}"></span>
@@ -356,7 +353,7 @@
                                         <span class="tag leader">
                                             <span th:text="|${campaign.userNm}|"></span>
                                             <span class="sub-text">인솔자</span>
-                                        </span> 
+                                        </span>
                                         <span class="card-badge"
                                         th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
                                         th:data-campaign-id="${campaign.campaignId}"></span>
@@ -389,7 +386,7 @@
                                         <span class="tag leader">
                                             <span th:text="|${campaign.userNm}|"></span>
                                             <span class="sub-text">인솔자</span>
-                                        </span> 
+                                        </span>
                                         <span class="card-badge"
                                         th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
                                         th:data-campaign-id="${campaign.campaignId}"></span>
@@ -431,7 +428,7 @@
                                     <!-- <span class="tag leader">
                                         <span th:text="|${campaign.userNm}|"></span>
                                         <span class="sub-text">인솔자</span>
-                                    </span> 
+                                    </span>
                                     <span class="card-badge"
                                     th:data-app-end-date-str="${campaign.appPeriodEnd != null ? #temporals.format(campaign.appPeriodEnd, 'yyyy-MM-dd') : ''}"
                                     th:data-campaign-id="${campaign.campaignId}"></span> -->
@@ -498,7 +495,7 @@
             <!-- ❗여기에 이미지와 X 버튼을 함께 넣습니다. -->
             <!-- <img src="/images/popup_img2.png" alt="경호 팝업"> -->
             <a href="https://open.kakao.com/o/gcfNk0ni"><img src="/images/popup_img2.png" alt="공지사항 이미지" style="width: 100%; height: auto;" /></a>
-            
+
             <!-- X 버튼 (이미지 위에 겹쳐짐) -->
             <button type="button" class="btn-close-on-image" onclick="closePop('popup2')">X</button>
         </div>
@@ -512,7 +509,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            
+
             document.querySelectorAll('.card-badge').forEach(function(badge) {
                 console.log(badge.dataset)
                 const dateStr = badge.dataset.appEndDateStr; // ${item.eventPeriodEnd != null ? #temporals.format(item.eventPeriodEnd, 'yyyy/MM/dd') : ''}
@@ -523,12 +520,12 @@
                 }
                 const eventDate = new Date(dateStr.replace(/\./g, '/'));
                 eventDate.setHours(0, 0, 0, 0);
-            
+
                 if (isNaN(eventDate.getTime())) {
                     badge.textContent = '날짜 오류';
                     return;
                 }
-            
+
                 const diffDays = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
                 if (diffDays === 0) {
                     badge.textContent = '오늘마감';
@@ -539,7 +536,7 @@
                     badge.textContent = '마감됨';
                 }
             });
-            
+
             async function sendAlimtalk() {
                 const requestData = {
                     receiver: "01012345678",
@@ -572,17 +569,17 @@
                 centeredSlides: false,       // 현재 슬라이드를 중앙 배치
                 spaceBetween: 15,           // 슬라이드 간 간격
                 loop: true,                 // 🚨 무한 반복 (참조 사이트 핵심)
-                
+
 
                 slidesPerView: "auto",      // 슬라이드 너비를 CSS(.swiper-slide)의 width: 85% 등으로 인식
                 /* 만약 centeredSlides를 썼는데도 왼쪽이 붙는다면 아래 속성을 추가해보세요 */
                 slidesOffsetBefore: 15,      // 시작 부분 여백 (px 단위)
                 slidesOffsetAfter: 0,       // 끝 부분 여백 (px 단위)
-    
+
                 // 중요: 화면에 배너가 늦게 그려져도 다시 인식하게 함
                 observer: true,
                 observeParents: true,
-                
+
                 // autoplay: {
                 //     delay: 3000,            // 3초마다 자동 이동
                 //     disableOnInteraction: false,
@@ -592,7 +589,7 @@
                     clickable: true,
                 },
             });
-    
+
             // 확인용: 콘솔에 이게 찍히면 호출 성공입니다.
             console.log("Swiper가 성공적으로 초기화되었습니다:", mainBannerSwiper);
         });
@@ -639,6 +636,6 @@
         // 추가: 나중에 '오늘 하루 보지 않기' 기능을 넣으려면 여기에 로직을 추가하면 됩니다.
     </script>
     </main>
-    
+
 </body>
 </html>

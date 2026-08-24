@@ -52,14 +52,14 @@ public class CampaignController {
 
        // 캠페인 상세 정보 조회
         CampaignVO campaignSelect = campaignsService.campaignSelect(campaignId);
-
+        log.info("campaignSelect : " + campaignSelect.toString());
         if (campaignSelect == null) {
             log.error("ID가 {}인 캠페인을 찾을 수 없습니다.", campaignId);
             // 에러 페이지로 바로 보내거나 리다이렉트
-            return "error/404"; 
+            return "error/404";
         }
-        
-        
+
+
         String formattedContent = campaignSelect.getMission();
         model.addAttribute("mission", formattedContent);
 
@@ -69,7 +69,7 @@ public class CampaignController {
         if (authUser != null) {
             UserVO user = authUser.getUserVo();
             model.addAttribute("user", user);
-            model.addAttribute("authUser", authUser); 
+            model.addAttribute("authUser", authUser);
 
             // 현재 조회하는 캠페인에 대한 사용자의 신청 내역이 있는지 확인
 
@@ -78,14 +78,14 @@ public class CampaignController {
             if (userSelect != null) {
                 // [갱신] 세션 객체(authUser) 내의 UserVO를 최신 데이터로 교체
                 // 이렇게 하면 이후 호출되는 자바스크립트나 JSP에서 최신 값을 읽을 수 있습니다.
-                authUser.setUserVo(userSelect); 
+                authUser.setUserVo(userSelect);
 
                 SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(authUser, authUser.getPassword(), authUser.getAuthorities())
                 );
-                
+
                 // 모델에는 DB에서 바로 가져온 따끈따끈한 정보를 담음
-                model.addAttribute("user", userSelect); 
+                model.addAttribute("user", userSelect);
                 model.addAttribute("guardType", userSelect.getGuardType());
             }
 
@@ -93,19 +93,19 @@ public class CampaignController {
             if (campaignApply != null && !campaignApply.isEmpty()) {
                 model.addAttribute("campaignApply", campaignApply.get(0));
             }
-        
+
             // 기본적으로 현재 캠페인 신청이 '가능'하다고 가정
             // 하지만 아래 로직을 통해 신청 불가능할 수 있음
-            boolean canApply = true; 
+            boolean canApply = true;
 
             // 만약 사용자가 이 캠페인을 이미 신청했다면 신청 불가능
             // --- 수정 및 보완된 주요 부분 ---
 
             if (campaignApply != null && !campaignApply.isEmpty()) {
                 // 1. 이미 신청한 경우
-                canApply = false; 
+                canApply = false;
                 for (UserCampaignVO vo : campaignApply) {
-                    vo.setEventActive(false); 
+                    vo.setEventActive(false);
                 }
                 model.addAttribute("campaignApply", campaignApply.get(0)); // 안전하게 리스트 안에서 꺼냄
 
@@ -128,7 +128,7 @@ public class CampaignController {
 
                         // 기간 중복 조건 (하나라도 참이면 겹침)
                         boolean isOverlap = !currentStart.isAfter(existEnd) && !currentEnd.isBefore(existStart);
-                        
+
                         if (isOverlap) {
                             canApply = false;
                             break;
@@ -155,7 +155,7 @@ public class CampaignController {
     //     List<UserVO> leaderList = campaignsService.leaderList();
     //     List<CampaignVO> securityType = campaignsService.securityType();
     //     FilesVO file = fileService.select(id);
-        
+
     //     log.info("campaignSelect : " + campaignSelect);
     //     log.info("leaderList : " + leaderList);
     //     log.info("securityType : " + securityType);
@@ -192,7 +192,7 @@ public class CampaignController {
     //     log.info("등록 처리");
     //     log.info("campaignsVO : " + campaignsVO);
     //     // campaignsVO.setCampaignStatusId(1);
-        
+
     //     int result = campaignsService.campaignInsert(campaignsVO);
     //     if(result > 0){
     //         return "redirect:/";
@@ -226,7 +226,7 @@ public class CampaignController {
     @GetMapping("/closedCampaign")
     public String closedCampaign(@AuthenticationPrincipal CustomUser authUser, Model model, @ModelAttribute("option") Option option, Page page) throws Exception{
         log.info("closedCampaign");
-        
+
         if(authUser != null){
             UserVO user = authUser.getUserVo();
             // UserCampaignVO campaignApply = mainService.campaignApply(user.getUserId());
@@ -241,12 +241,12 @@ public class CampaignController {
 
         return "campaign/campaign09";
     }
-    
+
 
     @GetMapping("/search")
     public String searchCampaign(@RequestParam("schCamp") String schCamp, Model model) throws Exception {
         log.info("1. 검색 시작: " + schCamp);
-    
+
         List<CampaignVO> list = null;
 
         if (schCamp != null && !schCamp.trim().isEmpty()) {
@@ -279,7 +279,7 @@ public class CampaignController {
 
 //     model.addAttribute("campaignList", list); // HTML에서 사용하는 이름과 일치해야 함
 //     model.addAttribute("keyword", schCamp);    // 검색창에 검색어 유지용
-    
+
 //     return "campaign/list"; // 전체 페이지 리턴
 // }
 

@@ -232,18 +232,18 @@ public class ApplyServiceImpl implements ApplyService {
             if(status.equals("2")) {
                 log.info("status 2 : " + status);
                 // 일반 근무 포인트
-                if(wageChk.equals("02")) {
-                    getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
-                    myPoint.setAmount(dto.getCampaignPay() * workHour);
-                } else if(wageChk.equals("01")) {
-                    getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
-                    myPoint.setAmount(getPay);
-                }else {
-                    getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
-                    myPoint.setAmount(getPay);
-                }
+                // if(wageChk.equals("02")) {
+                //     getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
+                //     myPoint.setAmount(dto.getCampaignPay() * workHour);
+                // } else if(wageChk.equals("01")) {
+                //     getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
+                //     myPoint.setAmount(getPay);
+                // }else {
+                //     getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
+                //     myPoint.setAmount(getPay);
+                // }
 
-                if("01".equals(ucChoice)) { // 캠페인 페이
+                if ("01".equals(ucChoice)) { // 캠페인 페이
                     if(wageChk.equals("01")) { // 일급
                         getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
                         myPoint.setAmount(getPay);
@@ -251,7 +251,7 @@ public class ApplyServiceImpl implements ApplyService {
                         getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
                         myPoint.setAmount(dto.getCampaignPay() * workHour);
                     }
-                }else { // 유저 페이
+                } else { // 유저 페이
                     getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
                     myPoint.setAmount(getPay);
                 }

@@ -7,14 +7,14 @@
 <title>캠페인 신청 안내</title>
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 <style>
-    
+
     .container {
         display: black;
         gap: 40px;
         max-width: 90%;
         margin: 0 auto;
     }
-    
+
     .left-view {
         flex: 2;
     }
@@ -247,18 +247,18 @@
         kakao.maps.load(function() {
             var xx = "";
             var yy = "";
-            
+
             // 주소-좌표 변환 객체를 생성합니다
             var geocoder = new kakao.maps.services.Geocoder();
 
             // 주소로 좌표를 검색합니다
             geocoder.addressSearch(campaign.placeAddr, function(result, status) {
-                // 정상적으로 검색이 완료됐으면 
+                // 정상적으로 검색이 완료됐으면
                 if (status === kakao.maps.services.Status.OK) {
 
                     xx = result[0].x;
                     yy = result[0].y;
-                        
+
                     var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
                     // 결과값으로 받은 위치를 마커로 표시합니다
@@ -275,7 +275,7 @@
 
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                     map.setCenter(coords);
-                } 
+                }
             });
             var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
             var options = { //지도를 생성할 때 필요한 기본 옵션
@@ -320,7 +320,7 @@
                         if (data.appPeriodStr && data.appPeriodEnd) {
                             let appEndDate = new Date(data.appPeriodEnd); // 'YYYY-MM-DD' 문자열을 Date 객체로 변환
                             appEndDate.setDate(appEndDate.getDate() + 1); // 현재 Date 객체에 하루를 더해줘
-                            let formattedAppEndDate = appEndDate.toISOString().slice(0, 10); 
+                            let formattedAppEndDate = appEndDate.toISOString().slice(0, 10);
 
                             events.push({
                                 title: '신청 기간', // 이 기간의 제목
@@ -338,7 +338,7 @@
                         if (data.eventPeriodStr && data.eventPeriodEnd) {
                             let appEndDate = new Date(data.eventPeriodEnd); // 'YYYY-MM-DD' 문자열을 Date 객체로 변환
                             appEndDate.setDate(appEndDate.getDate() + 1); // 현재 Date 객체에 하루를 더해줘
-                            let formattedAppEndDate = appEndDate.toISOString().slice(0, 10); 
+                            let formattedAppEndDate = appEndDate.toISOString().slice(0, 10);
 
                             events.push({
                                 title: '이벤트 진행', // 이 기간의 제목
@@ -401,7 +401,7 @@
                 const currentBtn = this;
                 const csrfTokenTag = document.querySelector('meta[name="_csrf"]');
                 const csrfHeaderTag = document.querySelector('meta[name="_csrf_header"]');
-                
+
                 if (!csrfTokenTag || !csrfHeaderTag) {
                     alert("보안 토큰을 찾을 수 없습니다.");
                     return;
@@ -418,7 +418,7 @@
                     applicantsNum: currentBtn.dataset.applicantsNum,
                     timeSegment: currentBtn.dataset.timeSegment
                 };
-                
+
                 if(campaign.typeCode == "02"){
                     if(currentBtn.dataset.guardType == "00" || currentBtn.dataset.guardType == "01") {
                         const requiredFields = {
@@ -435,10 +435,10 @@
                         for (const [key, label] of Object.entries(requiredFields)) {
                             if (!user[key]) { // 값이 null, undefined, "" 인 경우
                                 alert(label + " 정보가 없습니다.\n'내정보'에서 입력 후 저장해 주세요.");
-                                
+
                                 // 필요하다면 해당 입력창으로 포커스를 보낼 수도 있습니다.
-                                // document.getElementById(key).focus(); 
-                                
+                                // document.getElementById(key).focus();
+
                                 return; // 하나라도 없으면 여기서 중단
                             }
                         }
@@ -460,7 +460,7 @@
                         return;
                     }
                 }
-                
+
                 fetch('/apply', {
                     method: 'POST',
                     headers: {
@@ -479,7 +479,7 @@
                         location.reload();
                         return; // 성공 시 여기서 종료
                     }
-                    
+
                     // 실패(400, 500 등)인 경우 서버가 보낸 JSON 에러 메시지 추출
                     return response.json().then(errData => {
                         // 서버에서 ResponseEntity.badRequest().body("{\"message\": \"...\"}") 로 보낸 내용
@@ -514,7 +514,7 @@
         })
         .then(response => {
             // HTTP 응답 코드가 200번대(성공)가 아니면 에러로 처리
-            if (!response.ok) { 
+            if (!response.ok) {
                 // 서버에서 보낸 에러 메시지를 JSON 형태로 파싱하여 처리
                 return response.json().then(errorData => {
                     throw new Error(errorData.message || '상태 변경 중 알 수 없는 오류가 발생했습니다.');
@@ -526,7 +526,7 @@
             // 서버에서 응답받은 데이터 처리
             alert(data.message);
             if (targetContainer) {
-                targetContainer.remove(); 
+                targetContainer.remove();
             }
             location.reload();
         })
@@ -545,9 +545,10 @@
     <main layout:fragment="content">
     <div class="container_campaign">
     <section aria-labelledby="campaign-title" class="campaign-info">
-        <div class="mrg75-top mrg25-bottom">
-            <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span> <span class="campaign_tile"  th:text="${campaignSelect.timeSegment == 'DAY' || campaignSelect.timeSegment == null ? '(주간)' : '(야간)'}"></span>
+        <div class="mrg75-top" style="display: flex; align-items: center;">
+            <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span><span class="campaign_tile"  th:text="${campaignSelect.timeSegment == 'DAY' || campaignSelect.timeSegment == null ? '(주간)' : '(야간)'}"></span>
         </div>
+
         <div class="info-section">
             <div class="info-text">
                 <div><b>신청 기간</b></div>
@@ -576,13 +577,14 @@
         <div class="campaignTitle">
             <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
             <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span> <span class="campaign_tile"  th:text="${campaignSelect.timeSegment == 'DAY' || campaignSelect.timeSegment == null ? '(주간)' : '(야간)'}"></span>
+            <span class="campaign_tile mrglAuto" th:text="${campaignSelect.ucChoice}"></span>
         </div>
         <div class="image-row">
             <img id="imgFile" style="margin: 15px auto" th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" class=""/><br>
             <!-- 이미지 경로는 마이클 환경에 맞게 수정해주세요 -->
             <!-- <img src="image2.jpg" alt="음식 이미지 2" /> -->
         </div>
-        
+
         <div class="mobile_view">
             <div class="mrg15-bottom">
                 <div th:if="${authUser != null && campaignSelect != null && authUser.canShowPoint(campaignSelect?.typeCode)}">
@@ -598,7 +600,7 @@
                             시급 시간당 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span>
                             , 근무시간 : <span th:text="${campaignSelect.workHour}"></span>
                             <div>
-                                총 포인트 : 
+                                총 포인트 :
                                 <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay * #conversions.convert(campaignSelect.workHour, 'java.lang.Integer'), 3, 'COMMA')}"></span>
                             </div>
                         </div>
@@ -614,6 +616,9 @@
                     행사 기간
                 </div>
             </nav>
+        </div>
+        <div class="campaign-info">
+            <span class="campaign_tile mrglAuto" th:text="${campaignSelect.ucChoice}"></span>
         </div>
         <div class="section-title">
             모집인원 <span class="highlight-pink">총 <span th:text="${campaignSelect.applicantsNum}"></span> / <span th:text="${campaignSelect.recruitmentNum}"></span>명</span>
@@ -636,7 +641,7 @@
                             시급 시간당 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span>
                             , 근무시간 : <span th:text="${campaignSelect.workHour}"></span>
                             <div>
-                                총 포인트 : 
+                                총 포인트 :
                                 <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay * #conversions.convert(campaignSelect.workHour, 'java.lang.Integer'), 3, 'COMMA')}"></span>
                             </div>
                         </div>
@@ -657,7 +662,7 @@
                 주소 : <span th:text="${campaignSelect.placeAddr}"></span>
             </div>
             <div class="content-text">
-                
+
             </div>
             <div class="map">
                 <div class="col-6">
@@ -673,8 +678,8 @@
 
         <form id="form" class="apply_Area" action="/apply" method="post">
             <div sec:authorize="!isAuthenticated()" class="guest-message">
-                <a th:href="@{/user01(target='/campaign/' + ${campaignSelect.campaignId})}" 
-                class="btn-apply" 
+                <a th:href="@{/user01(target='/campaign/' + ${campaignSelect.campaignId})}"
+                class="btn-apply"
                 style="text-align: center; display: inline-block; text-decoration: none; width: 100%;">
                 로그인하고 캠페인 신청하기
             </a>
@@ -688,7 +693,7 @@
                         신청하기
                     </a>
                 </div>
-    
+
                 <div th:if="${campaignApply != null}">
                     <button class="btn-remove disabled" type="button" disabled>신청취소</button>
                     <!-- <span class="userInfofont" th:text="${userCampaign.userNm}"></span>/<span class="userInfofont" th:text="${userCampaign.phoneNum}"></span><button th:onclick="rosterRemove([[${index}]], [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]])" class="btn-state mrg5">명단 삭제</button> -->
@@ -717,9 +722,9 @@
         <h2><span class="d-Day"th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
             th:data-campaign-id="${campaignSelect.campaignId}"></span></h2>
         <div class="period-info"> -->
-        <img id="imgFile" 
+        <img id="imgFile"
         th:src="${campaignSelect == null || #lists.isEmpty(campaignSelect.leaderList) ? '/images/not-image.png' : '/selectProfile?id=' + campaignSelect.leaderList[0].leaderNo + '&amp;args=profile'}"
-            alt="파일이미지" 
+            alt="파일이미지"
             class="profile_img"/><br>
         <br>
             <div>신청기간 : <span th:text="${campaignSelect.appPeriodStr}"></span> ~<span th:text="${campaignSelect.appPeriodEnd}"></span></div>
@@ -728,7 +733,7 @@
         <br>
         <div id="calendar">
         </div>
-        
+
         <!-- <div class="image-row">
             <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
         </div> -->
@@ -736,8 +741,8 @@
     <!-- <span th:text="${user}"></span> -->
     <form id="form" class="" action="/apply" method="post">
         <div sec:authorize="!isAuthenticated()" class="guest-message">
-            <a th:href="@{/user01(target='/campaign/' + ${campaignSelect.campaignId})}" 
-                class="btn-apply" 
+            <a th:href="@{/user01(target='/campaign/' + ${campaignSelect.campaignId})}"
+                class="btn-apply"
                 style="text-align: center; display: inline-block; text-decoration: none; width: 100%;">
                 로그인하고 캠페인 신청하기
             </a>
@@ -798,7 +803,7 @@
                     tab.setAttribute('tabindex', '0');
 
                     const target = tab.getAttribute('aria-controls');
-                    
+
                     document.getElementById(target+'-tab').classList.add('active');
                     var calendarEl = document.getElementById('calendarMobile');
                     var calendar_month = campaign.eventPeriodStr;

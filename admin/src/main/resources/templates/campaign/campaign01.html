@@ -38,23 +38,25 @@
                 </form>
                 <table class="info_table campaign_Table" border="1">
                     <colgroup>
+                        <col width="3%"></col>
+                        <col width="16%"></col>
+                        <col width="6%"></col>
                         <col width="5%"></col>
+                        <col width="5%"></col>
+                        <col width="6%"></col>
+                        <col width="5%"></col>
+                        <col width="5%"></col>
+                        <col width="10%"></col>
+                        <col width="15%"></col>
                         <col width="*"></col>
-                        <col width="10%"></col>
-                        <col width="10%"></col>
-                        <col width="10%"></col>
-                        <col width="8%"></col>
-                        <col width="8%"></col>
-                        <col width="7%"></col>
-                        <col width="15%"></col>
-                        <col width="15%"></col>
                     </colgroup>
                     <thead>
                         <th>ID</th>
-                        <th>캠페인명</th>
-                        <th>캠페인신청</th>
-                        <th>명단보기</th>
-                        <th>상세보기</th>
+                        <th>캠페인 명</th>
+                        <th>캠페인 신청</th>
+                        <th>명단 보기</th>
+                        <th>상세 보기</th>
+                        <th>포인트 유형</th>
                         <th>신청자수</th>
                         <th>모집인원</th>
                         <th>인솔자</th>
@@ -76,14 +78,15 @@
                                     <a th:class="|statusInfoChange applyConfirmButotn|"
                                     href="#"
                                     th:data-url="@{/campPopup01/{campaignId}(campaignId=${campaign.campaignId})}"
-                                    th:onclick="|openPopup(this.dataset.url, ${stat.index}); return false;|">캠페인신청</a>
+                                    th:onclick="|openPopup(this.dataset.url, ${stat.index}); return false;|">캠페인 신청</a>
                                 </td>
                                 <td class="pointer">
-                                    <a th:href="|/apply/applyConfirm/${campaign.campaignId}|" target="_blank">명단보기</a>
+                                    <a th:href="|/apply/applyConfirm/${campaign.campaignId}|" target="_blank">명단 보기</a>
                                 </td>
                                 <td class="pointer">
-                                    <a th:href="@{/campaign02(id=${campaign.campaignId})}" target="_blank">상세보기</a>
+                                    <a th:href="@{/campaign02(id=${campaign.campaignId})}" target="_blank">상세 보기</a>
                                 </td>
+                                <td><span th:text="${campaign.ucChoice}"></span></td>
                                 <td><span th:text="${campaign.applicantsNum}"></span></td>
                                 <td><span th:text="${campaign.recruitmentNum}"></span></td>
                                 <td><span th:text="${campaign.userNm}"></span></td>

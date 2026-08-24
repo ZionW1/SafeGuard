@@ -97,6 +97,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             type_code,
             applicants_Num,
             recruitment_Num,
+            (CASE
+                WHEN uc_choice = '01' THEN '캠페인 포인트'
+                WHEN uc_choice = '02' THEN '유저 포인트'
+                ELSE ''
+            END) as uc_choice,
             c.time_segment,
             GROUP_CONCAT(distinct u.user_nm SEPARATOR ', ') as user_Nm,
                 -- 2. 급여들만 슬래시(/)나 쉼표로 묶기

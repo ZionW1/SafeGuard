@@ -47,13 +47,14 @@
                                 <input type="hidden" class="leaderCode" name="leaderList[].leaderCode" />
                                 <input type="hidden" class="leaderId" name="leaderList[].leaderId" />
                                 <input type="hidden" class="leaderNo" name="leaderList[].leaderNo" />
+                                <input type="hidden" class="leaderNm" name="leaderList[].leaderNm" />
                                 <input type="hidden" class="leaderPay" name="leaderList[].leaderPay" />
                                 <input type="hidden" class="leaderPoint" name="leaderList[].leaderPoint" />
 
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>인솔자 선택</label>
-                                        <select id="leaderNm_pc" name="leaderList[].leaderNm" onchange="inputLeaderPhoneNumber(this)" class="sync-nm">
+                                        <select id="leaderNm_pc" onchange="inputLeaderPhoneNumber(this)" class="sync-nm">
                                             <option value="">-- 선택하세요 --</option>
                                             <option th:each="leader, stat : ${leaderList}"
                                                     th:value="${stat.index}"
@@ -430,6 +431,7 @@
                 const phoneInput = formGroup.querySelector('.sync-phone');
                 const noInput = formGroup.querySelector('.leaderNo');
                 const idInput = formGroup.querySelector('.leaderId');
+                const nmInput = formGroup.querySelector('.leaderNm');
 
                 if (idx === "") {
                     phoneInput.value = "";
@@ -439,10 +441,12 @@
                 }
 
                 const selectedLeader = leaderList[idx];
+                console.log(selectedLeader)
                 if (selectedLeader) {
                     phoneInput.value = selectedLeader.phoneNum || '';
                     if (noInput) noInput.value = selectedLeader.id || '';
                     if (idInput) idInput.value = selectedLeader.userId || '';
+                    if (nmInput) nmInput.value = selectedLeader.userNm || '';
                 }
             }
 
@@ -465,12 +469,14 @@
                     const hCode = clone.querySelector('.leaderCode');
                     const hId = clone.querySelector('.leaderId');
                     const hNo = clone.querySelector('.leaderNo');
+                    const hNm = clone.querySelector('.leaderNm');
                     const hPay = clone.querySelector('.leaderPay');
                     const hPoint = clone.querySelector('.leaderPoint');
 
                     if (hCode) hCode.value = leaderInfo.leaderCode || "";
                     if (hId) hId.value = leaderInfo.leaderId || "";
                     if (hNo) hNo.value = leaderInfo.leaderNo || "";
+                    if (hNm) hNm.value = leaderInfo.leaderNm || "";
                     if (hPay) hPay.value = leaderInfo.leaderPay || "0";
                     if (hPoint) hPoint.value = leaderInfo.leaderPoint || "0";
 

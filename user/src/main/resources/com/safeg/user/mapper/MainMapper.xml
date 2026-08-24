@@ -26,7 +26,7 @@
 
     <resultMap id="campaignMap" type="CampaignVO">
         <id property="campaignId" column="campaign_id" />
-        
+
         <result property="companyNm" column="company_Nm" />
         <result property="companyPh" column="company_Ph" />
         <result property="campaignTitle" column="campaign_Title" />
@@ -41,6 +41,8 @@
         <result property="savedName" column="saved_name" />
         <result property="typeCode" column="type_code" />
         <result property="typeNm" column="type_nm" />
+        <result property="ucChoice" column="uc_choice" />
+        <result property="userNm" column="user_nm" />
         <result property="leaderCode" column="leader_code" />
         <result property="appPeriodStr" column="app_period_str" />
         <result property="appPeriodEnd" column="app_period_end" />
@@ -59,7 +61,7 @@
     </resultMap>
     <!-- <resultMap type="Users" id="userMap">
         <id property="no" column="no" />
-        
+
         <result property="no" column="no" />
         <result property="username" column="username" />
         <result property="password" column="password" />
@@ -68,19 +70,19 @@
         <result property="enabled" column="enabled" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAt" column="updated_at" />
-        
+
         <collection property="authList" resultMap="authMap"></collection>
     </resultMap>
-        
+
     <resultMap type="UserAuth" id="authMap">
         <result property="no" column="no" />
         <result property="username" column="username" />
         <result property="auth" column="auth" />
     </resultMap> -->
-    
+
     <select id="campaignFavorite" resultMap="campaignMap">
         <![CDATA[
-        SELECT 
+        SELECT
             c.campaign_id,
             c.campaign_Title,
             c.recruitment_Num,
@@ -88,31 +90,38 @@
             c.type_code,
             f.saved_name,
             f.file_path,
-            (CASE
-                WHEN type_code = '01' THEN '경호'
-                WHEN type_code = '02' THEN '진행'
-                WHEN type_code = '03' THEN '수행'
+            CASE
+                WHEN c.type_code = '01' THEN '경호'
+                WHEN c.type_code = '02' THEN '진행'
+                WHEN c.type_code = '03' THEN '수행'
                 ELSE ''
-            END) as type_Nm,
-            campaign_pay,
+            END AS type_Nm,
+            CASE
+                WHEN c.uc_choice = '01' THEN '캠페인 포인트'
+                WHEN c.uc_choice = '02' THEN '유저 포인트'
+                ELSE ''
+            END AS uc_Choice,
+            c.campaign_pay,
             c.app_period_str,
             c.app_period_end,
-            event_Period_str,
-            event_Period_End,
-            time_segment,
+            c.event_Period_str,
+            c.event_Period_End,
+            c.time_segment,
             cl.user_nm
-        FROM campaign c 
-        LEFT OUTER JOIN files f 
-        ON c.campaign_id = f.target_id
+        FROM campaign c
+        LEFT OUTER JOIN files f
+            ON c.campaign_id = f.target_id
+        AND f.is_deleted = 'N'
+        AND f.target_type = 'campaign'
         LEFT OUTER JOIN camp_leader cl
-        on c.campaign_id = cl.campaign_id
-        Where f.is_deleted = 'N'
-        and f.target_type = 'campaign'
-        and c.is_deleted = 'N'
-        and c.app_Period_end >= CURDATE()
-        and c.applicants_Num <= c.recruitment_Num
-        and c.is_active = 'Y'
-        ORDER BY c.applicants_Num DESC, c.campaign_id desc
+            ON c.campaign_id = cl.campaign_id
+        AND cl.is_deleted = 'N' -- 리더 삭제 여부 조건 추가
+        WHERE c.is_deleted = 'N'
+        AND c.app_Period_end >= CURDATE()
+        AND c.applicants_Num <= c.recruitment_Num
+        AND c.is_active = 'Y'
+        GROUP BY c.campaign_id, f.SAVED_NAME, f.FILE_PATH, cl.user_nm-- 중복 방지를 위해 그룹화
+        ORDER BY c.applicants_Num DESC, c.campaign_id DESC
         ]]>
         <!-- DATE_FORMAT(c.event_Period_Str, '%Y.%m.%d') as event_period_str,
             DATE_FORMAT(c.event_Period_End, '%Y.%m.%d') as event_Period_End -->
@@ -120,13 +129,13 @@
 
     <select id="campaignWorkable" resultMap="campaignMap">
         <![CDATA[
-        SELECT 
+        SELECT
             c.campaign_id,
             c.campaign_Title,
             c.recruitment_Num,
             c.applicants_Num,
             c.type_code,
-            f.saved_name, 
+            f.saved_name,
             f.file_path,
             (CASE
                 WHEN type_code = '01' THEN '경호'
@@ -141,8 +150,8 @@
             event_Period_End,
             time_segment,
             cl.user_nm
-            FROM campaign c 
-        LEFT OUTER JOIN files f 
+            FROM campaign c
+        LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN camp_leader cl
         on c.campaign_id = cl.campaign_id
@@ -158,7 +167,7 @@
 
     <select id="campaignNew" resultMap="campaignMap">
         <![CDATA[
-        SELECT 
+        SELECT
             c.campaign_id,
             c.campaign_Title,
             c.recruitment_Num,
@@ -179,8 +188,8 @@
             event_Period_End,
             time_segment,
             cl.user_nm
-            FROM campaign c 
-        LEFT OUTER JOIN files f 
+            FROM campaign c
+        LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN camp_leader cl
         on c.campaign_id = cl.campaign_id
@@ -198,13 +207,13 @@
     </select>
 
     <select id="campaignSelect" resultType="campaignVO">
-        select 
+        select
             campaign_id,
-            company_Nm, 
-            company_Ph, 
-            campaign_Title, 
-            recruitment_Num, 
-            applicants_Num, 
+            company_Nm,
+            company_Ph,
+            campaign_Title,
+            recruitment_Num,
+            applicants_Num,
             place_Addr,
             mission,
             <!-- DATE_FORMAT(App_period_str,'%Y-%m-%d') AS app_period_str,
@@ -220,17 +229,17 @@
             result_date
             <!-- DATE_FORMAT(event_Period_str,'%Y-%m-%d') AS event_Period_str,
             DATE_FORMAT(event_Period_end,'%Y-%m-%d') AS event_Period_end -->
-        from campaign 
+        from campaign
         where campaign_id = #{id}
         and is_deleted = 'N'
         and is_active = 'Y'
     </select>
     <select id="campaignApply" resultType="UserCampaignVO">
-        select uc.user_id, uc.campaign_id, uc.user_no, c.event_period_str, c.event_period_end 
-        from user_campaign uc 
+        select uc.user_id, uc.campaign_id, uc.user_no, c.event_period_str, c.event_period_end
+        from user_campaign uc
         left outer join campaign c
         on uc.campaign_id = c.campaign_id
-        where uc.user_Id= #{userId} 
+        where uc.user_Id= #{userId}
         and uc.campaign_id = #{campaignId}
     </select>
 
@@ -246,12 +255,12 @@
     <select id="allView" resultMap="campaignMap">
         <![CDATA[
         SELECT
-            c.campaign_id, 
-            c.campaign_Title, 
-            c.recruitment_Num, 
-            c.applicants_Num, 
-            f.saved_name, 
-            f.file_path, 
+            c.campaign_id,
+            c.campaign_Title,
+            c.recruitment_Num,
+            c.applicants_Num,
+            f.saved_name,
+            f.file_path,
             c.app_period_str,
             c.app_period_end,
             c.event_Period_str,
@@ -266,8 +275,8 @@
             cl.user_nm,
             c.campaign_pay,
             DATE_FORMAT(c.created_at, '%Y.%m.%d') as created_at
-        FROM campaign c 
-        LEFT OUTER JOIN files f 
+        FROM campaign c
+        LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN camp_leader cl
         on c.campaign_id = cl.campaign_id
@@ -291,11 +300,11 @@
             and applicants_Num = 0
             ORDER BY c.created_At DESC, c.campaign_id desc
         </if>
-        
+
     </select>
 
     <select id="userCampaignApply" resultType="UserCampaignVO">
-        select 
+        select
             uc.campaign_id,
             uc.user_id,
             uc.user_No,
@@ -328,28 +337,28 @@
             time_segment,
             result_date,
             place_addr
-        from user_campaign uc 
-        left outer join user u 
+        from user_campaign uc
+        left outer join user u
         on uc.user_id = u.user_id
-        left outer join campaign c 
+        left outer join campaign c
         on uc.campaign_id = c.campaign_id
         where uc.campaign_id=#{id};
     </select>
 
     <select id="campaignDeleted" resultType="UserCampaignVO">
     <!-- SELECT c.* FROM campaign c
-    WHERE 
+    WHERE
         c.is_active = 'Y'
-    AND 
+    AND
         EXISTS (SELECT 1 FROM files f WHERE f.target_id = c.campaign_id AND f.is_deleted = 'N') -->
         SELECT c.* FROM campaign c
-    WHERE 
+    WHERE
         EXISTS (SELECT 1 FROM files f WHERE f.target_id = c.campaign_id)
     </select>
 
     <select id="campaignCount" resultType="int">
         SELECT count(*)
-        FROM campaign 
+        FROM campaign
         WHERE is_deleted = 'Y';
     </select>
 
@@ -380,7 +389,7 @@
         ]]>
     </update>
     <select id="bannerList" resultType="BannerVO">
-        SELECT 
+        SELECT
             banner_id,
             url,
             title

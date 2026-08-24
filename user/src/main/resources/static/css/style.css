@@ -28,7 +28,7 @@ form.optionForm {
     display: flex;
     flex-direction: row;
     gap: 24px;
-    display: flex; 
+    display: flex;
     justify-content: flex-end;
 }
 
@@ -52,7 +52,7 @@ select {
     font-size: 14px;
     outline: none;
     cursor: pointer;
-/*     
+/*
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #ccc;
@@ -173,7 +173,7 @@ a {
     border: 0 none;
     cursor: pointer; /* 마우스 올렸을 때 손가락 모양 추가 */
     text-indent: -9999em;
-    
+
     /* 배경 설정 수정 */
     background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat center;
     background-size: contain; /* 아이콘이 버튼 크기에 딱 맞게 조절됩니다 */
@@ -386,7 +386,7 @@ a {
     /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
     scroll-snap-align: start;
 }
-  
+
     /* 캠페인 리스트 (추가) */
     .campaign-list {
         display: flex;
@@ -397,7 +397,7 @@ a {
         /* height: ; 스크롤이 생기려면 높이 제한이 있어야겠지? */
         overflow-x: auto; /* 수직 스크롤바가 나타나도록 설정 */
     }
-    
+
     /* 스크롤바 스타일 (선택사항) */
     .campaign-list::-webkit-scrollbar {
         height: 15px;
@@ -506,7 +506,7 @@ a {
   .slider-btn.next {
     right: -10px;
   }
-  
+
     .left-view, .right-view {
         display: block;
         background: #fff;
@@ -532,11 +532,11 @@ a {
     display: flex;
     justify-content: center;
 }
-    
+
 .campaign-info-box {
     font-size: 14px;
   }
-  
+
   .campaign-tags {
     display: flex;
     font-weight: bold;
@@ -546,7 +546,7 @@ a {
     align-items: center; */
       /* 가로 가운데 정렬 세로 가운데 정렬(필요시) */
   }
-  
+
   .campaign-tags .tag {
     font-size: 15px;
     background: #eee;
@@ -554,7 +554,7 @@ a {
     padding: 2px 6px;
     border-radius: 4px;
   }
-  
+
   .campaign-tags .leader {
     padding: 8px 15px;
     font-size: 1.5em;
@@ -580,15 +580,15 @@ a {
     -webkit-line-clamp: 2; /* 2줄 제한 */
     overflow: hidden;
     text-overflow: ellipsis;
-    
+
     /* 너비를 부모에 꽉 차게 강제 */
-    width: 100%; 
+    width: 100%;
     max-width: 100%; /* 추가 */
-    
+
     font-size: 1.2rem;     /* 1.4em은 모바일에서 너무 커서 한 줄에 몇 자 안 들어갈 수 있어요 */
     line-height: 1.4;
-    
-    word-break: break-all; 
+
+    word-break: break-all;
     white-space: normal;  /* 중요: white-space가 nowrap이면 한 줄로만 나옵니다 */
     display: inline;
     vertical-align: baseline;
@@ -612,14 +612,14 @@ a {
     /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
     /* display: -webkit-box; */
     -webkit-box-orient: vertical;
-    
+
     /* 2. 핵심 설정: 최대 몇 줄까지 보여줄지 결정 */
-    -webkit-line-clamp: 2; 
-    
+    -webkit-line-clamp: 2;
+
     /* 3. 넘치는 부분 처리 */
     overflow: hidden;
     text-overflow: ellipsis;
-    
+
     /* 4. 기존 한 줄 고정 코드는 반드시 삭제하거나 주석 처리하세요 */
     /* white-space: nowrap;  <- 이 줄이 있으면 무조건 한 줄만 나옵니다. 삭제 필수! */
 
@@ -657,7 +657,7 @@ a {
 
     min-height: 2.5em;      /* 2줄 정도의 높이를 강제로 확보 (1.5em * 2) */
     /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
-    /* white-space: nowrap; */ 
+    /* white-space: nowrap; */
 }
 
 .card-point {
@@ -694,7 +694,7 @@ a {
         font-weight: bold;
         unicode-bidi: isolate;
     }
-  
+
   .tag.status {
     padding: 8px 15px;
     font-size: 1.2em;
@@ -715,16 +715,16 @@ a {
     box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
     transform-style: preserve-3d
 }
-  
+
   /* campaign-slider-track: 캠페인 카드들을 담고 실제 움직이는 요소 */
   .campaign-slider-track {
     display: flex; /* 자식 요소(카드)들을 가로로 나열 */
     transition: transform 0.5s ease-in-out; /* 슬라이드 애니메이션 효과 */
     /* transition을 JavaScript로 제어하여 무한 루프 구현 시 순간 이동 구간에서는 제거할 것 */
   }
-  
-  
-  
+
+
+
   /* slide-button: 이전/다음 버튼 */
   .slide-button {
     position: absolute;
@@ -744,19 +744,19 @@ a {
     z-index: 100;
     transition: background-color 0.2s ease;
   }
-  
+
   .slide-button:hover {
     background-color: rgba(0, 0, 0, 0.7);
   }
-  
+
   .slide-button.prev {
     left: 0; /* 컨테이너 좌측 끝 */
   }
-  
+
   .slide-button.next {
     right: 0; /* 컨테이너 우측 끝 */
   }
-  
+
   .slide-button:disabled {
     background-color: rgba(0, 0, 0, 0.2);
     cursor: not-allowed;
@@ -926,7 +926,7 @@ a {
     /* background-color: #fafafa; */
     /* font-family: 'Apple SD Gothic Neo', Malgun Gothic, sans-serif; */
     /* color: #666; */
-    
+
 }
 .footer-separator {
     border-bottom: 1px solid #ddd;
@@ -980,7 +980,7 @@ a {
     color: #000000;
 }
 .footer-copyright p {
-    
+
     font-size: large;
     color: #000000;
 }
@@ -1038,14 +1038,14 @@ a {
     text-align: right;
     font-size: 20px;
     float: right;
-    
+
 }
 
 .mobile_view {
     display: none;
 }
 
-.wdt200{ 
+.wdt200{
     width: 200px;
 }
 .mrgR50{
@@ -1115,7 +1115,7 @@ a {
     text-align: left;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
- /* 슬라이더 박스 */ 
+ /* 슬라이더 박스 */
 
 .slider-container {
     width: 100%;
@@ -1140,7 +1140,7 @@ a {
 .card {
     /* 100% / 7장 - (간격 * 6/7) = 7장과 간격이 잘 분배되도록 */
     /* flex: 0 0 calc((100% / 7) - 16px * (6 / 7)); */
-    flex: 0 0 calc((100% - (30px * 5)) / 6); 
+    flex: 0 0 calc((100% - (30px * 5)) / 6);
     min-width: calc((100% - (30px * 5)) / 6);
     height: 100%;
     background: white;
@@ -1265,7 +1265,7 @@ align-items: center; /* 수평 중앙 정렬 */
     padding: 30px; /* 카드 내부 패딩 */
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* 호버 효과 */
-    
+
     /* ⭐ 카드 내부 콘텐츠 정렬 (아이콘, 제목, 설명) ⭐ */
     display: flex;
     flex-direction: column;
@@ -1359,7 +1359,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     border: 2px solid #ff7448;
     color: #ff7448;
     background-color: transparent;
-    
+
     transition: all 0.3s;
 }
 
@@ -1683,6 +1683,24 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     font-weight: bold;
 }
 
+.tag {
+    display: inline-block;
+    padding: 4px 10px;
+    /* border: 1px solid #ff7448; */
+    border-radius: 12px;
+    color: #ff7448;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.pointCtgr {
+    text-align: center;
+    padding: 10px;
+    color: #ff7448;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
 .slide-item h3 {
     font-weight: 700;
     font-size: 2.0em;
@@ -1762,7 +1780,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     color: #836ddf; /* 아이콘 색상 */
     font-size: 1.2rem;
     /* 추가: z-index를 주면 다른 요소에 가려지지 않아 */
-    z-index: 10; 
+    z-index: 10;
 }
 
 /* .number {
@@ -2127,7 +2145,7 @@ table.bestPayList {
 
         /* FAQ 리스트 */
         .faq-list {margin: 0 23% 0px;}
-        
+
         .faq-item { border-bottom: 1px solid #eee; }
         .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 15px; }
         .faq-question:hover { background-color: #fafafa; }
@@ -2141,7 +2159,7 @@ table.bestPayList {
         }
         /* 기본적으로 답변은 숨깁니다. */
         .faq-answer {
-            display: none; 
+            display: none;
             background-color: #f8f9fa;
             padding: 30px 20px;
             font-size: 14px;
@@ -2190,12 +2208,12 @@ table.bestPayList {
         border: 0 none;
         cursor: pointer; /* 마우스 올렸을 때 손가락 모양 추가 */
         text-indent: -9999em;
-        
+
         /* 배경 설정 수정 */
         background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat center;
         background-size: contain; /* 아이콘이 버튼 크기에 딱 맞게 조절됩니다 */
         background-color: transparent; /* 배경색 투명하게 */
-    
+
         position: relative;
         top: 18px;
     }
@@ -2229,6 +2247,17 @@ table.bestPayList {
 .background-gray {
     background-color: #eee;
     padding: 80px 0;
+}
+
+.campaignTitle {
+    display: flex;
+    align-items: center;
+}
+
+.mrglAuto {
+    margin-left: auto;
+    color: #ff7448;
+    font-size: 2em;
 }
 
   /* 모바일 화면 (예: 768px 이하) */
@@ -2290,7 +2319,7 @@ table.bestPayList {
     .campaignTitle{
         display: none;
     }
-    
+
     .campaign-info {
         display: block;
     }
@@ -2337,7 +2366,7 @@ table.bestPayList {
     .right-view {
         display: none;
     }
-    
+
     .map {
         margin-bottom: 15px;
     }
@@ -2462,7 +2491,7 @@ table.bestPayList {
         color: #333;
         text-decoration: none;
     }
-    
+
     .mobile-header ul li a:hover {
             background-color: #f0f0f0;
     }
@@ -2505,7 +2534,7 @@ table.bestPayList {
     }
 
     /* JavaScript에서 cardWidth, cardMarginRight 재계산되도록 initializeSlider() 호출 */
-    
+
     .slide-button {
         width: 30px;
         height: 30px;
@@ -2597,7 +2626,7 @@ table.bestPayList {
     .text-area h1 {
         font-size: 1.8rem;
     }
-    
+
     .profile_img {
         width: 60%;
         height: 180px;
@@ -2665,7 +2694,7 @@ table.bestPayList {
         .number {
         font-size: 1.8rem;
         }
-    
+
         .card-grid-container.three-cols,
     .card-grid-container.four-cols {
     grid-template-columns: repeat(2, 1fr); /* 모두 1개로 */
@@ -2735,11 +2764,11 @@ table.bestPayList {
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
-        
+
         /* 한 줄로 유지하고 싶다면 아래 주석을 풀고 위 box 설정을 지우세요 */
-        /* white-space: nowrap; */ 
+        /* white-space: nowrap; */
     }
-    
+
     .notice-table {
         display: none;
         float: none;
@@ -2752,7 +2781,7 @@ table.bestPayList {
     .article-info {
         margin-left:0; font-size: 1.2em; color: #666; margin-bottom: 20px; font-weight: 700;
     }
-    
+
     .notice-title {
         margin-left: 0;
         font-size: 1.5em;
@@ -2926,18 +2955,18 @@ table.bestPayList {
             -webkit-line-clamp: 2; /* 2줄 제한 */
             overflow: hidden;
             text-overflow: ellipsis;
-            
+
             /* 너비를 부모에 꽉 차게 강제 */
             width: 220px;
-            
+
             font-size: 1.2rem;     /* 1.4em은 모바일에서 너무 커서 한 줄에 몇 자 안 들어갈 수 있어요 */
             line-height: 1.4;
             height: 2.8em;        /* (line-height 1.4 * 2줄) 딱 맞춰주기 */
-            
-            word-break: break-all; 
+
+            word-break: break-all;
             white-space: normal;  /* 중요: white-space가 nowrap이면 한 줄로만 나옵니다 */
         }
-    
+
         /* 내부 span들은 한 줄로 흐르게 처리 */
         .campaign-title-text span {
             display: inline;
@@ -2947,7 +2976,7 @@ table.bestPayList {
         .title-overlay {
             width: 100%;
         }
-    
+
 
     .card-point {
         font-size: 1.2em;
@@ -2957,17 +2986,17 @@ table.bestPayList {
         /* 1. 필수 설정: 박스 형태를 멀티라인에 맞게 변경 */
         /* display: -webkit-box; */
         -webkit-box-orient: vertical;
-        
+
         /* 2. 핵심 설정: 최대 몇 줄까지 보여줄지 결정 */
-        -webkit-line-clamp: 2; 
-        
+        -webkit-line-clamp: 2;
+
         /* 3. 넘치는 부분 처리 */
         overflow: hidden;
         text-overflow: ellipsis;
-        
+
         /* 4. 기존 한 줄 고정 코드는 반드시 삭제하거나 주석 처리하세요 */
         /* white-space: nowrap;  <- 이 줄이 있으면 무조건 한 줄만 나옵니다. 삭제 필수! */
-    
+
         /* 추가 디자인 제안 */
         width: 100%;
         font-size: 1.4em;
@@ -2995,7 +3024,7 @@ table.bestPayList {
         margin-left: auto;
         width: 65px;
     }
-    
+
     .mypage_link{
         font-size: 14px;
         font-weight: 500;
@@ -3031,7 +3060,7 @@ table.bestPayList {
         color: #888;
         cursor: pointer;
     }
-    
+
     .optionSubmit {
         display: inline-block;
         width: 25px;  /* 아이콘이 잘 안 보이면 크기를 조금 키워보세요 */
@@ -3040,12 +3069,12 @@ table.bestPayList {
         border: 0 none;
         cursor: pointer; /* 마우스 올렸을 때 손가락 모양 추가 */
         text-indent: -9999em;
-        
+
         /* 배경 설정 수정 */
         background: url('https://cdn-icons-png.flaticon.com/512/149/149852.png') no-repeat center;
         background-size: contain; /* 아이콘이 버튼 크기에 딱 맞게 조절됩니다 */
         background-color: transparent; /* 배경색 투명하게 */
-    
+
         position: relative;
         top: 0px;
         left: 0%;
@@ -3109,15 +3138,15 @@ table.bestPayList {
 
     .desktop-header, .desktop-nav { display: none !important; } /* 데스크톱 요소 숨김 */
 
-    .mobile-top-bar { 
-        /* display: flex; 
+    .mobile-top-bar {
+        /* display: flex;
         justify-content: space-between;
-        align-items: center; 
-        padding: 0px 20px; 
-        background: #fff; 
-        border-bottom: 1px solid #eee; 
-        position: sticky; 
-        top: 0; 
+        align-items: center;
+        padding: 0px 20px;
+        background: #fff;
+        border-bottom: 1px solid #eee;
+        position: sticky;
+        top: 0;
         z-index: 999; */
 
         display: flex;
@@ -3135,7 +3164,7 @@ table.bestPayList {
         box-sizing: border-box;
     }
     .mobile-logo { margin: 0 auto; font-size: 20px; font-weight: bold; color: #ff5a5f; text-decoration: none; }
-    .hamburger-btn { 
+    .hamburger-btn {
         position: absolute;
         left: 2%;
         font-size: 28px;
@@ -3183,8 +3212,8 @@ table.bestPayList {
     /* 사이드 메뉴 스타일 */
     .mobile-side-drawer {
         display: block; position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
-        background: #fff; 
-        z-index: 1001; 
+        background: #fff;
+        z-index: 1001;
         transition: 0.3s ease; box-shadow: -5px 0 15px rgba(0,0,0,0.1);
     }
     .mobile-side-drawer.open { left: 0; }
@@ -3192,21 +3221,21 @@ table.bestPayList {
     .drawer-list { list-style: none; padding: 10px 20px; }
     .drawer-list li { padding: 15px 0; border-bottom: 1px solid #f1f1f1; }
     .drawer-list li a { text-decoration: none; color: #333; font-size: 16px; display: block; }
-    
-    .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); 
-        z-index: 1000; 
+
+    .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+        z-index: 1000;
     }
     .drawer-overlay.active { display: block; }
 
     .search-modal {
         width: 100%;
         height: 60px;
-        display: none; 
-        position: absolute; 
-        top: 0; left: 0; width: 100%; height: 100%; 
+        display: none;
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
         /* background: rgba(0,0,0,0.5);  */
-        z-index: 1002; 
-        justify-content: center; 
+        z-index: 1002;
+        justify-content: center;
         align-items: center;
     }
 
@@ -3224,7 +3253,7 @@ table.bestPayList {
         z-index: 1000; /* 다른 요소보다 위에 표시 */
         padding-bottom: env(safe-area-inset-bottom); /* 아이폰 하단 바 간섭 방지 */
     }
-    
+
     .nav-item {
         width: 20%;
         border: 1px;
@@ -3235,11 +3264,11 @@ table.bestPayList {
         color: #888;
         font-size: 14px;
     }
-    
+
     .nav-item.active {
         color: #ff6b35; /* 강조하고 싶은 포인트 컬러 (예: 주황색) */
     }
-    
+
     .nav-item i {
         font-size: 20px;
         margin-bottom: 4px;
@@ -3281,7 +3310,7 @@ table.bestPayList {
         border-radius: 8px;
         display: none;
     }
-    
+
     .cert_preview {
         width: 90%;
         height: 430px;
@@ -3413,7 +3442,7 @@ table.bestPayList {
 
     /* 기본적으로 답변은 숨깁니다. */
     .faq-answer {
-    display: none; 
+    display: none;
     background-color: #f8f9fa;
     padding: 20px 20px;
     font-size: 14px;
@@ -3465,7 +3494,7 @@ table.bestPayList {
         margin-left: 50px;
         width: 65px;
     }
-    
+
     .mypage_link{
         font-size: 14px;
         font-weight: 500;
@@ -3521,7 +3550,7 @@ table.bestPayList {
         color: #333;
         text-decoration: none;
     }
-    
+
     .mobile-header ul li a:hover {
             background-color: #f0f0f0;
     }
@@ -3554,11 +3583,11 @@ table.bestPayList {
         float: right;
         height: 100px;
     }
-    
+
     .nav-bar {
         display: none;
     }
-    
+
     .campaign-slider-container {
         padding: 0 10px; /* 버튼 공간 더 줄이기 */
     }
@@ -3568,7 +3597,7 @@ table.bestPayList {
         width: 100%;
     }
 
-    
+
 
     .campaign-tags .leader {
         padding: 8px 10px;
@@ -3576,11 +3605,11 @@ table.bestPayList {
         background: #f8e1ff;
         color: #b151ff;
     }
-    
+
     .close_container {
         margin: 50px auto 20px;
     }
-    
+
     .card-badge {
         background-color: #e0f2f7; /* 기본 뱃지 색상 */
         color: #01579b;
@@ -3591,7 +3620,7 @@ table.bestPayList {
         align-self: flex-start; /* 뱃지를 왼쪽 정렬 */
         font-weight: bold;
     }
-    
+
     .campaign-list {
         display: flex; /* 가로 배열의 정석 */
         overflow-x: auto; /* 내용이 넘칠 때만 스크롤 생성 */
@@ -3602,9 +3631,9 @@ table.bestPayList {
         box-sizing: border-box;
         -webkit-overflow-scrolling: touch; /* 모바일 부드러운 스크롤 */
     }
-    
+
     /* 자식 요소 (개별 캠페인 카드) */
-    .campaign-list > div { 
+    .campaign-list > div {
         flex: 0 0 auto; /* ★중요: 너비가 줄어들지 않도록 고정 */
     }
 
@@ -3648,36 +3677,36 @@ table.bestPayList {
     }
     .notice-table_mobile {
         /* display: block 대신 table을 유지해야 컬럼 제어가 가능합니다 */
-        display: table; 
+        display: table;
         width: 100%;           /* 80% 대신 100%로 꽉 채우기 */
         table-layout: fixed;   /* 컬럼 너비를 고정하기 위해 필수 */
         border-collapse: collapse;
         margin: 10px 0;
     }
-    
+
     /* 컬럼 비율 강제 조정 */
     .notice-table_mobile th:nth-child(1),
     .notice-table_mobile td:nth-child(1) {
         width: 60px;           /* 번호 칸은 딱 60px만 차지 */
         text-align: center;
     }
-    
+
     .notice-table_mobile th:nth-child(2),
     .notice-table_mobile td:nth-child(2) {
         width: auto;           /* 제목 칸이 남은 공간을 다 차지함 */
     }
-    
+
     .notice-table_mobile th, .notice-table_mobile td {
         padding: 15px 10px;    /* 모바일에 맞게 패딩 살짝 조정 */
         border-bottom: 1px solid #eee;
         font-size: 16px;       /* 20px은 모바일에서 커 보일 수 있어 16~18px 권장 */
     }
-    
+
     .notice-table_mobile th {
         font-weight: 600;
         color: #555;
     }
-    
+
     .notice-table_mobile td.title {
         text-align: center;      /* 제목은 왼쪽 정렬 */
         color: #333;
@@ -3687,7 +3716,7 @@ table.bestPayList {
         overflow: hidden;
         text-overflow: ellipsis; /* 너무 길면 ... 표시 */
     }
-    
+
     .notice-table_mobile tr:hover {
         background-color: #fdfdfd;
     }
@@ -3715,22 +3744,22 @@ table.bestPayList {
         height: auto;
         display: block;
     }
-    
+
     .campaign-title-text {
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2; /* 2줄 제한 */
         overflow: hidden;
         text-overflow: ellipsis;
-        
+
         /* 너비를 부모에 꽉 차게 강제 */
         width: 165px;
-        
+
         font-size: 1.2rem;     /* 1.4em은 모바일에서 너무 커서 한 줄에 몇 자 안 들어갈 수 있어요 */
         line-height: 1.4;
         height: 2.8em;        /* (line-height 1.4 * 2줄) 딱 맞춰주기 */
-        
-        word-break: break-all; 
+
+        word-break: break-all;
         white-space: normal;  /* 중요: white-space가 nowrap이면 한 줄로만 나옵니다 */
     }
 
@@ -3749,5 +3778,11 @@ table.bestPayList {
     .campaign-title-text span {
         display: inline;
         vertical-align: baseline;
+    }
+
+    .mrglAuto {
+        margin-left: auto;
+        color: #ff7448;
+        font-size: 1.5em;
     }
 }

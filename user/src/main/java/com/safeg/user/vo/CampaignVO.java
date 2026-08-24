@@ -40,7 +40,7 @@ public class CampaignVO {
     //private List<CampaignFilesVO> campaignFilesList; //첨부 파일 정보
     private String filePath; //varchar(500) not null comment '파일 저장 경로',
     private String savedName; //varchar(255) not null comment '저장 파일
-    
+
     private boolean showPoint;
 
     private Long id;
@@ -74,7 +74,7 @@ public class CampaignVO {
     private LocalDate eventStrDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate eventEndDate;
-    
+
 	private String createdAt;
 	private String updatedAt;
     private String isDeleted;
@@ -88,12 +88,14 @@ public class CampaignVO {
 
     private String applyDateS;
 
+    private String ucChoice;
+
     private List<CampLeaderVO> leaderList;
 
 //     // Getter, Setter
 //     public Long getCampaignId() { return campaignId; }
 //     public void setCampaignId(Long campaignId) { this.campaignId = campaignId; }
-    
+
 //     public List<CampaignLeaderVO> getLeaderList() { return leaderList; }
 //     public void setLeaderList(List<CampaignLeaderVO> leaderList) { this.leaderList = leaderList; }
 // }
@@ -104,7 +106,7 @@ public class CampaignVO {
     private String leaderPhone; // 인솔자 연락처
     private String leaderId; // 인솔자 연락처
     private Long leaderNo; // 인솔자 번호
-    
+
     private MultipartFile fileName;    // 파일명
     private String phoneNum;
     private MultipartFile image; // 첨부 파일 목록
@@ -119,7 +121,7 @@ public class CampaignVO {
     private String workHour;
     private String wageChk;
     private String timeSegment;
-    
+
     //private List<CampaignFilesVO> campaignFilesList; //첨부 파일 정보
-    
+
 }

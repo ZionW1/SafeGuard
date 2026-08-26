@@ -7,12 +7,13 @@
 
     <select id="reviewList" resultType="ReviewVO">
         <![CDATA[
-        SELECT 
+        SELECT
             r.review_id,
             r.campaign_id,
             r.user_id,
             r.title,
             r.content,
+            r.blog_url,
             r.thumbnail_name,
             c.time_segment,
             (CASE
@@ -23,13 +24,13 @@
             END) as type_Nm,
             r.created_at,
             r.updated_at
-        FROM 
+        FROM
             review r
         LEFT OUTER JOIN
             campaign c
-        ON 
+        ON
             r.campaign_id = c.campaign_id
-        ORDER BY 
+        ORDER BY
             review_id desc
         LIMIT 30
         ]]>
@@ -37,7 +38,7 @@
 
     <select id="reviewSelect" resultType="ReviewVO">
         <![CDATA[
-        SELECT 
+        SELECT
             r.review_id,
             r.campaign_id,
             r.user_id,
@@ -48,23 +49,24 @@
             r.thumbnail_name,
             r.created_at,
             r.updated_at
-        FROM 
+        FROM
             review r
         LEFT OUTER JOIN
             user u
-        ON 
+        ON
             r.user_id = u.user_id
-        Where 
+        Where
             review_id = #{reviewId}
         ]]>
     </select>
 
     <insert id="reviewInsert" parameterType="ReviewVO" useGeneratedKeys="true" keyProperty="reviewId">
-        INSERT INTO review ( 
+        INSERT INTO review (
             campaign_id,
             user_id,
             title,
             <!-- content, -->
+            blog_url,
             address,
             thumbnail_name,
             created_at,
@@ -75,6 +77,7 @@
             #{userId},
             #{title},
             <!-- #{content}, -->
+            #{blogUrl},
             #{address},
             #{thumbnailName},
             now(),
@@ -97,23 +100,23 @@
                 WHEN u.guard_type = '02' THEN '경호'
                 ELSE 'X'
             END) AS guard_type
-        FROM 
+        FROM
             campaign c
-        LEFT OUTER JOIN 
+        LEFT OUTER JOIN
             user u
-        ON 
+        ON
             c.LEADER_CODE = u.id
-        WHERE 
+        WHERE
             CAMPAIGN_ID = #{campaignId}
     </select>
 
     <select id="reviewSelectConfirm" resultType="String">
         <![CDATA[
-        SELECT 
+        SELECT
             r.review_id
-        FROM 
+        FROM
             review r
-        Where 
+        Where
             campaign_id = #{campaignId}
         ]]>
     </select>

@@ -7,7 +7,7 @@
 
     <select id="faqList" resultType="AdminContentVO">
         <![CDATA[
-        SELECT 
+        SELECT
             Admin_Content_id,
             title,
             content,
@@ -15,24 +15,24 @@
             author,
             created_at,
             updated_at
-        FROM 
+        FROM
             Admin_Content
         where
         ]]>
+        content_type='FAQ'
         <if test="option.code == 0">
-            title like CONCAT('%', #{option.keyword}, '%')
+            AND title like CONCAT('%', #{option.keyword}, '%')
         </if>
-        AND content_type='FAQ'
         and is_active = 'Y'
         order by Admin_Content_id desc
         <!-- <if test="option.orderCode == 0">
-            
+
         </if> -->
     </select>
 
     <select id="faqSelect" resultType="AdminContentVO">
         <![CDATA[
-        SELECT 
+        SELECT
             Admin_Content_id,
             title,
             content,
@@ -40,7 +40,7 @@
             author,
             created_at,
             updated_at
-        FROM 
+        FROM
             Admin_Content
         where
             Admin_Content_id = #{faqId}

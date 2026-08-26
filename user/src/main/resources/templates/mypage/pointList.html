@@ -79,7 +79,7 @@
                     <colgroup>
                         <col style="width: 5%;"></col>
                         <col style="width: 15%;"></col>
-                        <col style="width: 65%;"></col>
+                        <!-- <col style="width: 65%;"></col> -->
                         <col style="width: 10%"></col>
                         <col style="width: 5%;"></col>
                     </colgroup>
@@ -87,7 +87,7 @@
                         <tr>
                             <th>번호</th>
                             <th>이름</th>
-                            <th>날짜</th>
+                            <!-- <th>날짜</th> -->
                             <th>포인트</th>
                             <th>횟수</th>
                         </tr>
@@ -97,7 +97,7 @@
                             <tr th:each="giver, stat : ${referrerList}">
                                 <td th:text="${stat.index + 1}"></td>
                                 <td th:text="${giver.userNm}"></td>
-                                <td th:text="${giver.missionDate != null ? giver.missionDate : '날짜 없음'}">0</td>
+                                <!-- <td th:text="${giver.missionDate != null ? giver.missionDate : '날짜 없음'}">0</td> -->
                                 <td th:text="${giver.amount != null ? #numbers.formatInteger(giver.amount, 3, 'COMMA') : 0}">0</td>
                                 <td th:text="${giver.pointCnt != null ? giver.pointCnt: 0}">0</td>
                             </tr>
@@ -147,7 +147,7 @@
                                 </th:block>
                                 <th:block th:unless="${leaderList != null and !leaderList.isEmpty()}">
                                     <tr>
-                                        <td colspan="5" style="text-align:center;">추천인 포인트가 없습니다.</td>
+                                        <td colspan="5" style="text-align:center;">인솔자 포인트가 없습니다.</td>
                                     </tr>
                                 </th:block>
                             </tbody>
@@ -187,7 +187,7 @@
                                 <th>번호</th>
                                 <th>캠페인 명</th>
                                 <th>날짜</th>
-                                <th>상태</th>
+                                <th>사유</th>
                                 <th>포인트</th>
                             </tr>
                         </thead>
@@ -198,13 +198,13 @@
                                     <td th:text="${stat.index + 1}"></td>
                                     <td th:text="|${giver.campaignTitle} (${giver.timeSegment == 'DAY' || giver.timeSegment == null ? '주간' : '야간'})|"></td>
                                     <td th:text="${giver.missionDate}"></td>
-                                    <td th:text="${giver.statusNm}"></td>
+                                    <td th:text="${giver.reasonInfo}"></td>
                                     <td th:text="${giver.amount != null ? #numbers.formatInteger(giver.amount, 3, 'COMMA') : 0}"></td>
                                 </tr>
                                 </th:block>
                                 <th:block th:unless="${overPayList != null and !overPayList.isEmpty()}">
                                     <tr>
-                                        <td colspan="5" style="text-align:center;">추천인 포인트가 없습니다.</td>
+                                        <td colspan="5" style="text-align:center;">추가 지출 포인트가 없습니다.</td>
                                     </tr>
                                 </th:block>
                             <!-- <tr th:each="point, stat : ${overPayList}">

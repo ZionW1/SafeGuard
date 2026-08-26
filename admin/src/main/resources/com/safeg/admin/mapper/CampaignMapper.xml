@@ -1165,9 +1165,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             user_no,
             user_id,
             time_segment,
+            applied_str_date,
+            applied_end_date,
             apply_date,
             event_str_date,
             event_end_date,
+            is_leader,
             status,
             is_leader,
             lead_apply,
@@ -1180,9 +1183,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             user_No,
             user_id,
             #{timeSegment},
+            #{appPeriodStr},
+            #{appPeriodEnd},
             #{applyDate}, -- 새로 생성될 날짜
             #{eventPeriodStr},
             #{eventPeriodEnd},
+            'N',
             #{status}, -- 상태는 매개변수로 전달받음 (예: '0' 또는 '8')
             #{isLeader}, -- 리더 여부도 매개변수로 전달받음 (예: 'Y' 또는 'N')
             #{leadApply},

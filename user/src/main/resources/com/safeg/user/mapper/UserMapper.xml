@@ -150,7 +150,8 @@
         SELECT
             u.user_id,
             u.user_nm,
-            COALESCE(COUNT(uc.campaign_id), 0) AS count
+            /* uc 참여 건수 + cl 인솔 건수를 합산하여 카운트 */
+            (COUNT(DISTINCT uc.campaign_id) + COUNT(DISTINCT cl.campaign_id)) AS count
         FROM
             user u
         LEFT OUTER JOIN
@@ -158,15 +159,27 @@
         ON
             u.user_id = uc.user_id
         AND
-            uc.status in ('2','9')
-        WHERE
-            u.role in ('USER', 'LEADER')
+            uc.status IN ('2')
         AND
             uc.is_deleted = 'N'
         AND
-apply_date LIKE CONCAT('2026-07', '%')
+            uc.apply_date LIKE CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '%') -- 날짜 조건을 JOIN 절로 이동
+        LEFT OUTER JOIN
+            camp_leader cl
+        ON
+            u.user_id = cl.user_id
+        AND
+            cl.status IN ('9')
+        AND
+            cl.is_deleted = 'N' -- cl.is_deleted 로 수정!
+        AND
+            cl.apply_date LIKE CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '%') -- 날짜 조건을 JOIN 절로 이동
+        WHERE
+            u.role IN ('USER', 'LEADER')
         GROUP BY
-            u.id, u.user_nm, u.email
+            u.id, u.user_id, u.user_nm
+        HAVING
+            count &gt; 0 -- 이번 달 활동 내역이 1건 이상인 유저만 조회
         ORDER BY
             count DESC,
             u.id ASC
@@ -175,44 +188,26 @@ apply_date LIKE CONCAT('2026-07', '%')
 
     <select id="bestPayList" resultType="PointHistoryVO">
         SELECT
-            u.id AS user_id,
+            u.id AS user_no,
             u.user_nm,
-            u.user_id AS id,
-            SUM(amount) AS amount,
+            u.user_id AS user_id,
+            SUM(ph.amount) AS amount,
             u.role
         FROM
             point_history ph
-        LEFT OUTER JOIN
-            user u ON ph.user_no = u.id AND ph.is_deleted = 'N'
-        LEFT OUTER JOIN
-            campaign c ON ph.campaign_id = c.CAMPAIGN_ID
-        /*  실시간 인원수를 계산하는 서브쿼리 추가 */
-        -- 서브쿼리 부분 수정
-        LEFT OUTER JOIN (
-            SELECT
-                campaign_id,
-                DATE(apply_date) AS work_date,       -- 💥 출근한 '날짜'를 추출
-                COUNT(DISTINCT user_id) AS active_applicants -- 당일 순수 출근 인원수
-            FROM
-                user_campaign
-            WHERE
-                status = '2' AND is_deleted = 'N'
-            GROUP BY
-                campaign_id, DATE(apply_date)        -- 💥 캠페인 번호와 날짜별로 그룹을 묶음
-        ) uc_count
-        ON ph.campaign_id = uc_count.campaign_id
-        AND ph.mission_date = uc_count.work_date    -- 💥 [중요] 포인트 날짜와 출근 날짜가 일치하는 것만 매칭!
+        JOIN
+            user u ON ph.user_no = u.id
         WHERE
             u.role IN ('USER', 'LEADER')
         AND
             ph.is_deleted = 'N'
         AND
-        ph.mission_date LIKE CONCAT('2026-07', '%')
-            <!-- ph.mission_date LIKE CONCAT(DATE_FORMAT(now(), '%Y-%m'), '%') -->
+            ph.mission_date LIKE CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '%')
         GROUP BY
             u.id, u.user_nm, u.user_id, u.role
         ORDER BY
-            amount DESC, u.id ASC
+            amount DESC,
+            u.id ASC
         LIMIT 10
     </select>
 

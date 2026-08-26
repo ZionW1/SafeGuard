@@ -468,6 +468,7 @@
                 WHEN lc.status = '9' THEN '퇴근'
                 ELSE '알 수 없음'
             END) as status_nm,
+            reason_info,
             ph.mission_date,
             amount
         FROM

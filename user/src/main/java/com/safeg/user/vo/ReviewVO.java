@@ -20,11 +20,12 @@ public class ReviewVO {
     private String content;      // content
     private String address;      // 주소
     private String thumbnailName; // thumnail_name (DB에 저장될 파일명 문자열)
+    private String blogUrl;
     private String createdAt;    // created_at
     private String updatedAt;    // updated_at
 
     // 💡 [화면 받아오기용] HTML Form 태그에서 <input type="file" name="reviewFile">로 던진 이미지를 파싱하는 용도
-    private MultipartFile thumbnail; 
+    private MultipartFile thumbnail;
 
     // 💡 [화면 뿌려주기용] MyBatis Select 쿼리문에서 JOIN을 통해 끌고 와 화면에 출력할 용도
     private String reviewerName;  // 회원 테이블(users)에서 JOIN으로 가져올 이름

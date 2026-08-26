@@ -95,7 +95,7 @@
                 WHEN c.type_code = '02' THEN '진행'
                 WHEN c.type_code = '03' THEN '수행'
                 ELSE ''
-            END AS type_Nm,
+            END AS type_nm,
             CASE
                 WHEN c.uc_choice = '01' THEN '캠페인 포인트'
                 WHEN c.uc_choice = '02' THEN '유저 포인트'
@@ -142,7 +142,12 @@
                 WHEN type_code = '02' THEN '진행'
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
-            END) as typeNm,
+            END) as type_nm,
+            CASE
+                WHEN c.uc_choice = '01' THEN '캠페인 포인트'
+                WHEN c.uc_choice = '02' THEN '유저 포인트'
+                ELSE ''
+            END AS uc_Choice,
             campaign_pay,
             c.app_period_str,
             c.app_period_end,
@@ -180,7 +185,12 @@
                 WHEN type_code = '02' THEN '진행'
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
-            END) as typeNm,
+            END) as type_nm,
+            CASE
+                WHEN c.uc_choice = '01' THEN '캠페인 포인트'
+                WHEN c.uc_choice = '02' THEN '유저 포인트'
+                ELSE ''
+            END AS uc_Choice,
             campaign_pay,
             c.app_period_str,
             c.app_period_end,

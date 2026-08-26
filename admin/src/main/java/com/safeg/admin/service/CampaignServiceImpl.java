@@ -188,6 +188,7 @@ public class CampaignServiceImpl implements CampaignService{
         // 1. 방어막: leaderList가 비어있거나 인솔자가 없는 경우 안전하게 처리
         String leaderPh = "";
         if (campaignVO.getLeaderList() != null && !campaignVO.getLeaderList().isEmpty()) {
+            log.info("campaignVO.getLeaderList");
             // 0번째 인솔자 번호 추출 (null이면 공백 처리)
             leaderPh = campaignVO.getLeaderList().get(0).getLeaderPh();
             if (leaderPh == null) leaderPh = "";
@@ -197,23 +198,23 @@ public class CampaignServiceImpl implements CampaignService{
 
         // 2. 알림톡 발송 판단 로직
         // 인솔자 번호가 없거나, 업체 번호와 인솔자 번호가 완전히 같은 경우 -> 업체에만 1번 발송
-        // if (leaderPh.isEmpty() || companyPh.equals(leaderPh)) {
-        //     aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
-        //         campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
-        //         "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
-        // }
-        // // 업체 번호와 인솔자 번호가 서로 다른 경우 -> 각각 1번씩 총 2번 발송
-        // else {
-        //     // 인솔자에게 발송 (💡 campaignVO.getLeaderPhone() 대신 통일성 있게 leaderPh 변수 사용을 권장합니다)
-        //     aligoSmsService.registrationAsync(leaderPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
-        //         campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
-        //         "https://행집.com/apply/userCampaignApply/" + campaignId, leaderPh);
+        if (leaderPh.isEmpty() || companyPh.equals(leaderPh)) {
+            aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+                "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
+        }
+        // 업체 번호와 인솔자 번호가 서로 다른 경우 -> 각각 1번씩 총 2번 발송
+        else {
+            // 인솔자에게 발송 (💡 campaignVO.getLeaderPhone() 대신 통일성 있게 leaderPh 변수 사용을 권장합니다)
+            aligoSmsService.registrationAsync(leaderPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+                "https://행집.com/apply/userCampaignApply/" + campaignId, leaderPh);
 
-        //     // 업체에게 발송
-        //     aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
-        //         campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
-        //         "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
-        // }
+            // 업체에게 발송
+            aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+                "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
+        }
 
         return result;
     }
@@ -724,8 +725,9 @@ public class CampaignServiceImpl implements CampaignService{
                             // ★ [핵심 수정] 복사 destination은 새로 늘어난 targetDate가 되어야 합니다!
                             paramInfo.setApplyDate(targetDate);
                             paramInfo.setBeforeDate(sourceDate); // 원본 날짜 전달
-
-                            paramInfo.setEventPeriodStr(dto.getEventPeriodStr());
+                            paramInfo.setAppliedStrDate(dto.getAppPeriodStr());
+                            paramInfo.setAppPeriodStr(dto.getAppPeriodEnd());
+                            paramInfo.setAppPeriodEnd(dto.getEventPeriodStr());
                             paramInfo.setEventPeriodEnd(dto.getEventPeriodEnd());
                             paramInfo.setTimeSegment(timeSegment);
                             paramInfo.setStatus("0");

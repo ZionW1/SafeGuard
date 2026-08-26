@@ -206,9 +206,7 @@
             WHERE campaign_id = #{campaignId}
             AND is_deleted = 'N'
             AND apply_date IS NOT NULL -- 👈 NULL인 날짜 제외
-
             UNION
-
             SELECT DATE_FORMAT(apply_date, '%Y-%m-%d 00:00:00') AS apply_date
             FROM user_campaign
             WHERE campaign_id = #{campaignId}
@@ -836,7 +834,8 @@
         UPDATE campaign c
         JOIN (
             -- 💡 여기서 미리 캠페인별 인원수를 정확하게 계산해 둡니다.
-            SELECT uc.campaign_id, COUNT(DISTINCT uc.user_id) + count(DISTINCT cl.user_no) as cnt
+            SELECT uc.campaign_id,
+            COUNT(DISTINCT uc.user_id) + count(DISTINCT cl.user_no) as cnt
             FROM user_campaign uc
             LEFT OUTER JOIN camp_leader cl ON uc.campaign_id = cl.campaign_id
             WHERE uc.campaign_id = #{campaignId}

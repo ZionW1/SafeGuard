@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class CampaignVO {
-    private LocalDate appPeriodStr;
-    private LocalDate appPeriodEnd;
+    // private LocalDate appPeriodStr;
+    // private LocalDate appPeriodEnd;
     private String isDelete;
 	private int whiteSal;
 	private int greenSal;
@@ -61,9 +61,9 @@ public class CampaignVO {
     private String placeAddr;
     private String mission;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate AppPeriodStr;
+    private LocalDate appPeriodStr;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate AppPeriodEnd;
+    private LocalDate appPeriodEnd;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate eventPeriodStr;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

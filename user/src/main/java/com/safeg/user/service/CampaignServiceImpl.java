@@ -80,7 +80,7 @@ public class CampaignServiceImpl implements CampaignService{
             dailyEntry.setEventPeriodEnd(userCampaignVO.getEventPeriodEnd());
             dailyEntry.setTimeSegment(userCampaignVO.getTimeSegment());
             dailyEntry.setLeadApply(userCampaignVO.getLeadApply());
-            
+
             dailyEntry.setApplyDate(date);
             dailyEntriesToInsert.add(dailyEntry);
         }
@@ -109,7 +109,7 @@ public class CampaignServiceImpl implements CampaignService{
                 // 안전한 문자열 조립 (String.valueOf는 null일 경우 "null" 문자열을 반환하여 에러를 막음)
                 String appPeriod = String.valueOf(campaignsVO.getAppPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getAppPeriodEnd());
                 String eventPeriod = String.valueOf(campaignsVO.getEventPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getEventPeriodEnd());
-                
+
                 aligoSmsService.rosterCheckAsync(campaignsVO.getLeaderPhone(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), appPeriod, eventPeriod, "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(), campaignsVO.getCompanyPh());
             } catch (Exception e) {
                 log.error("캠페인 ID {} 발송 중 개별 오류: {}", campaignsVO.getCampaignId(), e.getMessage());
@@ -122,12 +122,12 @@ public class CampaignServiceImpl implements CampaignService{
         log.info("overlapTitle userCampaignVO : " + userCampaignVO);
         String duplicateTitle = campaignMapper.overlapTitle(userCampaignVO);
         log.info("조회된 중복 타이틀: [" + duplicateTitle + "]"); // 대괄호를 붙여서 공백이나 빈값 확인
-    
+
         // 값이 정말로 있을 때만(null이 아니고, 비어있지 않고, 공백만 있는게 아닐 때) 리턴
         if (duplicateTitle != null && !duplicateTitle.trim().isEmpty()) {
             return duplicateTitle;
         }
-        
+
         // 중복이 없으면 명확하게 null을 반환해서 컨트롤러가 if문에 걸리지 않게 함
         return null;
     }
@@ -176,7 +176,7 @@ public class CampaignServiceImpl implements CampaignService{
 
         return campaignApplied;
     }
-    
+
     public List<CampaignVO> searchCampaign(String schCamp) throws Exception {
         // TODO Auto-generated method stub
         List<CampaignVO> searchCampaign = campaignMapper.searchCampaign(schCamp);
@@ -188,6 +188,7 @@ public class CampaignServiceImpl implements CampaignService{
     public List<CampaignVO> campaignProgress() throws Exception {
         // TODO Auto-generated method stub
         List<CampaignVO> campaignProgress = campaignMapper.campaignProgress();
+        log.info("campaignProgress : " + campaignProgress.toString());
 
         return campaignProgress;
     }
@@ -205,7 +206,7 @@ public class CampaignServiceImpl implements CampaignService{
         // TODO Auto-generated method stub
         List<CampaignVO> campaignFulfill = campaignMapper.campaignFulfill();
 
-        return campaignFulfill;    
+        return campaignFulfill;
     }
 
     @Override
@@ -222,7 +223,7 @@ public class CampaignServiceImpl implements CampaignService{
         for (LocalDate date : datesInRange) {
             log.info("applyCancel - initStatus for date {}", date);
             initStatus = initStatus + campaignMapper.applyCancel(userNo, campaignId, date);
-            log.info("applyCancel - initStatus for date {}: {}", date, initStatus);            
+            log.info("applyCancel - initStatus for date {}: {}", date, initStatus);
         }
 
         if(initStatus >= 1) {
@@ -235,7 +236,7 @@ public class CampaignServiceImpl implements CampaignService{
 
         // int initStatus = applyMapper.rosterRemove(userNo, campaignId, eventStr, eventEnd);
         // applyMapper.applicantsMinus(campaignId);
-        
+
         return initStatus;
     }
 }

@@ -240,13 +240,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             event_Period_str,
             event_Period_End,
             campaign_pay,
-            t.user_nm,
-            t.phone_num as leader_phone
+            cl.user_nm,
+            cl.phone_num as leader_phone
             FROM campaign c
         LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN user t
         on c.leader_code = t.id
+        LEFT OUTER JOIN camp_leader cl
+        on c.campaign_id = cl.campaign_id
         Where f.is_deleted = 'N'
         AND f.target_type = 'campaign'
         AND c.campaign_id = #{campaignId}
@@ -275,12 +277,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.app_period_end,
             event_Period_str,
             event_Period_End,
-            t.user_nm
+            cl.user_nm,
+            CASE
+                WHEN c.uc_choice = '01' THEN '캠페인 포인트'
+                WHEN c.uc_choice = '02' THEN '유저 포인트'
+                ELSE ''
+            END AS uc_Choice,
             FROM campaign c
         LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN user t
         on c.leader_code = t.id
+        LEFT OUTER JOIN camp_leader cl
+        on c.campaign_id = cl.campaign_id
         Where f.is_deleted = 'N'
         and f.target_type = 'campaign'
         and c.is_deleted = 'N'
@@ -341,17 +350,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
             END) as type_nm,
+            CASE
+                WHEN c.uc_choice = '01' THEN '캠페인 포인트'
+                WHEN c.uc_choice = '02' THEN '유저 포인트'
+                ELSE ''
+            END AS uc_Choice,
             campaign_pay,
             c.app_period_str,
             c.app_period_end,
             event_Period_str,
             event_Period_End,
-            t.user_nm
+            cl.user_nm
             FROM campaign c
         LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN user t
         ON c.leader_code = t.id
+        LEFT OUTER JOIN camp_leader cl
+        on c.campaign_id = cl.campaign_id
+        AND cl.is_deleted = 'N' -- 리더 삭제 여부 조건 추가
         Where f.is_deleted = 'N'
         AND f.target_type = 'campaign'
         AND c.is_deleted = 'N'
@@ -359,6 +376,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND c.app_Period_end >= now()
         AND c.applicants_Num <= c.recruitment_Num
         AND c.is_active = 'Y'
+        GROUP BY c.campaign_id, f.SAVED_NAME, f.FILE_PATH, cl.user_nm-- 중복 방지를 위해 그룹화\
         ORDER BY c.applicants_Num DESC, c.campaign_id desc
         ]]>
     </select>
@@ -379,17 +397,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
             END) as type_nm,
+            CASE
+                WHEN c.uc_choice = '01' THEN '캠페인 포인트'
+                WHEN c.uc_choice = '02' THEN '유저 포인트'
+                ELSE ''
+            END AS uc_Choice,
             campaign_pay,
             c.app_period_str,
             c.app_period_end,
             event_Period_str,
             event_Period_End,
-            t.user_nm
+            cl.user_nm
             FROM campaign c
         LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN user t
         ON c.leader_code = t.id
+        LEFT OUTER JOIN camp_leader cl
+        on c.campaign_id = cl.campaign_id
         Where f.is_deleted = 'N'
         AND f.target_type = 'campaign'
         AND c.is_deleted = 'N'
@@ -417,17 +442,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
             END) as type_nm,
+            CASE
+                WHEN c.uc_choice = '01' THEN '캠페인 포인트'
+                WHEN c.uc_choice = '02' THEN '유저 포인트'
+                ELSE ''
+            END AS uc_Choice,
             campaign_pay,
             c.app_period_str,
             c.app_period_end,
             event_Period_str,
             event_Period_End,
-            t.user_nm
+            cl.user_nm
             FROM campaign c
         LEFT OUTER JOIN files f
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN user t
         ON c.leader_code = t.id
+        LEFT OUTER JOIN camp_leader cl
+        on c.campaign_id = cl.campaign_id
         Where f.is_deleted = 'N'
         AND f.target_type = 'campaign'
         AND c.is_deleted = 'N'

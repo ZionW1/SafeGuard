@@ -1045,6 +1045,10 @@ a {
     display: none;
 }
 
+.pc_view {
+    display: block;
+}
+
 .wdt200{
     width: 200px;
 }
@@ -2272,43 +2276,65 @@ table.bestPayList {
     padding: 40px 0;
     box-sizing: border-box;
 }
-
-/* 카드 리스트가 들어가는 내부는 다시 중앙 정렬 */
-#reviewSection .review-bg-wrapper > * {
-    max-width: 1200px; /* 기존 campaignContainer 너비에 맞추기 */
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-/* 1. 바깥 배경 wrap: 좌우 패딩을 줄이고 상단 섹션과 시작점 맞추기 */
+/* 1. 전체 회색 배경 wrapper */
 .review-bg-wrapper {
     background-color: #f5f5f5;
     width: 100%;
-    padding: 30px 0; /* 좌우 패딩을 0으로 설정 */
+    padding: 60px 0; /* 위아래 내부 여백을 넉넉히 주어 아래로 내림 */
     box-sizing: border-box;
 }
 
-/* 2. 내부 콘텐츠 영역: 상단 campaignContainer와 동일한 패딩/마진 부여 */
-.review-bg-wrapper > .review-content-inner,
-.review-bg-wrapper > .campaign-title,
-.review-bg-wrapper > #newList {
-    max-width: 1200px; /* 기존 상단 레이아웃의 max-width 값 */
-    margin: 0 auto;    /* 중앙 정렬 */
-    padding: 0 20px;   /* 상단 '새로 오픈한 캠페인'과 동일한 좌우 여백 */
-    box-sizing: border-box;
+/* 2. 중앙 컨테이너 (좌측 타이틀 + 우측 카드 가로 배치) */
+.review-container {
+    max-width: 100%;
+    margin: 0 0 0 5%;
+    padding: 0 0px;
+
+    display: flex;
+    align-items: center; /* 🌟 핵심: 타이틀과 카드의 세로 중앙 정렬 */
+    justify-content: space-between;
+    gap: 40px; /* 타이틀과 카드 리스트 사이 간격 */
 }
 
-/* 3. 제목 요소 왼쪽 정렬 및 여백 제거 */
-.review-bg-wrapper .campaign-title {
+/* 3. 좌측 타이틀 영역 스타일 */
+.review-title-area {
+    flex-shrink: 0;
+    width: 220px; /* 타이틀 영역 너비 고정 */
     text-align: left;
-    margin-left: 0;
-    padding-left: 20px; /* 상단 제목들과 시작 위치 1:1 맞춤 */
 }
 
-.campaign-card-review {
-    background-color: #f5f5f5;
+.review-main-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 10px 0;
+}
+
+.review-sub-title {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 15px 0;
+    line-height: 1.4;
+}
+
+.review-more-btn {
+    display: inline-block;
+    font-size: 13px;
+    color: #888;
+    text-decoration: none;
+}
+
+/* 4. 우측 카드 리스트 영역 */
+.review-list-area {
+    flex-grow: 1;
+    overflow: hidden; /* 영역을 벗어나는 부분 숨김 처리 */
+}
+
+.review-list-area .campaign-list {
+    display: flex;
+    gap: 15px;
+    /* 카드가 많아 가로 스크롤을 쓰실 경우 아래 주석 해제 */
+    /* overflow-x: auto; */
 }
 
 
@@ -3520,6 +3546,14 @@ table.bestPayList {
 
     .mobile_view {
         display: block;
+    }
+
+    .review-content-inner {
+        margin: 0 5%;
+    }
+
+    .pc_view {
+        display: none;
     }
 
     .faq_form {

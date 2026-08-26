@@ -48,7 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 public class HomeController {
-    
+
     @Autowired
     MainService mainService;
 
@@ -91,7 +91,7 @@ public class HomeController {
                 if (campaignFavorite.get(i).getApplicantsNum() == campaignFavorite.get(i).getRecruitmentNum()) {
                     campaignService.updateCampaign(campaignFavorite.get(i).getCampaignId());
                     List<UserCampaignVO> userCampaignVO = mainService.applyDate(campaignFavorite.get(i).getCampaignId());
-                    
+
 
 
                     // authService.sendApply(campaignFavorite.get(i).getCampaignId(), userCampaignVO);
@@ -102,7 +102,7 @@ public class HomeController {
             // campaignFavorite이 비어있을 때 특별히 처리할 로직이 있다면 여기에 추가
             // 예를 들어, model.addAttribute("noFavoriteCampaigns", true); 같은 것을 추가해서 템플릿에서 조건부 렌더링 가능
         }
-        
+
         model.addAttribute("campaignFavorite", campaignFavorite);
         model.addAttribute("campaignWorkable", campaignWorkable);
         model.addAttribute("campaignNew", campaignNew);
@@ -115,14 +115,14 @@ public class HomeController {
             UserVO user = authUser.getUserVo();
             model.addAttribute("user", user);
             // 💡 UserVO가 아니라 canShowPoint 메서드를 가지고 있는 authUser(CustomUser)를 직접 담아줍니다.
-            model.addAttribute("authUser", authUser); 
+            model.addAttribute("authUser", authUser);
 
             // model.addAttribute("guardType", authUser.getGuardType());
             // String guardType = authUser.getGuardType();
             // for (CampaignVO campaign : campaignFavorite) {
             //     String typeCode = campaign.getTypeCode();
             //     boolean showPoint = false;
-                
+
             //     if (("00".equals(guardType) || "01".equals(guardType)) && "02".equals(typeCode)) {
             //         showPoint = true;
             //     } else if ("02".equals(guardType) && ("01".equals(typeCode) || "02".equals(typeCode))) {
@@ -130,11 +130,11 @@ public class HomeController {
             //     } else if (("03".equals(guardType) || "04".equals(guardType)) && ("01".equals(typeCode) || "02".equals(typeCode) || "03".equals(typeCode))) {
             //         showPoint = true;
             //     }
-                
+
             //     campaign.setShowPoint(showPoint); // VO에 boolean 필드를 추가해 저장
             // }
         }
-        
+
         return "index";
     }
 
@@ -142,7 +142,7 @@ public class HomeController {
     // // public String home(Principal principal, Model) throws Exception{
     // // public Stirng home(Authentication authentication, Model model) throws Exception{
     // // public String home(@AuthenticationPrincipal User authUser, Model model) throws Exception{
-    // public String campaign01(@AuthenticationPrincipal CustomUser authUser, Model model, @RequestParam("id") String id, @RequestParam("userId") String userId, 
+    // public String campaign01(@AuthenticationPrincipal CustomUser authUser, Model model, @RequestParam("id") String id, @RequestParam("userId") String userId,
     //     @RequestParam(value = "eventPeriodStr", required = false) LocalDate eventPeriodStr, @RequestParam(value = "eventPeriodEnd", required = false) LocalDate eventPeriodEnd) throws Exception{
     //     log.info(":::::::::: campaign01 화면 :::::::::: " + id +" :::::::::: " +  userId + " :::::::::: " + eventPeriodStr + " :::::::::: " + eventPeriodEnd); ;
     //         if(authUser != null){
@@ -164,7 +164,7 @@ public class HomeController {
     //                 for (UserCampaignVO appliedPeriod : appliedCampaign) {
     //                     LocalDate appliedStart = appliedPeriod.getAppliedStrDate();
     //                     LocalDate appliedEnd = appliedPeriod.getAppliedEndDate();
-    
+
     //                     // ⭐ 기간 중복 판단 로직: (campaignStartDate <= appliedEndDate && campaignEndDate >= appliedStartDate) ⭐
     //                     // 현재 캠페인의 시작일이 기존 신청의 종료일보다 빠르거나 같고,
     //                     // 현재 캠페인의 종료일이 기존 신청의 시작일보다 늦거나 같으면 겹치는 것!
@@ -201,7 +201,7 @@ public class HomeController {
             if(campaignApply.size() != 0){
                 model.addAttribute("campaignApply", campaignApply.get(0));
             }
-            
+
 
         }
         CampaignVO campaignSelect = mainService.campaignSelect(id);
@@ -224,9 +224,6 @@ public class HomeController {
             // model.addAttribute("campaignApply", campaignApply);
         }
 
-
-        
-
         String pageUrl = UriComponentsBuilder.fromPath("/campaign08")
                         //.queryParam("page", page.getPage())
                         .queryParam("keyword", option.getKeyword())
@@ -236,7 +233,7 @@ public class HomeController {
                         .build()
                         .toUriString();
         log.info("pageRows : " + page.getRows());
-        
+
         List<CampaignVO> allView = mainService.allView(option);
         log.info("allView : " + allView);
         model.addAttribute("option", option);
@@ -247,7 +244,7 @@ public class HomeController {
 
         return "campaign/campaign08";
     }
-    
+
     @GetMapping("/campaign09")
     @ResponseBody
     // public String home(Principal principal, Model) throws Exception{
@@ -265,7 +262,7 @@ public class HomeController {
         List<CampaignVO> allViewOption = mainService.allView(option);
 
         model.addAttribute("allViewOption", allViewOption);
-        
+
         return allViewOption;
     }
 
@@ -273,7 +270,7 @@ public class HomeController {
     public String getPopupFragment() throws Exception {
         return "/popup/addressPopup :: popupBody"; // Fragment 이름 지정
     }
-    
+
     /**
      * 캠페인 신청
      * 🔗 [POST] - /join
@@ -292,7 +289,7 @@ public class HomeController {
         // 1. [검증] 중복 체크를 가장 먼저 수행!
         String overlapTitle = campaignService.overlapTitle(userCampaign);
         log.info("overlapTitle : "+ overlapTitle);
-        
+
         if (overlapTitle != null && !overlapTitle.trim().isEmpty()) {
             log.info("중복 발견 - 신청 중단");
             Map<String, String> response = new HashMap<>();
@@ -303,7 +300,7 @@ public class HomeController {
         // 2. [저장] 검증을 통과했을 때만 실제로 저장 로직 실행
         String result = campaignService.campaignApply(userCampaign);
         // String result = "SUCCESS"; // 중복 체크 통과 후 저장 로직이 성공적으로 실행되었다고 가정
-        
+
         log.info("신청 결과 : " + result);
 
         if ("SUCCESS".equals(result)) {
@@ -322,7 +319,7 @@ public class HomeController {
         log.info(":::::::::: userCampaignApply 화면 :::::::::: " + id);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    
+
         // ⭐⭐ 이 조건문이 굉장히 중요해! ⭐⭐
         if (authentication.getPrincipal() instanceof CustomUser) {
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
@@ -347,10 +344,10 @@ public class HomeController {
 
         model.addAttribute("userCampaignApply", userCampaignApply);
         log.info("recruitmentNum : " + userCampaignApply);
-        
+
         return "apply/userCampaignApplyM";
     }
-    
+
     @GetMapping("/userCampaignApply01")
     public String userCampaignApply01(@AuthenticationPrincipal CustomUser authUser, Model model, @RequestParam("id") String id) throws Exception{
         log.info(":::::::::: userCampaignApply 화면 :::::::::: " + id);
@@ -364,12 +361,12 @@ public class HomeController {
         List<UserCampaignVO> userCampaignApply = mainService.userCampaignApply(id);
 
         model.addAttribute("userCampaignApply", userCampaignApply);
-        
+
         return "userCampaignApply";
     }
 
     @GetMapping("/ask")
-    public String getMethodName(@AuthenticationPrincipal CustomUser authUser, Model model) throws Exception { 
+    public String getMethodName(@AuthenticationPrincipal CustomUser authUser, Model model) throws Exception {
         //, @RequestParam String param
         log.info(":::::::::: ask 화면 :::::::::: " + authUser + " :::::::::: ");
         int campaignCount = mainService.campaignCount();
@@ -394,7 +391,7 @@ public class HomeController {
     }
 
     @GetMapping("/business")
-    public String business(@AuthenticationPrincipal CustomUser authUser, Model model) throws Exception { 
+    public String business(@AuthenticationPrincipal CustomUser authUser, Model model) throws Exception {
         //, @RequestParam String param
         log.info(":::::::::: ask 화면 :::::::::: " + authUser + " :::::::::: ");
         int campaignCount = mainService.campaignCount();

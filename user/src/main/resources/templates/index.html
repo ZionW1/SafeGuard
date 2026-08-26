@@ -429,8 +429,44 @@
             </div>
         </section>
 
+        <section id="reviewSection" th:if="${!reviewList.isEmpty()}" class="pc_view">
+            <div class="review-bg-wrapper">
+                <div class="review-container">
 
-        <section id="reviewSection" th:if="${!reviewList.isEmpty()}">
+                    <!-- 👈 왼쪽: 타이틀 영역 -->
+                    <div class="review-title-area">
+                        <h2 class="review-main-title">리뷰 캠페인</h2>
+                        <p class="review-sub-title">캠페인 후기입니다.</p>
+                        <!-- <a href="/campaign08?orderCode=0" class="review-more-btn">전체보기</a> -->
+                    </div>
+
+                    <!-- 👉 오른쪽: 카드 리스트 영역 -->
+                    <div class="review-list-area">
+                        <div class="campaign-list">
+                            <th:block th:each="review : ${reviewList}">
+                                <a th:href="${review.blogUrl}">
+                                    <div class="campaign-card-review">
+                                        <img id="imgFile" th:src="|/img?fileName=${review.thumbnailName}|" alt="파일이미지" class="campaign-image"/>
+                                        <div class="campaign-info-box">
+                                            <div class="title-overlay">
+                                                <div class="card-title campaign-title-text">
+                                                    <span>[</span>
+                                                    <span th:text="${review.typeNm}">타입명</span>
+                                                    <span>] </span>
+                                                    <span th:text="${review.title}">캠페인 제목이 여기에 들어갑니다.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </th:block>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <section id="reviewSection" th:if="${!reviewList.isEmpty()}" class="mobile_view">
             <div class="review-bg-wrapper">
                 <!-- 내부 콘텐츠는 중앙 정렬을 위해 inner 컨테이너로 감싸줍니다 -->
                 <div class="review-content-inner">

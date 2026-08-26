@@ -282,6 +282,11 @@
                 WHEN type_code = '03' THEN '수행'
                 ELSE ''
             END) as type_nm,
+            CASE
+                WHEN c.uc_choice = '01' THEN '캠페인 포인트'
+                WHEN c.uc_choice = '02' THEN '유저 포인트'
+                ELSE ''
+            END AS uc_Choice,
             cl.user_nm,
             c.campaign_pay,
             DATE_FORMAT(c.created_at, '%Y.%m.%d') as created_at

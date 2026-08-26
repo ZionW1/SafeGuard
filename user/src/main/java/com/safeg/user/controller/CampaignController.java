@@ -287,6 +287,8 @@ public class CampaignController {
     public String campaign04(@AuthenticationPrincipal CustomUser authUser, Model model) throws Exception {
         // 진행 캠페인 정보 조회
         List<CampaignVO> campaignProgress = campaignsService.campaignProgress();
+                log.info("campaignProgress : " + campaignProgress.toString());
+
         // 로그인된 사용자가 있을 경우
         if (authUser != null) {
             UserVO user = authUser.getUserVo();

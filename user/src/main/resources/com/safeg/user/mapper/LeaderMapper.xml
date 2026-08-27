@@ -3,11 +3,11 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- namespace="매퍼 인터페이스 경로" --> 
+<!-- namespace="매퍼 인터페이스 경로" -->
 <mapper namespace="com.safeg.user.mapper.LeaderMapper">
-    
+
     <select id="leaderSelect1" resultType="AdminContentVO">
-        SELECT 
+        SELECT
             Admin_Content_id,
             title,
             content,
@@ -15,7 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             author,
             created_at,
             updated_at
-        FROM 
+        FROM
             Admin_Content
         where
             is_active = 'Y'
@@ -40,16 +40,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="leaderSelect" resultType="AdminContentVO">
-        <!-- SELECT 
+        <!-- SELECT
             content
-        FROM 
+        FROM
             Admin_Content
         where
             is_active = 'Y'
             and content_type='LEADER'
  -->
 
-        SELECT 
+        SELECT
             Admin_Content_id,
             title,
             content,
@@ -57,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             author,
             created_at,
             updated_at
-        FROM 
+        FROM
             Admin_Content
         where
             is_active = 'Y'

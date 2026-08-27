@@ -47,9 +47,9 @@ public class UserServiceImpl implements UserService {
         // 💍 토큰 생성
         String username = userVo.getUserId();    // 아이디
         String password = userVo.getPassword();    // 암호화되지 않은 비밀번호
-        UsernamePasswordAuthenticationToken token 
+        UsernamePasswordAuthenticationToken token
             = new UsernamePasswordAuthenticationToken(username, password);
-        
+
 
         Authentication authentication = null;
 
@@ -57,14 +57,14 @@ public class UserServiceImpl implements UserService {
             authentication = authenticationManager.authenticate(token);
             boolean result = authentication.isAuthenticated();
             log.info("로그인 성공 여부: " + result);
-        
+
             if (result) {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 HttpSession session = request.getSession(true);
                 session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
                 log.info("세션에 SPRING_SECURITY_CONTEXT 설정 완료");
             }
-        
+
             return result;
         } catch (Exception ex) {
             log.error("로그인 실패: " + ex.getMessage(), ex);
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
         //     log.error("로그인 실패: " + ex.getMessage());
         //     return false;
         // }
-        
+
         // // 인증 여부 확인
         // boolean result = authentication.isAuthenticated();
         // log.error("result . + + + + + " +  result);
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
         // // 인증이 성공하면 SecurityContext에 설정
         // if (result) {
         //     SecurityContextHolder.getContext().setAuthentication(authentication);
-            
+
         //     // 세션에 인증 정보 설정 (세션이 없으면 새로 생성)
         //     HttpSession session = request.getSession(true);  // 세션이 없으면 새로 생성
         //     session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
@@ -122,11 +122,11 @@ public class UserServiceImpl implements UserService {
 
         String hashedPhone = EncryptionUtil.hash(userVo.getPhoneNum());
         log.info("hashedPhone : " + hashedPhone);
-        
-        if (userMapper.phoneDuplicate(hashedPhone, null)) {
-            throw new RuntimeException("이미 등록된 번호입니다.");
-        }
-        
+
+        // if (userMapper.phoneDuplicate(hashedPhone, null)) {
+        //     throw new RuntimeException("이미 등록된 번호입니다.");
+        // }
+
         // 2. 저장 (해시값 세팅)
         userVo.setPhoneHash(hashedPhone);
 
@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
         } else {
             userVo.setReferrerNo(referrerNo); // 유효한 추천인의 id(BIGINT) 저장
         }
-        
+
         // 회원 등록
         int result = userMapper.join(userVo); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!
 
@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean updateProfile(UserVO userVo) throws Exception {
         // TODO Auto-generated method stub
-        
+
         MultipartFile file = userVo.getImage();
         log.info("MultipartFile : : : : : : : : " + file);
         if (userVo.getId() == null) {
@@ -180,14 +180,14 @@ public class UserServiceImpl implements UserService {
         }
         boolean result = false;
         if(file != null){
-            
+
             // Files uploadFile = new Files();
             // uploadFile.setFile(file);
             // uploadFile.setParentTable("campaign");
             // uploadFile.setParentNo(campaignsVO.getId());
             // uploadFile.setType("main");
             // fileService.upload(uploadFile);
-            
+
             FilesVO uploadFile = new FilesVO();
             uploadFile.setFile(file);
             uploadFile.setFileSize(file.getSize());
@@ -199,9 +199,9 @@ public class UserServiceImpl implements UserService {
             log.info("등록 처리 uploadFile : " + uploadFile);
 
             result = fileService.upload(uploadFile);
-            
+
         }
-        
+
         return result;
     }
 
@@ -234,14 +234,14 @@ public class UserServiceImpl implements UserService {
         List<PointHistoryVO> bestPayList = userMapper.bestPayList();
         return bestPayList;
     }
-    
+
     @Override
     public boolean phoneDuplicate(String phoneNumber, String userId) throws Exception{
         log.info("phoneNum : " + phoneNumber + ", userId : " + userId);
         // String hashedPhone = EncryptionUtil.hash(phoneNumber);
         log.info("hashedPhone : " + phoneNumber);
         // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
-        boolean isDuplicate = userMapper.phoneDuplicate(phoneNumber, userId); 
+        boolean isDuplicate = userMapper.phoneDuplicate(phoneNumber, userId);
         log.info("isDuplicate : " + isDuplicate);
         return isDuplicate;
     }
@@ -276,25 +276,25 @@ public class UserServiceImpl implements UserService {
         // 회원 패스워드 재 등록
         int result = 0;
         try {
-            result= userMapper.reRegPw(userVo); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!    
+            result= userMapper.reRegPw(userVo); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!
             log.info("result + " + result);
         } catch (Exception e) {
             // TODO: handle exception
-            log.error("비밀번호 재설정 중 에러 발생: ", e);        
+            log.error("비밀번호 재설정 중 에러 발생: ", e);
         }
-        
+
 
         return result;
     }
 
     public String inquiryPhoneNum(String inquiryPhoneNum) throws Exception {
-        String result = userMapper.inquiryPhoneNum(inquiryPhoneNum); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!    
+        String result = userMapper.inquiryPhoneNum(inquiryPhoneNum); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!
 
         return result;
     }
 
     public boolean checkId(String userId) throws Exception {
-        boolean checkId = userMapper.checkId(userId); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!    
+        boolean checkId = userMapper.checkId(userId); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!
         log.info("checkId = " + checkId);
         return checkId;
     }

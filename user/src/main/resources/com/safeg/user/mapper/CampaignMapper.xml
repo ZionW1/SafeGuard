@@ -242,13 +242,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             campaign_pay,
             cl.user_nm,
             cl.phone_num as leader_phone
-            FROM campaign c
-        LEFT OUTER JOIN files f
-        ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN user t
-        on c.leader_code = t.id
-        LEFT OUTER JOIN camp_leader cl
-        on c.campaign_id = cl.campaign_id
+        FROM campaign c
+        LEFT OUTER JOIN (
+            SELECT target_id, saved_name, file_path
+            FROM (
+                SELECT target_id, saved_name, file_path,
+                    ROW_NUMBER() OVER (PARTITION BY target_id ORDER BY file_id DESC) as rn
+                FROM files
+                WHERE is_deleted = 'N' AND target_type = 'campaign'
+            ) tmp_f
+            WHERE rn = 1
+        ) f ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN (
+            SELECT campaign_id, user_nm
+            FROM (
+                SELECT campaign_id, user_nm,
+                    ROW_NUMBER() OVER (PARTITION BY campaign_id ORDER BY created_at) as rn
+                FROM camp_leader
+                where is_deleted = 'N'
+            ) tmp_cl
+            WHERE rn = 1
+        ) cl ON c.campaign_id = cl.campaign_id
         Where f.is_deleted = 'N'
         AND f.target_type = 'campaign'
         AND c.campaign_id = #{campaignId}
@@ -258,7 +272,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="searchCampaign" resultType="CampaignVO">
-
     <![CDATA[
         SELECT
             c.campaign_id,
@@ -304,6 +317,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 SELECT campaign_id, user_nm,
                     ROW_NUMBER() OVER (PARTITION BY campaign_id ORDER BY created_at) as rn
                 FROM camp_leader
+                WHERE is_deleted = 'N'
             ) tmp_cl
             WHERE rn = 1
         ) cl ON c.campaign_id = cl.campaign_id
@@ -395,6 +409,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 SELECT campaign_id, user_nm,
                     ROW_NUMBER() OVER (PARTITION BY campaign_id ORDER BY created_at asc) as rn
                 FROM camp_leader
+                WHERE is_deleted = 'N'
                 order by created_at asc
             ) tmp_cl
             WHERE rn = 1
@@ -454,6 +469,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 SELECT campaign_id, user_nm,
                     ROW_NUMBER() OVER (PARTITION BY campaign_id ORDER BY created_at asc) as rn
                 FROM camp_leader
+                WHERE is_deleted = 'N'
                 order by created_at asc
             ) tmp_cl
             WHERE rn = 1
@@ -513,6 +529,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 SELECT campaign_id, user_nm,
                     ROW_NUMBER() OVER (PARTITION BY campaign_id ORDER BY created_at asc) as rn
                 FROM camp_leader
+                WHERE is_deleted = 'N'
                 order by created_at asc
             ) tmp_cl
             WHERE rn = 1

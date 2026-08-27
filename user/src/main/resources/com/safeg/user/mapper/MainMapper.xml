@@ -109,13 +109,26 @@
             c.time_segment,
             cl.user_nm
         FROM campaign c
-        LEFT OUTER JOIN files f
-            ON c.campaign_id = f.target_id
-        AND f.is_deleted = 'N'
-        AND f.target_type = 'campaign'
-        LEFT OUTER JOIN camp_leader cl
-            ON c.campaign_id = cl.campaign_id
-        AND cl.is_deleted = 'N' -- 리더 삭제 여부 조건 추가
+        LEFT OUTER JOIN (
+            SELECT target_id, saved_name, file_path
+            FROM (
+                SELECT target_id, saved_name, file_path,
+                    ROW_NUMBER() OVER (PARTITION BY target_id ORDER BY file_id DESC) as rn
+                FROM files
+                WHERE is_deleted = 'N' AND target_type = 'campaign'
+            ) tmp_f
+            WHERE rn = 1
+        ) f ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN (
+            SELECT campaign_id, user_nm
+            FROM (
+                SELECT campaign_id, user_nm,
+                    ROW_NUMBER() OVER (PARTITION BY campaign_id ORDER BY created_at) as rn
+                FROM camp_leader
+                WHERE is_deleted = 'N'
+            ) tmp_cl
+            WHERE rn = 1
+        ) cl ON c.campaign_id = cl.campaign_id
         WHERE c.is_deleted = 'N'
         AND c.app_Period_end >= CURDATE()
         AND c.applicants_Num <= c.recruitment_Num
@@ -156,16 +169,30 @@
             time_segment,
             cl.user_nm
             FROM campaign c
-        LEFT OUTER JOIN files f
-        ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN camp_leader cl
-        on c.campaign_id = cl.campaign_id
-        AND cl.is_deleted = 'N'
-        Where f.is_deleted = 'N'
-        and f.target_type = 'campaign'
-        and c.is_deleted = 'N'
-        and c.app_Period_End > CURDATE()
+        LEFT OUTER JOIN (
+            SELECT target_id, saved_name, file_path
+            FROM (
+                SELECT target_id, saved_name, file_path,
+                    ROW_NUMBER() OVER (PARTITION BY target_id ORDER BY file_id DESC) as rn
+                FROM files
+                WHERE is_deleted = 'N' AND target_type = 'campaign'
+            ) tmp_f
+            WHERE rn = 1
+        ) f ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN (
+            SELECT campaign_id, user_nm
+            FROM (
+                SELECT campaign_id, user_nm,
+                    ROW_NUMBER() OVER (PARTITION BY campaign_id ORDER BY created_at) as rn
+                FROM camp_leader
+                where is_deleted = 'N'
+            ) tmp_cl
+            WHERE rn = 1
+        ) cl ON c.campaign_id = cl.campaign_id
+        Where
+        c.app_Period_End > CURDATE()
         and c.applicants_Num <= 1
+        and c.is_deleted = 'N'
         and c.is_active = 'Y'
         ORDER BY campaign_id asc
         ]]>
@@ -200,16 +227,30 @@
             time_segment,
             cl.user_nm
             FROM campaign c
-        LEFT OUTER JOIN files f
-        ON c.campaign_id = f.target_id
-        LEFT OUTER JOIN camp_leader cl
-        on c.campaign_id = cl.campaign_id
-        AND cl.is_deleted = 'N'
-        Where f.is_deleted = 'N'
-        and f.target_type = 'campaign'
-        and c.app_Period_End > CURDATE()
-        and c.is_deleted = 'N'
-        and c.is_active = 'Y'
+        LEFT OUTER JOIN (
+            SELECT target_id, saved_name, file_path
+            FROM (
+                SELECT target_id, saved_name, file_path,
+                    ROW_NUMBER() OVER (PARTITION BY target_id ORDER BY file_id DESC) as rn
+                FROM files
+                WHERE is_deleted = 'N' AND target_type = 'campaign'
+            ) tmp_f
+            WHERE rn = 1
+        ) f ON c.campaign_id = f.target_id
+        LEFT OUTER JOIN (
+            SELECT campaign_id, user_nm
+            FROM (
+                SELECT campaign_id, user_nm,
+                    ROW_NUMBER() OVER (PARTITION BY campaign_id ORDER BY created_at) as rn
+                FROM camp_leader
+                where is_deleted = 'N'
+            ) tmp_cl
+            WHERE rn = 1
+        ) cl ON c.campaign_id = cl.campaign_id
+        Where
+            c.app_Period_End > CURDATE()
+            and c.is_deleted = 'N'
+            and c.is_active = 'Y'
         ORDER BY c.created_at desc
         ]]>
     </select>

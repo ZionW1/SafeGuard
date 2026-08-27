@@ -160,6 +160,7 @@
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN camp_leader cl
         on c.campaign_id = cl.campaign_id
+        AND cl.is_deleted = 'N'
         Where f.is_deleted = 'N'
         and f.target_type = 'campaign'
         and c.is_deleted = 'N'
@@ -203,6 +204,7 @@
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN camp_leader cl
         on c.campaign_id = cl.campaign_id
+        AND cl.is_deleted = 'N'
         Where f.is_deleted = 'N'
         and f.target_type = 'campaign'
         and c.app_Period_End > CURDATE()
@@ -295,7 +297,7 @@
         ON c.campaign_id = f.target_id
         LEFT OUTER JOIN camp_leader cl
         on c.campaign_id = cl.campaign_id
-        and c.is_deleted = 'N'
+        AND cl.is_deleted = 'N'
         Where f.is_deleted = 'N'
         and c.app_Period_End >= CURDATE()
         and c.is_deleted = 'N'
@@ -303,17 +305,17 @@
         and f.target_type = 'campaign'
         ]]>
         <if test="option.orderCode == 0"> <!-- 최신 순 -->
-            ORDER BY c.created_At DESC, c.campaign_id desc
+            ORDER BY c.created_At DESC, c.campaign_id desc, cl.created_at
         </if>
         <if test="option.orderCode == 1"> <!-- 인기 순 -->
-            ORDER BY c.applicants_Num DESC, c.campaign_id desc
+            ORDER BY c.applicants_Num DESC, c.campaign_id desc, cl.created_at
         </if>
-        <if test="option.orderCode == 2"> <!-- 마감임박 순 -->
-            ORDER BY ABS(DATEDIFF(App_Period_End, CURDATE())) ASC, c.campaign_id desc;
-        </if>
-        <if test="option.orderCode == 3"> <!-- 선정확률 높은 순 -->
+        <if test="option.orderCode == 2"> <!-- 선정확률 높은 순 -->
             and applicants_Num = 0
-            ORDER BY c.created_At DESC, c.campaign_id desc
+            ORDER BY c.created_At DESC, c.campaign_id desc, cl.created_at
+        </if>
+        <if test="option.orderCode == 3"> <!-- 마감임박 순 -->
+            ORDER BY ABS(DATEDIFF(App_Period_End, CURDATE())) ASC, c.campaign_id desc, cl.created_at
         </if>
 
     </select>

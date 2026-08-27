@@ -309,6 +309,9 @@
                     <!-- <div class="campaign-item"> -->
 
                     <div class="campaign-card">
+                        <div class="pointCtgr">
+                            <span class="sub-text" th:text="|${campaign.ucChoice}|"></span>
+                        </div>
                         <img id="imgFile" th:src="|/img?id=${campaign.campaignId}|" alt="파일이미지" class="campaign-image"/>
                         <div class="campaign-info-box">
                             <div class="campaign-tags">

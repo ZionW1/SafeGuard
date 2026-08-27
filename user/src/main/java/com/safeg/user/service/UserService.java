@@ -14,13 +14,16 @@ public interface UserService {
 
     // 로그인
     public boolean login(UserVO userVo, HttpServletRequest request) throws Exception;
-    
+
     // 조회
     public UserVO select(String username) throws Exception;
 
     // 회원 가입
     public int join(UserVO userVo) throws Exception;
 
+    // 직원 회원가입
+    public int employeeJoin(UserVO userVO) throws Exception;
+    
     // 회원 수정
     public int update(Users user) throws Exception;
 

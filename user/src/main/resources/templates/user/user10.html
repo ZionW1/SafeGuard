@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>회원가입</title>
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="register-container">
+    <h2>회원가입</h2>
+    <form id="registerForm" class="" th:object="${userVO}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div class="form-group">
+            <input type="text" name="userNm" id="userNm" class="" th:field="*{userNm}" placeholder="이름" required maxlength="11"/>
+        </div>
+        <div class="form-group phone-group">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="tel" id="phoneNum" name="phoneNum" class="max-check" placeholder="전화번호 (-없이 입력)" required inputmode="numeric" pattern="[0-9]*" oninput="checkLength()" />
+                <button type="button" id="sendBtn">인증번호 발송</button>
+        </div>
+        <div class="form-group auth-group hidden" id="authCodeGroup">
+            <div id="authSection">
+                <input type="text" id="authCode" class="max-check-auth" placeholder="인증번호 6자리 입력" maxlength="6" oninput="checkLength()">
+                <span id="timer">03:00</span>
+                <button type="button" id="verifyBtn">인증확인</button>
+            </div>
+            <p id="resultMessage"></p>
+        </div>
+        <div class="form-group">
+            <input type="email" name="email" id="email" th:field="*{email}" placeholder="이메일" required />
+            <div id="emailStatus" style="font-size: 12px;"></div>
+        </div>
+        <div class="form-group">
+            <input type="text" name="userId" id="userId" th:field="*{userId}" placeholder="아이디 (6자 이상)" minlength="6" required />
+            <small id="idCheckMsg" class="form-text"></small>
+            <div id="usernameStatus" style="font-size: 12px;"></div>
+        </div>
+        <div class="form-group">
+            <div class="password-input-container">
+                <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required />
+                <span class="password-toggle" onclick="togglePasswordVisibility('password')"><i class="fa-regular fa-eye"></i></span>
+            </div>
+            <div class="error-msg" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+        </div>
+        <div class="form-group">
+            <div class="password-input-container">
+                <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="비밀번호를 다시 입력하세요" required />
+                <span class="password-toggle" onclick="togglePasswordVisibility('passwordConfirm')"><i class="fa-regular fa-eye"></i></span>
+            </div>
+            <div class="error-msg" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+        </div>
+        <div class="form-group">
+            <input type="text" name="referrerId" id="referrerId" placeholder="추천인 아이디 (선택)" />
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" name="agree" id="agree" placeholder="">
+            <div label="agree" class="mrg_t4 agree-text">개인정보수집 동의 </div>
+            <!-- <button type="button" href="" class="mrg_l170 mrg_t4" id="open-modal">보기</button> -->
+            <a href="javascript:void(0);" class="mrg_l150 mrg_t4" id="open-modal"><span class="modal-text">보기</span></a>
+        </div>
+        <button type="submit" id="joinButton">회원가입 신청</button>
+    </form>
+    <p class="login-link">
+        <a href="/user01" class="back-to-login">← 로그인으로 돌아가기</a>
+    </p>
+    <p class="login-link">
+        <a href="/" class="back-to-login">메인 홈페이지로 돌아가기</a>
+    </p>
+</div>
+<div id="modal-overlay" class="modal-hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>개인정보 수집 및 이용 동의 <a href="javascript:void(0);" class="popup_X_button" id="close-modal-x">X</a></h2>
+
+        </div>
+        <div class="modal-body">
+            <p>1. 수집 항목: 이름, 이메일, 연락처...</p>
+            <p>2. 수집 목적: 회원 식별 및 서비스 제공...</p>
+            <p>3. 보유 기간: 회원 탈퇴 시까지...</p>
+        </div>
+        <div class="modal-footer">
+            <button id="close-modal-btn" class="joinButton">확인</button>
+        </div>
+    </div>
+</div>
+<script>
+    function togglePasswordVisibility(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleButton = passwordField.nextElementSibling; // 바로 다음 형제 요소 (👁️ 버튼)
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text"; // 비밀번호 보이게
+                toggleButton.textContent = "🔒"; // 아이콘 변경 (선택 사항)
+            } else {
+                passwordField.type = "password"; // 비밀번호 숨기게
+                toggleButton.textContent = "👁️"; // 아이콘 변경 (선택 사항)
+            }
+        }
+</script>
+
+<script th:inline="javascript">
+    const form = document.getElementById('smsForm');
+    const resultMessage = document.getElementById('resultMessage');
+    const sendBtn = document.getElementById('sendBtn');
+    const authCodeGroup = document.getElementById('authCodeGroup');
+    const authSection = document.getElementById('authSection');
+    const phoneInput = document.getElementById('phoneNum');
+    const authCodeInput = document.getElementById('authCode');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const timerDisplay = document.getElementById('timer');
+    const joinButton = document.getElementById('joinButton');
+    let verifyBtnCode = false; // 인증번호 확인 버튼 클릭 여부를 추적하는 변수
+    const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+    const csrfToken = /*[[${_csrf.token}]]*/ '';
+    const agree = document.getElementById('agree');
+    // 정규식 검사 함수
+    let timer; // Debounce를 위한 타이머 변수
+    let isIdValid = false; // 전역 상태 변수 (중복 확인 및 정규식 통과 여부)
+    const idRegExp = /^[a-zA-Z0-9]{4,12}$/;
+
+    const requestHeaders = {};
+
+    if (csrfHeader && csrfToken) {
+        requestHeaders[csrfHeader] = csrfToken;
+    }
+
+    // function checkLength(obj) {
+    //     // if(obj.value.length >= obj.maxlength) {
+    //     //     alert(obj.maxlength + "자 까지 입력 가능합니다.");
+    //     // }
+    // }
+
+    // document.getElementById('phoneNum').addEventListener('input', function(){
+    //     console.log("input")
+    //     const maxlength = this.getAttribute('maxlength');
+    //     if(this.value.length > maxlength){
+    //         alert(maxlength + "자를 초과할 수 없습니다.");
+    //         this.value = this.value.slice(0, maxlength);
+    //     }
+    // });
+
+    // document.addEventListener('input', function(event) {
+    //     // 이벤트가 발생한 대상이 'max-check' 클래스를 가지고 있는지 확인
+    //     if (event.target.classList.contains('max-check')) {
+    //         const el = event.target;
+    //         const maxlength = el.getAttribute('maxlength');
+
+    //         if (maxlength && el.value.length > maxlength) {
+    //             alert(maxlength + "자를 초과할 수 없습니다.");
+    //             el.value = el.value.slice(0, maxlength);
+    //         }
+    //     }
+    // });
+
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('max-check')) {
+            const el = e.target;
+            const maxlength = parseInt(el.getAttribute('maxlength'));
+
+            // 1. 숫자가 아닌 문자가 들어왔는지 체크
+            if (/[^0-9]/.test(el.value)) {
+                alert("숫자만 입력 가능합니다.");
+                el.value = el.value.replace(/[^0-9]/g, '');
+                return; // 여기서 종료
+            }
+
+            // 2. 글자 수 초과 체크
+            // maxlength가 작동 중이면 이 조건문은 보통 '붙여넣기' 시에만 작동합니다.
+            if(document.getElementById("phoneNum")){
+                const maxlength11 = 11
+                if (el.value.length > maxlength11) {
+                    alert(maxlength11 + "자를 초과할 수 없습니다.");
+                    el.value = el.value.slice(0, maxlength11);
+                }
+            }
+        }
+
+        if (e.target.classList.contains('max-check-auth')) {
+            const el = e.target;
+            const maxlength = parseInt(el.getAttribute('maxlength'));
+
+            // 1. 숫자가 아닌 문자가 들어왔는지 체크
+            if (/[^0-9]/.test(el.value)) {
+                alert("숫자만 입력 가능합니다.");
+                el.value = el.value.replace(/[^0-9]/g, '');
+                return; // 여기서 종료
+            }
+
+            // 2. 글자 수 초과 체크
+            // maxlength가 작동 중이면 이 조건문은 보통 '붙여넣기' 시에만 작동합니다.
+            if(document.getElementById("phoneNum")){
+                const maxlength11 = 6
+                if (el.value.length > maxlength11) {
+                    alert(maxlength11 + "자를 초과할 수 없습니다.");
+                    el.value = el.value.slice(0, maxlength11);
+                }
+            }
+        }
+    });
+
+    // 기존 joinButton click 리스너를 submit 리스너로 변경하는 것이 좋습니다.
+const registerForm = document.getElementById('registerForm');
+
+registerForm.addEventListener('submit', function(e) {
+    e.preventDefault(); // 폼 전송 막기
+    const userId = document.getElementById('userId').value;
+    // 1. 인증 여부 확인
+    // if(!agree.checked){
+    //     alert("개인정보수집 동의 체크 해주세요.")
+    // } else if (typeof verifyBtnCode === 'undefined' || verifyBtnCode === false) {
+    //     alert("인증번호 입력 후 가입해주세요.");
+    //     return;
+    // }
+
+    if (!idRegExp.test(userId)) {
+        e.preventDefault();
+        alert("아이디는 6~12자의 영문 대/소문자, 숫자만 가능합니다.");
+        return;
+    }
+
+    // 2. 중복 확인 통과 여부 체크 (기존에 만든 isIdValid 변수 활용)
+    if (!isIdValid) {
+        e.preventDefault();
+        alert("아이디 중복 확인을 완료해주세요.");
+    }
+
+    // 2. FormData 생성
+    const formData = new URLSearchParams(new FormData(registerForm));
+
+    // 3. Fetch 전송
+    fetch('/employeeJoin', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            [csrfHeader]: csrfToken // 상단에서 정의한 CSRF 변수 사용
+        },
+        body: formData
+    })
+    .then(response => response.json()) // 응답을 JSON으로 파싱
+    .then(data => {
+        if (data.success) {
+            alert("회원가입 및 로그인이 완료되었습니다!");
+            window.location.href = data.url; // 메인으로 리다이렉트
+        } else {
+            // 에러 처리
+            if (data.errors) {
+                alert("입력 정보를 확인해주세요:\n" + data.errors.join("\n"));
+            } else {
+                alert(data.message || "회원가입에 실패했습니다.");
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("서버 통신 중 오류가 발생했습니다.");
+    });
+});
+
+    // sendBtn.addEventListener('click', function() {
+    //     const phoneNumber = document.getElementById('phoneNum').value;
+    //     if(!phoneNumber) {
+    //         alert("번호를 입력해주세요.");
+    //         return;
+    //     }
+
+    //     fetch('/auth/sendCode', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/x-www-form-urlencoded',
+    //             ...requestHeaders  // 반드시 객체 병합 형태로 추가
+    //         },
+    //         credentials: 'include',  // 이 옵션이 중요합니다!
+    //         body: new URLSearchParams({ phoneNumber: phoneNumber })
+    //     })
+    //     .then(response => response.json()) // 자동으로 JSON 객체로 변환!
+    //     .then(data => {
+    //         console.log("서버 응답 데이터:", data);
+    //         console.log("서버 응답 데이터:", data.success);
+    //         console.log("서버 응답 데이터:", data.duplicate);
+
+
+    //         if (!data.success) {
+    //             alert("이미 가입된 번호입니다. 로그인 페이지로 이동하세요.");
+    //             return;
+    //         }
+    //         // 서버에서 리턴한 문자열에 '성공'이라는 글자가 포함되어 있는지 확인
+
+    //         if (data.success === true) {
+    //             // alert(data.message); // "인증번호 발송 성공" 알림
+    //             resultMessage.style.color = 'blue';
+    //             resultMessage.textContent = '인증번호가 발송되었습니다.';
+    //             startTimer();
+    //             // 인증번호 입력창 활성화 등의 로직 실행
+    //         } else {
+    //             // alert(data.message); // "이미 가입된 번호" 또는 "발송 실패"
+    //             resultMessage.style.color = 'red';
+    //             resultMessage.textContent = '발송 실패: ' + data;
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //         resultMessage.textContent = '서버와 통신 중 오류가 발생했습니다.';
+    //     });
+    // });
+
+    let timeLeft = 180; // 3분
+    let timerInterval;
+
+    function startTimer() {
+        const authCodeGroup = document.getElementById('authCodeGroup');
+
+        clearInterval(timerInterval);
+        authCodeGroup.classList.remove('hidden');
+        timerInterval = setInterval(() => {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            document.getElementById('timer').textContent =
+                `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert("인증 시간이 만료되었습니다. 다시 시도해주세요.");
+            }
+            timeLeft--;
+        }, 1000);
+    }
+
+    // 인증확인 버튼 클릭 이벤트
+    document.getElementById('verifyBtn').addEventListener('click', () => {
+        const inputCode = document.getElementById('authCode').value;
+        const phoneNumber = document.getElementById('phoneNum').value;
+        fetch('/auth/verifyCode', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...requestHeaders },
+            body: new URLSearchParams({ phoneNumber: phoneNumber, inputCode: inputCode })
+        })
+        .then(res => res.text())
+        .then(data => {
+            if (data === "인증 성공") {
+                alert("✅ 인증되었습니다!");
+                verifyBtnCode = true;
+                clearInterval(timerInterval);
+                resultMessage.textContent = "인증되었습니다.";
+                // 추가로 인증번호 입력창과 버튼을 비활성화하거나 숨길 수도 있습니다.
+                document.getElementById('phoneNum').readOnly = true;
+                // document.getElementById('sendCode').disabled = true;
+                document.getElementById('authCode').disabled = true;
+                document.getElementById('verifyBtn').disabled = true;
+            } else {
+                alert(data);
+            }
+        });
+    });
+
+    function togglePasswordVisibility(fieldId) {
+        const input = document.getElementById(fieldId);
+        const container = input.parentElement;
+        const icon = container.querySelector('i'); // Font Awesome 사용 시
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            if(icon) icon.className = 'fa-regular fa-eye-slash'; // 감긴 눈으로 변경
+        } else {
+            input.type = 'password';
+            if(icon) icon.className = 'fa-regular fa-eye'; // 뜬 눈으로 변경
+        }
+    }
+
+    const openBtn = document.getElementById('open-modal');
+    const closeBtnX = document.getElementById('close-modal-x');
+    const closeBtnOk = document.getElementById('close-modal-btn');
+    const modal = document.getElementById('modal-overlay');
+
+    // 팝업 열기
+    openBtn.onclick = (e) => {
+        e.preventDefault(); // 기본 동작 방지
+        modal.classList.remove('modal-hidden');
+        document.body.style.overflow = 'hidden'; // 뒤쪽 본문 스크롤 방지
+    };
+
+    // 팝업 닫기 (X 버튼, 확인 버튼, 배경 클릭 시)
+    const closeModal = (e) => {
+        e.preventDefault(); // 기본 동작 방지
+        modal.classList.add('modal-hidden');
+        document.body.style.overflow = 'auto'; // 스크롤 복구
+    };
+
+    closeBtnX.onclick = closeModal;
+    closeBtnOk.onclick = closeModal;
+
+    // 배경(Overlay) 클릭 시 닫기
+    window.onclick = (event) => {
+        if (event.target == modal) closeModal();
+    };
+
+    function validateId(userId) {
+        return idRegExp.test(userId);
+    }
+
+    document.getElementById('userId').addEventListener('input', function() {
+        const userId = this.value;
+        const msgElement = document.getElementById('idCheckMsg');
+        const joinButton = document.getElementById('joinButton');
+
+        // 이전 타이머를 취소 (계속 입력 중일 때는 서버 요청 안 함)
+        clearTimeout(timer);
+        isIdValid = false; // 입력이 바뀔 때마다 초기화
+
+        // 입력값이 너무 짧을 때 처리
+        if (userId.length < 6) {
+            msgElement.innerText = "아이디는 6자 이상 입력해주세요.";
+            msgElement.style.color = "gray";
+            joinButton.disabled = true;
+            return;
+        }
+
+        if (!validateId(userId)) {
+            msgElement.innerText = "6~12자의 영문 대문자, 소문자, 숫자만 가능합니다.";
+            msgElement.style.color = "red";
+            return;
+        }
+        // 500ms(0.5초) 후에 실행
+        timer = setTimeout(() => {
+            fetch(`/check-id?userId=${userId}`)
+                .then(response => response.json())
+                .then(isAvailable => {
+                    if (isAvailable) {
+                        msgElement.innerText = "사용 가능한 아이디입니다.";
+                        msgElement.style.color = "green";
+                        joinButton.disabled = false; // 버튼 활성화
+                        isIdValid = true; // 모든 검사 통과
+                    } else {
+                        msgElement.innerText = "이미 사용 중인 아이디입니다.";
+                        msgElement.style.color = "red";
+                        joinButton.disabled = true; // 버튼 비활성화
+                        isIdValid = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    msgElement.innerText = "중복 확인 중 오류가 발생했습니다.";
+                });
+        }, 500);
+    });
+</script>
+</body>
+</html>

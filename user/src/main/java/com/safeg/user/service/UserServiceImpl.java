@@ -123,6 +123,53 @@ public class UserServiceImpl implements UserService {
         String hashedPhone = EncryptionUtil.hash(userVo.getPhoneNum());
         log.info("hashedPhone : " + hashedPhone);
 
+        if (userMapper.phoneDuplicate(hashedPhone, null)) {
+            throw new RuntimeException("이미 등록된 번호입니다.");
+        }
+
+        // 2. 저장 (해시값 세팅)
+        userVo.setPhoneHash(hashedPhone);
+
+        if (referrerNo == null || referrerNo == 0) {
+            userVo.setReferrerNo(null); // DB에 NULL 저장
+        } else {
+            userVo.setReferrerNo(referrerNo); // 유효한 추천인의 id(BIGINT) 저장
+        }
+
+        // 회원 등록
+        int result = userMapper.join(userVo); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!
+
+        log.info("result : " + result);
+        log.info("result : " + userVo.getId());
+
+        if( result > 0 ) {
+            // 회원 기본 권한 등록
+            UserAuth userAuth = new UserAuth();
+            userAuth.setId(userVo.getId());
+            userAuth.setName(id);
+            userAuth.setAuthCd("02");
+            userAuth.setAuth("ROLE_USER");
+
+            result = userMapper.insertAuth(userAuth);
+            log.info("result1 : " + result);
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional // 트랜잭션 처리를 설정 (회원정보, 회원권한)
+    public int employeeJoin(UserVO userVo) throws Exception {
+        String id = userVo.getUserId();
+        String name = userVo.getName();
+        // String password = userVo.getPassword();
+        // String encodedPassword = passwordEncoder.encode(password);  // 🔒 비밀번호 암호화
+        // userVo.setPassword(encodedPassword);
+        // getInputReferrerUserId
+        Long referrerNo = userMapper.getReferrerNo(userVo);
+
+        String hashedPhone = EncryptionUtil.hash(userVo.getPhoneNum());
+        log.info("hashedPhone : " + hashedPhone);
+
         // if (userMapper.phoneDuplicate(hashedPhone, null)) {
         //     throw new RuntimeException("이미 등록된 번호입니다.");
         // }

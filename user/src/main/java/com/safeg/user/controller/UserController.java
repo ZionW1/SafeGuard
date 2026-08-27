@@ -141,7 +141,7 @@ public class UserController {
         // String hashedPhone = EncryptionUtil.hash(userVO.getPhoneNum());
 
         // // 2. 중복 체크 (DB의 phone_hash 컬럼과 비교)
-        // if (userService.phoneDuplicate(hashedPhone)) {
+        // if (userService.phoneDuplicate(hashedPhone, userVO.getUserId())) {
         //     throw new RuntimeException("이미 사용 중인 번호입니다.");
         // }
 
@@ -454,5 +454,65 @@ public class UserController {
         // DB에서 해당 ID가 존재하는지 확인 (count 조회)
         boolean checkId = userService.checkId(userId);
         return ResponseEntity.ok(checkId);
+    }
+
+    @GetMapping("/employeeJoin")
+    public String employeeJoin(Model model) {
+        log.info(":::::::::: 회원 가입 화면 ::::::::::");
+
+        model.addAttribute("userVO", new UserVO());
+
+        return "user/user10";
+    }
+
+    @PostMapping("/employeeJoin")
+    @ResponseBody // JSON 응답을 위해 추가
+    public ResponseEntity<?> employeeJoinPost(@Valid @ModelAttribute("userVO") UserVO userVO, BindingResult bindingResult, HttpServletRequest request) throws Exception {
+        log.info(":::::::::: 회원 가입 처리 (Async) :::::::::: " + userVO);
+
+        // 1. 비밀번호 일치 확인
+        if (!userVO.isPasswordConfirmed()) {
+            bindingResult.rejectValue("passwordConfirm", "password.mismatch", "비밀번호가 일치하지 않습니다.");
+        }
+
+        // 2. 유효성 검사 에러 처리
+        if (bindingResult.hasErrors()) {
+            // 모든 에러 메시지를 수집하여 반환
+            List<String> errors = bindingResult.getFieldErrors().stream()
+                    .map(e -> e.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ResponseEntity.badRequest().body(Map.of("success", false, "errors", errors));
+        }
+
+        // String hashedPhone = EncryptionUtil.hash(userVO.getPhoneNum());
+
+        // // 2. 중복 체크 (DB의 phone_hash 컬럼과 비교)
+        // if (userService.phoneDuplicate(hashedPhone)) {
+        //     throw new RuntimeException("이미 사용 중인 번호입니다.");
+        // }
+
+        // userVO.setPhoneHash(hashedPhone);
+
+        // 3. 비밀번호 암호화 및 저장
+        String rawPassword = userVO.getPassword();
+        userVO.setPassword(passwordEncoder.encode(rawPassword));
+
+        int result = userService.employeeJoin(userVO);
+
+        if (result > 0) {
+            // 4. 자동 로그인 시도
+            UserVO loginUser = new UserVO();
+            loginUser.setUserId(userVO.getUserId());
+            loginUser.setPassword(rawPassword);
+
+            boolean loginResult = userService.login(loginUser, request);
+
+            if (loginResult) {
+                return ResponseEntity.ok(Map.of("success", true, "url", "/"));
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(Map.of("success", false, "message", "회원가입 처리 중 오류가 발생했습니다."));
     }
 }

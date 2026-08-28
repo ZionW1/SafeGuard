@@ -22,14 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @Slf4j
 public class BannerController {
-    
+
     @Autowired
     private BannerService bannerService;
 
     @Autowired
     private FileService fileService;
 
-    
+
     // 배너 리스트
     @GetMapping("/banner01")
     public String banner01(Model model, Option option, Page page) throws Exception {
@@ -49,14 +49,14 @@ public class BannerController {
                         .build()
                         .toUriString();
         model.addAttribute("pageUrl", pageUrl);
-        
+
         return "banner/banner01";
     }
-    
+
     // 배너 상세보기
     @GetMapping("/banner02")
     public String banner02(Model model, @RequestParam("id") Long id) throws Exception {
-        
+
         BannerVO bannerSelect = bannerService.bannerSelect(id);
         FilesVO file = fileService.bannerSelect(id);
 

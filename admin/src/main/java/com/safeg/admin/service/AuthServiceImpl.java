@@ -3,7 +3,6 @@ package com.safeg.admin.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.safeg.admin.config.AsyncConfig;
-import com.safeg.admin.controller.aController;
 import com.safeg.admin.vo.PhoneAuth;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
 
     private final PhoneAuthRepository phoneAuthRepository;
     private final AligoSmsService smsService;
@@ -32,12 +31,12 @@ public class AuthServiceImpl implements AuthService{
     /**
      * 문자 전송 실제 호출 메서드 - 재시도 가능하도록 분리
      * 예외 발생 시 재시도 동작함
-     * @throws JsonProcessingException 
-     * @throws JsonMappingException 
+     * @throws JsonProcessingException
+     * @throws JsonMappingException
      */
     @Transactional
     @Retryable(
-        value = {Exception.class},
+        retryFor = {Exception.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 2000)
     )
@@ -66,20 +65,20 @@ public class AuthServiceImpl implements AuthService{
             try {
                 // 1. 문자 전송 시도
                 sendSmsWithRetry(phoneNumber, authCode);
-                
+
                 // 2. 전송 성공 시에만 DB 저장 (유효시간 3분)
                 PhoneAuth phoneAuth = new PhoneAuth();
                 phoneAuth.setPhoneNumber(phoneNumber);
                 phoneAuth.setAuthCode(authCode);
                 phoneAuth.setExpiresAt(LocalDateTime.now().plusMinutes(3));
                 phoneAuthRepository.save(phoneAuth);
-                
+
                 log.info("인증번호 발송 및 DB 저장 완료: " + phoneNumber);
                 return true;
-                
+
             } catch (Exception e) {
                 // 여기서 찍히는 e의 내용을 봐야 왜 실패했는지 알 수 있습니다!
-                log.error("인증 프로세스 중 치명적 에러 발생: ", e); 
+                log.error("인증 프로세스 중 치명적 에러 발생: ", e);
                 return false;
             }
         }, AsyncConfig.smsExecutor()); // 아까 설정한 smsExecutor를 꼭 넣어주세요!
@@ -114,20 +113,20 @@ public class AuthServiceImpl implements AuthService{
             try {
                 // 1. 문자 전송 시도
                 sendSmsApply(phoneNumber, authCode);
-                
+
                 // 2. 전송 성공 시에만 DB 저장 (유효시간 3분)
                 PhoneAuth phoneAuth = new PhoneAuth();
                 phoneAuth.setPhoneNumber(phoneNumber);
                 phoneAuth.setAuthCode(authCode);
                 phoneAuth.setExpiresAt(LocalDateTime.now().plusMinutes(3));
                 phoneAuthRepository.save(phoneAuth);
-                
+
                 log.info("인증번호 발송 및 DB 저장 완료: " + phoneNumber);
                 return true;
-                
+
             } catch (Exception e) {
                 // 여기서 찍히는 e의 내용을 봐야 왜 실패했는지 알 수 있습니다!
-                log.error("인증 프로세스 중 치명적 에러 발생: ", e); 
+                log.error("인증 프로세스 중 치명적 에러 발생: ", e);
                 return false;
             }
         }, AsyncConfig.smsExecutor()); // 아까 설정한 smsExecutor를 꼭 넣어주세요!

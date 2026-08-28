@@ -13,12 +13,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+
+import static org.springframework.http.HttpMethod.POST;
 
 @Service
 @Slf4j
@@ -39,7 +41,7 @@ public class AligoSmsService {
 
     public boolean sendAuthSms(String phoneNumber, String authCode) throws JsonMappingException, JsonProcessingException {
         log.info("AligoSmsService 전송 시도: {} , 코드: {}", phoneNumber, authCode);
-        
+
         RestTemplate restTemplate = new RestTemplate();
 
         // 1. 반드시 MultiValueMap을 사용해야 하며, @Value로 받은 변수를 넣어야 합니다.
@@ -49,9 +51,9 @@ public class AligoSmsService {
         body.add("sender", sender);         // @Value 변수 사용
         body.add("receiver", phoneNumber);
         body.add("msg", "[SafeG] 인증번호는 [" + authCode + "] 입니다. 3분 이내에 입력해주세요.");
-        
+
         // 🚨 테스트 완료 후 문자가 실제로 오게 하려면 이 줄을 주석 처리하거나 "N"으로 바꾸세요!
-        // body.add("testmode_yn", "Y"); 
+        // body.add("testmode_yn", "Y");
 
         // 2. 헤더 설정 (Form Data 형식)
         HttpHeaders headers = new HttpHeaders();
@@ -68,7 +70,7 @@ public class AligoSmsService {
             if (response.getStatusCode() == HttpStatus.OK) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode root = objectMapper.readTree(response.getBody());
-                
+
                 // 알리고는 성공 시 result_code가 정수 1 또는 문자열 "1"로 옵니다.
                 String resultCode = root.path("result_code").asText();
                 return "1".equals(resultCode);
@@ -76,14 +78,14 @@ public class AligoSmsService {
         } catch (Exception e) {
             log.error("알리고 통신 중 에러 발생: ", e);
         }
-        
+
         return false;
     }
 
     public boolean sendSmsApply(String phoneNumber, String authCode) {
         // TODO Auto-generated method stub
         log.info("AligoSmsService 전송 시도: {} , 코드: {}", phoneNumber, authCode);
-        
+
         RestTemplate restTemplate = new RestTemplate();
 
         // 1. 반드시 MultiValueMap을 사용해야 하며, @Value로 받은 변수를 넣어야 합니다.
@@ -93,9 +95,9 @@ public class AligoSmsService {
         body.add("sender", sender);         // @Value 변수 사용
         body.add("receiver", phoneNumber);
         body.add("msg", "[SafeG] 인증번호는 [" + authCode + "] 입니다. 3분 이내에 입력해주세요.");
-        
+
         // 🚨 테스트 완료 후 문자가 실제로 오게 하려면 이 줄을 주석 처리하거나 "N"으로 바꾸세요!
-        // body.add("testmode_yn", "Y"); 
+        // body.add("testmode_yn", "Y");
 
         // 2. 헤더 설정 (Form Data 형식)
         HttpHeaders headers = new HttpHeaders();
@@ -112,7 +114,7 @@ public class AligoSmsService {
             if (response.getStatusCode() == HttpStatus.OK) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode root = objectMapper.readTree(response.getBody());
-                
+
                 // 알리고는 성공 시 result_code가 정수 1 또는 문자열 "1"로 옵니다.
                 String resultCode = root.path("result_code").asText();
                 return "1".equals(resultCode);
@@ -120,14 +122,14 @@ public class AligoSmsService {
         } catch (Exception e) {
             log.error("알리고 통신 중 에러 발생: ", e);
         }
-        
+
         return false;
     }
 
     public boolean sendEventNotice(String receiver, String eventName, String count, String period, String link) {
         // 1. 템플릿 본문 구성 (승인된 내용과 글자 하나 안 틀리고 똑같아야 함)
         String url = "https://alimtalk-api.aligo.in/akv10/alimtalk/send/";
-    
+
         // 🚨 템플릿 문구 구성 (주의: 승인받은 문구와 띄어쓰기, 줄바꿈이 완벽히 일치해야 함)
         String message = String.format(
             "[%s] %s 모집 공고 등록 안내\n\n" +
@@ -144,7 +146,7 @@ public class AligoSmsService {
             "%s",
             eventName, eventName, count, link
         );
-    
+
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("apikey", "YOUR_API_KEY");        // 알리고 API 키
         params.add("userid", "YOUR_ID");             // 알리고 아이디
@@ -154,21 +156,39 @@ public class AligoSmsService {
         params.add("receiver_1", receiver);          // 수신자 번호
         params.add("subject_1", "모집 공고 등록 안내"); // 알리고 관리자용 제목
         params.add("message_1", message);            // 치환 완료된 전체 문구
-    
+
         // 버튼이 있다면 추가 (없으면 생략)
         // params.add("button_1", "{\"button\":[{\"name\":\"확인하기\",\"linkType\":\"WL\",\"linkMo\":\""+link+"\",\"linkPc\":\""+link+"\"}]}");
-    
+
         try {
-            ResponseEntity<Map> response = restTemplate.postForEntity(url, params, Map.class);
+            // 1. ResponseEntity에 제네릭 타입 추가
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params);
+
+            // 2. exchange 메서드로 복합 제네릭 타입(Map<String, Object>)을 안전하게 수신
+            @SuppressWarnings("null")
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                url,
+                POST,
+                requestEntity,
+                new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
+
             Map<String, Object> body = response.getBody();
             log.info("알림톡 발송 결과: {}", body);
-            return "1".equals(String.valueOf(body.get("result_code")));
+
+            // 2. body가 null이 아닌지 체크 후 접근
+            return body != null && "1".equals(String.valueOf(body.get("result_code")));
+
+            // ResponseEntity<Map> response = restTemplate.postForEntity(url, params, Map.class);
+            // Map<String, Object> body = response.getBody();
+            // log.info("알림톡 발송 결과: {}", body);
+            // return "1".equals(String.valueOf(body.get("result_code")));
         } catch (Exception e) {
             log.error("알림톡 전송 중 시스템 에러 발생", e);
             return false;
         }
     }
-    
+
 
     @Async("taskExecutor")
     public CompletableFuture<Boolean> registrationAsync(
@@ -213,7 +233,7 @@ public class AligoSmsService {
                 "%s"; // 템플릿에 포함된 텍스트
 
         // 3. 메시지 생성
-        String message = String.format(template, 
+        String message = String.format(template,
             type,          // [%s] 행사구분
             eventName,     // %s 행사명 (제목)
             eventName,     // %s 행사명 (본문)
@@ -223,7 +243,7 @@ public class AligoSmsService {
             link,          // %s 모집링크
             sender     // %s 담당자연락처
         );
-    
+
         log.warn("apiKey : " + apiKey + " userId : " + userId + " sender : " + sender + " message : " + message);
 
         HttpHeaders headers = new HttpHeaders();
@@ -234,7 +254,7 @@ public class AligoSmsService {
         params.add("userid", userId);
         params.add("senderkey", "ff7f69c328188f85aa26867582ce55a57358b4a3");
         params.add("tpl_code", "UG_4122"); // 예: TF_0001
-        params.add("sender", sender); 
+        params.add("sender", sender);
         params.add("receiver_1", receiver);
         params.add("subject_1", "모집 공고 등록 안내");
         params.add("message_1", message);
@@ -247,19 +267,19 @@ public class AligoSmsService {
             // RestTemplate 등을 이용해 POST 요청 (이미 bean 등록되어 있다고 가정)
             // ResponseEntity<Map> response = restTemplate.postForEntity(url, params, Map.class);
             // String resultCode = String.valueOf(response.getBody().get("result_code"));
-            
+
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             log.info("알리고 전체 응답: " + response.getBody());
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode root = objectMapper.readTree(response.getBody());
-                
+
                 // 알리고는 성공 시 result_code가 정수 1 또는 문자열 "1"로 옵니다.
                 String resultCode = root.path("result_code").asText();
                 return "1".equals(resultCode);
             }
-            
+
             // return "1".equals(resultCode);
         } catch (Exception e) {
             log.error("알림톡 API 통신 실패", e);
@@ -285,7 +305,7 @@ public class AligoSmsService {
     private boolean rosterChecktalk(String receiver, String type, String eventName, int count, String appPeriod, String eventPeriod, String link, String companyPh) {
         log.info("sendAlimtalk : receiver : " + receiver + " type : " + type + " eventName : " + eventName + " appPeriod : " + appPeriod + " eventPeriod : " + eventPeriod + " link : " + link + " companyPh : " + companyPh);
         String url = "https://kakaoapi.aligo.in/akv10/alimtalk/send/";
-    
+
 
         // 예시: 템플릿을 통째로 복사해서 가져온 경우
         String template = "[%s] 운영 인솔자 지정 및 업무 안내\n" +
@@ -324,7 +344,7 @@ public class AligoSmsService {
         params.add("userid", userId);
         params.add("senderkey", "ff7f69c328188f85aa26867582ce55a57358b4a3");
         params.add("tpl_code", "UG_4123"); // 예: TF_0001
-        params.add("sender", sender); 
+        params.add("sender", sender);
         params.add("receiver_1", receiver);
         params.add("subject_1", "인솔자 명단 안내");
         params.add("message_1", message);
@@ -337,19 +357,19 @@ public class AligoSmsService {
             // RestTemplate 등을 이용해 POST 요청 (이미 bean 등록되어 있다고 가정)
             // ResponseEntity<Map> response = restTemplate.postForEntity(url, params, Map.class);
             // String resultCode = String.valueOf(response.getBody().get("result_code"));
-            
+
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             log.info("알리고 전체 응답: " + response.getBody());
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode root = objectMapper.readTree(response.getBody());
-                
+
                 // 알리고는 성공 시 result_code가 정수 1 또는 문자열 "1"로 옵니다.
                 String resultCode = root.path("result_code").asText();
                 return "1".equals(resultCode);
             }
-            
+
             // return "1".equals(resultCode);
         } catch (Exception e) {
             log.error("알림톡 API 통신 실패", e);

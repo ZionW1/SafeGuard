@@ -33,12 +33,12 @@ public class AuthServiceImpl implements AuthService{
     /**
      * 문자 전송 실제 호출 메서드 - 재시도 가능하도록 분리
      * 예외 발생 시 재시도 동작함
-     * @throws JsonProcessingException 
-     * @throws JsonMappingException 
+     * @throws JsonProcessingException
+     * @throws JsonMappingException
      */
     @Transactional
     @Retryable(
-        value = {Exception.class},
+        retryFor = {Exception.class},
         maxAttempts = 3,
         backoff = @Backoff(delay = 2000)
     )
@@ -65,13 +65,13 @@ public class AuthServiceImpl implements AuthService{
         try {
             // STEP 1: 문자 전송 (외부 API 호출 - 트랜잭션 외부)
             sendSmsWithRetry(phoneNumber, authCode);
-            
+
             // STEP 2: DB 저장 (별도의 트랜잭션 메서드 호출)
             savePhoneAuthData(phoneNumber, authCode);
-            
+
             log.info("인증번호 발송 및 DB 저장 완료: " + phoneNumber);
             return CompletableFuture.completedFuture(true);
-            
+
         } catch (Exception e) {
             log.error("인증 프로세스 중 치명적 에러 발생: ", e);
             return CompletableFuture.completedFuture(false);
@@ -86,7 +86,7 @@ public class AuthServiceImpl implements AuthService{
         phoneAuth.setAuthCode(authCode);
         phoneAuth.setExpiresAt(LocalDateTime.now().plusMinutes(3));
         phoneAuth.setUsed(false); // 기본값 설정
-        
+
         phoneAuthRepository.save(phoneAuth);
     }
 
@@ -120,20 +120,20 @@ public class AuthServiceImpl implements AuthService{
             try {
                 // 1. 문자 전송 시도
                 sendSmsApply(campaignId, userCampaignVO);
-                
+
                 // 2. 전송 성공 시에만 DB 저장 (유효시간 3분)
                 PhoneAuth phoneAuth = new PhoneAuth();
                 phoneAuth.setPhoneNumber("01045558079");
                 phoneAuth.setAuthCode(authCode);
                 phoneAuth.setExpiresAt(LocalDateTime.now().plusMinutes(3));
                 phoneAuthRepository.save(phoneAuth);
-                
+
                 log.info("인증번호 발송 및 DB 저장 완료: ");
                 return true;
-                
+
             } catch (Exception e) {
                 // 여기서 찍히는 e의 내용을 봐야 왜 실패했는지 알 수 있습니다!
-                log.error("인증 프로세스 중 치명적 에러 발생: ", e); 
+                log.error("인증 프로세스 중 치명적 에러 발생: ", e);
                 return false;
             }
         }, AsyncConfig.smsExecutor()); // 아까 설정한 smsExecutor를 꼭 넣어주세요!

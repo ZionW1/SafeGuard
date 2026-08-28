@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +27,11 @@ public class ApplyServiceImpl implements ApplyService {
 
     final ApplyMapper applyMapper;
 
-    @Autowired
-    UserMapper userMapper;
+    final UserMapper userMapper;
 
-    ApplyServiceImpl(ApplyMapper applyMapper) {
+    ApplyServiceImpl(ApplyMapper applyMapper, UserMapper userMapper) {
         this.applyMapper = applyMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -50,7 +49,7 @@ public class ApplyServiceImpl implements ApplyService {
         String fullAttendDate = applyDate.toString().substring(0, 7);
         log.info("fullAttendDate : " + fullAttendDate);
         String statusInfo = applyMapper.statusInfo(userNo, campaignId, applyDate);
-        String applyDateString = applyDate.toString();
+        // String applyDateString = applyDate.toString();
         int result = applyMapper.updateStatus(userNo, campaignId, applyDate, statusValue);
         log.info("출결 상태 업데이트 결과 : " + result);
 
@@ -68,20 +67,6 @@ public class ApplyServiceImpl implements ApplyService {
         } else {
             throw new Exception("출결 상태 업데이트 실패");
         }
-    }
-
-    private void saveLeaderPoint(Long userId, Long campId, LocalDate date, String category, int amount) throws Exception {
-        String dateString = date.toString();
-
-        PointHistoryVO vo = new PointHistoryVO();
-        vo.setUserNo(userId);
-        vo.setAmount(amount);
-        vo.setCategory(category);
-        vo.setSourceNo(userId);
-        vo.setCampaignId(campId);
-        vo.setMissionDate(dateString);
-        vo.setSettlementStatus("READY");
-        applyMapper.insertPointHistory(vo);
     }
 
     @Override
@@ -382,9 +367,10 @@ public class ApplyServiceImpl implements ApplyService {
     @Transactional(rollbackFor = Exception.class) // 에러 발생 시 자동 롤백
     public UserCampaignVO overlapTitle(CampaignVO dto) throws Exception {
         log.info("overlapTitle" + dto.getLeaderPay());
-        Long campaignId = dto.getCampaignId();
+        // Long campaignId = dto.getCampaignId();
+        // List<String> userIdList = dto.getUserIds();
+
         List<String> userNoList = dto.getUserNos();
-        List<String> userIdList = dto.getUserIds();
 
         int userNoSize = userNoList.size();
         int currentCount = applyMapper.countApplicants(dto.getCampaignId());

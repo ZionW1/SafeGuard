@@ -2,7 +2,6 @@ package com.safeg.admin.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,12 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class BannerServiceImpl implements BannerService{
-    
-    @Autowired
-    private BannerMapper bannerMapper;
 
-    @Autowired 
-    FileService fileService;
+    private final BannerMapper bannerMapper;
+
+    final FileService fileService;
+
+    BannerServiceImpl(BannerMapper bannerMapper, FileService fileService) {
+        this.bannerMapper = bannerMapper;
+        this.fileService = fileService;
+    }
 
     @Override
     public List<BannerVO> bannerList(Option option, Page page) throws Exception {
@@ -33,7 +35,7 @@ public class BannerServiceImpl implements BannerService{
             // page.setCount(total);
         }
         List<BannerVO> bannerList = bannerMapper.bannerList(option, page);
-        
+
         return bannerList;
     }
 
@@ -58,7 +60,7 @@ public class BannerServiceImpl implements BannerService{
         log.info("수정 처리 후 : " + bannerVO.getFile());
 
         MultipartFile file = bannerVO.getFile();
-        
+
         // uploadFile.setStatusId(bannerVO.getId());
         // uploadFile.setId(bannerVO.getId());
 
@@ -127,15 +129,4 @@ public class BannerServiceImpl implements BannerService{
         }
         return result;
     }
-
-
-
-
-    // @Override
-    // public CampaignVO campaignSelect(String id) throws Exception {
-    //     // TODO Auto-generated method stub
-    //     log.info("campaignSelectDetail");
-    //     CampaignVO campaignDetail = campaignsMapper.campaignSelect(id);
-    //     return campaignDetail;
-    // }
 }

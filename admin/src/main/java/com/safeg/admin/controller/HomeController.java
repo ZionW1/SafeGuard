@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.safeg.admin.service.AligoSmsService;
 import com.safeg.admin.service.CampaignService;
 import com.safeg.admin.service.UserService;
 import com.safeg.admin.util.EncryptionUtil;
@@ -37,14 +36,6 @@ public class HomeController {
     private final UserService userService;
 
     private final PasswordEncoder passwordEncoder; // ⭐️ BCryptPasswordEncoder가 주입될 곳 ⭐️
-
-    // ⭐️ 생성자 주입 ⭐️
-    public HomeController(UserService userService, PasswordEncoder passwordEncoder, AligoSmsService aligoSmsService, CampaignService campaignsService) {
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-        this.campaignsService = campaignsService;
-    }
-
 
     @GetMapping("")
     public String home(@AuthenticationPrincipal CustomUser authUser, Model model,
@@ -85,8 +76,6 @@ public class HomeController {
 
     @PostMapping("/join")
     public String join02(@Valid @ModelAttribute("userVO") UserVO userVO, BindingResult bindingResult, Model model) throws Exception{
-        log.info(":::::::::: 어드민 가입 처리 ::::::::::" + userVO);
-
         // ⭐️⭐️⭐️ 가장 중요! 비밀번호 확인은 평문끼리 해야 해! ⭐️⭐️⭐️
         // UserVO에서 가져온 rawPassword와 rawPasswordConfirm은 이미 평문 상태야.
         // 여기서 이 두 평문값을 userVO의 password와 passwordConfirm 필드에 그대로 둔 상태로

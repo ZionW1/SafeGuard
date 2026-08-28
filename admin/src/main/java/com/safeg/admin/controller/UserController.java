@@ -1,31 +1,23 @@
 package com.safeg.admin.controller;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.UrlResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.safeg.admin.service.FileService;
 import com.safeg.admin.service.UserService;
 import com.safeg.admin.util.EncryptionUtil;
-import com.safeg.admin.vo.CampaignVO;
 import com.safeg.admin.vo.CustomUser;
 import com.safeg.admin.vo.FilesVO;
 import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
 import com.safeg.admin.vo.UserVO;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,19 +26,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
 
 @Controller
+@RequiredArgsConstructor
 @Slf4j
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private FileService fileService;
+    private final FileService fileService;
 
     @GetMapping("/user01")
     public String user01(@AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {

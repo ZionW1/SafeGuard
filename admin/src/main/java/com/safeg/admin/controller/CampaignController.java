@@ -134,7 +134,6 @@ public class CampaignController {
     // 등록 처리
     @PostMapping("/campaign04")
     public String campaign04(CampaignVO campaignVO) throws Exception {
-        log.info("campaignVO.toString : " + campaignVO.toString());
         // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // CustomUser customUser = (CustomUser) authentication.getPrincipal();
         int result = campaignService.campaignInsert(campaignVO);
@@ -144,10 +143,7 @@ public class CampaignController {
             .limit(campaignVO.getEventPeriodEnd().toEpochDay() - campaignVO.getEventPeriodStr().toEpochDay() + 1)
             .collect(Collectors.toList());
 
-        log.info("datesInRange"+datesInRange);
-
         if (campaignVO.getLeaderList() != null && !campaignVO.getLeaderList().isEmpty()) {
-            log.info("campaignVO.getLeaderList"+campaignVO.getLeaderList());
             int index = 0;
 
             // 1. 추출된 각각의 날짜를 순회합니다.
@@ -211,8 +207,8 @@ public class CampaignController {
             .limit(campaignVO.getEventPeriodEnd().toEpochDay() - campaignVO.getEventPeriodStr().toEpochDay() + 1)
             .collect(Collectors.toList());
 
-        log.info("datesInRange"+datesInRange);
-
+        log.warn("datesInRange" + datesInRange);
+        
         if (result > 0) {
             script = "<script>" +
             "   alert('수정이 완료 되었습니다.');" +
@@ -277,7 +273,6 @@ public class CampaignController {
 
     @GetMapping("/campaign09")
     public String campaign09(@AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {
-        log.info("campaign09");
         List<CampaignVO> campaignsList = campaignService.campaignList(option, page);
 
         model.addAttribute("campaignsList", campaignsList);
@@ -293,7 +288,6 @@ public class CampaignController {
                         .queryParam("orderCode", option.getOrderCode())
                         .build()
                         .toUriString();
-        log.info("pageRows : " + page.getRows());
         model.addAttribute("pageUrl", pageUrl);
 
         if(authUser != null){
@@ -367,9 +361,6 @@ public class CampaignController {
     @PostMapping("/chgRole/{campaignId}")
     @ResponseBody // 👈 HTML이 아니라 데이터(JSON)만 리턴하겠다는 선언!
     public List<UserVO> chgRole(@PathVariable("campaignId") Long campaignId, @RequestBody Map<String, String> paramMap, Option option) throws Exception {
-        log.info("campaignId : {} ", campaignId);
-
-        log.info("paramMap : {} ", paramMap);
         // String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
 
         // 만약 'ALL' 이면 전체 조회, 특정 날짜면 해당 날짜만 조회하는 로직 필요
@@ -398,7 +389,6 @@ public class CampaignController {
                 // 중복이 발견되었더라도 사용자가 선택한 날짜가 'ALL'이 아니고,
                 // 실제 중복된 날짜(applyDate)와 사용자가 선택한 날짜(applyDateS)가 다르다면 패스해야 함
                 if (!"ALL".equals(dto.getApplyDateS()) && !dto.getApplyDateS().equals("")) {
-                    log.info("dto.getApplyDateS(). " + dto.getApplyDateS());
                     // 겹치는 날짜는 6,7일인데 사용자는 8일을 골랐으므로 신청 진행!
                     result = campaignService.userApply(dto);
                     response.put("message", "캠페인 신청이 완료되었습니다.");
@@ -450,7 +440,6 @@ public class CampaignController {
     @PostMapping("/leaderUpdate")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> leaderUpdate(@RequestBody CampaignVO dto) {
-        log.info("dto : " + dto);
         Map<String, Object> response = new HashMap<>();
 
         try {

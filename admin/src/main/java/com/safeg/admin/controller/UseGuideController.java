@@ -1,51 +1,35 @@
 package com.safeg.admin.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.safeg.admin.service.UseGuideService;
 import com.safeg.admin.vo.AdminContentVO;
-import com.safeg.admin.vo.UseGuideVO;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@RequiredArgsConstructor
 @Slf4j
 public class UseGuideController {
-    @Autowired
-    UseGuideService useGuideService;
-    
+    final UseGuideService useGuideService;
+
     @RequestMapping("/useGuide01")
     public String useGuide01(Model model) throws Exception {
-        log.info("UseGuide useGuide01");
         AdminContentVO useGuideSelect = useGuideService.useGuideSelect();
-        log.info("UseGuide useGuide01" + useGuideSelect);
 
         model.addAttribute("useGuideSelect", useGuideSelect);
         return "useGuide/useGuide01";
     }
-    
+
     // CKEditor에서 작성된 내용을 POST 요청으로 받아 데이터베이스에 저장
     @PostMapping("/useGuide02")
     public String saveContent(AdminContentVO adminContentVO) throws Exception{
         int result = 0;
         // 'content'는 HTML form의 textarea name="content"에서 넘어온 값
-        System.out.println("--- CKEditor에서 넘어온 내용 ---");
-        System.out.println(adminContentVO.getContent());
-        System.out.println("----------------------------");
         if(adminContentVO.getAction().equals("I")){
             adminContentVO.setAuthor("Admin");
             result = useGuideService.useGuideInsert(adminContentVO);
@@ -53,7 +37,7 @@ public class UseGuideController {
             adminContentVO.setAuthor("Admin");
             result = useGuideService.useGuideUpdate(adminContentVO);
         }
-        
+
         System.out.println("DB 저장 결과: " + result);
         // ⭐️ 여기서 DB에 저장하는 로직을 구현해야 해. ⭐️
         // 1. Service 레이어를 호출하여 DB 트랜잭션 시작
@@ -76,7 +60,7 @@ public class UseGuideController {
     //         try {
     //             // 실제 이미지 파일을 서버 특정 경로에 저장
     //             String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-                
+
     //             File uploadDir = new File("/path/to/your/upload/directory");
     //             if (!uploadDir.exists()) {
     //                 uploadDir.mkdirs();

@@ -11,11 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 public class ErrorController {
-    
+
     @GetMapping("/error01")
     public String error(Model model) throws Exception {
-        log.info("Admin HomeController error() 호출");
-        
+        log.info("error() 호출");
+
         return "error/error01";
     }
 

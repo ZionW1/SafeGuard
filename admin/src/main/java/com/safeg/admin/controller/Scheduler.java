@@ -1,21 +1,15 @@
 package com.safeg.admin.controller;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import com.safeg.admin.service.AligoSmsService;
 import com.safeg.admin.service.CampaignService;
-import com.safeg.admin.service.UserService;
 import com.safeg.admin.vo.CampaignVO;
-import com.safeg.admin.vo.UserVO;
 
-import ch.qos.logback.core.model.Model;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,9 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 public class Scheduler {
-    
+
     private final CampaignService campaignService;
-    private final UserService userService;
+    // private final UserService userService;
     private final AligoSmsService aligoSmsService; // @Autowired 대신 생성자 주입 권장 (이미 RequiredArgsConstructor가 있음)
 
     // 1. 새벽 2시 스케줄러 (정상)
@@ -44,12 +38,13 @@ public class Scheduler {
     @Scheduled(cron = "0 0 10 * * *")
     public void closeCampaignScheduler() { // 👈 Model model 파라미터 제거!
         log.info("CloseCampaignScheduler - 알림톡 발송 스케줄러 시작.");
-         // 현재 날짜 구하기        
-        LocalDate now = LocalDate.now();         
-        // 포맷 정의        
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");         
-        // 포맷 적용        
-        String formatedNow = now.format(formatter);
+         // 현재 날짜 구하기
+        LocalDate now = LocalDate.now();
+
+        // 포맷 정의
+        // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // 포맷 적용
+        // String formatedNow = now.format(formatter);
 
         try {
             List<CampaignVO> closedCampaign = campaignService.closedCampaign();
@@ -62,7 +57,7 @@ public class Scheduler {
                     // 안전한 문자열 조립 (String.valueOf는 null일 경우 "null" 문자열을 반환하여 에러를 막음)
                     String appPeriod = String.valueOf(campaignsVO.getAppPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getAppPeriodEnd());
                     String eventPeriod = String.valueOf(campaignsVO.getEventPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getEventPeriodEnd());
-                    LocalDate resultDate = campaignsVO.getResultDate();
+                    // LocalDate resultDate = campaignsVO.getResultDate();
 
                     if (now.isEqual(campaignsVO.getResultDate())) {
                         aligoSmsService.rosterCheckAsync(campaignsVO.getLeaderPhone(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), appPeriod, eventPeriod, "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(), campaignsVO.getCompanyPh());

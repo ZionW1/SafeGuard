@@ -2,30 +2,28 @@ package com.safeg.admin.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.safeg.admin.service.FaqService;
 import com.safeg.admin.service.InquiryService;
-import com.safeg.admin.vo.AdminContentVO;
 import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
 import com.safeg.admin.vo.InquiryVO;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@RequiredArgsConstructor
 @Slf4j
 public class InquiryController {
 
-    @Autowired
-    InquiryService inquiryService;
-    
+    final InquiryService inquiryService;
+
     // 1:1 문의사항 리스트
     @GetMapping("/inquiry01")
     public String inquiryList(Option option, Page page, Model model, HttpServletRequest request) throws Exception{
@@ -65,5 +63,5 @@ public class InquiryController {
     // 1:1 문의사항 답변 삭제
     // 1:1 문의사항 답변 상태 변경 (예: 답변 완료, 답변 대기 등)
     // 1:1 문의사항 검색 및 필터링 (예: 날짜, 상태, 사용자 등)
-    
+
 }

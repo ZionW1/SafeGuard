@@ -26,7 +26,7 @@ public class FaqController {
 
     @GetMapping("/faq01")
     public String notice01(Model model, Option option, Page page) throws Exception {
-
+        log.info("FAQ List 화면");
         List<AdminContentVO> faqList = faqService.faqList(option, page);
 
         model.addAttribute("faqList", faqList);
@@ -48,7 +48,7 @@ public class FaqController {
 
     @GetMapping("/faq02")
     public String faq02(Model model, @RequestParam("id") String faqId) throws Exception {
-        log.info("Admin FaqController faq02() 호출");
+        log.info("FAQ update 화면");
         AdminContentVO faqSelect = faqService.faqSelect(faqId);
 
         model.addAttribute("faqSelect", faqSelect);
@@ -58,14 +58,14 @@ public class FaqController {
 
     @GetMapping("/faq03")
     public String faq03(Model model) throws Exception {
-        log.info("Admin FaqController faq03() 호출");
+        log.info("FAQ insert 화면");
 
         return "faq/faq03";
     }
 
     @PostMapping("/faq04")
     public String faq04(Model model, AdminContentVO adminContentVO) throws Exception {
-        log.info("Admin FaqController faq04() 호출");
+        log.info("FAQ insert 추가");
         log.info("faq04 : " + adminContentVO);
 
         int result = faqService.faqInsert(adminContentVO);
@@ -77,9 +77,7 @@ public class FaqController {
 
     @PostMapping("/faq05")
     public String faq05(AdminContentVO adminContentVO) throws Exception {
-
-        log.info("Admin FaqController faq05() 호출");
-        log.info("faq05 : " + adminContentVO);
+        log.info("FAQ update 수정");
 
         int result = faqService.faqUpdate(adminContentVO);
         if(result > 0){
@@ -90,9 +88,7 @@ public class FaqController {
 
     @PostMapping("/faq06")
     public String faq06(@RequestParam("id") String faqId) throws Exception {
-
-        log.info("Admin FaqController faq06() 호출");
-        log.info("faq06 : " + faqId);
+        log.info("FAQ Delete 삭제");
 
         int result = faqService.faqDelete(faqId);
         if(result > 0){

@@ -8,20 +8,19 @@ import org.springframework.web.bind.annotation.*;
 
 import com.safeg.admin.service.AuthService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/auth")
 @Slf4j
 public class AuthController {
 
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
-
+    // 휴대폰 인증번호 발송
     @PostMapping("/sendCode")
     public CompletableFuture<ResponseEntity<String>> sendCode(@RequestParam("phoneNumber") String phoneNumber) throws Exception{
         log.info("sendCode " + phoneNumber);
@@ -36,6 +35,7 @@ public class AuthController {
         );
     }
 
+    // 인증 코드 확인.
     @PostMapping("/verifyCode")
     public String verifyCode(@RequestParam("phoneNumber") String phoneNumber, @RequestParam("inputCode") String code) throws Exception {
         if (authService.verifyAuthCode(phoneNumber, code)) {

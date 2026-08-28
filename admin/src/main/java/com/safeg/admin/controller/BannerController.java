@@ -2,7 +2,6 @@ package com.safeg.admin.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,18 +16,17 @@ import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
 import com.safeg.admin.service.BannerService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@RequiredArgsConstructor
 @Slf4j
 public class BannerController {
 
-    @Autowired
-    private BannerService bannerService;
+    private final BannerService bannerService;
 
-    @Autowired
-    private FileService fileService;
-
+    private final FileService fileService;
 
     // 배너 리스트
     @GetMapping("/banner01")

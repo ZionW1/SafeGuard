@@ -1,15 +1,8 @@
 package com.safeg.admin.controller;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.CompletableFuture;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,51 +10,45 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.safeg.admin.config.CryptoUtils;
 import com.safeg.admin.service.AligoSmsService;
 import com.safeg.admin.service.CampaignService;
 import com.safeg.admin.service.UserService;
 import com.safeg.admin.util.EncryptionUtil;
 import com.safeg.admin.vo.CampaignVO;
-import com.safeg.admin.vo.CommonData;
 import com.safeg.admin.vo.CustomUser;
 import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
 import com.safeg.admin.vo.UserVO;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/")
 @Slf4j
 public class HomeController {
-    @Autowired
-    private CampaignService campaignsService;
+    private final CampaignService campaignsService;
 
-    @Autowired
-    private UserService userService;
-
-    private final AligoSmsService aligoSmsService;
+    private final UserService userService;
 
     private final PasswordEncoder passwordEncoder; // ⭐️ BCryptPasswordEncoder가 주입될 곳 ⭐️
 
     // ⭐️ 생성자 주입 ⭐️
-    public HomeController(UserService userService, PasswordEncoder passwordEncoder, AligoSmsService aligoSmsService) {
+    public HomeController(UserService userService, PasswordEncoder passwordEncoder, AligoSmsService aligoSmsService, CampaignService campaignsService) {
         this.userService = userService;
-        this.aligoSmsService = aligoSmsService;
         this.passwordEncoder = passwordEncoder;
+        this.campaignsService = campaignsService;
     }
 
 
     @GetMapping("")
     public String home(@AuthenticationPrincipal CustomUser authUser, Model model,
-                Option option, 
+                Option option,
                 Page page) throws Exception{
         List<CampaignVO> campaignsList = campaignsService.campaignList(option, page);
         model.addAttribute("campaignsList", campaignsList);
@@ -87,7 +74,7 @@ public class HomeController {
         // return "/admin/list";
         return "index";
     }
-    
+
     @GetMapping("/join")
     public String join01(Model model) throws Exception{
         log.info(":::::::::: 어드민 가입 화면 ::::::::::");
@@ -157,7 +144,7 @@ public class HomeController {
         // 회원가입 처리 로직
         return "redirect:/login";
     }
-    
+
     public static void main(String[] args) {
         // BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -174,10 +161,10 @@ public class HomeController {
         // System.out.println("DB에 저장된 해시: " + dbEncodedPassword);
         // System.out.println("비밀번호 일치 여부: " + isMatch);
         // Random random = new Random();
-        
+
         // int code = 100000 + random.nextInt(900000);
         // log.info("code + " + code);
-        
+
         // return String.valueOf(code);
         // 만약 회원가입 시 평문 'MJordan23!'을 암호화한 해시와 로그인 시 'MJordan23!'을 비교해서 일치하는지 확인
         // String newHash = encoder.encode(enteredPlainPassword);
@@ -187,11 +174,11 @@ public class HomeController {
 
         // 2. 해시화 수행
         String hashedPhone = EncryptionUtil.hash("01045558079");
-        
+
         // 3. 변환된 값 확인 (DB에 들어갈 그 값!)
         System.out.println("해시 변환 결과: " + hashedPhone);
     }
-    
+
 
 //     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 // DB에 저장된 jjj의 BCrypt 비밀번호 해시값을 가져와. ($2a$10$Au6xQ0N/mzggLNcN/E/eve5vamCc/v0jdYebiOaSIuhcyyNSoRW5m)
@@ -211,10 +198,10 @@ public class HomeController {
     // public ResponseEntity<String> sendNotice(@RequestBody Map<String, String> data) {
     //     // 비동기 메서드 호출 (결과를 기다리지 않고 바로 다음 줄 실행)
     //     aligoSmsService.sendEventNoticeAsync(
-    //         data.get("receiver"), 
-    //         data.get("eventName"), 
-    //         data.get("count"), 
-    //         data.get("period"), 
+    //         data.get("receiver"),
+    //         data.get("eventName"),
+    //         data.get("count"),
+    //         data.get("period"),
     //         data.get("link")
     //     );
 

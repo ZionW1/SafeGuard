@@ -1,23 +1,17 @@
 package com.safeg.admin.controller;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,24 +28,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.safeg.admin.vo.CampaignVO;
 import com.safeg.admin.vo.CommonData;
 import com.safeg.admin.vo.FilesVO;
 import com.safeg.admin.mapper.MediaUtil;
 import com.safeg.admin.service.FileService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
+@RequiredArgsConstructor
 @Controller
 public class FileController {
 
-    @Autowired
-    private FileService fileService;
-    
+    private final FileService fileService;
+
     @Value("${upload.path}")
     private String uploadPath;
+
     /**
      * 이미지 썸네일
      * @param id
@@ -62,13 +57,13 @@ public class FileController {
     public ResponseEntity<byte[]> thumbnail(@RequestParam("id") String id) throws Exception{
         log.info("thumbnail : " + id);
         FilesVO file = fileService.select(id);
-        
+
         String filePath = file.getFilePath();
         // 파일 객체 생성
         File f = new File(filePath);
         // 파일 데이터
         byte[] fileData = FileCopyUtils.copyToByteArray(f);
-        
+
         // 컨텐츠 파일 지정
         // 확장자로 컨텐츠 타입 지정
         // - 확장자 : .jpg, .png ...
@@ -80,8 +75,8 @@ public class FileController {
 
         return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
     }
-    
-    
+
+
     /**
      * 다운로드
      * @param id
@@ -94,7 +89,7 @@ public class FileController {
 
         String filePath = file.getFilePath();
         String fileName = file.getOriginalName();
-        
+
         // 한글 파일명 인코딩
         fileName = URLEncoder.encode(fileName,"UTF-8");
 
@@ -175,7 +170,7 @@ public class FileController {
         File f = new File(filePath);
         // 파일 데이터
         byte[] fileData = FileCopyUtils.copyToByteArray(f);
-        
+
         // 컨텐츠 파일 지정
         // 확장자로 컨텐츠 타입 지정
         // - 확장자 : .jpg, .png ...
@@ -210,14 +205,14 @@ public class FileController {
 
             // 2. 고유한 파일명 생성
             String originalFileName = file.getOriginalFilename();
-            String fileExtension = (originalFileName != null && originalFileName.contains(".")) 
-                                    ? originalFileName.substring(originalFileName.lastIndexOf(".")) 
+            String fileExtension = (originalFileName != null && originalFileName.contains("."))
+                                    ? originalFileName.substring(originalFileName.lastIndexOf("."))
                                     : "";
             String uuidFileName = UUID.randomUUID().toString() + fileExtension;
-            
+
             // 3. 파일 저장 (단 한 번만 수행!)
             Path targetPath = Paths.get(uploadDir).resolve(uuidFileName);
-            
+
             // transferTo는 가장 효율적인 파일 저장 방식입니다.
             file.transferTo(targetPath.toFile());
 
@@ -225,8 +220,8 @@ public class FileController {
 
             // 4. 성공 응답 구성
             // WebConfig에서 /images/** 를 /Users/pieck/Documents/upload/ 로 매핑했으므로 아래 경로가 맞습니다.
-            String fileUrl = "/admin/images/" + uuidFileName; 
-            
+            String fileUrl = "/admin/images/" + uuidFileName;
+
             response.put("uploaded", true);
             response.put("url", fileUrl);
 
@@ -246,7 +241,7 @@ public class FileController {
     public String bannerRemoveFile(@RequestParam("id") String id) throws Exception{
 
         log.info("=========================== deleteFile ========================= " + id);
-        
+
         log.info("삭제 처리 : " + id);
         int result = fileService.bannerRemoveFile(id);
         log.info("=========================== result ========================= " + result);
@@ -264,7 +259,7 @@ public class FileController {
         if(args == null || args.equals("")) {
             log.warn("Invalid args parameter for selectProfile: {}", args);
             log.info("Invalid args parameter for selectProfile: {}", args);
-            
+
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else if(args.equals("2")) {
             file = fileService.getMypageImage(id, "identification");
@@ -299,7 +294,7 @@ public class FileController {
         File f = new File(filePath);
         // 파일 데이터
         byte[] fileData = FileCopyUtils.copyToByteArray(f);
-        
+
         // 컨텐츠 파일 지정
         // 확장자로 컨텐츠 타입 지정
         // - 확장자 : .jpg, .png ...
@@ -323,11 +318,11 @@ public class FileController {
             String zipFileName = URLEncoder.encode("신분증_파일묶음.zip", StandardCharsets.UTF_8.toString()).replace("+", "%20");
             // 1. 서버 컴퓨터에 파일이 실제로 저장되어 있는 절대 경로 설정 (본인 환경에 맞게 수정)
             // 예: Mac/Linux라면 "/Users/username/upload/" , Windows라면 "C:/upload/"
-            // String uploadDir = "/Users/safeg/upload/"; 
-            
+            // String uploadDir = "/Users/safeg/upload/";
+
             // // Path fileStorageLocation = Paths.get(uploadPath).toAbsolutePath().normalize();
             // Path targetPath = fileStorageLocation.resolve(filePath).normalize();
-            
+
             // Resource resource = new UrlResource(targetPath.toUri());
 
             // // // 2. 파일이 진짜 존재하는지 확인
@@ -353,7 +348,7 @@ public class FileController {
             return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/zip"))
                 // ✨ 파일 크기를 브라우저에 정확히 알려주기 위해 contentLength 추가
-                .contentLength(identificationFile.contentLength()) 
+                .contentLength(identificationFile.contentLength())
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + zipFileName + "\"")
                 .body(identificationFile);
         } catch (Exception e) {

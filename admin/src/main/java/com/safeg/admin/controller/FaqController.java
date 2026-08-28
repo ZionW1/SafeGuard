@@ -2,7 +2,6 @@ package com.safeg.admin.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,14 +14,15 @@ import com.safeg.admin.vo.AdminContentVO;
 import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@RequiredArgsConstructor
 @Slf4j
 public class FaqController {
 
-    @Autowired
-    FaqService faqService;
+    final FaqService faqService;
 
     @GetMapping("/faq01")
     public String notice01(Model model, Option option, Page page) throws Exception {
@@ -59,15 +59,15 @@ public class FaqController {
     @GetMapping("/faq03")
     public String faq03(Model model) throws Exception {
         log.info("Admin FaqController faq03() 호출");
-        
+
         return "faq/faq03";
     }
-    
+
     @PostMapping("/faq04")
     public String faq04(Model model, AdminContentVO adminContentVO) throws Exception {
         log.info("Admin FaqController faq04() 호출");
         log.info("faq04 : " + adminContentVO);
-        
+
         int result = faqService.faqInsert(adminContentVO);
         if(result > 0){
             return "redirect:/faq01";
@@ -77,10 +77,10 @@ public class FaqController {
 
     @PostMapping("/faq05")
     public String faq05(AdminContentVO adminContentVO) throws Exception {
-        
+
         log.info("Admin FaqController faq05() 호출");
         log.info("faq05 : " + adminContentVO);
-        
+
         int result = faqService.faqUpdate(adminContentVO);
         if(result > 0){
             return "redirect:/faq01";
@@ -90,10 +90,10 @@ public class FaqController {
 
     @PostMapping("/faq06")
     public String faq06(@RequestParam("id") String faqId) throws Exception {
-        
+
         log.info("Admin FaqController faq06() 호출");
         log.info("faq06 : " + faqId);
-        
+
         int result = faqService.faqDelete(faqId);
         if(result > 0){
             return "redirect:/faq01";

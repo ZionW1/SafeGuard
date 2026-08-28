@@ -3,9 +3,7 @@ package com.safeg.admin.service;
 import java.util.List;
 
 import com.safeg.admin.vo.CampLeaderVO;
-// import com.safeg.admin.vo.CampaignTypesVO;
 import com.safeg.admin.vo.CampaignVO;
-import com.safeg.admin.vo.FilesVO;
 import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
 import com.safeg.admin.vo.UserCampaignVO;
@@ -20,6 +18,8 @@ public interface CampaignService {
     public CampaignVO campaignSelect(String campaignId) throws Exception;
 
     public int campaignInsert(CampaignVO campaignsVO) throws Exception;
+
+    public void campLeaderInsert(CampLeaderVO leaderList, int index) throws Exception;
 
     public int campaignUpdate(CampaignVO campaign) throws Exception;
 
@@ -42,8 +42,6 @@ public interface CampaignService {
     public int userCancel(CampaignVO dto) throws Exception;
 
     public int userApply(CampaignVO dto) throws Exception;
-
-    public void campLeaderInsert(CampLeaderVO leaderList) throws Exception;
 
     public int leaderUpdate(CampaignVO dto) throws Exception;
 

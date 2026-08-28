@@ -11,7 +11,7 @@
         <!-- 1. 데스크탑 사이드바 -->
         <div class="desktop-header sidebar">
             <div class="sidebar-menu">
-                <h2><a th:href="@{/campaign01}">챗짱 Admin</a></h2>
+                <h1>행집 Admin</a></h1>
                 <a th:href="@{/campaign01}"><div class="menu-item">캠페인 목록 요약</div></a>
                 <a th:href="@{/campaign03}"><div class="menu-item">캠페인 등록</div></a>
                 <a th:href="@{/campaign07}"><div class="menu-item">선정인원 없는 캠페인 목록</div></a>
@@ -43,7 +43,7 @@
                 <button class="close-btn" id="mMenuClose">✕</button>
             </div>
             <ul class="drawer-list">
-                <li><h2><a th:href="@{/campaign01}">챗짱 Admin</a></h2></li>
+                <li><h2>행집 Admin</a></h2></li>
                 <li><a th:href="@{/campaign01}">캠페인 목록 요약</a></li>
                 <li><a th:href="@{/campaign03}">캠페인 등록</a></li>
                 <li><a th:href="@{/campaign07}">선정인원 없는 캠페인 목록</a></li>
@@ -61,7 +61,7 @@
                 <li sec:authorize="isAuthenticated()"><a href="javascript:logout()">로그아웃</a></li>
             </ul>
         </aside>
-        
+
         <!-- 오버레이 -->
         <div class="drawer-overlay" id="drawerOverlay"></div>
 
@@ -71,15 +71,15 @@
             window.logout = function() {
                 const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
                 const csrfHeaderName = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-            
+
                 if (!csrfToken || !csrfHeaderName) {
                     console.error("CSRF 토큰 없음");
                     alert("보안 토큰이 없어 로그아웃할 수 없습니다.");
                     return;
                 }
-            
+
                 if (!confirm("로그아웃 하시겠습니까?")) return;
-        
+
                 fetch('/admin/logout', {
                     method: 'POST',
                     headers: {
@@ -92,7 +92,7 @@
                     if (response.ok || response.redirected) {
                         alert("로그아웃 되었습니다.");
                         // context-path가 /admin 이므로 '/'는 실제 /admin/이 됨
-                        window.location.href = '/admin/'; 
+                        window.location.href = '/admin/';
                     } else {
                         alert("로그아웃 실패 (" + response.status + ")");
                     }
@@ -102,21 +102,21 @@
                     alert('네트워크 오류가 발생했습니다.');
                 });
             };
-        
+
             // 모바일 메뉴 관련 로직 (DOMContentLoaded로 안전하게 실행)
             document.addEventListener('DOMContentLoaded', function() {
                 const openBtn = document.getElementById('mMenuOpen');
                 const closeBtn = document.getElementById('mMenuClose');
                 const drawer = document.getElementById('mobileDrawer');
                 const overlay = document.getElementById('drawerOverlay');
-        
+
                 function toggleDrawer() {
                     if(drawer && overlay) {
                         drawer.classList.toggle('open');
                         overlay.classList.toggle('active');
                     }
                 }
-        
+
                 if(openBtn) openBtn.onclick = toggleDrawer;
                 if(closeBtn) closeBtn.onclick = toggleDrawer;
                 if(overlay) overlay.onclick = toggleDrawer;
@@ -161,7 +161,7 @@
                 <li sec:authorize="isAuthenticated()"><a href="javascript:logout()">로그아웃</a></li>
             </ul>
         </aside>
-        
+
         <!-- 오버레이 -->
         <div class="drawer-overlay" id="drawerOverlay"></div>
 
@@ -189,21 +189,21 @@
             function logout() {
             const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
             const csrfHeaderName = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-        
+
             // **** 이 줄을 꼭 추가해서 console에서 출력되는 값을 확인해줘! ****
             console.log("DEBUG: raw csrfHeaderName from meta tag:", csrfHeaderName);
-        
+
             // 토큰이 없으면 경고 메시지를 띄우고 함수 종료
             if (!csrfToken || !csrfHeaderName) {
                 console.error("CSRF 토큰 또는 헤더 메타 태그를 찾을 수 없거나 비어있습니다. Spring Security 설정 또는 HTML을 확인하세요.");
                 alert("로그아웃 보안 토큰이 없어 로그아웃할 수 없습니다. 잠시 후 다시 시도해 주세요.");
                 return; // 토큰이 없으면 더 이상 진행하지 않음
             }
-            
+
             // 콘솔 로그 오타 수정!
             console.log("CSRF Token: " + csrfToken);
             console.log("CSRF Header Name: " + csrfHeaderName);
-        
+
             fetch('/admin/logout', {
                 method: 'POST',
                 headers: {

@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- namespace="매퍼 인터페이스 경로" --> 
+<!-- namespace="매퍼 인터페이스 경로" -->
 <mapper namespace="com.safeg.admin.mapper.FileMapper">
     <!-- 목록 -->
     <select id="list" resultType="FilesVO">
@@ -19,7 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <!-- 등록 -->
     <insert id="insert">
-        <!-- insert into files (id, file_name, file_path, file_size, 
+        <!-- insert into files (id, file_name, file_path, file_size,
             type, parent_table, parent_no)
             values (
                 #{id}, #{fileName}, #{filePath}, #{fileSize},
@@ -33,11 +33,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
         insert into files (
-            file_type, target_id, target_type, original_name, saved_name, 
+            file_type, target_id, target_type, original_name, saved_name,
             file_path, file_size, file_extension, created_by, updated_by
         )
         values (
-            #{fileType}, #{targetId}, #{targetType}, #{originalName}, #{savedName}, 
+            #{fileType}, #{targetId}, #{targetType}, #{originalName}, #{savedName},
             #{filePath}, #{fileSize}, #{fileExtension}, #{createdBy}, #{updatedBy}
         )
     </insert>
@@ -63,13 +63,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 삭제 -->
     <update id="delete">
-        <!-- delete from files
-        where id = #{id} -->
-        update files set is_deleted = 'Y' where target_id = #{id} and target_type = 'campaign';
+        UPDATE files
+        SET is_deleted = 'Y'
+        WHERE target_id = #{id}
+        AND target_type = 'campaign'
     </update>
 
     <select id="listByParent" resultType="FilesVO">
-        select * 
+        select *
         from files
         where parent_table = #{parentTable}
         and parent_no = #{parentNo}
@@ -77,14 +78,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 부모테이블 기준 파일 삭제 -->
     <delete id="deleteByParent">
-        delete 
+        delete
         from files
         where parent_table = #{parentTable}
         and parent_no = #{parentNo}
     </delete>
 
     <insert id="bannerInsert">
-        <!-- insert into files (id, file_name, file_path, file_size, 
+        <!-- insert into files (id, file_name, file_path, file_size,
             type, parent_table, parent_no)
             values (
                 #{id}, #{fileName}, #{filePath}, #{fileSize},
@@ -97,17 +98,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ) -->
 
         insert into files (
-            file_type, target_id, target_type, original_name, saved_name, 
+            file_type, target_id, target_type, original_name, saved_name,
             file_path, file_size, file_extension, created_by, updated_by
         )
         values (
-            #{fileType}, #{targetId}, #{targetType}, #{originalName}, #{savedName}, 
+            #{fileType}, #{targetId}, #{targetType}, #{originalName}, #{savedName},
             #{filePath}, #{fileSize}, #{fileExtension}, #{createdBy}, #{updatedBy}
         )
     </insert>
 
     <update id="bannerUpdate" parameterType="BannerVO">
-        update files set 
+        update files set
             image = #{image},
             file_size = #{fileSize},
             image_id = #{imageId},
@@ -132,15 +133,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getMypageImage" resultType="filesVO">
-        SELECT 
-            * 
-        FROM 
-            files 
-        WHERE 
-            target_id = #{id} 
-        AND 
-            target_type=#{targetType} 
-        AND 
+        SELECT
+            *
+        FROM
+            files
+        WHERE
+            target_id = #{id}
+        AND
+            target_type=#{targetType}
+        AND
             is_deleted = 'N';
     </select>
 
@@ -160,7 +161,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             f.is_deleted = 'N'
         AND
             c.is_active = 'N'
-        AND 
+        AND
             CURDATE() > c.app_period_end
         ]]>
     </update>
@@ -170,11 +171,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             file_id
         FROM
             files
-        WHERE 
+        WHERE
             file_type = #{fileType}
-        AND 
-            target_type = #{targetType} 
-        AND 
+        AND
+            target_type = #{targetType}
+        AND
             is_deleted = 'N'; -->
 
         SELECT id FROM user WHERE is_deleted = 'N'

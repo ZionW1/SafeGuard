@@ -5,11 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -40,29 +37,25 @@ import com.safeg.admin.vo.Option;
 import com.safeg.admin.vo.Page;
 import com.safeg.admin.vo.UserCampaignVO;
 import com.safeg.admin.vo.UserVO;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@RequiredArgsConstructor
 @Slf4j
 public class CampaignController {
 
-    @Autowired
-    private CampaignService campaignService;
+    private final CampaignService campaignService;
 
-    @Autowired
-    private FileService fileService;
+    private final FileService fileService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
+    // 캠페인 리스트
     @GetMapping("/campaign01")
     public String campaign01(@AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {
         List<CampaignVO> campaignsList = campaignService.campaignList(option, page);
-
-        log.info("page : " + page);
-        log.info("page.getRows : " + page.getRows());
-        log.info("option : " + option);
-
         model.addAttribute("campaignsList", campaignsList);
         model.addAttribute("option", option);
         model.addAttribute("rows", page.getRows());
@@ -104,7 +97,6 @@ public class CampaignController {
                 campaignSelect.setLeaderNo(leader.getId());
                 campaignSelect.setPhoneNum(leader.getPhoneNum());
                 campaignSelect.setLeaderId(leader.getUserId());
-                // break;
             }
         }
 
@@ -128,10 +120,8 @@ public class CampaignController {
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         String username = customUser.getUsername(); // 로그인 아이디 (userId)
 
-        List<UserVO> leaderList = campaignService.leaderList();
-        List<CampaignVO> securityType = campaignService.securityType();
-
-        log.info("leaderList : " + leaderList);
+        List<UserVO> leaderList = campaignService.leaderList(); // 인솔자 리스트
+        List<CampaignVO> securityType = campaignService.securityType(); // 진행, 경호, 수행
 
         model.addAttribute("leaderList", leaderList);
         model.addAttribute("securityType", securityType);
@@ -145,10 +135,10 @@ public class CampaignController {
     @PostMapping("/campaign04")
     public String campaign04(CampaignVO campaignVO) throws Exception {
         log.info("campaignVO.toString : " + campaignVO.toString());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUser customUser = (CustomUser) authentication.getPrincipal();
-        String username = customUser.getUsername(); // 로그인 아이디 (userId)
+        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // CustomUser customUser = (CustomUser) authentication.getPrincipal();
         int result = campaignService.campaignInsert(campaignVO);
+
         List<LocalDate> datesInRange = Stream.iterate(campaignVO.getEventPeriodStr(), date -> date.plusDays(1))
             // startDate와 endDate 모두 포함
             .limit(campaignVO.getEventPeriodEnd().toEpochDay() - campaignVO.getEventPeriodStr().toEpochDay() + 1)
@@ -158,6 +148,8 @@ public class CampaignController {
 
         if (campaignVO.getLeaderList() != null && !campaignVO.getLeaderList().isEmpty()) {
             log.info("campaignVO.getLeaderList"+campaignVO.getLeaderList());
+            int index = 0;
+
             // 1. 추출된 각각의 날짜를 순회합니다.
             for (LocalDate date : datesInRange) {
                 // 2. 발급된 campaignId를 모든 인솔자 데이터에 세팅
@@ -165,23 +157,22 @@ public class CampaignController {
                     // 사용자가 선택하지 않아 빈 값으로 넘어온 항목은 제외하는 방어 코드
                     if (leader.getLeaderId() != null && !leader.getLeaderId().isEmpty()) {
                         leader.setCampaignId(campaignVO.getCampaignId());
-                        // ★ [핵심] 이 복사본 객체에 '현재 순회의 날짜'를 주입해 줍니다.
                         leader.setApplyDate(date);
-                        log.info("leader after setting campaignId: " + leader.toString());
-                        campaignService.campLeaderInsert(leader); // 3. 인솔자 대량(Batch) 등록 실행
+                        index++;
+
+                        campaignService.campLeaderInsert(leader, index); // 3. 인솔자 대량(Batch) 등록 실행
                     }
                 }
             }
         }
-        // if(result > 0){
-        //     return "redirect:/campaign01";
-        // } else {
-        //     return "입력안됨";
-        // }
-        return "redirect:/campaign01";
+        if(result > 0){
+            return "redirect:/campaign01";
+        } else {
+            return "입력안됨";
+        }
+        // return "redirect:/campaign01";
     }
 
-    // 수정 처리
     // @PostMapping("/campaign05")
     // public String campaign05(CampaignVO campaign, RedirectAttributes reAttr) throws Exception{
     //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -205,11 +196,16 @@ public class CampaignController {
     //         return "redirect:/campaign02?id=" + campaign.getCampaignId();
     //     }
     // }
+    // 수정 처리
     @PostMapping("/campaign05")
     public ResponseEntity<String> campaign05(@ModelAttribute CampaignVO campaignVO) throws Exception {
-        log.info("수정 campaign05.toString : " + campaignVO.toString());
         // 1. 수정 서비스 로직 수행
-        campaignService.campaignUpdate(campaignVO);
+        int result = campaignService.campaignUpdate(campaignVO);
+        // 2. 부모 창을 새로고침하고 현재 팝업창을 닫는 스크립트 작성
+        String script = "";
+        // 3. 브라우저가 스크립트로 인식할 수 있도록 Content-Type 설정 후 응답
+        HttpHeaders headers = new HttpHeaders();
+
         List<LocalDate> datesInRange = Stream.iterate(campaignVO.getEventPeriodStr(), date -> date.plusDays(1))
             // startDate와 endDate 모두 포함
             .limit(campaignVO.getEventPeriodEnd().toEpochDay() - campaignVO.getEventPeriodStr().toEpochDay() + 1)
@@ -217,36 +213,28 @@ public class CampaignController {
 
         log.info("datesInRange"+datesInRange);
 
-        // if (campaignVO.getLeaderList() != null && !campaignVO.getLeaderList().isEmpty()) {
-        //     log.info("campaignVO.getLeaderList"+campaignVO.getLeaderList());
-        //     // 1. 추출된 각각의 날짜를 순회합니다.
-        //     for (LocalDate date : datesInRange) {
-        //         // 2. 발급된 campaignId를 모든 인솔자 데이터에 세팅
-        //         for (CampLeaderVO leader : campaignVO.getLeaderList()) {
-        //             // 사용자가 선택하지 않아 빈 값으로 넘어온 항목은 제외하는 방어 코드
-        //             if (leader.getLeaderId() != null && !leader.getLeaderId().isEmpty()) {
-        //                 leader.setCampaignId(campaignVO.getCampaignId());
-        //                 // ★ [핵심] 이 복사본 객체에 '현재 순회의 날짜'를 주입해 줍니다.
-        //                 leader.setApplyDate(date);
-        //                 log.info("leader after setting campaignId: " + leader.toString());
-        //                 campaignService.campLeaderInsert(leader); // 3. 인솔자 대량(Batch) 등록 실행
-        //             }
-        //         }
-        //     }
-        // }
+        if (result > 0) {
+            script = "<script>" +
+            "   alert('수정이 완료 되었습니다.');" +
+            "   if (window.opener) { " +
+            "       window.opener.location.reload(); " + // 부모 창(리스트 화면) 새로고침
+            "   }" +
+            "   window.close();" +                       // 현재 팝업창 닫기
+            "</script>";
 
-        // 2. 부모 창을 새로고침하고 현재 팝업창을 닫는 스크립트 작성
-        String script = "<script>" +
-                        "   alert('수정이 완료되었습니다.');" +
-                        "   if (window.opener) { " +
-                        "       window.opener.location.reload(); " + // 부모 창(리스트 화면) 새로고침
-                        "   }" +
-                        "   window.close();" +                       // 현재 팝업창 닫기
-                        "</script>";
+            headers.add("Content-Type", "text/html; charset=UTF-8");
 
-        // 3. 브라우저가 스크립트로 인식할 수 있도록 Content-Type 설정 후 응답
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "text/html; charset=UTF-8");
+        } else {
+            script = "<script>" +
+            "   alert('수정 실패 하였습니다.');" +
+            "   if (window.opener) { " +
+            "       window.opener.location.reload(); " + // 부모 창(리스트 화면) 새로고침
+            "   }" +
+            "   window.close();" +                       // 현재 팝업창 닫기
+            "</script>";
+
+            headers.add("Content-Type", "text/html; charset=UTF-8");
+        }
 
         return new ResponseEntity<>(script, headers, HttpStatus.OK);
     }
@@ -254,12 +242,8 @@ public class CampaignController {
     // 삭제 처리
     @PostMapping("/campaign06")
     public String campaign06(@RequestParam("id") String id) throws Exception{
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUser customUser = (CustomUser) authentication.getPrincipal();
-        String username = customUser.getUsername(); // 로그인 아이디 (userId)
-
         int result = campaignService.campaignDelete(id);
-        int result1 = campaignService.applyDelete(id);
+        campaignService.applyDelete(id);
 
         if(result > 0){
             return "redirect:/campaign01";
@@ -267,6 +251,7 @@ public class CampaignController {
         return "redirect:/campaign02?error&id="+id;
     }
 
+    // 선정인원 없는 캠페인 목록
     @GetMapping("/campaign07")
     public String campaign07(Model model, Option option, Page page) throws Exception{
         List<CampaignVO> campaign07 = campaignService.campaign07(option, page);
@@ -322,35 +307,31 @@ public class CampaignController {
     @PostMapping("/campPopup01/{campaignId}")
     public String userInfoList(@PathVariable("campaignId") Long campaignId, @RequestBody CampaignVO dto, Option option, Model model) throws Exception {
         try {
-        log.info("dto : " + dto);
-        log.info("option : " + option);
+            if (option == null) {
+                option = new Option();
+            }
 
-        if (option == null) {
-            option = new Option();
+            List<UserVO> userInfoList = userService.userInfoList(campaignId, option);
+
+            List<LocalDate> dates = new ArrayList<>();
+            if (dto.getEventPeriodStr() != null && dto.getEventPeriodEnd() != null) {
+                dates = dto.getEventPeriodStr()
+                .datesUntil(dto.getEventPeriodEnd().plusDays(1))
+                .collect(Collectors.toList());
+            }
+
+            model.addAttribute("campaignTitle", dto.getCampaignTitle());
+            model.addAttribute("campaignId", campaignId);
+            model.addAttribute("userInfoList", userInfoList);
+            model.addAttribute("dates", dates);
+            model.addAttribute("option", option);
+
+            return "campaign/campaignPopup01";
+
+        } catch (Exception e) {
+            log.error("=== campPopup01 500 ERROR 발생 ===", e); // 콘솔에 상세 에러 원인 출력
+            throw e;
         }
-
-        List<UserVO> userInfoList = userService.userInfoList(campaignId, option);
-
-        List<LocalDate> dates = new ArrayList<>();
-        if (dto.getEventPeriodStr() != null && dto.getEventPeriodEnd() != null) {
-            dates = dto.getEventPeriodStr()
-                       .datesUntil(dto.getEventPeriodEnd().plusDays(1))
-                       .collect(Collectors.toList());
-        }
-
-        log.info("Dates : " + dates);
-        model.addAttribute("campaignTitle", dto.getCampaignTitle());
-        model.addAttribute("campaignId", campaignId);
-        model.addAttribute("userInfoList", userInfoList);
-        model.addAttribute("dates", dates);
-        model.addAttribute("option", option);
-
-        return "campaign/campaignPopup01";
-
-    } catch (Exception e) {
-        log.error("=== campPopup01 500 ERROR 발생 ===", e); // 콘솔에 상세 에러 원인 출력
-        throw e;
-    }
     }
 
     // 팝업 내부 실시간 검색/필터링 전용 (JSON 반환)
@@ -372,8 +353,6 @@ public class CampaignController {
 
         String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
 
-        log.info("applyDate : " + applyDate);
-
         // 만약 'ALL' 이면 전체 조회, 특정 날짜면 해당 날짜만 조회하는 로직 필요
         List<UserVO> updatedUserList = null;
         if ("ALL".equals(applyDate)) {
@@ -381,8 +360,6 @@ public class CampaignController {
         } else {
             updatedUserList = userService.userInfoDate(campaignId, applyDate); // 👈 날짜별 조회 (서비스에 메서드 구현 필요)
         }
-
-        log.info("updatedUserList : " + updatedUserList);
 
         return updatedUserList; // 자바스크립트로 유저 리스트 배열이 JSON 형태로 바로 넘어감
     }
@@ -393,9 +370,7 @@ public class CampaignController {
         log.info("campaignId : {} ", campaignId);
 
         log.info("paramMap : {} ", paramMap);
-        String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
-
-        log.info("applyDate : " + applyDate);
+        // String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
 
         // 만약 'ALL' 이면 전체 조회, 특정 날짜면 해당 날짜만 조회하는 로직 필요
         List<UserVO> updatedUserList = null;
@@ -413,12 +388,10 @@ public class CampaignController {
     @PostMapping("/userApply")
     @ResponseBody
     public ResponseEntity<?> userApply(@RequestBody CampaignVO dto) throws Exception {
-        log.info("userApply : " + dto);
         Map<String, String> response = new HashMap<>();
         int result = 0;
         try {
             UserCampaignVO overlapTitle = campaignService.overlapTitle(dto);
-            log.info("overlapTitle : " + overlapTitle);
 
             // 중복된 타이틀이 존재한다면 안내 메시지와 함께 400 Bad Request 리턴
             if (overlapTitle != null) {
@@ -461,7 +434,6 @@ public class CampaignController {
     @PostMapping("/userCancel")
     @ResponseBody
     public ResponseEntity<?> userCancel(@RequestBody CampaignVO dto) throws Exception {
-        log.info("userCancel " + dto);
         Map<String, String> response = new HashMap<>();
 
         try {

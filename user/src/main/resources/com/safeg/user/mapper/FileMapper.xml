@@ -44,8 +44,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="userList" resultType="java.lang.Long">
-        select user_no from user_campaign where campaign_id = #{id}
-        <!-- and is_deleted = 'N'; -->
+        SELECT
+            user_no
+        FROM user_campaign
+        WHERE campaign_id = #{id}
+        AND is_deleted = 'N'
+        UNION
+        SELECT
+            user_no
+        FROM camp_leader
+        WHERE campaign_id = #{id}
+        AND is_deleted = 'N'
     </select>
 
     <!-- 등록 -->

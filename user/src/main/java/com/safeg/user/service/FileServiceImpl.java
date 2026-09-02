@@ -44,10 +44,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class FileServiceImpl implements FileService{
-    
+
     @Autowired
     private FileMapper fileMapper;
-    
+
     @Value("${upload.path}") // application.properties 에서 지정한 업로드 경로 가져옴
     private String uploadPath;
 
@@ -84,7 +84,7 @@ public class FileServiceImpl implements FileService{
      */
     @Override
     public int delete(String id) throws Exception{
-        
+
 
         // 1. 파일 시스템의 파일 삭제
         // FilesVO file = select(id);
@@ -150,7 +150,7 @@ public class FileServiceImpl implements FileService{
 
         log.info("insert 전 file + " + file);
         fileMapper.insert(file);
-        
+
         return true;
     }
 
@@ -175,7 +175,7 @@ public class FileServiceImpl implements FileService{
         // 첨부된 파일 전체 한번에 삭제
         int result = fileMapper.deleteByParent(file);
         log.info(result + "건의 파일 정보가 삭제 되었습니다.");
-        
+
         return result;
     }
 
@@ -208,11 +208,13 @@ public class FileServiceImpl implements FileService{
                 }
                 FilesVO fileInfo ;
                 if("1".equals(code)){
+                    log.info("identification");
                     fileInfo = getMypageImage(String.valueOf(fileId), "identification"); // 단일 파일 정보 조회
                 } else {
+                    log.info("certificate");
                     fileInfo = getMypageImage(String.valueOf(fileId), "certificate"); // 단일 파일 정보 조회
                 }
-                
+
                 if (fileInfo == null) {
                     log.warn("File ID {} 에 대한 파일 정보를 찾을 수 없습니다. ZIP에서 제외합니다.", fileId);
                     continue;
@@ -235,7 +237,7 @@ public class FileServiceImpl implements FileService{
                 zos.closeEntry();
                 log.info("파일 '{}' (fileId: {}) ZIP에 추가 완료.", fileInfo.getOriginalName(), fileId);
             }
-            
+
         } // zos.close()는 try-with-resources에 의해 자동으로 호출됨
 
         return new ByteArrayResource(baos.toByteArray()); // 생성된 ZIP 데이터를 Resource로 반환
@@ -263,7 +265,7 @@ public class FileServiceImpl implements FileService{
         headerCellStyle.setFont(headerFont);
         headerCellStyle.setAlignment(HorizontalAlignment.CENTER);     // 가로 가운데 정렬
         headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER); // 세로 가운데 정렬
-        
+
         // 헤더 테두리선 추가
         headerCellStyle.setBorderTop(BorderStyle.THIN);
         headerCellStyle.setBorderBottom(BorderStyle.THIN);
@@ -275,7 +277,7 @@ public class FileServiceImpl implements FileService{
         dataCellStyle.setFont(dataFont);
         dataCellStyle.setAlignment(HorizontalAlignment.CENTER);     // 가로 가운데 정렬 💡
         dataCellStyle.setVerticalAlignment(VerticalAlignment.CENTER); // 세로 가운데 정렬 💡
-        
+
         // 데이터 테두리선 추가
         dataCellStyle.setBorderTop(BorderStyle.THIN);
         dataCellStyle.setBorderBottom(BorderStyle.THIN);
@@ -309,32 +311,32 @@ public class FileServiceImpl implements FileService{
                 phoneNum = getPhoneNum.replaceAll("[^0-9]", "").replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
             }
             Cell cell4 = row.createCell(colNum++); cell4.setCellValue(phoneNum); cell4.setCellStyle(dataCellStyle); // 휴대폰번호.
-            
+
             // 주민번호 복호화단
             String ResidentNum = app.getResidentNum();
             String rrn = "";
             // 1. 먼저 null 및 빈값 체크를 수행하여 안전성 확보
             if (ResidentNum != null && !ResidentNum.trim().isEmpty()) {
-                try { 
+                try {
                     // 2. 먼저 암호화된 주민번호를 평문(순수 숫자)으로 복호화
-                    String decryptRrn = EncryptionUtil.decrypt(ResidentNum); 
-                    
+                    String decryptRrn = EncryptionUtil.decrypt(ResidentNum);
+
                     // 3. 복호화된 결과물에서 숫자만 추출
                     rrn = decryptRrn.replaceAll("[^0-9]", "");
-                    
+
                     // 4. 정상적으로 13자리라면 6글자 뒤에 "-" 삽입
                     rrn = rrn.substring(0, 6) + "-" + rrn.substring(6);
-                } 
-                catch (Exception e) { 
+                }
+                catch (Exception e) {
                     log.error("주민등록번호 복호화 실패: {}", ResidentNum, e);
-                    rrn = "복호화 실패"; 
+                    rrn = "복호화 실패";
                 }
             } else {
                 // 5. 원래 값이 null이거나 비어있었다면 공백 처리
                 rrn = "";
             }
             Cell cell5 = row.createCell(colNum++); cell5.setCellValue(rrn); cell5.setCellStyle(dataCellStyle); // 주민등록번호.
-            
+
             Cell cell6 = row.createCell(colNum++); cell6.setCellValue(app.getStatusNm()); cell6.setCellStyle(dataCellStyle); // 상태 출퇴근.
             Cell cell7 = row.createCell(colNum++); cell7.setCellValue(app.getApplyDate() != null ? app.getApplyDate().toString() : ""); cell7.setCellStyle(dataCellStyle); // 신청일.
             Cell cell8 = row.createCell(colNum++); cell8.setCellValue(app.getAmount()); cell8.setCellStyle(dataCellStyle); // 오버페이.
@@ -346,7 +348,7 @@ public class FileServiceImpl implements FileService{
             // row.createCell(colNum++).setCellValue(app.getPhoneNum()); // 휴대폰번호
 
             // // [핵심 변경 사항] 주민등록번호 복호화 처리
-            // String displayResidentNum = ""; 
+            // String displayResidentNum = "";
             // String encryptedResidentNum = app.getResidentNum();
 
             // if (encryptedResidentNum != null && !encryptedResidentNum.trim().isEmpty()) {
@@ -356,7 +358,7 @@ public class FileServiceImpl implements FileService{
             //     } catch (Exception e) {
             //         // 복호화 도중 에러(예: 암호화 안 된 레거시 데이터 등) 발생 시 방어 코드
             //         log.error("주민등록번호 복호화 중 에러 발생 (데이터 유실 방지) : {}", encryptedResidentNum, e);
-            //         displayResidentNum = "복호화 실패"; 
+            //         displayResidentNum = "복호화 실패";
             //     }
             // }
             // row.createCell(colNum++).setCellValue(displayResidentNum); // 복호화된 주민번호 주입
@@ -374,10 +376,10 @@ public class FileServiceImpl implements FileService{
             // autoSizeColumn은 글자 크기에 딱 맞추기 때문에 양옆이 체해 보입니다.
             // 현재 너비에 여유분(예: 글자 4~5개 크기인 1200~1500)을 더해 넓게 벌려줍니다.
             int currentWidth = sheet.getColumnWidth(i);
-    
+
             // 💡 [핵심 수정] 캠페인명 컬럼(B열, 인덱스 1)은 한글과 공백이 길므로 여백을 훨씬 넉넉하게 줍니다.
             if (i == 1) {
-                sheet.setColumnWidth(i, currentWidth + 4000); // 기존 1500에서 4000으로 대폭 확대 
+                sheet.setColumnWidth(i, currentWidth + 4000); // 기존 1500에서 4000으로 대폭 확대
             } else {
                 sheet.setColumnWidth(i, currentWidth + 1500); // 다른 컬럼은 기존대로 유지
             }
@@ -392,22 +394,22 @@ public class FileServiceImpl implements FileService{
 
         // 7. [핵심] 추출한 엑셀 바이너리에 비밀번호(암호화) 걸기
         ByteArrayOutputStream encryptedOutputStream = new ByteArrayOutputStream();
-        
+
         // 가상 파일 시스템(POIFS) 생성
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
             // AES-128 또는 AES-256 표준 암호화 방식 선언
             EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
             Encryptor enc = info.getEncryptor();
-            
+
             // 💡 여기에 원하는 비밀번호를 설정하세요 (예: "1234" 또는 캠페인 ID 등 조합)
             // applyDate.toString().replaceAll("-","")
-            enc.confirmPassword("6824"); 
-            
+            enc.confirmPassword("6824");
+
             // 암호화된 파일 시스템에 데이터 쓰기
             try (OutputStream os = enc.getDataStream(fs)) {
                 os.write(excelBytes);
             }
-            
+
             // 최종 암호화된 명세를 출력 스트림에 담기
             fs.writeFilesystem(encryptedOutputStream);
         }
@@ -453,7 +455,7 @@ public class FileServiceImpl implements FileService{
         List<FilesVO> file = fileMapper.businessFile();
         return file;
     }
-    
+
     @Override
     public String getFileName(FilesVO file) throws Exception {
         MultipartFile mf = file.getFile();
@@ -462,31 +464,31 @@ public class FileServiceImpl implements FileService{
         String extension = originalName.substring(lastDotIndex + 1);
         long fileSize = mf.getSize();
         byte[] fileData = mf.getBytes();
-    
+
         log.info("원본 파일 명 : " + originalName);
         log.info("파일 용량 : " + fileSize);
         log.info("파일 데이터 : " + fileData);
-    
+
         // [수정 1] 메서드 안에서 OS에 맞는 업로드 베이스 경로를 가져옵니다.
         String uploadPath = CommonData.getUploadPath();
         log.info("파일 업로드 경로 : " + uploadPath);
-    
+
         // [수정 2] 업로드할 폴더가 없으면 자동으로 생성하는 로직 추가
         File targetDir = new File(uploadPath);
         if (!targetDir.exists()) {
             log.info("업로드 폴더가 존재하지 않아 새로 생성합니다: " + uploadPath);
             targetDir.mkdirs(); // 하위 디렉토리까지 한 번에 생성
         }
-    
+
         // 1. 파일 복사
         // 파일명 중복 방지 : UUID 활용
         String fileName = UUID.randomUUID().toString() + "_" + originalName;
         File uploadFile = new File(uploadPath, fileName);
-        
+
         // FileCopyUtils.copy(파일데이터, 파일객체) -> 실제 파일 업로드 실행
-        FileCopyUtils.copy(fileData, uploadFile); 
+        FileCopyUtils.copy(fileData, uploadFile);
         log.info("파일 업로드 완료: " + uploadFile.getAbsolutePath());
-    
+
         // 2. DB 등록을 위한 데이터 세팅
         file.setImage(fileName);
         file.setFilePath(uploadFile.getPath());
@@ -494,12 +496,12 @@ public class FileServiceImpl implements FileService{
         file.setFileExtension(extension);
         file.setOriginalName(originalName);
         file.setSavedName(fileName);
-    
+
         log.info("insert 전 file + " + file);
-    
+
         // MyBatis를 통한 DB 인서트
         int result = fileMapper.insert(file);
-        
+
         if(result >= 0) {
             return fileName;
         } else {

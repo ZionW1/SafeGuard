@@ -2337,6 +2337,9 @@ table.bestPayList {
     /* overflow-x: auto; */
 }
 
+.padding10 {
+    padding: 10px;
+}
 
   /* 모바일 화면 (예: 768px 이하) */
     @media (max-width: 768px) {

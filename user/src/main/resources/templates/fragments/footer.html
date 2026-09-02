@@ -14,13 +14,13 @@
         <div class="footer-logo-row">
             <img src="/images/행집.jpeg" alt="행집_로고" class="logo_image" />
         </div>
-        
+
         <div class="company-info">
             <p>
             <strong></strong>개인정보 보호 책임자: 남윤성<br />
             사업자등록번호: 675-050-3072<br />
             운영시간: am 9:00 ~ pm 18:00 (점심시간 11:50~13:00)<br>*주말 및 공휴일은 1:1 문의를 이용해주세요.<br />
-            
+
             </p>
             <div class="footer-copyright">
                 <p>© SINCE 2026 행집 </p>
@@ -50,7 +50,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="commonModalLabel">알림</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-secondary" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- 모달 내용이 들어갈 부분 -->
@@ -78,25 +78,25 @@
         // }
         // document.getElementById('menuLogout').addEventListener('click', function(e) {
         //     e.preventDefault(); // 기본 링크 동작을 막아줘.
-        
+
         //     // 1. CSRF 토큰과 헤더명을 가져와 (null 체크 포함)
         //     const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
         //     const csrfHeaderName = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-        
+
         //     // **** 이 줄을 꼭 추가해서 console에서 출력되는 값을 확인해줘! ****
         //     console.log("DEBUG: raw csrfHeaderName from meta tag:", csrfHeaderName);
-        
+
         //     // 토큰이 없으면 경고 메시지를 띄우고 함수 종료
         //     if (!csrfToken || !csrfHeaderName) {
         //         console.error("CSRF 토큰 또는 헤더 메타 태그를 찾을 수 없거나 비어있습니다. Spring Security 설정 또는 HTML을 확인하세요.");
         //         alert("로그아웃 보안 토큰이 없어 로그아웃할 수 없습니다. 잠시 후 다시 시도해 주세요.");
         //         return; // 토큰이 없으면 더 이상 진행하지 않음
         //     }
-            
+
         //     // 콘솔 로그 오타 수정!
         //     console.log("CSRF Token: " + csrfToken);
         //     console.log("CSRF Header Name: " + csrfHeaderName);
-        
+
         //     fetch('/logout', {
         //         method: 'POST',
         //         headers: {

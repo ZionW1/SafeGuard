@@ -612,6 +612,10 @@ body {
         cursor: pointer;
         margin: 0 0 15px;
     }
+
+    .btn-secondary {
+        padding :10px
+    }
 }
 /* 모바일 대응 */
 @media (max-width: 480px) {

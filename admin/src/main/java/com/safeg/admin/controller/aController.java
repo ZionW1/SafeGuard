@@ -22,13 +22,10 @@ public class aController {
     @PostMapping("/file/markDeleted/{id}") // 👈 POST 메서드로 변경하고 URL 의미도 변경
     @ResponseBody
     public ResponseEntity<String> markFileAsDeleted(@PathVariable("id") String id) throws Exception { // 메서드 이름도 변경하는 게 좋아
-        log.info("=========================== markFileAsDeleted =========================" + id);
 
         // 여기 fileService.delete(id)는 이제 물리적 삭제가 아니라 'is_deleted = Y'로 업데이트하는 로직이어야 해!
         // 예를 들어: int result = fileService.markAsDeleted(id);
         int result = fileService.delete(id); // 현재 fileService.delete()가 이미 is_deleted를 변경한다고 가정
-
-        log.info("=========================== result =========================" + result);
 
         // 파일 상태 변경 성공
         if (result > 0) {

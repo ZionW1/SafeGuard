@@ -812,7 +812,7 @@
                 if (!confirm(`선택한 ${checkedBoxes.length}명을 일괄 [${statusText}] 처리하시겠습니까?`)) {
                     return;
                 }
-                
+
                 // 💡 개별 호출을 반복(map)하지 않고, 첫 번째 체크박스의 정보와 선택한 statusValue를 넘겨서
                 // updateAttendanceStatus를 딱 '한 번만' 직접 실행합니다.
                 const firstCb = checkedBoxes[0];
@@ -1437,6 +1437,7 @@
                 alert("수정된 내역이 없습니다.");
             }
         }
+
     </script>
 </body>
 </html>

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.safeg.user.service.ApplyService;
 import com.safeg.user.service.ReviewService;
+import com.safeg.user.util.EncryptionUtil;
 import com.safeg.user.vo.CampaignVO;
 import com.safeg.user.vo.CustomUser;
 import com.safeg.user.vo.Option;
@@ -52,10 +53,7 @@ public class ApplyController {
     @GetMapping("/userCampaignApply/{campaignId}")
     public String userCampaignApply(@AuthenticationPrincipal CustomUser authUser, Model model,
             @PathVariable("campaignId") String campaignId,
-            @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date // 날짜가
-                                                                                                                   // 없을
-                                                                                                                   // 수도
-                                                                                                                   // 있음
+            @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date // 날짜가 없을 수도 있음
     // @PathVariable("date") @DateTimeFormat(pattern = "yy-MM-dd") LocalDate
     // applyDate // String 대신 LocalDate로 받고 패턴 지정
     ) throws Exception {
@@ -670,5 +668,39 @@ public class ApplyController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    @PostMapping("/chgDate/{campaignId}")
+    @ResponseBody // 👈 HTML이 아니라 데이터(JSON)만 리턴하겠다는 선언!
+    public List<UserVO> chgDate(@PathVariable("campaignId") Long campaignId, Option option, @RequestBody Map<String, String> paramMap) throws Exception {
+
+        String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
+        log.info("aaa : " + applyDate);
+        // 만약 'ALL' 이면 전체 조회, 특정 날짜면 해당 날짜만 조회하는 로직 필요
+        List<UserVO> updatedUserList = null;
+        if ("ALL".equals(applyDate)) {
+            updatedUserList = applyService.userDateInfo(campaignId, option); // 전체 조회
+        } else {
+            updatedUserList = applyService.dateSelect(campaignId, option, applyDate); // 👈 날짜별 조회 (서비스에 메서드 구현 필요)
+        }
+
+        return updatedUserList; // 자바스크립트로 유저 리스트 배열이 JSON 형태로 바로 넘어감
+    }
+
+    @GetMapping("/filterUser/{campaignId}")
+    @ResponseBody
+    public List<UserVO> searchPopupUsers(@PathVariable("campaignId") Long campaignId, Option option) throws Exception {
+
+        log.info("");
+        log.info("option : " + option);
+        log.info("option : " + option);
+
+        String keyword = option.getKeyword();
+
+        if (keyword != null && keyword.startsWith("010")) {
+            option.setKeyword(EncryptionUtil.hash(option.getKeyword()));
+        }
+        // SQL에서 option(role, keyword 등)을 조건으로 조회한 리스트 반환
+        return applyService.userInfoList(campaignId, option);
     }
 }

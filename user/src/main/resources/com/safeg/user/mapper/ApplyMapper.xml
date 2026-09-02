@@ -4,6 +4,56 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.safeg.user.mapper.ApplyMapper">
+    <!-- <resultMap type="UserVO" id="userMap">
+        <id property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="userNm" column="user_nm" />
+        <result property="password" column="password" />
+        <result property="privAgree" column="priv_agree" />
+        <result property="courseNum" column="course_num" />
+        <result property="residentNum" column="resident_num" />
+        <result property="accountNumber" column="account_number"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+        <result property="bankNm" column="bank_nm" />
+        <result property="depositor" column="depositor"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+        <result property="email" column="email"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+        <result property="isDeleted" column="is_deleted" />
+        <result property="isStopped" column="is_stopped" />
+        <result property="nickname" column="nickname" />
+        <result property="phoneNum" column="phone_num"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+        <result property="pointId" column="point_id" />
+        <result property="userRating" column="user_rating" />
+        <result property="commonId" column="common_id" />
+        <result property="addressId" column="address_id" />
+        <result property="gradeId" column="grade_id" />
+        <result property="role" column="role" />
+        <result property="stopDate" column="stop_date" />
+        <result property="memo" column="memo" />
+        <result property="fileId" column="FILE_ID" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <result property="enabled" column="enabled" />
+        <result property="guardType" column="guard_type" />
+        <result property="fullAddress" column="full_Address"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
+        <result property="guardTypeNm" column="guard_type_nm" />
+        <result property="referrerId" column="referrer_id" />
+        <result property="pendingPoint" column="pending_point" />
+        <result property="isApplied" column="is_applied" />
+        <collection property="authList" resultMap="authMap"></collection>
+    </resultMap> -->
+
+    <resultMap type="UserAuth" id="authMap">
+        <result property="no" column="no" />
+        <result property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="auth" column="auth" />
+        <result property="authCd" column="auth_cd" />
+    </resultMap>
+
     <resultMap type="com.safeg.user.vo.UserCampaignVO" id="userCampaignMap">
         <id property="id" column="id" />
         <result property="campaignId" column="campaign_id" />
@@ -704,16 +754,28 @@
             AND is_deleted = 'N'
         ) sub ON u.id = sub.user_no
         WHERE
-            <if test="option != null and option.code != null">
+            u.is_deleted = 'N'
+            AND u.role != 'Admin'
+            <!-- <if test="option != null and option.code != null">
                 (
                             u.guard_type LIKE CONCAT('%', #{option.code}, '%')
                             AND u.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
 
                 )
                 AND
+            </if> -->
+
+            <if test="option.code != null and option.code != '' and option.code != 'ALL'">
+                AND u.guard_type = #{option.code}
             </if>
-            u.is_deleted = 'N'
-            AND u.role != 'Admin'
+
+            <!-- 🔥 이름 및 전화번호 검색어 필터 -->
+            <if test="option.keyword != null and option.keyword != ''">
+                AND (
+                    u.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
+                    OR u.phone_hash LIKE CONCAT('%', #{option.keyword}, '%')
+                )
+            </if>
         ORDER BY
             u.user_nm, u.id
     </select>
@@ -919,4 +981,106 @@
             </otherwise>
         </choose>
     </select> -->
+
+    <select id="userDateInfo" resultMap="userMap">
+        SELECT
+            u.id,
+            u.user_id,
+            u.user_nm,
+            u.phone_num,
+            (CASE
+                WHEN u.guard_type = '00' THEN '스텝'
+                WHEN u.guard_type = '01' THEN '경호원 신청 중'
+                WHEN u.guard_type = '02' THEN '경호원'
+                WHEN u.guard_type = '03' THEN '수행'
+                WHEN u.guard_type = '04' THEN '인솔자'
+                ELSE '미지정'
+            END) AS guard_type_nm,
+            <!-- REPLACE(u.phone_num, '-', '') AS phone_num, -->
+            u.role,
+            CASE WHEN sub.user_no IS NOT NULL THEN 'Y' ELSE 'N' END AS is_applied
+        FROM
+            user u
+        LEFT OUTER JOIN (
+            -- 122번 캠페인을 신청한 유저 번호를 딱 1줄씩만 뽑아내는 가상 가방
+            SELECT DISTINCT user_no
+            FROM user_campaign
+            WHERE CAMPAIGN_ID = #{campaignId}
+            AND is_deleted = 'N'
+            UNION
+            -- 인솔자 배정 명단
+            SELECT DISTINCT user_no
+            FROM camp_leader
+            WHERE campaign_id = #{campaignId}
+            AND is_deleted = 'N'
+        ) sub ON u.id = sub.user_no
+        WHERE
+            u.is_deleted = 'N'
+            AND u.role != 'Admin'
+
+            <!-- 🔥 역할(경호/진행/수행/스탭/인솔자) 필터 -->
+            <if test="option.role != null and option.role != '' and option.role != 'ALL'">
+                AND u.guard_type = #{option.role}
+            </if>
+
+            <!-- 🔥 이름 및 전화번호 검색어 필터 -->
+            <if test="option.keyword != null and option.keyword != ''">
+                AND (
+                    u.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
+                    OR u.phone_hash LIKE CONCAT('%', #{option.keyword}, '%')
+                )
+            </if>
+        ORDER BY
+            u.user_nm, u.id;
+    </select>
+
+    <select id="dateSelect" resultMap="userMap">
+        SELECT
+            u.id,
+            u.user_id,
+            u.user_nm,
+            u.phone_num,
+            (CASE
+                WHEN u.guard_type = '00' THEN '스텝'
+                WHEN u.guard_type = '01' THEN '경호원 신청 중'
+                WHEN u.guard_type = '02' THEN '경호원'
+                WHEN u.guard_type = '03' THEN '수행'
+                WHEN u.guard_type = '04' THEN '인솔자'
+                ELSE '미지정'
+            END) AS guard_type_nm,
+            CASE WHEN sub.user_no IS NOT NULL THEN 'Y' ELSE 'N' END AS is_applied
+        FROM
+            user u
+        LEFT OUTER JOIN (
+            -- 🔥 122번 캠페인을 신청한 유저 번호를 딱 1줄씩만 뽑아내는 가상 가방
+            SELECT DISTINCT user_no
+            FROM user_campaign
+            WHERE CAMPAIGN_ID = #{campaignId}
+            AND apply_date = #{applyDate}
+            AND is_deleted = 'N'
+            UNION
+            -- 인솔자 배정 명단
+            SELECT DISTINCT user_no
+            FROM camp_leader
+            WHERE campaign_id = #{campaignId}
+            AND apply_date = #{applyDate}
+            AND is_deleted = 'N'
+        ) sub ON u.id = sub.user_no
+        WHERE u.IS_DELETED = 'N'
+        <!-- 🔥 역할(경호/진행/수행/스탭/인솔자) 필터 -->
+        <if test="option.role != null and option.role != '' and option.role != 'ALL'">
+            AND u.guard_type = #{option.role}
+        </if>
+
+        <!-- 🔥 이름 및 전화번호 검색어 필터 -->
+        <if test="option.keyword != null and option.keyword != ''">
+            AND (
+                u.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
+                OR u.phone_hash LIKE CONCAT('%', #{option.keyword}, '%')
+            )
+        </if>
+        ORDER BY
+            u.user_nm, u.id;
+    </select>
+
 </mapper>

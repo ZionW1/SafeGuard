@@ -23,7 +23,6 @@ public class AuthController {
     // 휴대폰 인증번호 발송
     @PostMapping("/sendCode")
     public CompletableFuture<ResponseEntity<String>> sendCode(@RequestParam("phoneNumber") String phoneNumber) throws Exception{
-        log.info("sendCode " + phoneNumber);
         return authService.sendAuthCode(phoneNumber)
             .thenApply(success -> {
                 if (success) {

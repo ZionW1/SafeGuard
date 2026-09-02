@@ -57,4 +57,8 @@ public interface ApplyService {
 
     public int userCancel(CampaignVO dto) throws Exception;
 
+    public List<UserVO> userDateInfo(Long campaignId, Option option) throws Exception;
+
+    public List<UserVO> dateSelect(Long campaignId, Option option, String applyDate) throws Exception;
+
 }

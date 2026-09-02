@@ -528,4 +528,20 @@ public class ApplyServiceImpl implements ApplyService {
         // 모든 작업이 성공적으로 끝나면 성공 메시지 반환
         return result;
     }
+
+    @Override
+    public List<UserVO> userDateInfo(Long campaignId, Option option) throws Exception {
+        List<UserVO> userInfoList = applyMapper.userDateInfo(campaignId, option);
+
+        return userInfoList;
+    }
+
+    @Override
+    public List<UserVO> dateSelect(Long campaignId, Option option, String applyDate) throws Exception {
+        List<UserVO> userInfoDate = applyMapper.dateSelect(campaignId, option, applyDate);
+        log.info("userInfoDate : " + userInfoDate);
+
+        return userInfoDate;
+    }
+
 }

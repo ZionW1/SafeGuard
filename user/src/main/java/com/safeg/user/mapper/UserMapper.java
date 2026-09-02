@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.safeg.user.vo.Option;
 import com.safeg.user.vo.PointHistoryVO;
 import com.safeg.user.vo.UserAuth;
 import com.safeg.user.vo.UserCampaignVO;

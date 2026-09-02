@@ -41,13 +41,6 @@ public class UserController {
         if(authUser != null){
             UserVO user = authUser.getUserVo();
             // 1. URL은 원본 키워드를 유지 (사용자에게 보여지는 용도)
-            // String pageUrl = UriComponentsBuilder.fromPath("/admin/user01")
-            // .queryParam("keyword", option.getKeyword()) // 원본 유지
-            // .queryParam("code", option.getCode())
-            // .queryParam("orderCode", option.getOrderCode())
-            // .build()
-            // .toUriString();
-
             String pageUrl = UriComponentsBuilder.fromPath("/user01")
                         //.queryParam("page", page.getPage())
                         .queryParam("keyword", option.getKeyword())
@@ -101,12 +94,8 @@ public class UserController {
 
     @GetMapping("/user02")
     public String user02(@AuthenticationPrincipal CustomUser authUser, Model model, @RequestParam("id") String id) throws Exception {
-        log.info(":::::::::: select :::::::::: " + id);
-
         UserVO userSelect = userService.userSelect(id);
         FilesVO file = fileService.select(id);
-        log.info("DEBUG: nickName value before passing to template: [{}]", userSelect.getNickname());
-
         List<FilesVO> profileImage = fileService.userImageFile(id);
 
         String rawPhone = userSelect.getPhoneNum(); // ex: "01012345678"
@@ -143,70 +132,65 @@ public class UserController {
             rrn = "";
         }
 
+        if(profileImage.size() == 0){
+            model.addAttribute("profile", "N");
+            model.addAttribute("identification", "N");
+            model.addAttribute("certificate", "N");
+        } else if(profileImage.size() == 1) {
+            if("profile".equals(profileImage.get(0).getTargetType())) {
+                model.addAttribute("profile", "Y");
+                model.addAttribute("identification", "N");
+                model.addAttribute("certificate", "N");
+            } else if("identification".equals(profileImage.get(0).getTargetType())) {
+                model.addAttribute("profile", "N");
+                model.addAttribute("identification", "Y");
+                model.addAttribute("certificate", "N");
+            } else if("certificate".equals(profileImage.get(0).getTargetType())) {
+                model.addAttribute("profile", "N");
+                model.addAttribute("identification", "N");
+                model.addAttribute("certificate", "Y");
+            }
+        } else if(profileImage.size() == 2) {
+            if ("profile".equals(profileImage.get(0).getTargetType()) && "identification".equals(profileImage.get(1).getTargetType())) {
+                model.addAttribute("profile", "Y");
+                model.addAttribute("identification", "Y");
+                model.addAttribute("certificate", "N");
+            } else if ("profile".equals(profileImage.get(0).getTargetType()) && "certificate".equals(profileImage.get(1).getTargetType())){
+                model.addAttribute("profile", "Y");
+                model.addAttribute("identification", "N");
+                model.addAttribute("certificate", "Y");
+            } else if ("identification".equals(profileImage.get(0).getTargetType()) && "certificate".equals(profileImage.get(1).getTargetType())){
+                model.addAttribute("profile", "N");
+                model.addAttribute("identification", "Y");
+                model.addAttribute("certificate", "Y");
+            }
 
-        log.info("profileImage.size() : " + profileImage.size());
-        log.info("profileImage : " + profileImage.toString());
-
-                if(profileImage.size() == 0){
-                    log.info("user02 profile 0");
-                    model.addAttribute("profile", "N");
-                    model.addAttribute("identification", "N");
-                    model.addAttribute("certificate", "N");
-                } else if(profileImage.size() == 1) {
-                    if("profile".equals(profileImage.get(0).getTargetType())) {
-                        model.addAttribute("profile", "Y");
-                        model.addAttribute("identification", "N");
-                        model.addAttribute("certificate", "N");
-                    } else if("identification".equals(profileImage.get(0).getTargetType())) {
-                        model.addAttribute("profile", "N");
-                        model.addAttribute("identification", "Y");
-                        model.addAttribute("certificate", "N");
-                    } else if("certificate".equals(profileImage.get(0).getTargetType())) {
-                        model.addAttribute("profile", "N");
-                        model.addAttribute("identification", "N");
-                        model.addAttribute("certificate", "Y");
-                    }
-                } else if(profileImage.size() == 2) {
-                    if ("profile".equals(profileImage.get(0).getTargetType()) && "identification".equals(profileImage.get(1).getTargetType())) {
-                        model.addAttribute("profile", "Y");
-                        model.addAttribute("identification", "Y");
-                        model.addAttribute("certificate", "N");
-                    } else if ("profile".equals(profileImage.get(0).getTargetType()) && "certificate".equals(profileImage.get(1).getTargetType())){
-                        model.addAttribute("profile", "Y");
-                        model.addAttribute("identification", "N");
-                        model.addAttribute("certificate", "Y");
-                    } else if ("identification".equals(profileImage.get(0).getTargetType()) && "certificate".equals(profileImage.get(1).getTargetType())){
-                        model.addAttribute("profile", "N");
-                        model.addAttribute("identification", "Y");
-                        model.addAttribute("certificate", "Y");
-                    }
-
-                } else if(profileImage.size() == 3) {
-                    model.addAttribute("profile", "Y");
-                    model.addAttribute("identification", "Y");
-                    model.addAttribute("certificate", "Y");
-                }
-                    // if(i == 0 || i == 1 || i == 2 && profileImage.get(i).getTargetType() != null){
-                    //     model.addAttribute("" + profileImage.get(i).getTargetType(), "Y");
-                    // }
-                    // if(i == 0 && "profile".equals(profileImage.get(i).getTargetType())) {
-                    //     if(i == 1 && profileImage.get(i).getTargetType() == null){
-                    //         model.addAttribute("identification", "N");
-                    //     } else if (i == 2 && profileImage.get(i).getTargetType() == null) {
-                    //         model.addAttribute("certificate", "N");
-                    //     }
-                    // } else if(i == 0 && "identification".equals(profileImage.get(i).getTargetType())) {
-                    //     if(i == 1 && profileImage.get(i).getTargetType() == null){
-                    //         model.addAttribute("profile", "N");
-                    //         model.addAttribute("certificate", "N");
-                    //     }
-                    // } else if(i == 0 && "certificate".equals(profileImage.get(i).getTargetType())) {
-                    //     if(i == 1 && profileImage.get(i).getTargetType() == null){
-                    //         model.addAttribute("profile", "N");
-                    //         model.addAttribute("identification", "N");
-                    //     }
-                    // }
-                    for(int i = 0; i < profileImage.size(); i++) {
+        } else if(profileImage.size() == 3) {
+            model.addAttribute("profile", "Y");
+            model.addAttribute("identification", "Y");
+            model.addAttribute("certificate", "Y");
+        }
+            // if(i == 0 || i == 1 || i == 2 && profileImage.get(i).getTargetType() != null){
+            //     model.addAttribute("" + profileImage.get(i).getTargetType(), "Y");
+            // }
+            // if(i == 0 && "profile".equals(profileImage.get(i).getTargetType())) {
+            //     if(i == 1 && profileImage.get(i).getTargetType() == null){
+            //         model.addAttribute("identification", "N");
+            //     } else if (i == 2 && profileImage.get(i).getTargetType() == null) {
+            //         model.addAttribute("certificate", "N");
+            //     }
+            // } else if(i == 0 && "identification".equals(profileImage.get(i).getTargetType())) {
+            //     if(i == 1 && profileImage.get(i).getTargetType() == null){
+            //         model.addAttribute("profile", "N");
+            //         model.addAttribute("certificate", "N");
+            //     }
+            // } else if(i == 0 && "certificate".equals(profileImage.get(i).getTargetType())) {
+            //     if(i == 1 && profileImage.get(i).getTargetType() == null){
+            //         model.addAttribute("profile", "N");
+            //         model.addAttribute("identification", "N");
+            //     }
+            // }
+            for(int i = 0; i < profileImage.size(); i++) {
 
             }
 
@@ -224,19 +208,12 @@ public class UserController {
         @RequestParam(value="page", defaultValue="1") int page
     ) throws Exception {
         Long referrerNo = 0L;
-        log.info(":::::::::: update :::::::::: " + userVO);
-        log.info(":::::::::: update page :::::::::: " + page);
         String userId = String.valueOf(userVO.getId());
+
         if(userVO.getReferrerId() != null && !userVO.getReferrerId().isEmpty()) {
-            log.info("user03 getReferrerId : " + userVO.getReferrerId());
             referrerNo = userService.referrerId(userVO.getReferrerId());
             userVO.setReferrerNo(referrerNo);
         }
-
-        log.info("userId :::::::::: " + userId);
-        log.info("referrerNo :::::::::: " + referrerNo);
-        log.info("getReferrerNo :::::::::: " + userVO.getReferrerNo());
-        log.info("getReferrerId :::::::::: " + userVO.getReferrerId());
 
         if ("on".equals(userVO.getPrivAgree())) {
             userVO.setPrivAgree("Y");
@@ -250,10 +227,8 @@ public class UserController {
             model.addAttribute("file", file);
         }
         if(result > 0){
-            log.info("user03 update success");
             model.addAttribute("msg", "");
         } else {
-            log.info("user03 update fail");
             model.addAttribute("msg", "");
         }
         return "redirect:/user01?page=" + page ;
@@ -261,9 +236,6 @@ public class UserController {
 
     @PostMapping("/user04")
     public String user04(@RequestParam("id") String id) throws Exception {
-        log.info(":::::::::: remove :::::::::: " + id);
-        log.info(id);
-
         int result = userService.userRemove(id);
 
         if(result > 0){
@@ -278,12 +250,10 @@ public class UserController {
     @PostMapping("/user05")
     @ResponseBody
     public Map<String, Object> user05(@ModelAttribute UserVO userVO) throws Exception {
-        log.info(":::::::::: user05 userUpdate :::::::::: " + userVO.getId());
         Map<String, Object> response = new HashMap<>();
         try {
             // 일반 유저로 변경하는 서비스 로직 호출
             userService.userUpdate(userVO.getId()); // 또는 userVO를 넘겨서 처리
-
             response.put("success", true);
             response.put("message", "사용자가 성공적으로 일반 유저로 변경되었습니다.");
         } catch (Exception e) {
@@ -297,7 +267,6 @@ public class UserController {
     @PostMapping("/user06")
     @ResponseBody
     public Map<String, Object> user06(@ModelAttribute UserVO userVO) throws Exception {
-        log.info(":::::::::: user06 userUpdate :::::::::: " + userVO.getId());
         Map<String, Object> response = new HashMap<>();
         try {
             // 일반 유저로 변경하는 서비스 로직 호출
@@ -316,7 +285,6 @@ public class UserController {
     @PostMapping("/user07")
     @ResponseBody
     public Map<String, Object> user07(@ModelAttribute UserVO userVO) throws Exception {
-        log.info(":::::::::: user07 userStop :::::::::: " + userVO.getId());
         Map<String, Object> response = new HashMap<>();
         try {
             // 일반 유저로 변경하는 서비스 로직 호출
@@ -335,7 +303,6 @@ public class UserController {
     @PostMapping("/user08")
     @ResponseBody
     public Map<String, Object> user08(@ModelAttribute UserVO userVO) throws Exception {
-        log.info(":::::::::: user06 userUpdate :::::::::: " + userVO.getId());
         Map<String, Object> response = new HashMap<>();
         try {
             // 일반 유저로 변경하는 서비스 로직 호출
@@ -354,7 +321,6 @@ public class UserController {
     @PostMapping("/user09")
     @ResponseBody
     public Map<String, Object> user09(@ModelAttribute UserVO userVO) throws Exception {
-        log.info(":::::::::: user09 guardType Change :::::::::: " + userVO.getId());
         Map<String, Object> response = new HashMap<>();
 
         try {
@@ -387,7 +353,6 @@ public class UserController {
     @PostMapping("/settlementAll")
     @ResponseBody
     public Map<String, Object> settlementAll() throws Exception{
-        log.info("settlementAll");
         Map<String, Object> result = new HashMap<>();
         try {
             // Service를 호출해서 실제 DB 작업을 수행합니다.
@@ -404,12 +369,9 @@ public class UserController {
     @PostMapping("/updateUserInfo")
     @ResponseBody
     public Map<String, Object> updateUserInfo(UserVO userVO) throws Exception{
-        log.info("updateUserInfo : " + userVO);
         Map<String, Object> resultMap = new HashMap<>();
 
         String encryptedData = EncryptionUtil.encrypt(userVO.getResidentNum());
-        log.info("::::: 주민등록번호 암호화 성공 ::::: " + encryptedData);
-
         // 암호화된 텍스트(Base64 형태)를 다시 VO에 저장
         userVO.setResidentNum(encryptedData);
 
@@ -422,10 +384,8 @@ public class UserController {
             return resultMap;
         }
 
-        log.info("::::: 주민등록번호 암호화 성공 ::::: " + userVO.getResidentNum());
         try {
             int result = userService.updateUserInfo(userVO);
-            log.info("updateUserInfo res : " + result);
             if(result > 0) {
                 resultMap.put("success", true);
             } else {
@@ -435,9 +395,7 @@ public class UserController {
         } catch (Exception e) {
             resultMap.put("failed", false);
         }
-        // result.put("success", true);
 
         return resultMap;
     }
-
 }

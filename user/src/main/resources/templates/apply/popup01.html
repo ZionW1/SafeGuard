@@ -1,6 +1,6 @@
 <div id="modalPop" class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="popup-content">
-        
+
         <div class="modal-header">
             <!-- <h4 class="modal-title">참여 유저 리스트</h4> -->
             <h5 class="modal-title">캠페인명 : <span th:text="${campaignTitle}"></span></h5>
@@ -19,36 +19,36 @@
                 <div class="sync-nm-box mrg16 purpleFont">
                     <!-- 💡 전체 (최초 실행 시 option.code가 null이거나 빈 값인 경우 포함하여 checked 처리) -->
                     <label>
-                        <input type="radio" name="code" class="code-radio" value="" onchange="initCheckboxCount()"
-                            th:checked="${option == null or option.code == null or option.code == '' or option.code == '0'}"> 
+                        <input type="radio" name="code" class="code-radio" value="" onchange="filterUserList()"
+                            th:checked="${option == null or option.code == null or option.code == '' or option.code == '0'}">
                         <span>전체</span>
                     </label>
-                
+
                     <!-- 💡 스텝 -->
                     <label>
-                        <input type="radio" name="code" class="code-radio" value="00" onchange="initCheckboxCount()"
-                            th:checked="${option != null and option.code == '00'}"> 
+                        <input type="radio" name="code" class="code-radio" value="00" onchange="filterUserList()"
+                            th:checked="${option != null and option.code == '00'}">
                         <span>스텝</span>
                     </label>
-                
+
                     <!-- 💡 경호 -->
                     <label>
-                        <input type="radio" name="code" class="code-radio" value="02" onchange="initCheckboxCount()"
-                            th:checked="${option != null and option.code == '02'}"> 
+                        <input type="radio" name="code" class="code-radio" value="02" onchange="filterUserList()"
+                            th:checked="${option != null and option.code == '02'}">
                         <span>경호</span>
                     </label>
-                
+
                     <!-- 💡 수행 -->
                     <label>
-                        <input type="radio" name="code" class="code-radio" value="03" onchange="initCheckboxCount()"
-                            th:checked="${option != null and option.code == '03'}"> 
+                        <input type="radio" name="code" class="code-radio" value="03" onchange="filterUserList()"
+                            th:checked="${option != null and option.code == '03'}">
                         <span>수행</span>
                     </label>
-                
+
                     <!-- 💡 인솔자 -->
                     <label>
-                        <input type="radio" name="code" class="code-radio" value="04" onchange="initCheckboxCount()"
-                            th:checked="${option != null and option.code == '04'}"> 
+                        <input type="radio" name="code" class="code-radio" value="04" onchange="filterUserList()"
+                            th:checked="${option != null and option.code == '04'}">
                         <span>인솔자</span>
                     </label>
                 </div>
@@ -59,7 +59,7 @@
                 </select> -->
                 <div id="inputArea" class="inputArea">
                     <input type="text" class="search_keyword" id="keyword" name="keyword" th:value="${option.keyword}" placeholder="검색어를 입력해 주세요.">
-                    <button class="optionSubmit" id="btnSearch" type="button">검색</button>
+                    <button class="optionSubmit" id="" type="button" onclick="filterUserList()">검색</button>
                 </div>
                 <!-- <input type="text" name="keyword"  th:value="${param.keyword}"> -->
             <!-- </form> -->
@@ -94,9 +94,9 @@
                             <td>
                                 <input type="hidden" th:value="${userInfo.userId}" class="user_Id" name="userId">
                                 <!-- <input th:value="${userInfo.id}" type="checkbox" class="user_Chk" name="Attendance"> -->
-                                <input th:value="${userInfo.id}" type="checkbox" 
+                                <input th:value="${userInfo.id}" type="checkbox"
                                     th:classappend="${userInfo.isApplied == 'Y'} ? 'already-applied' : ''"
-                                    class="user_Chk" name="Attendance" onclick="chkBoxSelect()">
+                                    class="user_Chk" name="Attendance" onclick="chkBoxSelect(this)">
                             </td>
                             <td><span th:text="${userInfo.userNm}"></span></td>
                             <td><span th:text="${userInfo.guardTypeNm ?: '미지정'}"></span></td>

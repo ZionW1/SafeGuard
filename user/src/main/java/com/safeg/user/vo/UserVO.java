@@ -170,7 +170,7 @@ public class UserVO {
     private String passwordResetKey;
     private String passwordResetRequestedAt;
 
-    
+
     private List<UserAuth> authList;
     private MultipartFile image; // 첨부 파일 목록
     private MultipartFile certImage;
@@ -191,9 +191,9 @@ public class UserVO {
     @Convert(converter = StringCryptoConverter.class)
     private String detailAddress;
     private boolean isDefault; // 대표 주소 여부, -- 한 사용자의 여러 주소 중 대표 주소를 지정하고 싶을 때
-    
+
     private String filePath;
-    
+
     private Long referrerNo;
     private String referrerId;
 

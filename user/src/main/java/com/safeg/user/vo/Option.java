@@ -10,14 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // 직접 만든 생성자 대신 이걸 쓰세요!
 @Builder // 필요한 경우 객체 생성을 편하게 도와줍니다
 public class Option {
-    
+
     @Builder.Default // 빌더 사용 시 기본값 설정
     private String keyword = ""; // 검색어
-    
+
     private String code; // 검색 옵션 코드
     private int orderCode; // 순서 옵션 코드
+    private String role;
 
-    // 직접 작성하셨던 생성자는 지우거나 아래처럼 유지해도 되지만, 
+    // 직접 작성하셨던 생성자는 지우거나 아래처럼 유지해도 되지만,
     // 위 어노테이션들이 있으면 굳이 없어도 됩니다.
 }
 /**
@@ -29,7 +30,7 @@ public class Option {
  * 2 : 내용
  * 3 : 제목 + 내용
  * 4 : 작성자
- * 
+ *
  * - orderCode : 순서 옵션 코드
  * 0 : 최신순 (등록일자)
  * 1 : 제목순

@@ -68,8 +68,6 @@ public class HomeController {
 
     @GetMapping("/join")
     public String join01(Model model) throws Exception{
-        log.info(":::::::::: 어드민 가입 화면 ::::::::::");
-        // return "/admin/list";
         model.addAttribute("userVO", new UserVO());
         return "join";
     }
@@ -82,14 +80,11 @@ public class HomeController {
         // isPasswordConfirmed()를 호출해야 해.
 
         // 기존 로그
-        log.info(":::::::::: 어드민 가입 처리 (초기 평문) :::::::::: Password=" + userVO.getPassword() + ", PasswordConfirm=" + userVO.getPasswordConfirm());
-
         // ⭐️ 비밀번호 일치 여부 확인 (평문끼리 비교) ⭐️
         // userVO.isPasswordConfirmed() 호출 전에 userVO.password와 userVO.passwordConfirm에는
         // 모두 사용자가 입력한 "평문 비밀번호"가 들어있어야 해.
         // @ModelAttribute("userVO")가 이미 그렇게 바인딩해줬을 거야.
         if (!userVO.isPasswordConfirmed()) {
-            log.info("비밀번호 불일치 (평문 비교) + " + userVO.isPasswordConfirmed());
             bindingResult.rejectValue("passwordConfirm", "password.mismatch", "비밀번호가 일치하지 않습니다.");
         }
 
@@ -109,12 +104,10 @@ public class HomeController {
         // userVO.setPasswordConfirm(null) 등으로 명확히 비워줄 수도 있어.
         // 하지만 보통은 그냥 둔 상태로 서비스 계층으로 넘겨주면 서비스는 password 필드만 사용할 거야.
 
-        log.info(":::::::::: 어드민 가입 처리 최종 (암호화 후) :::::::::: Password=" + userVO.getPassword());
         // 이제 password 필드에 BCrypt 해시값이 들어있고, userVO.getPasswordConfirm()은 평문이거나 null일 거야.
 
         // 서비스 계층으로 암호화된 비밀번호가 담긴 userVO 전달
-        int result = userService.userJoin(userVO);
-        log.info("join02 : " + result);
+        userService.userJoin(userVO);
 
         return "redirect:/campaign01";
     }
@@ -167,34 +160,4 @@ public class HomeController {
         // 3. 변환된 값 확인 (DB에 들어갈 그 값!)
         System.out.println("해시 변환 결과: " + hashedPhone);
     }
-
-
-//     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-// DB에 저장된 jjj의 BCrypt 비밀번호 해시값을 가져와. ($2a$10$Au6xQ0N/mzggLNcN/E/eve5vamCc/v0jdYebiOaSIuhcyyNSoRW5m)
-// 로그인 폼에 입력한 평문 비밀번호 (예: 1234)
-// boolean isMatch = encoder.matches("입력한평문비밀번호", "DB의BCrypt해시");
-// 이 코드를 실행해서 isMatch가 true가 나오는지 확인해 봐. false가 나온다면 평문 비밀번호가 틀린 거야.
-
-
-    @GetMapping("/test")
-    public String test() throws Exception {
-        log.info("test page");
-        return "test";
-    }
-
-    // @PostMapping("/api/sms/send-notice")
-    // @ResponseBody
-    // public ResponseEntity<String> sendNotice(@RequestBody Map<String, String> data) {
-    //     // 비동기 메서드 호출 (결과를 기다리지 않고 바로 다음 줄 실행)
-    //     aligoSmsService.sendEventNoticeAsync(
-    //         data.get("receiver"),
-    //         data.get("eventName"),
-    //         data.get("count"),
-    //         data.get("period"),
-    //         data.get("link")
-    //     );
-
-    //     // 알림톡 발송 시작 여부만 즉시 응답 (사용자 대기 시간 없음)
-    //     return ResponseEntity.ok("발송 요청이 완료되었습니다.");
-    // }
 }

@@ -439,6 +439,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND apply_date = #{applyDate}
             AND is_deleted = 'N'
         ) sub ON u.id = sub.user_no
+        WHERE u.IS_DELETED = 'N'
         ORDER BY
             u.user_nm, u.id;
     </select>

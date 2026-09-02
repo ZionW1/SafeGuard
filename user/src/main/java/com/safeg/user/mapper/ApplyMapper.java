@@ -92,5 +92,7 @@ public interface ApplyMapper {
 
     public int getPay(@Param("ucChoice") String ucChoice, @Param("campaignId") Long campaignId, @Param("userNo") Long userNo, @Param("wageChk") String wageChk) throws Exception;
 
+    public List<UserVO> userDateInfo(@Param("campaignId") Long campaignId, @Param("option") Option option) throws Exception;
 
+    public List<UserVO> dateSelect(@Param("campaignId") Long campaignId, @Param("option") Option option, @Param("applyDate") String applyDate) throws Exception;
 }

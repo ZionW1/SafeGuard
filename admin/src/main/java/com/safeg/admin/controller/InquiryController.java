@@ -47,11 +47,8 @@ public class InquiryController {
     // 1:1 문의사항 상세보기
     @GetMapping("/inquiry02")
     public String supportSelect(@RequestParam("inquiryId") String inquiryId, Model model, HttpServletRequest request) throws Exception{
-        log.info("Admin SupportController supportSelect() 호출 : supportId = " + inquiryId);
-
         InquiryVO inquirySelect = inquiryService.inquirySelect(inquiryId);
-        log.info("Admin SupportController supportList() 호출 : "  + inquirySelect.toString());
-
+        
         model.addAttribute("inquirySelect", inquirySelect);
         model.addAttribute("currentURI", request.getRequestURI());
 

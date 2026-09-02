@@ -252,20 +252,24 @@
         }
 
         function changeDate(element) {
-            // 사용자가 선택한 option의 value 값을 가져옴 ('ALL' 또는 '2026-07-06' 등)
             const campaignId = campaign[selectIndex].campaignId;
             const selectedValue = element.value;
             let applyDate = "";
 
             console.log("선택된 값:", selectedValue);
-            if(!selectedValue)
-                return;
+            if (!selectedValue) return;
+
+            // 💡 [추가] 날짜를 바꾸기 직전에 현재 화면에서 체크되어 있는 사용자들의 고유 ID(value)를 미리 수집해 둡니다!
+            const checkedUserIds = [];
+            document.querySelectorAll('.user_Chk:checked').forEach(cb => {
+                checkedUserIds.push(cb.value);
+            });
 
             const url = `/admin/chgDate/${campaignId}`;
             if (selectedValue === "ALL") {
-                applyDate = "ALL"; // 자바단에 'ALL'이라는 문자열을 그대로 전송
+                applyDate = "ALL";
             } else {
-                applyDate = selectedValue; // '2026-07-06' 같은 실제 날짜 전송
+                applyDate = selectedValue;
             }
 
             var sendData = {
@@ -289,25 +293,25 @@
                 if (!response.ok) {
                     throw new Error("네트워크 응답에 문제가 있습니다.");
                 }
-                // 서버에서 HTML 조각을 받아온다면 response.text(), JSON을 받아온다면 response.json()
                 return response.json();
             })
             .then(data => {
-                // 1. 데이터를 꽂아 넣을 대상(tbody) 가져오기
                 const tableBody = document.getElementById("userList");
-
-                // 2. 누적할 HTML 문자열 초기화
                 let htmlRows = "";
 
-                // 3. 만약 받아온 데이터가 비어있다면 처리
                 if (!data || data.length === 0) {
                     htmlRows = `<tr><td colspan="3" style="text-align:center;">조회된 회원 정보가 없습니다.</td></tr>`;
                 } else {
-                    // 4. 데이터 배열(data)을 돌면서 기존 타임리프 구조 그대로 그리기
                     data.forEach(userInfo => {
-                        // userInfo.isApplied가 'Y'이면 클래스명 추가하고 아니면 빈값
-                        const classAppend = (userInfo.isApplied === 'Y') ? 'already-applied' : '';
-                        const isChecked = (userInfo.isApplied === 'Y') ? 'checked' : '';
+                        const isAlreadyApplied = (userInfo.isApplied === 'Y');
+
+                        // 💡 [핵심] 서버에서 이미 신청된 사람이거나,
+                        // 아까 내가 날짜 바꾸기 전에 체크했던 사람(checkedUserIds에 포함된 사람)이라면 체크 유지!
+                        const isUserChecked = checkedUserIds.includes(String(userInfo.id));
+
+                        const classAppend = (isAlreadyApplied || isUserChecked) ? 'already-applied' : '';
+                        const isChecked = (isAlreadyApplied || isUserChecked) ? 'checked' : '';
+
                         htmlRows += `
                             <tr>
                                 <td>
@@ -321,24 +325,25 @@
                             </tr>
                         `;
                     });
-                    const appliedBoxes = document.querySelectorAll('.user_Chk.already-applied');
-
-                    appliedBoxes.forEach(cb => {
-                        cb.checked = true;  // 자동으로 체크 표시 활성화
-                        // cb.disabled = true; // 유저가 임의로 체크 해제하지 못하도록 비활성화
-
-                        // (시각적 효과) 해당 행을 흐리게 만들어서 이미 신청 완료된 상태임을 표시
-                        const row = cb.closest('tr');
-                        if (row) {
-                            row.style.backgroundColor = '#f8f9fa';
-                            row.style.color = '#bbb';
-                        }
-                    });
-                    updateChkCount();
                 }
 
-                // 5. 새로 만든 HTML 덩어리를 tbody에 덮어씌우기
+                // 1. 먼저 HTML을 테이블에 싹 렌더링합니다.
                 tableBody.innerHTML = htmlRows;
+
+                // 2. 렌더링이 끝난 후에 이미 신청된 항목들의 스타일(배경색 등)을 일괄 적용합니다.
+                const appliedBoxes = document.querySelectorAll('.user_Chk.already-applied');
+                // appliedBoxes.forEach(cb => {
+                //     const row = cb.closest('tr');
+                //     if (row) {
+                //         row.style.backgroundColor = '#f8f9fa';
+                //         row.style.color = '#bbb';
+                //     }
+                // });
+
+                // 3. 체크된 숫자 카운트 갱신 함수 실행
+                if (typeof updateChkCount === 'function') {
+                    updateChkCount();
+                }
             })
             .catch(error => {
                 console.error("데이터를 가져오는 중 오류 발생:", error);

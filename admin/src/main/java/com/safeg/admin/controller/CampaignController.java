@@ -208,7 +208,6 @@ public class CampaignController {
             .collect(Collectors.toList());
 
         log.warn("datesInRange" + datesInRange);
-        
         if (result > 0) {
             script = "<script>" +
             "   alert('수정이 완료 되었습니다.');" +

@@ -878,8 +878,10 @@ public class CampaignServiceImpl implements CampaignService{
                 for (LocalDate date : newDates) {
                     newLeader.setApplyDate(date);
                     // newLeader.setIsDeleted("N");
-                    log.info("신규 인솔자 INSERT 진행: " + newLeader + ", 날짜: " + date);
-                    campaignMapper.insertLeader(newLeader);
+                    if(dto.getLeaderList() != null && !dto.getLeaderList().isEmpty()) {
+                        log.info("신규 인솔자 INSERT 진행: " + newLeader + ", 날짜: " + date);
+                        campaignMapper.insertLeader(newLeader);
+                    }
                 }
             }
         }

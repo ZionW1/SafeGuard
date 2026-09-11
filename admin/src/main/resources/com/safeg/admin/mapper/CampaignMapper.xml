@@ -110,8 +110,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from campaign c
         left outer join camp_leader cl
         on c.campaign_id = cl.campaign_id
+        AND cl.is_deleted = 'N'
         left outer join user u
         on cl.user_no = u.id
+        AND u.is_deleted = 'N'
         where
         <if test="option.code == 0">
             (campaign_title like CONCAT('%', #{option.keyword}, '%')

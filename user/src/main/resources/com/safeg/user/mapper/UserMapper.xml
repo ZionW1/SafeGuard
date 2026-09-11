@@ -151,7 +151,7 @@
             u.user_id,
             u.user_nm,
             /* uc 참여 건수 + cl 인솔 건수를 합산하여 카운트 */
-            (COUNT(DISTINCT uc.campaign_id) + COUNT(DISTINCT cl.campaign_id)) AS count
+            (COUNT(DISTINCT uc.apply_date) + COUNT(DISTINCT cl.apply_date)) AS count
         FROM
             user u
         LEFT OUTER JOIN
@@ -163,7 +163,7 @@
         AND
             uc.is_deleted = 'N'
         AND
-            uc.apply_date LIKE CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '%') -- 날짜 조건을 JOIN 절로 이동
+            uc.apply_date LIKE CONCAT('2026-08', '%') -- 날짜 조건을 JOIN 절로 이동
         LEFT OUTER JOIN
             camp_leader cl
         ON
@@ -173,7 +173,7 @@
         AND
             cl.is_deleted = 'N' -- cl.is_deleted 로 수정!
         AND
-            cl.apply_date LIKE CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '%') -- 날짜 조건을 JOIN 절로 이동
+            cl.apply_date LIKE CONCAT('2026-08', '%') -- 날짜 조건을 JOIN 절로 이동
         WHERE
             u.role IN ('USER', 'LEADER')
         GROUP BY
@@ -202,7 +202,7 @@
         AND
             ph.is_deleted = 'N'
         AND
-            ph.mission_date LIKE CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '%')
+            ph.mission_date LIKE CONCAT('2026-08', '%')
         GROUP BY
             u.id, u.user_nm, u.user_id, u.role
         ORDER BY

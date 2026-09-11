@@ -29,5 +29,6 @@ public class CampLeaderVO {
     private String userNm;
     private String userPhone;
 
+    private String isDeleted;
     // Getter, Setter ...
 }

@@ -130,23 +130,23 @@ public class CampaignServiceImpl implements CampaignService{
         }
 
         // 2. 알림톡 발송 판단 로직
-        if (leaderPh.isEmpty() || companyPh.equals(leaderPh)) {
-            // 인솔자 번호가 없거나, 업체 번호와 인솔자 번호가 완전히 같은 경우 -> 업체에만 1번 발송
-            aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
-                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
-                "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
-        } else {
-            // 업체 번호와 인솔자 번호가 서로 다른 경우 -> 각각 1번씩 총 2번 발송
-            // 인솔자에게 발송 (💡 campaignVO.getLeaderPhone() 대신 통일성 있게 leaderPh 변수 사용을 권장합니다)
-            aligoSmsService.registrationAsync(leaderPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
-                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
-                "https://행집.com/apply/userCampaignApply/" + campaignId, leaderPh);
+        // if (leaderPh.isEmpty() || companyPh.equals(leaderPh)) {
+        //     // 인솔자 번호가 없거나, 업체 번호와 인솔자 번호가 완전히 같은 경우 -> 업체에만 1번 발송
+        //     aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+        //         campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+        //         "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
+        // } else {
+        //     // 업체 번호와 인솔자 번호가 서로 다른 경우 -> 각각 1번씩 총 2번 발송
+        //     // 인솔자에게 발송 (💡 campaignVO.getLeaderPhone() 대신 통일성 있게 leaderPh 변수 사용을 권장합니다)
+        //     aligoSmsService.registrationAsync(leaderPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+        //         campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+        //         "https://행집.com/apply/userCampaignApply/" + campaignId, leaderPh);
 
-            // 업체에게 발송
-            aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
-                campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
-                "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
-        }
+        //     // 업체에게 발송
+        //     aligoSmsService.registrationAsync(companyPh, campaignVO.getTypeNm(), campaignVO.getCampaignTitle(),
+        //         campaignVO.getRecruitmentNum(), AppPeriod, EventPeriod,
+        //         "https://행집.com/apply/userCampaignApply/" + campaignId, companyPh);
+        // }
 
         return result;
     }
@@ -829,8 +829,10 @@ public class CampaignServiceImpl implements CampaignService{
         // ---------------------------------------------------------------
         // 프론트에서 받은 인솔자 목록
         List<CampLeaderVO> newList = dto.getLeaderList() != null ? dto.getLeaderList() : Collections.emptyList();
+        log.info("new list : " + newList);
         // 기존 DB에 저장된 인솔자 목록
         List<CampLeaderVO> dbLeaderList = campaignMapper.campaignLeader(campaignId);
+        log.info("dbLeaderList list : " + dbLeaderList);
 
         // 3. [삭제 처리] DB엔 있지만 프론트 목록에서 사라진 인솔자 DELETE
         for (CampLeaderVO dbLeader : dbLeaderList) {
@@ -856,12 +858,14 @@ public class CampaignServiceImpl implements CampaignService{
             );
             log.info("인솔자 No [{}] -> DB 존재 여부: {}", newLeader.getLeaderNo(), isExistInDb);
 
+            // db에 인솔자 존재
             if (isExistInDb) {
                 // [기존 인솔자] 행사 기간 전체 날짜에 대해 UPDATE 실행
                 for (LocalDate date : newDates) {
                     newLeader.setApplyDate(date);
                     // 날짜별로 이미 존재하는 행은 UPDATE (금액/포인트 변경 반영)
                     // updateLeader의 쿼리가 (WHERE campaign_id = #{campaignId} AND user_no = #{leaderNo} AND apply_date = #{applyDate}) 인지 확인
+
                     int updatedRows = campaignMapper.updateLeader(newLeader);
                     log.info("기존 인솔자 날짜별 UPDATE 시도: " + newLeader + ", 날짜: " + date + ", 업데이트된 행 수: " + updatedRows);
                     // 만약 해당 날짜에 데이터가 없어서 UPDATE된 행이 0개라면 새로 INSERT
@@ -872,13 +876,15 @@ public class CampaignServiceImpl implements CampaignService{
                         log.info("기존 인솔자 날짜별 UPDATE 완료: " + newLeader + ", 날짜: " + date);
                     }
                 }
-            } else {
+            }
+            // db에 인솔자 무존재
+            else {
                 log.info("신규 인솔자 감지! INSERT 진행: " + newLeader);
                 // [신규 인솔자] 행사 기간 전체 날짜 수만큼 반복 INSERT
                 for (LocalDate date : newDates) {
                     newLeader.setApplyDate(date);
-                    // newLeader.setIsDeleted("N");
-                    if(dto.getLeaderList() != null && !dto.getLeaderList().isEmpty()) {
+                    newLeader.setIsDeleted("N");
+                    if(newLeader.getLeaderNo() != null && !"".equals(newLeader.getLeaderNo())) {
                         log.info("신규 인솔자 INSERT 진행: " + newLeader + ", 날짜: " + date);
                         campaignMapper.insertLeader(newLeader);
                     }

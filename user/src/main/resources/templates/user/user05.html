@@ -12,7 +12,7 @@
             width: 45%;
             border-collapse: collapse;
         }
-        
+
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
@@ -66,17 +66,17 @@
                         <th>랭킹</th>
                         <th>유저 ID</th>
                         <th>유저 이름</th>
-                        <th>수행 점수</th>
+                        <th>포인트</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="userRank, stat : ${bestPayList}">
                         <td th:text="${stat.count}"></td>
-                        <td th:text="${userRank.id}"></td>
+                        <td th:text="${userRank.userId}"></td>
                         <td th:text="${userRank.userNm}"></td>
                         <td th:text="${userRank.amount != null ? #numbers.formatInteger(userRank.amount, 3, 'COMMA') : 0}"></td>
                     </tr>
-                    
+
                     <tr th:if="${bestPayList.empty}">
                         <td colspan="4">유저가 없습니다.</td>
                     </tr>

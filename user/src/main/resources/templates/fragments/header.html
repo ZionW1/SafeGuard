@@ -53,7 +53,7 @@
                     </th:block>
                     <th:block sec:authorize="isAuthenticated()">
                         <div class="welcome-msg">안녕하세요, <span sec:authentication="name"></span>님!</div>
-                        <a th:href="@{/mypage/calendarPage(userId=${#authentication.principal.username})}" class="auth-link">내 정보</a>
+                        <a th:href="@{/mypage/calendarPage}" class="auth-link">내 정보</a>
                         <a href="javascript:logout()" class="auth-link">로그아웃</a>
                     </th:block>
                 </div>
@@ -70,7 +70,7 @@
             <form class="search_from" action="/search" id="searchForm" name="searchForm">
                 <!-- <input type="text" class="search" id="schCamp" name="schCamp" placeholder="검색어 입력" /> -->
                 <!-- <input class="optionSubmit" type="submit" id="search_btn" value=""> -->
-                
+
                 <!-- 검색 오버레이 (두 번째 이미지 형태) -->
                 <div id="searchOverlay" class="search-modal" style="display: none;">
                     <div class="search-header">
@@ -122,7 +122,7 @@
 
     <style>
         @media (max-width: 768px) {
-            
+
         }
     </style>
 
@@ -147,21 +147,21 @@
         function logout() {
             const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
             const csrfHeaderName = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-        
+
             // **** 이 줄을 꼭 추가해서 console에서 출력되는 값을 확인해줘! ****
             console.log("DEBUG: raw csrfHeaderName from meta tag:", csrfHeaderName);
-        
+
             // 토큰이 없으면 경고 메시지를 띄우고 함수 종료
             if (!csrfToken || !csrfHeaderName) {
                 console.error("CSRF 토큰 또는 헤더 메타 태그를 찾을 수 없거나 비어있습니다. Spring Security 설정 또는 HTML을 확인하세요.");
                 alert("로그아웃 보안 토큰이 없어 로그아웃할 수 없습니다. 잠시 후 다시 시도해 주세요.");
                 return; // 토큰이 없으면 더 이상 진행하지 않음
             }
-            
+
             // 콘솔 로그 오타 수정!
             console.log("CSRF Token: " + csrfToken);
             console.log("CSRF Header Name: " + csrfHeaderName);
-        
+
             fetch('/logout', {
                 method: 'POST',
                 headers: {
@@ -203,7 +203,7 @@
             form.addEventListener('submit', function(e) {
                 const resultArea = document.getElementById('resultArea');
                 const keyword = "";
-                
+
                 document.querySelectorAll('.search').forEach(input => {
                     console.log(input.value);
                     keyword = input.value;

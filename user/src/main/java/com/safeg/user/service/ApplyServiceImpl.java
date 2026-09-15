@@ -176,11 +176,16 @@ public class ApplyServiceImpl implements ApplyService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class) // 중간에 에러 나면 전체 롤백 보장
     public int pointInsert(List<UserCampaignVO> getUserInfo) throws Exception {
-        log.info("pointInsert : " + getUserInfo);
-        // TODO Auto-generated method stub
-        int result = 0;
-        int getPay = 0;
+        log.info("pointInsert 실행, 대상 인원 수: " + (getUserInfo != null ? getUserInfo.size() : 0));
+
+        if (getUserInfo == null || getUserInfo.isEmpty()) {
+            return 0;
+        }
+
+        int successCount = 0; // 성공적으로 처리된 유저 수
+
         for (UserCampaignVO dto : getUserInfo) {
             Long campaignId = dto.getCampaignId();
             Long userNo = dto.getUserNo();
@@ -192,15 +197,12 @@ public class ApplyServiceImpl implements ApplyService {
             }
 
             String applyDate = dto.getApplyDate().toString();
-            String theMonth = applyDate.toString().substring(0, 7);
+            String theMonth = applyDate.substring(0, 7);
             String wageChk = dto.getWageChk();
             String status = dto.getStatus();
             int workHour = dto.getWorkHour();
 
             int theMonthCnt = applyMapper.fullAttendCount(userNo, theMonth);
-
-            log.info("theMonth : : " + theMonth);
-            log.info("theMonthCnt : : " + theMonthCnt);
 
             PointHistoryVO myPoint = new PointHistoryVO();
             myPoint.setCampaignId(campaignId);
@@ -212,24 +214,12 @@ public class ApplyServiceImpl implements ApplyService {
             myPoint.setSettlementStatus("READY");
 
             // --------------------------------------------------------
-            // 🏃‍♂️ 1. 일반 근무 유저 처리
+            // 🏃‍♂️ 1. 일반 근무 유저 처리 (NPE 방지를 위해 상수를 앞으로)
             // --------------------------------------------------------
-            if(status.equals("2")) {
-                log.info("status 2 : " + status);
-                // 일반 근무 포인트
-                // if(wageChk.equals("02")) {
-                //     getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
-                //     myPoint.setAmount(dto.getCampaignPay() * workHour);
-                // } else if(wageChk.equals("01")) {
-                //     getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
-                //     myPoint.setAmount(getPay);
-                // }else {
-                //     getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
-                //     myPoint.setAmount(getPay);
-                // }
-
+            if ("2".equals(status)) {
+                int getPay = 0;
                 if ("01".equals(ucChoice)) { // 캠페인 페이
-                    if(wageChk.equals("01")) { // 일급
+                    if ("01".equals(wageChk)) { // 일급
                         getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
                         myPoint.setAmount(getPay);
                     } else { // 시급
@@ -241,14 +231,13 @@ public class ApplyServiceImpl implements ApplyService {
                     myPoint.setAmount(getPay);
                 }
                 myPoint.setCategory("WORK");
+                applyMapper.insertPointHistory(myPoint);
 
-                log.info("myPoint : " + myPoint);
-                result = applyMapper.insertPointHistory(myPoint);
             // --------------------------------------------------------
             // 👑 2. 인솔자 처리
             // --------------------------------------------------------
-            } else if (status.equals("9")) {
-                log.info("status 9 : " + status);
+            } else if ("9".equals(status)) {
+                int getPay = 0;
                 // 👑 인솔자 기본 급여 적립
                 if (dto.getCampaignPay() > 0) {
                     getPay = applyMapper.getPay(ucChoice, campaignId, userNo, wageChk);
@@ -256,35 +245,36 @@ public class ApplyServiceImpl implements ApplyService {
                     myPoint.setCategory("WORK");
                     applyMapper.insertPointHistory(myPoint);
                 } else {
-                    log.warn("인솔자 급여가 0이하입니다. 캠페인 ID: {}", campaignId);
+                    log.warn("인솔자 급여가 0 이하입니다. 캠페인 ID: {}", campaignId);
                 }
 
                 // 담당한 일반 유저(status=2) 수에 따른 인솔 수수료 추가 적립
                 if (dto.getLeaderPoint() > 0) {
                     for (UserCampaignVO info : getUserInfo) {
-                        PointHistoryVO extraPoint = new PointHistoryVO();
-                        if(info.getStatus().equals("2")) {
+                        // 주의: 리스트에 다른 인솔자의 하위 팀원만 매칭되도록 설계되어 있다면 유지하되,
+                        // 만약 전체 리스트가 섞여있다면 이 중첩 루프 구조가 맞는지 한 번 더 확인이 필요합니다.
+                        if ("2".equals(info.getStatus())) {
+                            PointHistoryVO extraPoint = new PointHistoryVO();
                             extraPoint.setCampaignId(campaignId);
-                            extraPoint.setUserNo(userNo); // 돈 받는 사람: 본인
-                            extraPoint.setUserId(userId); // 돈 받는 사람: 본인
+                            extraPoint.setUserNo(userNo); // 돈 받는 사람: 본인(인솔자)
+                            extraPoint.setUserId(userId);
                             extraPoint.setMissionDate(applyDate);
                             extraPoint.setSettlementStatus("READY");
                             extraPoint.setAmount(dto.getLeaderPoint());
-                            extraPoint.setSourceNo(info.getUserNo());
+                            extraPoint.setSourceNo(info.getUserNo()); // 원인 제공자: 일반 유저
                             extraPoint.setCategory("LEADER_EXTRA");
                             applyMapper.insertPointHistory(extraPoint);
                         }
                     }
                 } else {
-                    log.warn("인솔자 포인트가 0이하입니다. 캠페인 ID: {}", campaignId);
+                    log.warn("인솔자 포인트가 0 이하입니다. 캠페인 ID: {}", campaignId);
                 }
             } else {
-                log.info("퇴근 상태가 없음.");
                 throw new IllegalStateException("🚨 유저번호 [" + userId + "]의 퇴근 상태(" + status + ")가 부적절하여 전체 적립을 취소합니다.");
             }
 
             // --------------------------------------------------------
-            // 🏅 3. [공통 혜택] 만근 포인트 적립 (전체 대상)
+            // 🏅 3. [공통 혜택] 만근 포인트 적립
             // --------------------------------------------------------
             PointHistoryVO attendPoint = new PointHistoryVO();
             attendPoint.setCampaignId(campaignId);
@@ -295,48 +285,37 @@ public class ApplyServiceImpl implements ApplyService {
             attendPoint.setSettlementStatus("READY");
 
             if (theMonthCnt == 0) {
-                // 1. 이번 달 무단결근이 0회라면 -> 만근 포인트 지급 시도
-                // (단, 이미 이번 달에 지급받았는지 체크하는 로직이 있으면 중복 방지에 좋습니다.)
                 attendPoint.setAmount(10000);
                 attendPoint.setCategory("FULL_ATTEND");
-
-                log.info("attendPoint : " + attendPoint);
                 applyMapper.insertPointHistory(attendPoint);
             } else {
-                // 2. 이번 달 무단결근이 1회라도 있다면 -> 기존 만근 포인트 회수(0원 처리)
-                // 이전에 결근했을 때 미처 처리하지 못했더라도, 오늘 출근 처리 시점에 확실히 잡아냅니다.
                 attendPoint.setAmount(0);
                 attendPoint.setCategory("FULL_ATTEND");
                 applyMapper.updateAttendPoint(attendPoint);
-                log.info("해당 월은 만근포인트 없음");
             }
 
             // --------------------------------------------------------
-            // 🤝 4. [공통 혜택] 추천인 포인트 적립 (전체 대상)
+            // 🤝 4. [공통 혜택] 추천인 포인트 적립
             // --------------------------------------------------------
-            log.info("userNo + " + userNo);
-
             UserVO refInfo = userMapper.getReferrerNoById(userNo);
-            log.info("refInfo + " + refInfo);
             if (refInfo != null && refInfo.getReferrerNo() != null) {
                 PointHistoryVO refPoint = new PointHistoryVO();
-                refPoint.setUserNo(refInfo.getReferrerNo()); // 돈 받는 사람: 추천인
-                refPoint.setUserId(refInfo.getReferrerId()); // 돈 받는 사람: 추천인
+                refPoint.setUserNo(refInfo.getReferrerNo());
+                refPoint.setUserId(refInfo.getReferrerId());
                 refPoint.setAmount(5000);
                 refPoint.setCategory("REFERRAL");
-                refPoint.setSourceNo(userNo); // 원인 제공자: 본인
+                refPoint.setSourceNo(userNo);
                 refPoint.setMissionDate(applyDate);
                 refPoint.setCampaignId(campaignId);
                 refPoint.setSettlementStatus("READY");
-                log.info("refPoint : " + refPoint.toString());
-                int i = applyMapper.insertPointHistory(refPoint);
-                log.info("추천인 포인트 적립 결과 : " + i);
+
+                applyMapper.insertPointHistory(refPoint);
             }
-            result++;
-            log.info("sult +  + " + result);
+
+            successCount++; // 정상 처리된 유저 카운트 증가
         }
 
-        return result;
+        return successCount;
     }
 
     @Override

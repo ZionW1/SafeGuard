@@ -538,7 +538,7 @@ public class ApplyController {
     @PostMapping("/pointEarn")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> pointEarn(@RequestBody List<UserCampaignVO> dto) {
-        log.info("pointEarn");
+        log.info("pointEarn" + dto);
         UserCampaignVO vo = dto.get(0);
         Map<String, Object> response = new HashMap<>();
         if (dto.isEmpty()) {

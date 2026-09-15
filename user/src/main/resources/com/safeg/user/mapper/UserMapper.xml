@@ -151,7 +151,7 @@
             u.user_id,
             u.user_nm,
             /* uc 참여 건수 + cl 인솔 건수를 합산하여 카운트 */
-            (COUNT(DISTINCT uc.apply_date) + COUNT(DISTINCT cl.apply_date)) AS count
+            (COUNT(uc.apply_date) + COUNT(cl.apply_date)) AS count
         FROM
             user u
         LEFT OUTER JOIN

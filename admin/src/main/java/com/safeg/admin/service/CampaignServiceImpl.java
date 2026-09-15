@@ -885,6 +885,8 @@ public class CampaignServiceImpl implements CampaignService{
                     newLeader.setApplyDate(date);
                     newLeader.setIsDeleted("N");
                     if(newLeader.getLeaderNo() != null && !"".equals(newLeader.getLeaderNo())) {
+                    // newLeader.setIsDeleted("N");
+                    // if(newLeader.getUserNo() != null && !"".equals(newLeader.getUserNo())) {
                         log.info("신규 인솔자 INSERT 진행: " + newLeader + ", 날짜: " + date);
                         campaignMapper.insertLeader(newLeader);
                     }

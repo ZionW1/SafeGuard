@@ -379,7 +379,7 @@
         LEFT OUTER JOIN user u
             ON u.id = ph.source_no
         WHERE
-            ph.mission_date LIKE CONCAT(#{targetMonth}, '%')
+            ph.mission_date LIKE CONCAT('2026-08', '%')
             AND ph.is_deleted = 'N'
             AND ph.settlement_status = 'READY'
             AND ph.user_no = #{userNo}
@@ -401,7 +401,7 @@
         LEFT OUTER JOIN user u
             on u.id = ph.user_id
         WHERE
-            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            mission_date LIKE CONCAT('2026-08', '%')
             AND ph.is_deleted = 'N'
             AND settlement_status = 'READY'
             and ph.user_id = #{userNo}
@@ -430,7 +430,7 @@
                 user_campaign
             WHERE
                 status IN ('2')
-                AND apply_date LIKE CONCAT(#{targetMonth}, '%')
+                AND apply_date LIKE CONCAT('2026-08', '%')
                 AND is_deleted = 'N'
             GROUP BY
                 campaign_id,
@@ -439,7 +439,7 @@
             ON ph.campaign_id = uc_count.campaign_id
         AND ph.mission_date = uc_count.apply_date -- 💡 3. 미션 날짜와 일치하는 데이터만 조인
         WHERE
-            ph.mission_date LIKE CONCAT(#{targetMonth}, '%')
+            ph.mission_date LIKE CONCAT('2026-08', '%')
             AND ph.is_deleted = 'N'
             AND ph.settlement_status = 'READY'
             AND ph.user_no = #{userNo}
@@ -480,7 +480,7 @@
             AND cl.apply_date = ph.mission_date
             AND cl.status = '9'
         WHERE
-            ph.mission_date LIKE CONCAT(#{targetMonth}, '%')
+            ph.mission_date LIKE CONCAT('2026-08', '%')
             AND ph.is_deleted = 'N'
             AND ph.settlement_status = 'READY'
             AND ph.user_no = #{userNo}
@@ -520,7 +520,7 @@
             AND lc.apply_date = ph.mission_date
             AND lc.status = '9'
         WHERE
-            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            mission_date LIKE CONCAT('2026-08', '%')
             AND ph.is_deleted = 'N'
             AND settlement_status = 'READY'
             AND ph.user_no = #{userNo}
@@ -541,7 +541,7 @@
         AND
             is_deleted = 'N'
         AND
-            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            mission_date LIKE CONCAT('2026-08', '%')
     </select>
 
     <select id="attendAmount" resultType="String">
@@ -558,7 +558,7 @@
         AND
             is_deleted = 'N'
         AND
-            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            mission_date LIKE CONCAT('2026-08', '%')
     </select>
 
     <select id="leaderAmount" resultType="String">
@@ -575,7 +575,7 @@
         AND
             is_deleted = 'N'
         AND
-            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            mission_date LIKE CONCAT('2026-08', '%')
     </select>
 
     <select id="workAmount" resultType="String">
@@ -592,7 +592,7 @@
         AND
             is_deleted = 'N'
         AND
-            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            mission_date LIKE CONCAT('2026-08', '%')
     </select>
 
     <select id="overPayAmount" resultType="String">
@@ -609,7 +609,7 @@
         AND
             is_deleted = 'N'
         AND
-            mission_date LIKE CONCAT(#{targetMonth}, '%')
+            mission_date LIKE CONCAT('2026-08', '%')
     </select>
 
     <select id="getUserAuth" resultType="String">

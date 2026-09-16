@@ -150,8 +150,10 @@
         SELECT
             u.user_id,
             u.user_nm,
-            /* uc 참여 건수 + cl 인솔 건수를 합산하여 카운트 */
-            (COUNT(uc.apply_date) + COUNT(cl.apply_date)) AS count
+            /* 각 테이블의 고유 ID(또는 PK)를 기준으로 COUNT 하고 합산 */
+                (COUNT(DISTINCT uc.id) + COUNT(DISTINCT cl.no)) AS count
+            , COUNT(DISTINCT uc.id) AS uc_count
+            , COUNT(DISTINCT cl.no) AS cl_count
         FROM
             user u
         LEFT OUTER JOIN
@@ -163,7 +165,7 @@
         AND
             uc.is_deleted = 'N'
         AND
-            uc.apply_date LIKE CONCAT('2026-08', '%') -- 날짜 조건을 JOIN 절로 이동
+            uc.apply_date LIKE CONCAT('2026-08', '%')
         LEFT OUTER JOIN
             camp_leader cl
         ON
@@ -171,19 +173,19 @@
         AND
             cl.status IN ('9')
         AND
-            cl.is_deleted = 'N' -- cl.is_deleted 로 수정!
+            cl.is_deleted = 'N'
         AND
-            cl.apply_date LIKE CONCAT('2026-08', '%') -- 날짜 조건을 JOIN 절로 이동
+            cl.apply_date LIKE CONCAT('2026-08', '%')
         WHERE
             u.role IN ('USER', 'LEADER')
         GROUP BY
             u.id, u.user_id, u.user_nm
         HAVING
-            count &gt; 0 -- 이번 달 활동 내역이 1건 이상인 유저만 조회
+            count &gt; 0
         ORDER BY
             count DESC,
             u.id ASC
-        LIMIT 10
+        LIMIT 15
     </select>
 
     <select id="bestPayList" resultType="PointHistoryVO">
@@ -208,7 +210,7 @@
         ORDER BY
             amount DESC,
             u.id ASC
-        LIMIT 10
+        LIMIT 15
     </select>
 
     <select id="getReferrerNo" resultType="Long">

@@ -260,7 +260,7 @@
 
         function openSignificantModal(element) {
             const statusNow = element.dataset.statusNow; // 💡 statusNow 값 가져오기
-            console.log(statusNow)
+
             // 1. 서버에 해당 url의 HTML 내용을 요청
             fetch(element.dataset.url)
                 .then(response => {
@@ -397,7 +397,6 @@
             }
             const downloadUrl = `/file/excelDownload/${campaignId}/${applyDate}/${timeSegment}`;
 
-            // window.location.href = downloadUrl;
             window.top.location.href = downloadUrl;
         }
 
@@ -498,8 +497,6 @@
         }
 
         function initStatus(index, userNo, campaignId, applyDate, division){
-            console.log("initStatus 호출됨:", {index: index, userNo: userNo, campaignId: campaignId, applyDate: applyDate, division: division});
-
             if (window.event) {
                 window.event.preventDefault();
             }

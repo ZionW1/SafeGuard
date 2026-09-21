@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- namespace="매퍼 인터페이스 경로" --> 
+<!-- namespace="매퍼 인터페이스 경로" -->
 <mapper namespace="com.safeg.admin.mapper.UserDetailMapper">
     <resultMap type="UserVO" id="userMap">
         <id property="no" column="no" />
@@ -27,7 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="enabled" column="enabled" />
         <collection property="authList" resultMap="authMap"></collection>
     </resultMap>
-        
+
     <resultMap type="UserAuth" id="authMap">
         <result property="no" column="no" />
         <result property="id" column="id" />
@@ -48,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         on u.profile_image = f.id -->
         left outer join user_auth auth
         on u.no = auth.no
-        where 
+        where
         <if test="option.code == 0">
             u.id like CONCAT('%', #{option.keyword}, '%') or
             u.name like CONCAT('%', #{option.keyword}, '%') or
@@ -82,9 +82,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="count" resultType="int">
-        select count(*) 
+        select count(*)
         from user u
-        where 
+        where
             <if test="option.code == 0">
                 id like CONCAT('%', #{option.keyword}, '%') or
                 name like CONCAT('%', #{option.keyword}, '%') or
@@ -131,7 +131,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 ELSE 'X'
             END) AS auth
         FROM user u 
-        
         WHERE u.user_id = #{id}
     </select>
 </mapper>

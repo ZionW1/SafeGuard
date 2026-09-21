@@ -191,7 +191,7 @@
             'N' as is_leader -- 일반 지원자 구분값
         FROM
             user_campaign uc
-        LEFT OUTER JOIN user u ON uc.user_id = u.user_id
+        LEFT OUTER JOIN user u ON uc.user_no = u.id
         LEFT OUTER JOIN campaign c ON uc.campaign_id = c.campaign_id
         LEFT OUTER JOIN files f ON uc.user_no = f.target_id AND f.target_type='profile' AND f.is_deleted = 'N'
         LEFT OUTER JOIN review r ON uc.campaign_id = r.campaign_id
@@ -815,7 +815,7 @@
                 u.user_nm
             FROM user_campaign uc
             LEFT OUTER JOIN campaign c ON uc.campaign_id = c.campaign_id
-            LEFT OUTER JOIN user u ON uc.user_id = u.user_id
+            LEFT OUTER JOIN user u ON uc.user_no = u.id
             WHERE uc.user_no = #{userNo}
             AND uc.is_leader = 'N'
             AND uc.is_deleted = 'N'

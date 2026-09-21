@@ -188,12 +188,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND cl.is_deleted = 'N'
         ) m
         LEFT OUTER JOIN user u
-            ON m.user_id = u.user_id
+            ON m.user_no = u.id
         LEFT OUTER JOIN campaign c
             ON m.campaign_id = c.campaign_id
         LEFT OUTER JOIN point_history ph
             ON m.campaign_id = ph.campaign_id
-        AND m.user_id = ph.user_id
+        AND m.user_no = ph.user_no
         AND ph.category = 'OVERPAY'
         AND ph.is_deleted = 'N'
     </select>

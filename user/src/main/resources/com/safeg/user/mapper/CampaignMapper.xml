@@ -129,7 +129,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from user_campaign uc
         left outer join campaign c
         on uc.campaign_id = c.campaign_id
-        where uc.user_Id= #{userId}
+        where uc.user_id= #{userId}
         and uc.campaign_id = #{campaignId}
         and uc.is_deleted = 'N'
     </select>
@@ -167,7 +167,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         UPDATE campaign
         SET applicants_num = (
             SELECT t.cnt FROM (
-                SELECT COUNT(DISTINCT user_id) as cnt
+                SELECT
+                    COUNT(DISTINCT user_id) as cnt
                 FROM user_campaign
                 WHERE campaign_id = #{campaignId}
                 AND is_deleted = 'N'

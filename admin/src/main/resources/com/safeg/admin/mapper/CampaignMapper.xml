@@ -790,7 +790,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 u.user_nm
             FROM user_campaign uc
             LEFT OUTER JOIN campaign c ON uc.campaign_id = c.campaign_id
-            LEFT OUTER JOIN user u ON uc.user_id = u.user_id
+            LEFT OUTER JOIN user u ON uc.user_no = u.id
             WHERE uc.user_no = #{userNo}
             AND uc.is_leader = 'N'
             AND uc.is_deleted = 'N'

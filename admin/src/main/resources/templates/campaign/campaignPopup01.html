@@ -94,7 +94,7 @@
                                 <!-- <input th:value="${userInfo.id}" type="checkbox" class="user_Chk" name="Attendance"> -->
                                 <input th:value="${userInfo.id}" type="checkbox"
                                     th:classappend="${userInfo.isApplied == 'Y'} ? 'already-applied' : ''"
-                                    class="user_Chk" name="Attendance" onclick="chkBoxSelect()">
+                                    class="user_Chk" name="Attendance" onclick="chkBoxSelect(this)">
                             </td>
                             <td><span th:text="${userInfo.userNm}"></span></td>
                             <td><span th:text="${userInfo.phoneNum}"></span></td>

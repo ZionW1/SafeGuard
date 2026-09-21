@@ -138,7 +138,9 @@
 
         let chkInfo = new Set();
 
-        function chkBoxSelect() {
+        // 체크박스 선택
+        function chkBoxSelect(ele) {
+            console.log("체크박스 선택 이벤트 발생");
             chkInfo.clear(); // 기존 Set 초기화 후 현재 체크된 요소들 재수집
             const checkboxes = document.querySelectorAll('.user_Chk');
             const chkPcs = document.getElementById('chkPcs');
@@ -160,6 +162,48 @@
                     }
                     chkInfo.add(chk.value);
                 });
+            });
+
+            const userNo = ele.value; // 체크박스의 value (회원 고유 ID)
+
+            if (ele.checked) {
+                chkInfo.add(userNo);    // 체크된 경우 배열/세트에 추가
+            } else {
+                chkInfo.delete(userNo); // 체크가 해제된 경우 제거
+            }
+
+            console.log("현재 체크된 유저 목록:", Array.from(chkUser));
+            initCheckboxCount();
+
+        }
+
+        function initCheckboxCount() {
+            const chkPcs = document.getElementById('chkPcs');
+            const recPcs = document.getElementById('recPcs');
+
+            // 안전장치: userCampaignApply 데이터가 있을 때만 모집 인원 설정
+            if (recPcs && typeof userCampaignApply !== 'transparent' && userCampaignApply.length > 0) {
+                recPcs.textContent = userCampaignApply[0].recruitmentNum;
+            }
+
+            // 💡 1. 화면에 그려지자마자 현재 체크된 개수(isApplied='Y'로 인해 체크된 애들 포함)를 센다.
+            const updateCount = () => {
+                const checkedCount = document.querySelectorAll('.user_Chk:checked').length;
+                if (chkPcs) {
+                    chkPcs.textContent = chkUser.size;
+                }
+            };
+
+            // 최초 1회 숫자 세팅
+            updateCount();
+
+            // 💡 2. 기존 이벤트를 다 날리고 새로 만들어진 체크박스들에만 깨끗하게 change 이벤트를 건다.
+            const checkboxes = document.querySelectorAll('.user_Chk');
+            checkboxes.forEach(checkbox => {
+                // 이벤트 중복 등록 방지를 위해 기존 이벤트를 고려하여 새로 매핑
+                checkbox.onchange = () => {
+                    updateCount(); // 체크될 때마다 숫자 갱신
+                };
             });
         }
 

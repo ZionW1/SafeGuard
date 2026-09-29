@@ -23,6 +23,7 @@
                 <a th:href="@{/useGuide01}"><div class="menu-item">이용가이드</div></a>
                 <a th:href="@{/leader01}"><div class="menu-item">인솔자</div></a>
                 <a th:href="@{/user01}"><div class="menu-item">유저</div></a>
+                <a th:href="@{/point01}"><div class="menu-item">포인트</div></a>
                 <a href="javascript:logout()" class="auth-link">로그아웃</a>
             </div>
         </div>
@@ -55,6 +56,7 @@
                 <li><a th:href="@{/useGuide01}">이용가이드</a></li>
                 <li><a th:href="@{/leader01}">인솔자</a></li>
                 <li><a th:href="@{/user01}">유저</a></li>
+                <li><a th:href="@{/point01}">포인트</a></li>
                 <li><hr></li>
                 <!-- 시큐리티 적용 부분 -->
                 <li sec:authorize="isAnonymous()"><a th:href="@{/login}">로그인</a></li>

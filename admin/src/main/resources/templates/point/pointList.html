@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포인트 리스트</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <div th:if="${user.userId} == 'semiAdmin'">
+            <div th:replace="~{fragments/sidebar :: sidebarFragment-semi}"></div>
+        </div>
+        <div th:unless="${user.userId} == 'semiAdmin'">
+            <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
+        </div>
+        <div class="main-content">
+
+            <h1><a th:href="@{/point01}">캠페인 목록 요약</a></h1>
+            <!-- <form class="optionForm" th:action="@{/campaign01}" method="get" id="form"> -->
+                <div th:replace="~{fragments/csrfFragments :: inputCsrf}"></div>
+                <!-- <select name="code" class="wdt160">
+                    <option value="0" th:selected="${option.code==0}">날짜</option>
+                </select>
+                <select name="orderCode" id="order-code" class="wdt160">
+                    <option value="#{th:}" th:selected="${option.orderCode == 0}"></option>
+                    <option value="1" th:selected="${option.orderCode == 1}">제목순</option>
+                </select>
+                <input type="text" name="keyword" placeholder="검색어를 입력해 주세요." th:value="${param.keyword}" style="width: 160px;">
+                <input class="optionSubmit" type="submit" value="검색"> -->
+                <input type="month" class="selectedMonth" name="selectedMonth" id="selectedMonth" th:value="${selectedMonth}" onchange="changeMonth()">
+            <!-- </form> -->
+            <table class="info_table campaign_Table" border="1">
+                <colgroup>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                    <col width="10%"></col>
+                    <!-- <col width="10%"></col> -->
+                </colgroup>
+                <thead>
+                    <th>ID</th>
+                    <th>이름</th>
+                    <th>횟수</th>
+                    <th>작업 포인트</th>
+                    <th>추천인 포인트</th>
+                    <th>만근포인트</th>
+                    <th>인솔자 포인트</th>
+                    <th>추가지출</th>
+                    <th>총 포인트</th>
+                </thead>
+                <tbody>
+                    <th:block th:if="${pointList.isEmpty()}">
+                        <tr>
+                            <td colspan="10" align="center">조회된 데이터가 없습니다.</td>
+                        </tr>
+                    </th:block>
+                </div>
+                    <th:block th:each="point, stat : ${pointList}">
+                        <tr class="pointer" th:onclick="|window.open('@{/point02(userNo=${point.userNo}, selectedMonth=${selectedMonth})}', '_blank')|">
+                            <td><span th:text="${point.userId}"></span></td>
+                            <td><span th:text="${point.userNm}"></span></td>
+                            <!-- <td th:text="|${point.user_nm} (${point.mission_month})|"></td> -->
+                            <td><span th:text="${point.workCount}"></span></td>
+                            <td><span th:text="${#numbers.formatInteger(point.workAmount, 3, 'COMMA')}"></span></td>
+                            <td><span th:text="${#numbers.formatInteger(point.referralAmount, 3, 'COMMA')}"></span></td>
+                            <td><span th:text="${#numbers.formatInteger(point.attendAmount, 3, 'COMMA')}"></span></td>
+                            <td><span th:text="${#numbers.formatInteger(point.leaderAmount, 3, 'COMMA')}"></span></td>
+                            <td><span th:text="${#numbers.formatInteger(point.overpayAmount, 3, 'COMMA')}"></span></td>
+                            <td><span th:text="${#numbers.formatInteger(point.totalPoint, 3, 'COMMA')}"></span></td>
+                        </tr>
+                    </th:block>
+                </tbody>
+            </table>
+            <div class="parent">
+                    <div class="child">
+                        <a th:href="@{${pageUrl} + '&page=' + ${page.first}}">[처음]</a>
+                        <th:block th:if="${page.page != page.first }">
+                            <a th:href="@{${pageUrl} + '&page=' + ${page.prev}}">[이전]</a>
+                        </th:block>
+                        <th:block th:each="no : ${#numbers.sequence(page.start, page.end)}">
+                            <th:block th:if="${page.page == no}">
+                                <b><span th:text="${no}"></span></b>
+                            </th:block>
+                            <th:block th:if="${page.page != no}">
+                                <a th:href="@{${pageUrl} + '&page='+${no}}" th:text="${no}"></a>
+                            </th:block>
+                        </th:block>
+                        <th:block th:if="${page.page != page.last }">
+                            <a th:href="@{${pageUrl} + '&page=' + ${page.next}}">[다음]</a>
+                        </th:block>
+                        <a th:href="@{${pageUrl} + '&page=' + ${page.last}}">[마지막]</a>
+                    </div>
+                </div>
+            <!-- <a th:href="@{/campaign03}" class="insert">등록</a> -->
+        </div>
+    </div>
+    <div id="modalPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
+            <span onclick="closeModal();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    <div th:replace="~{fragments/footer :: mainFooter}"></div>
+    <div th:replace="~{fragments/sidebar :: adminScript}"></div>
+
+    <script th:inline="javascript">
+        function changeMonth() {
+            console.log("changeMonth called");
+            var selectedMonth = document.getElementById('selectedMonth').value;
+            // var url = /*[[@{/point01}]]*/ + '?selectedMonth=' + selectedMonth;
+            var url = '/admin/point01?selectedMonth='+ selectedMonth;
+            window.location.href = url;
+        }
+        function openModal(content) {
+            document.getElementById('modalContent').innerHTML = content;
+            document.getElementById('modalPopup').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modalPopup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

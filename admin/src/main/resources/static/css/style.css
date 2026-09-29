@@ -399,7 +399,7 @@ button[type="submit"]:hover {
 .info_table th,
 .info_table td {
     padding: 12px 10px;
-    border-bottom: 1px solid #eee;
+    border: 1px solid #aaa;
     text-align: center;
     font-size: 12px;
 }
@@ -701,11 +701,11 @@ body {
     padding: 12px;
     text-align: center;
     font-weight: bold;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #aaa;
 }
 .data-grid td {
     padding: 12px;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #aaa;
 }
 .data-grid tr:hover {
     background-color: #f9f9f9;
@@ -879,6 +879,57 @@ input[type=checkbox] {
 
 .purpleFont {
     color: #5b408b;
+}
+
+.selectedMonth {
+    font-weight: bold;
+    color: #5b408b;
+    padding: 4px 8px;
+    margin-bottom: 10px;
+}
+
+.table-container {
+    overflow-x: auto; /* 가로 스크롤바 자동 생성 */
+    width: 100%;
+    text-align: left;
+
+}
+
+.point_List {
+    width: 300%;
+    max-width: 1200px;
+    border-collapse: collapse;
+    margin-left: 0px;
+    border: 1px solid #000;
+}
+
+.tableTitle {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: left;
+    margin: 15px 0 15px 0;
+}
+
+.point_List th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+.textalign_left {
+    text-align: left;
+}
+
+.point_title {
+    background-color: #f3ecff;
+    color: #5e4b8b;
+    font-weight: bold;
+    text-align: center;
+}
+
+.point_subtitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #555;
 }
 
 @media (max-width: 768px) {

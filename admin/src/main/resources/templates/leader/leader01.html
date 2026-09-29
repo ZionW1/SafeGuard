@@ -6,7 +6,7 @@
     <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
     <title>Document</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
-    
+
     <style>
         .ck-editor__editable_inline {
             min-height: 400px;
@@ -62,7 +62,7 @@
         <div class="main-content">
             <h1><a th:href="@{/leader01}">인솔자 리스트</a></h1>
 
-        <table border="1" cellspacing="0" cellpadding="8">
+        <table class="info_table campaign_Table" border="1">
             <thead>
                 <tr>
                     <th>이름</th>
@@ -167,7 +167,7 @@
             //     uploadUrl: '/upload/image' // 우리의 커스텀 업로드 어댑터 URL
             // },
             // ⭐️ 한국어 설정 (우리가 빌드 시 language: 'ko'로 설정했으니 아마 필요 없을 거야. 확인용.) ⭐️
-            language: 'ko', 
+            language: 'ko',
             table: {
                 contentToolbar: [
                     'tableColumn',
@@ -179,7 +179,7 @@
                     'tableProperties', // ⭐️ 추가: 표 전체 속성 편집 모달
                     'tableCellProperties' // ⭐️ 추가: 선택된 셀 속성 편집 모달
             ] // 표 편집 툴바 옵션
-                
+
             },
 
             fontSize: {
@@ -195,7 +195,7 @@
                     { color: 'hsl(0, 0%, 30%)', label: 'Dim grey' },
                     { color: 'hsl(0, 0%, 60%)', label: 'Grey' },
                     { color: 'hsl(0, 0%, 90%)', label: 'Light grey' },
-                    { color: 'hsl(0, 0%, 100%)', label: 'White', 
+                    { color: 'hsl(0, 0%, 100%)', label: 'White',
                     // 'hasBorder'는 색상이 너무 밝아서 테두리로 구분해야 할 때 사용
                     hasBorder: true
                     },
@@ -252,7 +252,7 @@
     // 폼 제출 시 에디터 내용을 textarea에 반영
     document.getElementById('contentForm').addEventListener('ss', function(event) {
         // CKEditor 5는 생성될 때 연결된 <textarea>의 내용을 자동으로 업데이트해줘.
-        // 그래서 보통 이 `submit` 이벤트 리스너 안에서 `getData()`를 호출하고 
+        // 그래서 보통 이 `submit` 이벤트 리스너 안에서 `getData()`를 호출하고
         // hidden input에 넣는 등의 작업이 필요 없는 경우가 많아.
         // form의 `textarea` name="content"로 값이 잘 넘어갈 거야.
         console.log("폼이 제출됩니다. CKEditor 내용:", editorInstance.getData());

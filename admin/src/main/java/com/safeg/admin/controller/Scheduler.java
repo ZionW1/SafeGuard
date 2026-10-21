@@ -60,7 +60,7 @@ public class Scheduler {
                     // LocalDate resultDate = campaignsVO.getResultDate();
 
                     if (now.isEqual(campaignsVO.getResultDate())) {
-                        aligoSmsService.rosterCheckAsync(campaignsVO.getLeaderPhone(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), appPeriod, eventPeriod, "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(), campaignsVO.getCompanyPh());
+                        aligoSmsService.rosterCheckAsync(campaignsVO.getLeaderPhone(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), appPeriod, eventPeriod, "https://행집.com/campaign/" + campaignsVO.getCampaignId(), "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(), campaignsVO.getCompanyPh());
                     }
                 } catch (Exception e) {
                     log.error("캠페인 ID {} 발송 중 개별 오류: {}", campaignsVO.getCampaignId(), e.getMessage());

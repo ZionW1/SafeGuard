@@ -34,10 +34,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
-	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    testCompileOnly 'org.projectlombok:lombok:1.18.28'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
@@ -58,7 +60,7 @@ dependencies {
 
     implementation 'org.springframework.retry:spring-retry'
     implementation 'org.springframework:spring-aspects'
-    
+
     // Other dependencies (e.g., database driver)
     implementation 'com.mysql:mysql-connector-j' // MySQL 8.0.31 이후 버전에 맞는 올바른 의존성
     // or
@@ -79,7 +81,7 @@ tasks.named('test') {
 tasks.withType(JavaCompile) {
     options.annotationProcessorPath = configurations.annotationProcessor
     options.compilerArgs << "-parameters"
-    
+
     // 추가: 컴파일 시점에 Lombok이 확실히 개입하도록 함
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
 }

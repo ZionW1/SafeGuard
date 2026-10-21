@@ -1433,6 +1433,9 @@
             // 1. 기존에 이미 신청 완료되었던 유저 번호들 추출 (화면에 그려진 already-applied 기준)
             const appliedBoxes = Array.from(document.querySelectorAll('.user_Chk.already-applied'));
             const appliedUserNos = appliedBoxes.map(cb => String(cb.value));
+            console.log("appliedUserNos: ", appliedUserNos);
+            console.log("chkUser (전역 Set): ", Array.from(chkUser));
+            console.log("chkUser.size: ", chkUser.size);
 
             // 2. 🔥 [핵심 변경] 화면 DOM 대신 전역 `chkUser`(Set)에 들어있는 전체 체크된 유저 ID들을 가져옴!
             const checkedUserNos = Array.from(chkUser); // Set을 배열로 변환
@@ -1444,6 +1447,9 @@
             // 4. 새롭게 체크된 유저 번호 (등록 대상자)
             // checkedUserNos 중 기존 appliedUserNos에 없던 것들
             const usersToInsert = checkedUserNos.filter(userNo => !appliedUserNos.includes(userNo));
+
+            console.log("취소할 유저 번호 리스트:", usersToCancel);
+            console.log("새로 등록할 유저 번호 리스트:", usersToInsert);
 
             // 5. 새로 등록할 유저들의 상세 아이디(userId)와 맵핑하기 위해 현재 DOM을 참조하거나 필요 데이터 추출
             // (주의: 검색 등으로 인해 화면에 안 보이는 유저의 .user_Id를 찾을 수 있으므로,
@@ -1635,6 +1641,13 @@
                         const classAppend = (isAlreadyApplied || isUserChecked) ? 'already-applied' : '';
                         const isChecked = (isAlreadyApplied || isUserChecked) ? 'checked' : '';
 
+                        console.log(`Rendering user: ${userInfo.userNm}, isAlreadyApplied: ${isAlreadyApplied}, isUserChecked: ${isUserChecked}, classAppend: ${classAppend}, isChecked: ${isChecked}`);
+                        const updateCount = () => {
+                            const checkedCount = document.querySelectorAll('.user_Chk:checked').length;
+                            if (chkPcs) {
+                                chkPcs.textContent = chkUser.size;
+                            }
+                        };
                         htmlRows += `
                             <tr>
                                 <td>
@@ -1643,7 +1656,6 @@
                                         class="user_Chk ${classAppend}"
                                         name="Attendance" ${isChecked}
                                         onclick="chkBoxSelect(this)">
-
                                 </td>
                                 <td><span>${userInfo.userNm}</span></td>
                                 <td><span>${userInfo.guardTypeNm}</span></td>

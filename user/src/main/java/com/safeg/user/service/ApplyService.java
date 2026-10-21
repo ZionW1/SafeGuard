@@ -47,7 +47,7 @@ public interface ApplyService {
 
     public int pointInsert(List<UserCampaignVO> getUserInfo) throws Exception;
 
-    public List<UserVO> userInfoList(Long campaignId, Option option) throws Exception;
+    public List<UserVO> userInfoList(Long campaignId, Option option, LocalDate applyDate) throws Exception;
 
     public int getPointInfo(String campaignId, LocalDate finalDate) throws Exception;
 
@@ -57,8 +57,8 @@ public interface ApplyService {
 
     public int userCancel(CampaignVO dto) throws Exception;
 
-    public List<UserVO> userDateInfo(Long campaignId, Option option) throws Exception;
+    public List<UserVO> userDateInfo(Long campaignId, String code, String keyword) throws Exception;
 
-    public List<UserVO> dateSelect(Long campaignId, Option option, String applyDate) throws Exception;
+    public List<UserVO> dateSelect(Long campaignId, String code, String keyword, String applyDate) throws Exception;
 
 }

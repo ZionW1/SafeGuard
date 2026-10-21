@@ -28,14 +28,14 @@ public class CommonDataAdvice {
             int totalUsers = userService.totalUser();
             int totalGuard = userService.totalGuard();
             int totalCampaign = mainService.totalCampaign();
-            
+
             data.setTotalUser(totalUsers);
             data.setTotalGuard(totalGuard);
             data.setTotalCampaign(totalCampaign);
         } catch (Exception e) {
             log.error("Error preparing CommonData. Returning default values: {}", e.getMessage(), e);
             // 에러 발생 시에도 null이 아닌, 기본값을 가진 객체를 반환하여 템플릿 오류 방지
-            data.setTotalUser(0); 
+            data.setTotalUser(0);
             data.setTotalCampaign(0);
             // data.setTotalReview(0);
         }

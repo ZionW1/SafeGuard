@@ -214,6 +214,17 @@ body {
     border-radius: 5px;
 }
 
+.people-checked {
+    width: 100%;
+    color: white;
+    border: none;
+    padding: 10px 3px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+}
+
 .review_btn {
     display: block;
     border-radius: 5px;

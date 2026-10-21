@@ -149,6 +149,69 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         LIMIT #{page.index}, #{page.rows}
     </select>
 
+    <select id="campaignMonthList" resultType="CampaignVO">
+        select c.campaign_Id,
+            place_addr,
+            campaign_title,
+            DATE_FORMAT(c.created_at, '%Y.%m.%d') created_at,
+            event_Period_str,
+            event_Period_end,
+            type_code,
+            applicants_Num,
+            recruitment_Num,
+            (CASE
+                WHEN uc_choice = '01' THEN '캠페인 포인트'
+                WHEN uc_choice = '02' THEN '유저 포인트'
+                ELSE ''
+            END) as uc_choice,
+            c.time_segment,
+            GROUP_CONCAT(distinct u.user_nm SEPARATOR ', ') as user_Nm,
+                -- 2. 급여들만 슬래시(/)나 쉼표로 묶기
+                GROUP_CONCAT(FORMAT(cl.leader_pay, 0) SEPARATOR ' / ') as leader_pays
+            <!-- GROUP_CONCAT(u.user_nm SEPARATOR ', ') as user_Nm -->
+        from campaign c
+        left outer join camp_leader cl
+        on c.campaign_id = cl.campaign_id
+        AND cl.is_deleted = 'N'
+        left outer join user u
+        on cl.user_no = u.id
+        AND u.is_deleted = 'N'
+        where
+        <if test="option.code == 0">
+            (campaign_title like CONCAT('%', #{option.keyword}, '%')
+            or place_addr like CONCAT('%', #{option.keyword}, '%'))
+        </if>
+        <if test="option.code == 1">
+            campaign_title like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 2">
+            place_addr like CONCAT('%', #{option.keyword}, '%')
+        </if>
+        <if test="option.code == 3">
+            tl.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
+        </if>
+        AND c.EVENT_PERIOD_STR like CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '%')
+        and c.is_deleted = 'N'
+        GROUP BY c.campaign_Id,
+        c.place_addr,
+        c.campaign_title,
+        c.created_at,
+        c.event_Period_str,
+        c.event_Period_end,
+        c.type_code,
+        c.applicants_Num,
+        c.recruitment_Num,
+        c.uc_choice,
+        c.time_segment
+        <if test="option.orderCode == 0">
+            order by campaign_Id desc
+        </if>
+        <if test="option.orderCode == 1">
+            order by campaign_title asc, campaign_id desc
+        </if>
+        LIMIT #{page.index}, #{page.rows}
+    </select>
+
     <select id="campaignCount" resultType="int">
         SELECT COUNT(*)
         FROM campaign c
@@ -1174,7 +1237,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             event_end_date,
             is_leader,
             status,
-            is_leader,
             lead_apply,
             created_at,
             updated_at,
@@ -1192,7 +1254,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{eventPeriodEnd},
             'N',
             #{status}, -- 상태는 매개변수로 전달받음 (예: '0' 또는 '8')
-            #{isLeader}, -- 리더 여부도 매개변수로 전달받음 (예: 'Y' 또는 'N')
             #{leadApply},
             now(),
             now(),

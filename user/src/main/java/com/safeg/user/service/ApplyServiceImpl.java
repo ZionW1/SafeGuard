@@ -327,10 +327,15 @@ public class ApplyServiceImpl implements ApplyService {
         return String.valueOf(updateLeader);
     }
 
-    public List<UserVO> userInfoList(Long campaignId, Option option) throws Exception{
-        log.info("campaignId : {}, option : {}", campaignId, option);
+    public List<UserVO> userInfoList(Long campaignId, Option option, LocalDate applyDate) throws Exception{
+        LocalDate dateParam = null;
+        if (applyDate != null && !"ALL".equals(applyDate.toString())) {
+            dateParam = applyDate; // "2026-10-14" 형태의 문자열을 LocalDate로 파싱
+        }
+        // applyDate = null; // applyDateS를 null로 초기화하여 ALL 처리
+        log.info("userInfoList called with campaignId: {}, option: {}, applyDate: {}", campaignId, option, dateParam);
 
-        List<UserVO> userInfoList = applyMapper.userInfoList(campaignId, option);
+        List<UserVO> userInfoList = applyMapper.userInfoList(campaignId, option, dateParam);
         log.info("userInfoList : " + userInfoList);
 
         return userInfoList;
@@ -406,7 +411,7 @@ public class ApplyServiceImpl implements ApplyService {
 
         List<Map<String, Object>> insertList = new ArrayList<>();
         // datesInRange는 이미 자바단에 계산되어 있는 [2026-07-06, 2026-07-07...] 리스트
-        log.info("equals(dto.getApplyDateS() : ");
+        log.info("equals(dto.getApplyDateS() : " + "ALL".equals(dto.getApplyDateS()) + ", dto.getApplyDateS() : " + dto.getApplyDateS());
         if ("ALL".equals(dto.getApplyDateS())) {
             // 1. ALL(전체)일 때는 [유저 수 × 날짜 수] 만큼 조합해서 리스트를 만듭니다. (2중 for문)
             for (int i = 0; i < userNoList.size(); i++) {
@@ -449,8 +454,9 @@ public class ApplyServiceImpl implements ApplyService {
         paramMap.put("insertList", insertList); // 🔥 2중 구조를 하나로 푼 이 리스트만 던집니다!
 
         log.info("완성된 인서트 리스트 개수: " + insertList.size()); // 유저2명 x 날짜4개면 8이 찍혀야 정상
+        log.info("완성된 인서트 리스트: " + insertList.toString()); // 유저2명 x 날짜4개면 8이 찍혀야 정상
 
-        log.info("paramMpa" + paramMap);
+        log.info("paramMap + " + paramMap);
 
         int result = applyMapper.userApply(paramMap);
         log.info("result + " + result);
@@ -509,15 +515,16 @@ public class ApplyServiceImpl implements ApplyService {
     }
 
     @Override
-    public List<UserVO> userDateInfo(Long campaignId, Option option) throws Exception {
-        List<UserVO> userInfoList = applyMapper.userDateInfo(campaignId, option);
+    public List<UserVO> userDateInfo(Long campaignId, String code, String keyword) throws Exception {
+        List<UserVO> userInfoList = applyMapper.userDateInfo(campaignId, code, keyword);
 
         return userInfoList;
     }
 
     @Override
-    public List<UserVO> dateSelect(Long campaignId, Option option, String applyDate) throws Exception {
-        List<UserVO> userInfoDate = applyMapper.dateSelect(campaignId, option, applyDate);
+    public List<UserVO> dateSelect(Long campaignId, String code, String keyword, String applyDate) throws Exception {
+        log.info("dateSelect called with campaignId: {}, code: {}, keyword: {}, applyDate: {}", campaignId, code, keyword, applyDate);
+        List<UserVO> userInfoDate = applyMapper.dateSelect(campaignId, code, keyword, applyDate);
         log.info("userInfoDate : " + userInfoDate);
 
         return userInfoDate;

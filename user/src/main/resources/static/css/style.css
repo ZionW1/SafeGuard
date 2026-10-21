@@ -2340,6 +2340,12 @@ table.bestPayList {
 .padding10 {
     padding: 10px;
 }
+/* 태블릿에서 공통으로 적용될 스타일 */
+@media (min-width: 769px) and (max-width: 1300px) {
+    .desktop-header {
+        display: none !important;
+    }
+}
 
   /* 모바일 화면 (예: 768px 이하) */
     @media (max-width: 768px) {

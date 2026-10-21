@@ -306,6 +306,16 @@ public class CampaignController {
 
             List<UserVO> userInfoList = userService.userInfoList(campaignId, option);
 
+            for(int i = 0; i < userInfoList.size(); i++) {
+                String rawPhone = userInfoList.get(i).getPhoneNum(); // ex: "01012345678"
+                if (rawPhone != null) {
+                    // 10자리, 11자리 모두 자동으로 하이픈을 찌르는 정규식 적용
+                    String formattedPhone = rawPhone.replaceAll("[^0-9]", "")
+                                                    .replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1.$2.$3");
+                    userInfoList.get(i).setPhoneNum(formattedPhone); // 하이픈이 포함된 값으로 세팅
+                }
+            }
+
             List<LocalDate> dates = new ArrayList<>();
             if (dto.getEventPeriodStr() != null && dto.getEventPeriodEnd() != null) {
                 dates = dto.getEventPeriodStr()

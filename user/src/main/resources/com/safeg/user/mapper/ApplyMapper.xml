@@ -745,12 +745,18 @@
             SELECT DISTINCT user_no
             FROM user_campaign
             WHERE CAMPAIGN_ID = #{campaignId}
+            <if test="applyDate != null">
+                AND apply_date = #{applyDate}
+            </if>
             AND is_deleted = 'N'
             UNION -- 💡 두 테이블의 유저 번호를 합치고 중복은 자동 제거
             -- 2. 인솔자 배정 명단
             SELECT DISTINCT user_no
             FROM camp_leader
             WHERE campaign_id = #{campaignId}
+            <if test="applyDate != null">
+                AND apply_date = #{applyDate}
+            </if>
             AND is_deleted = 'N'
         ) sub ON u.id = sub.user_no
         WHERE
@@ -1019,15 +1025,15 @@
             AND u.role != 'Admin'
 
             <!-- 🔥 역할(경호/진행/수행/스탭/인솔자) 필터 -->
-            <if test="option.role != null and option.role != '' and option.role != 'ALL'">
-                AND u.guard_type = #{option.role}
+            <if test="code != null and code != '' and code != 'ALL'">
+                AND u.guard_type = #{code}
             </if>
 
             <!-- 🔥 이름 및 전화번호 검색어 필터 -->
-            <if test="option.keyword != null and option.keyword != ''">
+            <if test="keyword != null and keyword != ''">
                 AND (
-                    u.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
-                    OR u.phone_hash LIKE CONCAT('%', #{option.keyword}, '%')
+                    u.user_nm LIKE CONCAT('%', #{keyword}, '%')
+                    OR u.phone_hash LIKE CONCAT('%', #{keyword}, '%')
                 )
             </if>
         ORDER BY
@@ -1068,15 +1074,15 @@
         ) sub ON u.id = sub.user_no
         WHERE u.IS_DELETED = 'N'
         <!-- 🔥 역할(경호/진행/수행/스탭/인솔자) 필터 -->
-        <if test="option.role != null and option.role != '' and option.role != 'ALL'">
-            AND u.guard_type = #{option.role}
+        <if test="code != null and code != '' and code != 'ALL'">
+            AND u.guard_type = #{code}
         </if>
 
         <!-- 🔥 이름 및 전화번호 검색어 필터 -->
-        <if test="option.keyword != null and option.keyword != ''">
+        <if test="keyword != null and keyword != ''">
             AND (
-                u.user_nm LIKE CONCAT('%', #{option.keyword}, '%')
-                OR u.phone_hash LIKE CONCAT('%', #{option.keyword}, '%')
+                u.user_nm LIKE CONCAT('%', #{keyword}, '%')
+                OR u.phone_hash LIKE CONCAT('%', #{keyword}, '%')
             )
         </if>
         ORDER BY

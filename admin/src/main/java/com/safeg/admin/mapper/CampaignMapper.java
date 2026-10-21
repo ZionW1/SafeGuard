@@ -20,6 +20,8 @@ public interface CampaignMapper {
 
     public List<CampaignVO> campaignList(@Param("option") Option option, @Param("page") Page page) throws Exception;
 
+    public List<CampaignVO> campaignMonthList(Option option, Page page) throws Exception;
+
     public int campaignCount(@Param("option") Option option, @Param("page") Page page) throws Exception;
 
     public CampaignVO campaignSelect(@Param("id") String id) throws Exception;
@@ -110,8 +112,6 @@ public interface CampaignMapper {
     public List<Long> inquiryUser(UserCampaignVO param) throws Exception;
 
     public int userAddApply(UserCampaignVO param) throws Exception;
-
-
 
     public List<Long> getActiveUserNos(@Param("campaignId") Long campaignId, @Param("timeSegment") String timeSegment) throws Exception;
 

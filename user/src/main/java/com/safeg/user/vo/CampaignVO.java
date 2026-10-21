@@ -88,6 +88,8 @@ public class CampaignVO {
 
     private String applyDateS;
 
+    private String applyDate;
+
     private String ucChoice;
 
     private List<CampLeaderVO> leaderList;

@@ -781,8 +781,6 @@ public class MyPageController {
         model.addAttribute("workAmount", wAmt);
         model.addAttribute("overPayAmount", opAmt);
 
-
-
         // 최종 합계 계산 (리더 금액 포함)
         model.addAttribute("totalPoint", rAmt + wAmt + lAmt + opAmt);
 

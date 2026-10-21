@@ -59,9 +59,9 @@
             <a class="review_btn" th:href="@{/review03/{id}(id=${campaignId})}">리뷰 등록</a>
         </div>
         <div class="pd-b20">
-            <button type="button" class="btn-info" onclick="processAttendance('1')" style="background-color: green; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">체크 출근</button>
-            <button type="button" class="btn-info" onclick="processAttendance('2')" style="background-color: red; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">체크 퇴근</button>
-            <button type="button" class="btn-info" onclick="processAttendance('3')" style="background-color: blue;; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">체크 특이사항</button>
+            <button type="button" class="people-checked" onclick="processAttendance('1')" style="background-color: green;">체크 출근</button>
+            <button type="button" class="people-checked" onclick="processAttendance('2')" style="background-color: red;">체크 퇴근</button>
+            <button type="button" class="people-checked" onclick="processAttendance('3')" style="background-color: blue;;">체크 특이사항</button>
         </div>
     </div>
 
@@ -203,6 +203,9 @@
         const campId = /*[[${campaignId}]]*/ null;
         const selectedUserIds = new Set();
         let chkUser = new Set(); // 👈 배열 대신 Set으로 선언
+        let chkUserId = new Set(); // 👈 배열 대신 Set으로 선언
+        let selectedUserMap = new Map(); // key: userNo, value: userId
+        const initialAppliedUsers = new Set(); // 👈 최초 신청자 고정 보관함
         document.addEventListener('DOMContentLoaded', function() {
             var statusButtons ;
             const applicantItems = document.querySelectorAll('.applicant-item');
@@ -238,7 +241,6 @@
         });
 
         function openChkPopup(url) {
-            console.log(url)
             // 1. 서버에 해당 url의 HTML 내용을 요청
             fetch(url)
                 .then(response => {
@@ -260,7 +262,6 @@
 
         function openSignificantModal(element) {
             const statusNow = element.dataset.statusNow; // 💡 statusNow 값 가져오기
-
             // 1. 서버에 해당 url의 HTML 내용을 요청
             fetch(element.dataset.url)
                 .then(response => {
@@ -284,7 +285,6 @@
 
                             // 현재 statusNow와 일치하는 버튼에 active-status 추가
                             targetBtn.classList.add('active-status');
-                            console.log(`[statusNow=${statusNow}] 버튼에 active-status 클래스가 추가되었습니다.`);
                         }
                     }
                     // ============================================================
@@ -397,6 +397,7 @@
             }
             const downloadUrl = `/file/excelDownload/${campaignId}/${applyDate}/${timeSegment}`;
 
+            // window.location.href = downloadUrl;
             window.top.location.href = downloadUrl;
         }
 
@@ -409,7 +410,6 @@
 
             if (btnLeader) {
                 if (btnLeader.getAttribute('data-clicked') === 'true') {
-                    console.log("이미 처리 중인 요청입니다. 연타 금지!");
                     return;
                 }
 
@@ -543,116 +543,20 @@
             });
         }
 
-        function changeDate(element) {
-            chkUser.clear();
-            const campaignId = /*[[${campaignId}]]*/ null;
+        // 현재 화면에 있는 체크박스 상태를 selectedUserMap에 동기화(백업)하는 공통 함수
+        function checkToMap() {
+            document.querySelectorAll('.user_Chk').forEach(cb => {
+                const userNo = String(cb.value);
+                const userId = cb.dataset.userId || cb.closest('td')?.querySelector('.user_Id')?.value;
 
-            // const campaignId = campaign[selectIndex].campaignId;
-            const selectedValue = element.value;
-            let applyDate = "";
-
-            console.log("campaignId "+ campaignId)
-            console.log("선택된 값:", selectedValue);
-            if (!selectedValue) return;
-
-            // 💡 [추가] 날짜를 바꾸기 직전에 현재 화면에서 체크되어 있는 사용자들의 고유 ID(value)를 미리 수집해 둡니다!
-            // const checkedUserIds = [];
-            // document.querySelectorAll('.user_Chk:checked').forEach(cb => {
-            //     checkedUserIds.push(cb.value);
-            // });
-
-            const url = `/apply/chgDate/${campaignId}`;
-            if (selectedValue === "ALL") {
-                applyDate = "ALL";
-            } else {
-                applyDate = selectedValue;
-            }
-
-            var sendData = {
-                campaignTitle: userCampaignApply.campaignTitle,
-                recruitmentNum: userCampaignApply.recruitmentNum,
-                applicantsNum: userCampaignApply.applicantsNum,
-                eventPeriodStr: userCampaignApply.eventPeriodStr,
-                eventPeriodEnd: userCampaignApply.eventPeriodEnd,
-                applyDateS: applyDate
-            };
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken
-                },
-                body: JSON.stringify(sendData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("네트워크 응답에 문제가 있습니다.");
-                }
-                return response.json();
-            })
-            .then(data => {
-                const tableBody = document.getElementById("userList");
-                let htmlRows = "";
-
-                if (!data || data.length === 0) {
-                    htmlRows = `<tr><td colspan="3" style="text-align:center;">조회된 회원 정보가 없습니다.</td></tr>`;
+                if (cb.checked) {
+                    if (userId) {
+                        selectedUserMap.set(userNo, userId); // 체크되어 있다면 맵에 저장
+                    }
                 } else {
-                    data.forEach(userInfo => {
-                        const isAlreadyApplied = (userInfo.isApplied === 'Y');
-
-                        // 💡 [핵심] 서버에서 이미 신청된 사람이거나,
-                        // 아까 내가 날짜 바꾸기 전에 체크했던 사람(checkedUserIds에 포함된 사람)이라면 체크 유지!
-                        // const isUserChecked = checkedUserIds.includes(String(userInfo.id));
-
-                        if (isAlreadyApplied) {
-                            chkUser.add(String(userInfo.id)); // 해당 날짜 신청자만 전역 세트에 등록
-                        }
-
-                        // const classAppend = (isAlreadyApplied || isUserChecked) ? 'already-applied' : '';
-                        // const isChecked = (isAlreadyApplied || isUserChecked) ? 'checked' : '';
-
-                        const classAppend = isAlreadyApplied ? 'already-applied' : '';
-                        const isChecked = isAlreadyApplied ? 'checked' : '';
-
-                        htmlRows += `
-                            <tr>
-                                <td>
-                                    <input type="hidden" value="${userInfo.userId}" class="user_Id" name="userId">
-                                    <input type="checkbox" value="${userInfo.id}"
-                                        class="user_Chk ${classAppend}"
-                                        name="Attendance" ${isChecked}
-                                        onclick="chkBoxSelect(this)">
-                                </td>
-                                <td><span>${userInfo.userNm}</span></td>
-                                <td><span>${userInfo.guardTypeNm}</span></td>
-                                <td><span>${userInfo.phoneNum}</span></td>
-                            </tr>
-                        `;
-                    });
+                    // 체크가 풀렸다면 기존 신청자든 아니든 맵에서 제거 (취소 대상 반영을 위해)
+                    selectedUserMap.delete(userNo);
                 }
-
-                // 1. 먼저 HTML을 테이블에 싹 렌더링합니다.
-                tableBody.innerHTML = htmlRows;
-
-                // 2. 렌더링이 끝난 후에 이미 신청된 항목들의 스타일(배경색 등)을 일괄 적용합니다.
-                const appliedBoxes = document.querySelectorAll('.user_Chk.already-applied');
-                // appliedBoxes.forEach(cb => {
-                //     const row = cb.closest('tr');
-                //     if (row) {
-                //         row.style.backgroundColor = '#f8f9fa';
-                //         row.style.color = '#bbb';
-                //     }
-                // });
-
-                // 3. 체크된 숫자 카운트 갱신 함수 실행
-                if (typeof initCheckboxCount === 'function') {
-                    initCheckboxCount();
-                }
-            })
-            .catch(error => {
-                console.error("데이터를 가져오는 중 오류 발생:", error);
-                alert("정보를 불러오는데 실패했습니다.");
             });
         }
 
@@ -728,11 +632,9 @@
                 }
                 userNos.push(Number(userNo));
             }
-            console.log("userNos + " + userNos)
 
             if (clickedButtonIndex) {
                 if (clickedButtonIndex.getAttribute('data-clicked') === 'true') {
-                    console.log("이미 처리 중인 요청입니다. 연타 금지!");
                     return;
                 }
 
@@ -818,7 +720,6 @@
                 alert(data.message);
 
                 const buttons = document.querySelectorAll(`a[th-onclick$=", [[${userNo}]])"]`);
-                console.log(buttons.forEach(btn => console.log(btn)));
                 buttons.forEach(btn => btn.classList.remove('active-status'));
                 clickedButton.classList.add('active-status');
             })
@@ -876,9 +777,6 @@
                 const userNoStr = userNos.join(',');
                 const userIdStr = userIds.join(',');
 
-                console.log("userNoStr" + userNoStr)
-                console.log("userIdStr" + userIdStr)
-
                 // 최종적으로 요청할 동적 URL 생성
                 const targetUrl = `/apply/significant/${userNoStr}/${userIdStr}/${campaignId}/${applyDate}`;
 
@@ -913,7 +811,7 @@
                     alert(`선택된 인원의 ${statusText} 처리가 요청되었습니다.`);
                 }).catch(err => {
                     console.error("일괄 처리 중 에러 발생: ", err);
-                    location.reload();
+                    // location.reload();
                 });
             } else {
                 const statusText = statusValue === '1' ? '출근' : '퇴근';
@@ -940,7 +838,6 @@
         }
 
         function updateSignificantStatus(status, userNo, campaignId, applyDate) {
-            console.log("updateAttendanceStatus called with:", {status, userNo, campaignId, applyDate});
             const clickedButton = event.target;
             const applicantItems = document.querySelectorAll('.applicant-item');
             const requestBody = {
@@ -990,7 +887,6 @@
                 alert(data.message);
 
                 const buttons = document.querySelectorAll(`a[th-onclick$=", [[${userNo}]])"]`);
-                console.log(buttons.forEach(btn => console.log(btn)));
                 buttons.forEach(btn => btn.classList.remove('active-status'));
                 clickedButton.classList.add('active-status');
             })
@@ -1013,16 +909,12 @@
 
         function significantInsert(campaignId, userNo, userId, applyDate) {
             // 모달창 내부에서 바뀐 클래스명(.modal-reason, .modal-amount)으로 요소를 정확히 찾아옵니다.
-            console.log(" significantInsert " + userNo);
-            console.log(" significantInsert " + userId);
 
             const reasonInput = document.querySelector('.modal-reason');
             const amountInput = document.querySelector('.modal-amount');
 
             const reasonInfo = reasonInput ? reasonInput.value.trim() : "";
             const amount = amountInput ? amountInput.value.trim() : "";
-
-            console.log("실제 전송될 데이터 정보:", {campaignId, userNo, applyDate, reasonInfo, amount});
 
             if (!reasonInfo) {
                 alert('특이사항 내용을 입력해 주세요.');
@@ -1072,8 +964,6 @@
                 alert("적립 가능한 캠페인 신청 정보가 없습니다.");
                 return;
             }
-            console.log("전체 캠페인 신청 현황:", userCampaignApply);
-            console.log("=== 퇴근 포인트 적립 시작 ===");
 
             // 변수로 받아온 배열을 순회합니다.
             // 2. 오브젝트 통째로 서버에 전송
@@ -1090,7 +980,7 @@
             .then(data => {
                 if(data.success) {
                     alert("🎉 퇴근 포인트 적립 및 업데이트가 " + data.message + "건 완료되었습니다!");
-                    location.reload();
+                    // location.reload();
                 } else {
                     alert(`❌ 실패: ${data.message}`);
                 }
@@ -1099,18 +989,18 @@
         });
 
         function openPopup(url) {
-            console.log("url : " + JSON.stringify(url));
-            console.log("userCampaignApply : " + JSON.stringify(userCampaignApply));
-
+            console.log("url : ", url);
             var sendData = {
                 campaignTitle: userCampaignApply[0].campaignTitle,
                 recruitmentNum: userCampaignApply[0].recruitmentNum,
                 applicantsNum: userCampaignApply[0].applicantsNum,
                 eventPeriodStr: userCampaignApply[0].eventPeriodStr,
-                eventPeriodEnd: userCampaignApply[0].eventPeriodEnd
+                eventPeriodEnd: userCampaignApply[0].eventPeriodEnd,
+                applyDate: document.getElementById('dateSelector').value
+                // applyDate: "ALL"
             };
 
-            console.log("sendData : " + JSON.stringify(sendData));
+            console.log("openPopup 호출됨. 전송 데이터:", sendData);
 
             // 1. 서버에 해당 url의 HTML 내용을 요청
             fetch(url, {
@@ -1129,38 +1019,49 @@
                 // 2. 모달 컨텐츠 영역에 서버에서 가져온 HTML 주입
                 document.getElementById('modalContentUser').innerHTML = html;
                 document.getElementById('modalPopup').style.display = 'flex';
+// 💡 [추가] 팝업이 열릴 때 날짜 selectbox의 두 번째 값(index 1)을 기본 선택하고 목록 로드
+    const dateSelect = document.getElementById('dates');
+    console.log("openPopup 호출됨. 팝업이 열렸습니다. 날짜 selectbox 기본 선택 시도." + dateSelect.options.length + "개 옵션 존재.");
+    console.log("openPopup 호출됨. 팝업이 열렸습니다. 날짜 selectbox 기본 선택 시도." + dateSelect.length + "개 옵션 존재.");
 
+    if (dateSelect && dateSelect.options.length > 1) {
+        dateSelect.selectedIndex = 1; // 두 번째 옵션(인덱스 1) 선택
+
+        // // onchange에 등록된 loadUserList 함수 실행 (또는 이벤트 트리거)
+        // if (typeof loadUserList === 'function') {
+        //     loadUserList(dateSelect);
+        // } else {
+        //     dateSelect.dispatchEvent(new Event('change'));
+        // }
+    }
                 // 💡 [수정 1] 팝업이 열릴 때, 이미 체크되어 있거나(이미 신청된 경우 등)
                 // 기존에 전역 배열(chkUser)에 기억되어 있던 ID들을 체크박스에 반영하고 배열에도 동기화합니다.
                 const userChkList = document.querySelectorAll('.user_Chk');
 
                 userChkList.forEach(cb => {
-                    const userId = String(cb.value);
-
-                    // 이미 전역 배열에 있거나, 서버에서 이미 신청된 상태라면 체크 유지
-                    if (chkUser.has(userId) || cb.classList.contains('already-applied')) {
-                        cb.checked = true;
-                        // 배열에 아직 없다면 안전하게 추가
-                        if (!chkUser.has(userId)) {
-                            chkUser.add(userId);
+                    const userNo = String(cb.value); // 유저 고유 번호 (id)
+                    // 체크박스 태그에 data-user-id가 박혀있거나, 숨김 input에서 가져오기
+                    const userId = cb.dataset.userId || cb.closest('td')?.querySelector('.user_Id')?.value;
+                    // 🔥 [핵심 수정] 반드시 'already-applied' 클래스가 있는 경우에만 initialAppliedUsers에 넣어야 합니다!
+                    if (cb.classList.contains('already-applied')) {
+                        initialAppliedUsers.add(userNo);
+                        if (userId) {
+                            selectedUserMap.set(userNo, userId);
                         }
                     }
 
-                    // 시각적 효과 (이미 신청된 항목 스타일)
-                    if (cb.classList.contains('already-applied')) {
-                        const row = cb.closest('tr');
-                        if (row) {
-                            row.style.backgroundColor = '#f8f9fa';
-                            row.style.color = '#bbb';
+                    // 사용자가 체크를 직접 했거나 기존 신청자인 경우 체크 유지
+                    if (cb.classList.contains('already-applied') || cb.checked) {
+                        cb.checked = true;
+                        if (userId) {
+                            selectedUserMap.set(userNo, userId);
                         }
                     }
                 });
 
-                console.log("현재 chkUser 배열 상태:", chkUser);
-
                 // 💡 [수정 2] 팝업이 열린 직후, 현재까지 선택된 총 인원수 카운트 초기화/반영
-                if (typeof initCheckboxCount === 'function') {
-                    initCheckboxCount();
+                if (typeof updateChkCount === 'function') {
+                    updateChkCount();
                 }
 
                 // 검색 인풋창 엔터 이벤트 처리
@@ -1182,38 +1083,180 @@
             });
         }
 
-        function chkBoxSelect(ele) {
-            // const checkboxes = document.querySelectorAll('.user_Chk');
-            // const chkPcs = document.getElementById('chkPcs');
-            // const recPcs = document.getElementById('recPcs');
-            // const recNum = userCampaignApply[0].recruitmentNum;
-            // // 💡 [추가] 팝업창이 뜨자마자 '현재 체크되어 있는 개수'를 바로 span에 집어넣습니다.
-            // const initialCount = document.querySelectorAll('.user_Chk:checked').length;
-            // if (chkPcs) {
-            //     chkPcs.textContent = initialCount;
-            //     recPcs.textContent = recNum;
-            // }
-
-            // // 그 이후에 유저가 클릭할 때마다 숫자가 바뀌도록 감시자를 붙입니다.
-            // checkboxes.forEach(checkbox => {
-            //     checkbox.addEventListener('change', () => {
-            //         const checkedCount = document.querySelectorAll('.user_Chk:checked').length;
-            //         if (chkPcs) {
-            //             chkPcs.textContent = checkedCount; // span에 값 갱신
-            //         }
-            //     });
-            // });
-            console.log("ele : " + ele)
-            const userNo = ele.value; // 체크박스의 value (회원 고유 ID)
-
-            if (ele.checked) {
-                chkUser.add(userNo);    // 체크된 경우 배열/세트에 추가
-            } else {
-                chkUser.delete(userNo); // 체크가 해제된 경우 제거
+        // 💡 체크박스 상태 변화에 따라 선택된 인원 수를 실시간으로 업데이트하는 함수
+        function updateChkCount() {
+            const chkPcs = document.getElementById('chkPcs');
+            const recPcs = document.getElementById('recPcs');
+            console.log("updateChkCount 호출됨. 현재 선택된 총 인원수: " + selectedUserMap.size);
+            // 안전장치: userCampaignApply 데이터가 있을 때만 모집 인원 설정
+            if (recPcs && typeof userCampaignApply !== 'undefined' && userCampaignApply.length > 0) {
+                recPcs.textContent = userCampaignApply[0].recruitmentNum;
             }
 
-            console.log("현재 체크된 유저 목록:", Array.from(chkUser));
-            initCheckboxCount();
+            // 💡 1. 화면에 그려지자마자 현재 체크된 개수(isApplied='Y'로 인해 체크된 애들 포함)를 센다.
+            const updateCount = () => {
+                const checkedCount = document.querySelectorAll('.user_Chk:checked').length;
+                if (chkPcs) {
+                    chkPcs.textContent = selectedUserMap.size;
+                }
+            };
+
+            // 최초 1회 숫자 세팅
+            updateCount();
+
+            // 💡 2. 기존 이벤트를 다 날리고 새로 만들어진 체크박스들에만 깨끗하게 change 이벤트를 건다.
+            const checkboxes = document.querySelectorAll('.user_Chk');
+            checkboxes.forEach(checkbox => {
+                // 이벤트 중복 등록 방지를 위해 기존 이벤트를 고려하여 새로 매핑
+                checkbox.onchange = () => {
+                    updateCount(); // 체크될 때마다 숫자 갱신
+                };
+            });
+        }
+
+        function chkBoxSelect(ele) {
+            const userNo = ele.value; // 체크박스의 value (회원 고유 ID)
+            const userId = ele.dataset.userId || ele.closest('td')?.querySelector('.user_Id')?.value;
+
+            console.log(`체크박스 상태 변경: userNo=${userNo}, userId=${userId}, checked=${ele.checked}`);
+            if (ele.checked) {
+                chkUser.add(userNo);    // 체크된 경우 배열/세트에 추가
+                chkUserId.add(userId); // 체크된 경우 배열/세트에 추가
+                selectedUserMap.set(userNo, userId); // 👈 ID와 userId를 쌍으로 저장!
+            } else {
+                chkUser.delete(userNo); // 체크가 해제된 경우 제거
+                chkUserId.delete(userId); // 체크가 해제된 경우 제거
+                selectedUserMap.delete(userNo); // 👈 ID와 userId 쌍 제거
+            }
+
+            updateChkCount();
+            // const chkPcs = document.getElementById('chkPcs');
+            // if (chkPcs) {
+            //     chkPcs.textContent = selectedUserMap.size;
+            // }
+        }
+
+        function chgDate(element) {
+            const campaignId = /*[[${campaignId}]]*/ null;
+
+            const selectedValue = element.value;
+            let applyDate = "";
+
+            const selectedCodeRadio = document.querySelector('.code-radio:checked');
+            console.log("현재 선택된 코드 번호(selectedCodeRadio):", selectedCodeRadio);
+
+            const codeValue = selectedCodeRadio ? selectedCodeRadio.value : "";
+
+            // 디버깅용 로그로 확인
+            console.log("현재 선택된 코드 번호(code):", codeValue);
+            if (!selectedValue) return;
+
+            // 💡 [추가] 날짜를 바꾸기 직전에 현재 화면에서 체크되어 있는 사용자들의 고유 ID(value)를 미리 수집해 둡니다!
+            // const checkedUserIds = [];
+            // document.querySelectorAll('.user_Chk:checked').forEach(cb => {
+            //     checkedUserIds.push(cb.value);
+            // });
+
+            // 🔥 [핵심 1] 검색하기 전, 현재 화면에 체크된 유저들의 userId를 확실하게 백업
+            checkToMap();
+
+            const url = `/apply/chgDate/${campaignId}`;
+            if (selectedValue === "ALL") {
+                applyDate = "ALL";
+            } else {
+                applyDate = selectedValue;
+            }
+
+            var sendData = {
+                campaignTitle: userCampaignApply.campaignTitle,
+                recruitmentNum: userCampaignApply.recruitmentNum,
+                applicantsNum: userCampaignApply.applicantsNum,
+                eventPeriodStr: userCampaignApply.eventPeriodStr,
+                eventPeriodEnd: userCampaignApply.eventPeriodEnd,
+                applyDateS: applyDate,
+                code: codeValue,
+                keyword: document.querySelector('input[name="keyword"]').value
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(sendData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("네트워크 응답에 문제가 있습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tableBody = document.getElementById("userList");
+                let htmlRows = "";
+
+                if (!data || data.length === 0) {
+                    htmlRows = `<tr><td colspan="3" style="text-align:center;">조회된 회원 정보가 없습니다.</td></tr>`;
+                } else {
+                    initialAppliedUsers.clear();
+
+                    // 🔥 [핵심 해결] 날짜가 변경되었으므로, 기존에 전역 맵(selectedUserMap)에 있던 수동 체크 데이터 중
+                    // 이번에 새로 조회된 날짜의 데이터에 존재하지 않는 임시 체크 건들은 싹 정리해 줍니다!
+                    // const fetchedUserIds = new Set(data.map(userInfo => String(userInfo.id)));
+                    // for (let [userNo, userId] of selectedUserMap.entries()) {
+                    //     // 만약 새로 조회된 날짜의 목록에 없는 유저인데, 원래 신청되었던 사람도 아니라면 맵에서 제거
+                    //     const targetUser = data.find(u => String(u.id) === userNo);
+                    //     if (!targetUser || targetUser.isApplied !== 'Y') {
+                    //         // 사용자가 수동으로 체크했던 임시 데이터이므로 날짜가 바뀌면 초기화
+                    //         selectedUserMap.delete(userNo);
+                    //     }
+                    // }
+
+                    data.forEach(userInfo => {
+                        const isAlreadyApplied = (userInfo.isApplied === 'Y');
+                        const userNoStr = String(userInfo.id);
+
+                        if (isAlreadyApplied) {
+                            initialAppliedUsers.add(userNoStr);
+                            if (!selectedUserMap.has(userNoStr)) {
+                                selectedUserMap.set(userNoStr, userInfo.userId);
+                            }
+                        }
+
+                        // 이제 selectedUserMap에는 '10월 2일 기준'으로 유효한 체크만 남게 됩니다.
+                        const isUserChecked = selectedUserMap.has(userNoStr);
+
+                        const classAppend = isAlreadyApplied ? 'already-applied' : '';
+                        const isChecked = isUserChecked ? 'checked' : '';
+
+                        htmlRows += `
+                            <tr>
+                                <td>
+                                    <input type="hidden" value="${userInfo.userId}" class="user_Id" name="userId">
+                                    <input type="checkbox" value="${userInfo.id}"
+                                        class="user_Chk ${classAppend}"
+                                        name="Attendance" ${isChecked} data-user-id="${userInfo.userId}"
+                                        onclick="chkBoxSelect(this)">
+                                </td>
+                                <td><span>${userInfo.userNm}</span></td>
+                                <td><span>${userInfo.guardTypeNm}</span></td>
+                                <td><span>${userInfo.phoneNum}</span></td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                tableBody.innerHTML = htmlRows;
+
+                if (typeof updateChkCount === 'function') {
+                    updateChkCount();
+                }
+            })
+            .catch(error => {
+                console.error("데이터를 가져오는 중 오류 발생:", error);
+                alert("정보를 불러오는데 실패했습니다.");
+            });
         }
 
         function closeModalApply() {
@@ -1255,9 +1298,6 @@
         function searchUser(element) {
             const campaignId = userCampaignApply[0].campaignId;
             const searchValue = document.getElementById("keyword").value;
-            console.log("a : " + campaignId);
-            console.log("b : " + searchValue);
-
             const url = `/searchUser/${campaignId}?keyword=${encodeURIComponent(searchValue)}`;
 
             fetch(url, {
@@ -1308,7 +1348,7 @@
                             row.style.color = '#bbb';
                         }
                     });
-                    initCheckboxCount();
+                    updateChkCount();
                 }
                 tableBody.innerHTML = htmlRows;
             })
@@ -1337,7 +1377,6 @@
                         // const tbody = document.querySelector('.modal_table tbody');
                         const tbody = document.getElementById('userList');
                         tbody.innerHTML = ''; // 기존 목록 비우기
-                        console.log('data : ' + JSON.stringify(data));
                         if(data.length === 0) {
                             tbody.innerHTML = '<tr><td colspan="4">검색 결과가 없습니다.</td></tr>';
                             return;
@@ -1372,255 +1411,107 @@
             }
         });
 
-        function initCheckboxCount() {
-            const chkPcs = document.getElementById('chkPcs');
-            const recPcs = document.getElementById('recPcs');
+        function filterUserList() {
+            const role = document.querySelector('input[name="code"]:checked')?.value || '전체';
+            const keyword = document.getElementById("keyword").value.trim();
+            const code = document.querySelector('.code-radio:checked').value;
 
-            // 안전장치: userCampaignApply 데이터가 있을 때만 모집 인원 설정
-            if (recPcs && typeof userCampaignApply !== 'transparent' && userCampaignApply.length > 0) {
-                recPcs.textContent = userCampaignApply[0].recruitmentNum;
+            // 🔥 [핵심 1] 검색하기 전, 현재 화면에 체크된 유저들의 userId를 확실하게 백업
+            checkToMap();
+
+            // 010 검색 시 11자리가 아니면 검색 중단
+            if (keyword.startsWith("010") && !keyword.includes("-") && keyword.length !== 11) {
+                alert("휴대폰 번호는 11자리로 입력해주세요.");
+                return;
             }
 
-            // 💡 1. 화면에 그려지자마자 현재 체크된 개수(isApplied='Y'로 인해 체크된 애들 포함)를 센다.
-            const updateCount = () => {
-                const checkedCount = document.querySelectorAll('.user_Chk:checked').length;
-                if (chkPcs) {
-                    chkPcs.textContent = chkUser.size;
+            const datesValue = document.getElementById("dates").value;
+            console.log("filterUserList 호출됨. 현재 선택된 날짜:", datesValue, "검색 키워드:", keyword, "선택된 코드:", code);
+
+            const url = `/apply/popup01/search?campaignId=${campId}&code=${code}&keyword=${encodeURIComponent(keyword)}&dates=${encodeURIComponent(datesValue)}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                const tableBody = document.getElementById("userList");
+                let htmlRows = "";
+
+                if (!data || data.length === 0) {
+                    htmlRows = `<tr><td colspan="3" style="text-align:center;">조회된 회원 정보가 없습니다.</td></tr>`;
+                } else {
+                    alert("a")
+                    initialAppliedUsers.clear();
+
+                    // 🔥 [핵심 해결] 날짜가 변경되었으므로, 기존에 전역 맵(selectedUserMap)에 있던 수동 체크 데이터 중
+                    // 이번에 새로 조회된 날짜의 데이터에 존재하지 않는 임시 체크 건들은 싹 정리해 줍니다!
+                    const fetchedUserIds = new Set(data.map(userInfo => String(userInfo.id)));
+                    for (let [userNo, userId] of selectedUserMap.entries()) {
+                        // 만약 새로 조회된 날짜의 목록에 없는 유저인데, 원래 신청되었던 사람도 아니라면 맵에서 제거
+                        const targetUser = data.find(u => String(u.id) === userNo);
+                        if (!targetUser || targetUser.isApplied !== 'Y') {
+                            // 사용자가 수동으로 체크했던 임시 데이터이므로 날짜가 바뀌면 초기화
+                            selectedUserMap.delete(userNo);
+                        }
+                    }
+
+                    data.forEach(userInfo => {
+                        const isAlreadyApplied = (userInfo.isApplied === 'Y');
+                        const userNoStr = String(userInfo.id);
+
+                        if (isAlreadyApplied) {
+                            initialAppliedUsers.add(userNoStr);
+                            if (!selectedUserMap.has(userNoStr)) {
+                                selectedUserMap.set(userNoStr, userInfo.userId);
+                            }
+                        }
+
+                        // 이제 selectedUserMap에는 '10월 2일 기준'으로 유효한 체크만 남게 됩니다.
+                        const isUserChecked = selectedUserMap.has(userNoStr);
+
+                        const classAppend = isAlreadyApplied ? 'already-applied' : '';
+                        const isChecked = isUserChecked ? 'checked' : '';
+
+                        htmlRows += `
+                            <tr>
+                                <td>
+                                    <input type="hidden" value="${userInfo.userId}" class="user_Id" name="userId">
+                                    <input type="checkbox" value="${userInfo.id}"
+                                        class="user_Chk ${classAppend}"
+                                        name="Attendance" ${isChecked} data-user-id="${userInfo.userId}"
+                                        onclick="chkBoxSelect(this)">
+                                </td>
+                                <td><span>${userInfo.userNm}</span></td>
+                                <td><span>${userInfo.guardTypeNm}</span></td>
+                                <td><span>${userInfo.phoneNum}</span></td>
+                            </tr>
+                        `;
+                    });
                 }
-            };
 
-            // 최초 1회 숫자 세팅
-            updateCount();
+                tableBody.innerHTML = htmlRows;
 
-            // 💡 2. 기존 이벤트를 다 날리고 새로 만들어진 체크박스들에만 깨끗하게 change 이벤트를 건다.
-            const checkboxes = document.querySelectorAll('.user_Chk');
-            checkboxes.forEach(checkbox => {
-                // 이벤트 중복 등록 방지를 위해 기존 이벤트를 고려하여 새로 매핑
-                checkbox.onchange = () => {
-                    updateCount(); // 체크될 때마다 숫자 갱신
-                };
-            });
+                if (typeof updateChkCount === 'function') {
+                    updateChkCount();
+                }
+            })
+                .catch(err => console.error("Search failed:", err));
         }
 
-        // async function applyCampaign(campaignId, id) {
-        //     const timeSegment = userCampaignApply[0].timeSegment; // 혹은 해당 캠페인의 timeSegment 값
-        //     console.log(timeSegment+ " timeS" );
-        //     // 1. 기존에 신청 상태였던 '체크박스 엘리먼트' 목록 및 번호 추출
-        //     const appliedBoxes = Array.from(document.querySelectorAll('.user_Chk.already-applied'));
-        //     const appliedUserNos = appliedBoxes.map(cb => cb.value); // ["43", "34"] 형태의 문자열 배열
-
-        //     // 2. 🔥 [수정] 현재 체크박스에 '체크가 되어 있는' 엘리먼트 자체를 배열로 수집!
-        //     const checkedBoxes = Array.from(document.querySelectorAll('.user_Chk:checked'));
-        //     const checkedUserNos = checkedBoxes.map(cb => cb.value); // ["43", "55"] 형태의 문자열 배열
-
-        //     // 3. 기존에 신청했으나 현재 체크가 풀린 유저 번호 (취소 대상자)
-        //     // 기존 번호들 중 현재 체크된 번호 목록에 없는 것만 필터링
-        //     const usersToCancel = appliedUserNos.filter(userNo => !checkedUserNos.includes(userNo));
-
-        //     // 4. 🔥 [수정] 새롭게 체크된 '체크박스 엘리먼트' 골라내기 (태그 자체를 필터링)
-        //     // 현재 체크된 태그들 중, 기존 번호 목록에 없는 태그들만 걸러냄
-        //     const boxesToInsert = checkedBoxes.filter(cb => !appliedUserNos.includes(cb.value));
-
-        //     // 5. 이제 boxesToInsert 안에는 진짜 HTML 태그가 들어있으므로 에러가 나지 않습니다!
-        //     const usersToInsert = boxesToInsert.map(cb => cb.value); // 신규 등록 유저 번호 목록
-        //     const userIdList = boxesToInsert.map(cb => {
-        //         // 체크박스(cb) 부모 td 내부의 hidden input 값 가져오기
-        //         return cb.closest('td').querySelector('.user_Id').value;
-        //     });
-
-        //     const workDate = document.querySelectorAll('.user_Chk.already-applied')
-
-        //     const applyDate = document.querySelector(".sync-nm");
-
-        //     console.log("applyDate: ", applyDate.value); // 이제 값이 잘 나옵니다!
-
-        //     console.log("취소할 유저 번호 리스트:", usersToCancel);
-        //     console.log("새로 등록할 유저 번호(id) 리스트:", usersToInsert);
-        //     console.log("새로 등록할 유저 아이디(userId) 리스트:", userIdList);
-        //     console.log("선택된 유저 일련번호(id) 리스트:", usersToInsert);      // 예: ["43", "34"]
-        //     console.log("선택된 유저 아이디(userId) 리스트:", userIdList); // 예: ["admin123", "test01"]
-
-        //     const url = "/apply/userApply";
-
-        //     const sendData = {
-        //         campaignId: campaignId,
-        //         userNos: usersToInsert, // [1, 2, 3] 형태의 배열
-        //         userIds: userIdList,
-        //         // leaderPay: campaign[selectIndex].leaderPay,
-        //         recruitmentNum: userCampaignApply[0].recruitmentNum,
-        //         applicantsNum: userCampaignApply[0].applicantsNum,
-        //         eventPeriodStr: userCampaignApply[0].eventPeriodStr,
-        //         eventPeriodEnd: userCampaignApply[0].eventPeriodEnd,
-        //         timeSegment: userCampaignApply[0].timeSegment,
-        //         applyDate: applyDate.value
-        //     };
-        //     console.log(sendData);
-        //     try {
-        //         // 🔥 STEP 1: 체크를 푼 유저가 있다면 취소(삭제) 프로세스 진행
-        //         if (usersToCancel.length > 0) {
-        //             const cancelData = {
-        //                 campaignId: campaignId,
-        //                 timeSegment: timeSegment,
-        //                 userNos: usersToCancel,
-        //                 eventPeriodStr: userCampaignApply[0].eventPeriodStr,
-        //                 eventPeriodEnd: userCampaignApply[0].eventPeriodEnd
-        //             };
-        //             const res = await fetch('/userCancel', {
-        //                 method: 'POST',
-        //                 headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
-        //                 body: JSON.stringify(cancelData)
-        //             });
-
-        //             if (!res.ok) {
-        //                 const errorData = await res.json(); // 💡 response가 아니라 res
-        //                 throw new Error(errorData.message || '취소 처리 실패');
-        //             }
-        //         }
-
-        //         // 🔥 STEP 2: 새로 체크한 유저가 있다면 등록(추가) 프로세스 진행
-        //         if (usersToInsert.length > 0) {
-        //             const insertData = {
-        //                 campaignId: campaignId,
-        //                 userNos: usersToInsert,
-        //                 userIds: userIdList,
-        //                 recruitmentNum: userCampaignApply[0].recruitmentNum,
-        //                 applicantsNum: userCampaignApply[0].applicantsNum,
-        //                 eventPeriodStr: userCampaignApply[0].eventPeriodStr,
-        //                 eventPeriodEnd: userCampaignApply[0].eventPeriodEnd,
-        //                 timeSegment: timeSegment,
-        //                 applyDateS: applyDate.value
-        //             };
-        //             console.log("insertData : " + JSON.stringify(insertData))
-        //             // const res = await fetch('/apply/userApply', {
-        //             //     method: 'POST',
-        //             //     headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
-        //             //     body: JSON.stringify(insertData)
-        //             // });
-
-        //             // 💡 [순서 변경] 성공 알림창을 띄우기 전에 서버가 에러(400 등)를 보냈는지 먼저 확인합니다!
-        //             // if (!res.ok) {
-        //             //     const errorData = await res.json(); // 💡 response를 res로 수정하여 서버 에러 메시지 파싱
-        //             //     throw new Error(errorData.message || "알 수 없는 서버 오류가 발생했습니다.");
-        //             // }
-        //             // const successData = await res.json();
-        //             // alert("수정 사항 " + successData.message + "건 성공적으로 반영되었습니다.");
-        //             // location.reload(); // 화면 새로고침
-        //         }
-        //         // alert(successData.message); // 서버가 보낸 "성공" 문구 출력
-        //         // 💡 3. 모든 프로세스(취소/등록)가 에러 없이 안전하게 성공한 후 알림 및 새로고침
-        //         // location.reload();
-
-        //     } catch (error) {
-        //         // 🎯 이제 서버에서 던진 "이미 [...] 캠페인 일정이 있는 유저가 포함되어 있습니다." 메시지가 여기에 정확히 꽂힙니다.
-        //         // console.error("작업 중 오류 발생:", error);
-        //         alert(error.message); // 기존의 무의미한 문구 대신 error.message만 깔끔하게 띄웁니다.
-        //     }
-        // }
-
-        async function applyCampaign(campaignId, id) {
-            const timeSegment = userCampaignApply[0].timeSegment;
-            console.log(timeSegment + " timeS");
-
-            // 1. 기존에 이미 신청 완료되었던 유저 번호들 추출 (화면에 그려진 already-applied 기준)
-            const appliedBoxes = Array.from(document.querySelectorAll('.user_Chk.already-applied'));
-            const appliedUserNos = appliedBoxes.map(cb => String(cb.value));
-
-            // 2. 🔥 [핵심 변경] 화면 DOM 대신 전역 `chkUser`(Set)에 들어있는 전체 체크된 유저 ID들을 가져옴!
-            const checkedUserNos = Array.from(chkUser); // Set을 배열로 변환
-
-            // 3. 기존에 신청했으나 현재 체크가 풀린 유저 번호 (취소 대상자)
-            // appliedUserNos 중 현재 checkedUserNos에 없는 것
-            const usersToCancel = appliedUserNos.filter(userNo => !checkedUserNos.includes(userNo));
-
-            // 4. 새롭게 체크된 유저 번호 (등록 대상자)
-            // checkedUserNos 중 기존 appliedUserNos에 없던 것들
-            const usersToInsert = checkedUserNos.filter(userNo => !appliedUserNos.includes(userNo));
-
-            // 5. 새로 등록할 유저들의 상세 아이디(userId)와 맵핑하기 위해 현재 DOM을 참조하거나 필요 데이터 추출
-            // (주의: 검색 등으로 인해 화면에 안 보이는 유저의 .user_Id를 찾을 수 있으므로,
-            // 서버로 유저 번호(userNos)만 넘겨도 처리 가능하게 설계되어 있다면 userNos만 넘겨도 무방합니다.)
-
-            // 만약 현재 화면에 DOM이 그려져 있는 요소들 중에서 userId를 찾아야 한다면 아래와 같이 매핑합니다.
-            const userIdList = [];
-            usersToInsert.forEach(userNo => {
-                // 현재 화면(DOM)에 해당 value를 가진 체크박스가 존재한다면 바로 찾음
-                const cb = document.querySelector(`.user_Chk[value="${userNo}"]`);
-                if (cb) {
-                    const userIdVal = cb.closest('td').querySelector('.user_Id')?.value;
-                    if (userIdVal) userIdList.push(userIdVal);
-                }
+        function resChk() {
+            document.querySelectorAll('.user_Chk').forEach(chk => {
+                // 보관된 Set에 ID가 있으면 체크, 없으면 체크 해제
+                chk.checked = selectedUserIds.has(chk.value);
             });
+            updateChkCount(); // 카운트 갱신
+        }
 
-            const applyDate = document.querySelector(".sync-nm");
-            console.log("applyDate: ", applyDate.value);
-
-            console.log("취소할 유저 번호 리스트:", usersToCancel);
-            console.log("새로 등록할 유저 번호 리스트:", usersToInsert);
-
-            try {
-                // 🔥 STEP 1: 체크를 푼 유저가 있다면 취소(삭제) 프로세스 진행
-                if (usersToCancel.length > 0) {
-                    const cancelData = {
-                        campaignId: campaignId,
-                        timeSegment: timeSegment,
-                        userNos: usersToCancel,
-                        eventPeriodStr: userCampaignApply[0].eventPeriodStr,
-                        eventPeriodEnd: userCampaignApply[0].eventPeriodEnd
-                    };
-                    const res = await fetch('/apply/userCancel', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
-                        body: JSON.stringify(cancelData)
-                    });
-
-                    if (!res.ok) {
-                        const errorData = await res.json();
-                        throw new Error(errorData.message || '취소 처리 실패');
-                    }
-                }
-
-                // 🔥 STEP 2: 새로 체크한 유저가 있다면 등록(추가) 프로세스 진행
-                if (usersToInsert.length > 0) {
-                    const insertData = {
-                        campaignId: campaignId,
-                        userNos: usersToInsert,
-                        userIds: userIdList,
-                        recruitmentNum: userCampaignApply[0].recruitmentNum,
-                        applicantsNum: userCampaignApply[0].applicantsNum,
-                        eventPeriodStr: userCampaignApply[0].eventPeriodStr,
-                        eventPeriodEnd: userCampaignApply[0].eventPeriodEnd,
-                        timeSegment: timeSegment,
-                        applyDateS: applyDate.value
-                    };
-                    console.log("insertData : " + JSON.stringify(insertData));
-
-                    const res = await fetch('/apply/userApply', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
-                        body: JSON.stringify(insertData)
-                    });
-
-                    if (!res.ok) {
-                        const errorData = await res.json();
-                        throw new Error(errorData.message || "알 수 없는 서버 오류가 발생했습니다.");
-                    }
-
-                    const successData = await res.json();
-                    alert("수정 사항 " + successData.message + "건 성공적으로 반영되었습니다.");
-
-                    // 💡 성공 후 전역 세트 초기화 및 새로고침
-                    chkUser.clear();
-                    location.reload();
-                } else if (usersToCancel.length > 0) {
-                    // 등록할 건 없고 취소할 것만 있는 경우의 처리
-                    alert("취소 처리가 완료되었습니다.");
-                    chkUser.clear();
-                    location.reload();
-                }
-
-            } catch (error) {
-                alert(error.message);
+        function handleChkChange(checkbox) {
+            if (checkbox.checked) {
+                selectedUserIds.add(checkbox.value);   // 체크하면 Set에 추가
+            } else {
+                selectedUserIds.delete(checkbox.value); // 체크 해제하면 Set에서 삭제
             }
+            updateChkCount(); // 카운트 갱신
         }
 
         function cancelCampaign(campaignId) {
@@ -1637,17 +1528,11 @@
                 checkedUsers.push(cb.value);
             });
 
-            console.log("appliedUsers : " + appliedUsers);
-            console.log("checkedUsers : " + checkedUsers);
-
             // 3. 🔥 핵심: 기존에 신청했었는데(original), 현재 체크가 풀린(current에 없는) 유저 골라내기 (취소 대상자)
             const usersToCancel = appliedUsers.filter(userNo => !checkedUsers.includes(userNo));
 
             // 4. 새롭게 체크된 유저 골라내기 (신규 등록 대상자 - 필요시 사용)
             const usersToInsert = checkedUsers.filter(userNo => !appliedUsers.includes(userNo));
-
-            console.log("취소할 유저 번호 목록:", usersToCancel);
-            console.log("새로 등록할 유저 번호 목록:", usersToInsert);
 
             // ========================================================
             // 5. 서버에 취소 요청 보내기 (취소 대상자가 있을 때만)
@@ -1672,9 +1557,8 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("취소 처리 결과 건수:", data.message);
                     alert("선택한 유저의 신청 취소가 완료되었습니다.");
-                    location.reload(); // 화면 새로고침
+                    // location.reload(); // 화면 새로고침
                 })
                 .catch(error => {
                     console.error("취소 처리 중 에러:", error);
@@ -1684,47 +1568,185 @@
             }
         }
 
-        function filterUserList() {
-            const role = document.querySelector('input[name="code"]:checked')?.value || '전체';
-            const keyword = document.getElementById("keyword").value.trim();
-            const code = document.querySelector('.code-radio:checked').value;
-            // const checkedUserIds = [];
-            //     document.querySelectorAll('.user_Chk:checked').forEach(cb => {
-            //     checkedUserIds.push(cb.value);
-            //     chkUser.push(cb.value)
-            // });
-            console.log("chkUser : " + chkUser);
+        async function applyCampaign(campaignId, id) {
+            const timeSegment = userCampaignApply[0].timeSegment;
 
-            // 010 검색 시 11자리가 아니면 검색 중단
-            if (keyword.startsWith("010") && !keyword.includes("-") && keyword.length !== 11) {
-                alert("휴대폰 번호는 11자리로 입력해주세요.");
-                return; // 🔥 [추가] 잘못된 검색어일 때 fetch 실행 방지
-            }
+            
+            // 🔥 1. 현재 화면에 남아있는(또는 페이지1를 이동하며 체크해 둔) 최종 체크 상태를 Map에 한 번 더 확실하게 동기화
+            document.querySelectorAll('.user_Chk').forEach(cb => {
+                const userNo = String(cb.value);
+                const userId = cb.dataset.userId || cb.closest('td')?.querySelector('.user_Id')?.value;
+                if (cb.checked) {
+                    if (userId) selectedUserMap.set(userNo, userId);
+                } else {
+                    if (!cb.classList.contains('already-applied')) {
+                        selectedUserMap.delete(userNo);
+                    }
+                }
+            });
 
-            // const url = `/apply/popup01/search/${campaignId}/?role=${encodeURIComponent(role)}&keyword=${encodeURIComponent(keyword)}`;
-            const url = `/apply/popup01/search?campaignId=${campId}&code=${code}&keyword=${encodeURIComponent(keyword)}`;
+            // 2. 최초 신청자 목록 (Set -> Array)
+            const appliedUserNos = Array.from(initialAppliedUsers);
 
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const tbody = document.getElementById("userList");
-                    tbody.innerHTML = ""; // 기존 목록 초기화
-                    let htmlRows = "";
-                    if (data.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="4" class="text-center">검색 결과가 없습니다.</td></tr>`;
-                        return;
+            // 3. 현재 전역 맵에 체크되어 있는 모든 유저 고유번호 목록
+            const checkedUserNos = Array.from(selectedUserMap.keys());
+
+            // 4. 취소할 유저 (원래 있었는데 지금 체크 풀린 사람)
+            const usersToCancel = appliedUserNos.filter(userNo => !checkedUserNos.includes(userNo));
+
+            // 5. 새로 등록할 유저 (처음엔 없었는데 새로 체크한 사람)
+            const usersToInsert = checkedUserNos.filter(userNo => !appliedUserNos.includes(userNo));
+
+            // 6. 전역 맵(selectedUserMap)에서 신규 등록할 유저들의 userId를 안전하게 1:1 매핑해서 추출!
+            const userIdsToInsert = usersToInsert.map(userNo => {
+                let userId = selectedUserMap.get(userNo);
+                // 혹시 맵에 없다면 현재 DOM에서 직접 찾기 (안전장치)
+                if (!userId) {
+                    const cb = document.querySelector(`.user_Chk[value="${userNo}"]`);
+                    if (cb) {
+                        userId = cb.dataset.userId || cb.closest('td')?.querySelector('.user_Id')?.value;
+                    }
+                }
+                return userId || "";
+            });
+
+            console.log("usersToInsert:", usersToInsert);
+            console.log("usersToCancel:", usersToCancel);
+            console.log("userIdsToInsert:", userIdsToInsert);
+
+            const applyDate = document.querySelector(".sync-nm");
+
+            try {
+                // 🔥 STEP 1: 취소 처리
+                if (usersToCancel.length > 0) {
+                    const cancelData = {
+                        campaignId: campaignId,
+                        timeSegment: timeSegment,
+                        userNos: usersToCancel,
+                        eventPeriodStr: userCampaignApply[0].eventPeriodStr,
+                        eventPeriodEnd: userCampaignApply[0].eventPeriodEnd
+                    };
+                    const res = await fetch('/apply/userCancel', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+                        body: JSON.stringify(cancelData)
+                    });
+
+                    if (!res.ok) {
+                        const errorData = await res.json();
+                        throw new Error(errorData.message || '취소 처리 실패');
+                    }
+                }
+
+                // 🔥 STEP 2: 신규 등록 처리
+                if (usersToInsert.length > 0) {
+                    const insertData = {
+                        campaignId: campaignId,
+                        userNos: usersToInsert,
+                        userIds: userIdsToInsert,  // 이제 3명이면 3명의 아이디가 정확히 다 들어갑니다!
+                        recruitmentNum: userCampaignApply[0].recruitmentNum,
+                        applicantsNum: userCampaignApply[0].applicantsNum,
+                        eventPeriodStr: userCampaignApply[0].eventPeriodStr,
+                        eventPeriodEnd: userCampaignApply[0].eventPeriodEnd,
+                        timeSegment: timeSegment,
+                        applyDateS: applyDate ? applyDate.value : ""
+                    };
+
+                    const res = await fetch('/apply/userApply', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+                        body: JSON.stringify(insertData)
+                    });
+
+                    if (!res.ok) {
+                        const errorData = await res.json();
+                        throw new Error(errorData.message || "알 수 없는 서버 오류가 발생했습니다.");
                     }
 
-                    // 검색된 데이터로 tbody 렌더링
+                    const successData = await res.json();
+                    alert("수정 사항 " + successData.message + "건 성공적으로 반영되었습니다.");
+                    location.reload();
+                } else if (usersToCancel.length > 0) {
+                    alert("취소 처리가 완료되었습니다.");
+                    location.reload();
+                } else {
+                    alert("변경사항이 없습니다.");
+                }
+
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function loadUserList(ele) {
+            // 1. 현재 화면의 체크 상태를 전역 맵에 먼저 동기화
+            if (typeof checkToMap === 'function') {
+                checkToMap();
+            }
+
+            // 2. 파라미터 수집
+            const campaignId = campId; // 혹은 컨트롤러에서 쓰는 변수명
+            const code = document.querySelector('.code-radio:checked')?.value || "";
+            const keyword = document.getElementById("keyword").value.trim();
+            const datesValue = document.getElementById("dates").value;
+
+            if (keyword.startsWith("010") && !keyword.includes("-") && keyword.length !== 11) {
+                alert("휴대폰 번호는 11자리로 입력해주세요.");
+                return;
+            }
+
+            // 3. 서버로 보낼 데이터를 객체로 구성 (요청하신 방식)
+            const searchData = {
+                campaignId: campaignId,
+                code: code,
+                keyword: keyword,
+                dates: datesValue,
+                // 필요하다면 userCampaignApply 정보나 기타 옵션도 함께 담을 수 있습니다.
+                eventPeriodStr: (typeof userCampaignApply !== 'undefined' && userCampaignApply.length > 0) ? userCampaignApply[0].eventPeriodStr : null,
+                eventPeriodEnd: (typeof userCampaignApply !== 'undefined' && userCampaignApply.length > 0) ? userCampaignApply[0].eventPeriodEnd : null
+            };
+
+            // 4. POST 방식으로 fetch 요청
+            const url = `/apply/search`; // 엔드포인트 URL
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken // CSRF 토큰이 있다면 포함
+                },
+                body: JSON.stringify(searchData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("네트워크 응답에 문제가 있습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tableBody = document.getElementById("userList");
+                let htmlRows = "";
+
+                if (!data || data.length === 0) {
+                    htmlRows = `<tr><td colspan="3" style="text-align:center;">조회된 회원 정보가 없습니다.</td></tr>`;
+                } else {
+                    initialAppliedUsers.clear();
+
                     data.forEach(userInfo => {
                         const isAlreadyApplied = (userInfo.isApplied === 'Y');
+                        const userNoStr = String(userInfo.id);
 
-                        // 💡 [핵심] 서버에서 이미 신청된 사람이거나,
-                        // 아까 내가 날짜 바꾸기 전에 체크했던 사람(checkedUserIds에 포함된 사람)이라면 체크 유지!
-                        const isUserChecked = chkUser.has(String(userInfo.id));
+                        if (isAlreadyApplied) {
+                            initialAppliedUsers.add(userNoStr);
+                            if (!selectedUserMap.has(userNoStr)) {
+                                selectedUserMap.set(userNoStr, userInfo.userId);
+                            }
+                        }
 
-                        const classAppend = (isAlreadyApplied || isUserChecked) ? 'already-applied' : '';
-                        const isChecked = (isAlreadyApplied || isUserChecked) ? 'checked' : '';
+                        const isUserChecked = selectedUserMap.has(userNoStr);
+                        const classAppend = isAlreadyApplied ? 'already-applied' : '';
+                        const isChecked = isUserChecked ? 'checked' : '';
+                        console.log(`userNo: ${userNoStr}, isAlreadyApplied: ${isAlreadyApplied}, isUserChecked: ${isUserChecked}`);
 
                         htmlRows += `
                             <tr>
@@ -1732,47 +1754,25 @@
                                     <input type="hidden" value="${userInfo.userId}" class="user_Id" name="userId">
                                     <input type="checkbox" value="${userInfo.id}"
                                         class="user_Chk ${classAppend}"
-                                        name="Attendance" ${isChecked}
+                                        name="Attendance" ${isChecked} data-user-id="${userInfo.userId}"
                                         onclick="chkBoxSelect(this)">
-
                                 </td>
                                 <td><span>${userInfo.userNm}</span></td>
                                 <td><span>${userInfo.guardTypeNm}</span></td>
                                 <td><span>${userInfo.phoneNum}</span></td>
                             </tr>
                         `;
-
                     });
-                    tbody.insertAdjacentHTML('beforeend', htmlRows);
-                    // 🔥 data.forEach 밖으로 이동 (목록을 다 그린 뒤 '딱 1번만' 실행)
-                    // resChk();
-                    if (typeof initCheckboxCount === 'function') {
-                        initCheckboxCount();
-                    }
-                })
+                }
+
+                tableBody.innerHTML = htmlRows;
+
+                if (typeof updateChkCount === 'function') {
+                    updateChkCount();
+                }
+            })
             .catch(err => console.error("Search failed:", err));
         }
-
-
-        function resChk() {
-            console.log("resChk")
-            document.querySelectorAll('.user_Chk').forEach(chk => {
-                // 보관된 Set에 ID가 있으면 체크, 없으면 체크 해제
-                chk.checked = selectedUserIds.has(chk.value);
-            });
-            initCheckboxCount(); // 카운트 갱신
-        }
-
-
-        function handleChkChange(checkbox) {
-            if (checkbox.checked) {
-                selectedUserIds.add(checkbox.value);   // 체크하면 Set에 추가
-            } else {
-                selectedUserIds.delete(checkbox.value); // 체크 해제하면 Set에서 삭제
-            }
-            initCheckboxCount(); // 카운트 갱신
-        }
-
     </script>
 </body>
 </html>

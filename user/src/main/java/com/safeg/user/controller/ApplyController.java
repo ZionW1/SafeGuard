@@ -573,10 +573,12 @@ public class ApplyController {
     @PostMapping("/popup01/{campaignId}")
     public String popup01(@PathVariable("campaignId") Long campaignId, @RequestBody CampaignVO dto, Option option,
             Model model) throws Exception {
-        log.info("dto : " + dto);
-        log.info("option : " + option);
+        log.info("popup01 : " + dto);
+        log.info("dto.getApplyDateS : " + dto.getApplyDateS() + ", dto.getApplyDate : " + dto.getApplyDate());
 
-        List<UserVO> userInfoList = applyService.userInfoList(campaignId, option);
+        // 1. applyDateS가 "ALL"이 아닌 경우, applyDate를 LocalDate로 변환
+        List<UserVO> userInfoList = applyService.userInfoList(campaignId, option, LocalDate.parse(dto.getApplyDate()));
+
         List<LocalDate> dates = dto.getEventPeriodStr().datesUntil(dto.getEventPeriodEnd().plusDays(1))
                 .collect(Collectors.toList()); // 입력 날짜 List
 
@@ -592,15 +594,42 @@ public class ApplyController {
 
     @GetMapping("/popup01/search")
     @ResponseBody // 🔥 HTML이 아닌 JSON 데이터를 리턴하겠다는 선언!
-    public List<UserVO> searchUsers(Model model, Option option, @RequestParam("campaignId") Long campaignId)
+    public List<UserVO> searchUsers(Model model, Option option, @RequestParam("campaignId") Long campaignId, @RequestParam("dates") String dates)
             throws Exception { // code, keyword 등이 담긴 객체
         log.info("searchUsers");
+        log.info("option : " + option + ", campaignId : " + campaignId + ", dates : " + dates);
         // MyBatis Mapper를 호출해서 조건에 맞는 유저 리스트를 가져옵니다.
-        List<UserVO> userInfoList = applyService.userInfoList(campaignId, option);
+        List<UserVO> userInfoList = applyService.userInfoList(campaignId, option, LocalDate.parse(dates));
         model.addAttribute("option", option);
 
         return userInfoList;
         // return null;
+    }
+
+    @PostMapping("/search")
+    @ResponseBody // 🔥 HTML이 아닌 JSON 데이터를 리턴하겠다는 선언!
+    public List<UserVO> search(Model model, @RequestBody Map<String, String> paramMap)
+            throws Exception { // code, keyword 등이 담긴 객체
+        log.info("search");
+        Option option = new Option();
+        option.setCode(paramMap.get("code"));
+        option.setKeyword(paramMap.get("keyword"));
+        Long campaignId = Long.valueOf(paramMap.get("campaignId"));
+        String dates = paramMap.get("dates");
+
+        LocalDate eventPeriodStr = LocalDate.parse(paramMap.get("eventPeriodStr"));
+        LocalDate eventPeriodEnd = LocalDate.parse(paramMap.get("eventPeriodEnd"));
+        log.info("eventPeriodStr : " + eventPeriodStr);
+        if("ALL".equals(dates)) {
+            dates = eventPeriodStr.toString();
+        }
+        
+        log.info("option : " + option + ", campaignId : " + campaignId + ", dates : " + dates);
+        // MyBatis Mapper를 호출해서 조건에 맞는 유저 리스트Clean the workspace를 가져옵니다.
+        List<UserVO> userInfoList = applyService.userInfoList(campaignId, option, LocalDate.parse(dates));
+        model.addAttribute("option", option);
+
+        return userInfoList;
     }
 
     @PostMapping("/userApply")
@@ -620,7 +649,7 @@ public class ApplyController {
                 if (!"ALL".equals(dto.getApplyDateS()) && !dto.getApplyDateS().equals("")) {
                     log.info("dto.getApplyDateS(). " + dto.getApplyDateS());
                     // 겹치는 날짜는 6,7일인데 사용자는 8일을 골랐으므로 신청 진행!
-                    result = applyService.userApply(dto);
+                    // result = applyService.userApply(dto);
                     response.put("message", "캠페인 신청이 완료되었습니다.");
                     return ResponseEntity.ok().body(response);
                 }
@@ -673,15 +702,21 @@ public class ApplyController {
     @PostMapping("/chgDate/{campaignId}")
     @ResponseBody // 👈 HTML이 아니라 데이터(JSON)만 리턴하겠다는 선언!
     public List<UserVO> chgDate(@PathVariable("campaignId") Long campaignId, Option option, @RequestBody Map<String, String> paramMap) throws Exception {
-
+        log.info("chgDate 호출됨 : " + paramMap);
         String applyDate = paramMap.get("applyDateS"); // 프론트에서 보낸 날짜값 ('ALL' 또는 '2026-07-06')
-        log.info("aaa : " + applyDate);
+        String code = paramMap.get("code"); // option의 값을 가져옴
+        String keyword = paramMap.get("keyword"); // keyword의 값을 가져옴
+
+        log.info("aapply : " + applyDate);
+        log.info("code : " + code);
+        log.info("keyword : " + keyword);
+
         // 만약 'ALL' 이면 전체 조회, 특정 날짜면 해당 날짜만 조회하는 로직 필요
         List<UserVO> updatedUserList = null;
         if ("ALL".equals(applyDate)) {
-            updatedUserList = applyService.userDateInfo(campaignId, option); // 전체 조회
+            updatedUserList = applyService.userDateInfo(campaignId, code, keyword); // 전체 조회
         } else {
-            updatedUserList = applyService.dateSelect(campaignId, option, applyDate); // 👈 날짜별 조회 (서비스에 메서드 구현 필요)
+            updatedUserList = applyService.dateSelect(campaignId, code, keyword, applyDate); // 👈 날짜별 조회 (서비스에 메서드 구현 필요)
         }
 
         return updatedUserList; // 자바스크립트로 유저 리스트 배열이 JSON 형태로 바로 넘어감
@@ -689,7 +724,7 @@ public class ApplyController {
 
     @GetMapping("/filterUser/{campaignId}")
     @ResponseBody
-    public List<UserVO> searchPopupUsers(@PathVariable("campaignId") Long campaignId, Option option) throws Exception {
+    public List<UserVO> searchPopupUsers(@PathVariable("campaignId") Long campaignId, Option option, String dates) throws Exception {
 
         log.info("");
         log.info("option : " + option);
@@ -701,6 +736,6 @@ public class ApplyController {
             option.setKeyword(EncryptionUtil.hash(option.getKeyword()));
         }
         // SQL에서 option(role, keyword 등)을 조건으로 조회한 리스트 반환
-        return applyService.userInfoList(campaignId, option);
+        return applyService.userInfoList(campaignId, option, LocalDate.parse(dates));
     }
 }

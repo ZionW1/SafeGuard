@@ -373,14 +373,11 @@ public class ApplyServiceImpl implements ApplyService {
             log.info("dto : " + dto);
 
             UserCampaignVO overlapTitle = applyMapper.overlapTitle(dto, userNo);
+            log.info("overlapTitle  ()()()()() : " + overlapTitle);
             // 공백이나 null이 아니라는 것은 무언가 중복된 캠페인 타이틀이 조회되었다는 뜻!
-            if (overlapTitle != null) {
-                // log.info("중복 발견 - 유저 번호: {}, 중복 캠페인: {}", userNo, overlapTitle);
-
+            if (overlapTitle != null && overlapTitle.getCampaignId() != null) {
+                log.info("진짜 중복 발견!");
                 return overlapTitle;
-                // 컨트롤러의 .catch(error => alert(error.message)) 로 전달될 에러 메시지
-                // throw new IllegalArgumentException("이미 [" + overlapTitle + "] 캠페인 일정이 있는 유저가 포함되어 있습니다.\n기간을 확인해 주세요.");
-
             }
         }
         return null;

@@ -823,7 +823,6 @@
             LEFT OUTER JOIN campaign c ON uc.campaign_id = c.campaign_id
             LEFT OUTER JOIN user u ON uc.user_no = u.id
             WHERE uc.user_no = #{userNo}
-            AND uc.is_leader = 'N'
             AND uc.is_deleted = 'N'
             AND (
                 uc.event_str_date <= #{dto.eventPeriodEnd}
@@ -889,8 +888,10 @@
         <foreach collection="insertList" item="item" separator=",">
             (
                 #{campaignId},
-                #{item.userNo},    #{item.userId},    #{eventPeriodStr},
-                #{eventPeriodEnd},
+                #{item.userNo},
+                #{item.userId},
+                #{applyPeriodStr},
+                #{applyPeriodEnd},
                 #{eventPeriodStr},
                 #{eventPeriodEnd},
                 #{timeSegment},

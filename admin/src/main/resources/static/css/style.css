@@ -356,7 +356,7 @@ button[type="submit"]:hover {
 }
 
 .campaign_Table {
-    width: 100%;
+    width: 80%;
 }
 
 .user_info {
@@ -420,6 +420,7 @@ button[type="submit"]:hover {
 }
 
 .parent {
+    width: 80%;
     text-align: center;
 }
 
@@ -439,6 +440,7 @@ button[type="submit"]:hover {
     box-sizing: border-box;
     overflow-y: auto;
     float: right;
+    margin: 0 20% 0 0;
 }
 
 .dateInsert{

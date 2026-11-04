@@ -8,8 +8,8 @@
         </div>
         <div class="form-group">
             <label class="purpleFont" for="dates">캠페인 기간</label>
-            <select id="dates" name="applyDate" onchange="changeDate(this)" class="sync-nm mrg16 purpleFont">
-                <option value="ALL">전체</option>
+            <select id="dates" name="applyDate" th:onchange="loadUserList(true, [[${campaignId}]])" class="sync-nm mrg16 purpleFont">
+                <!-- <option value="ALL">전체</option> -->
                 <option th:each="date : ${dates}" th:value="${date}" th:text="${date}"></option>
             </select>
             <label class="purpleFont" for="dates">경호원/진행/수행</label>
@@ -17,38 +17,40 @@
                 <div class="sync-nm-box mrg16 purpleFont">
                     <!-- 💡 전체 (최초 실행 시 option.code가 null이거나 빈 값인 경우 포함하여 checked 처리) -->
                     <label>
-                        <input type="radio" name="code" class="code-radio" value="ALL" th:onchange="filterUserList(this, [[${campaignId}]])"
-                            checked>
+                        <!-- <input type="radio" name="code" class="code-radio" value="" th:onchange="loadUserList(this, [[${campaignId}]])"
+                            checked> -->
+                        <input type="radio" name="code" class="code-radio" value="" th:onchange="loadUserList(false, [[${campaignId}]])"
+                            th:checked="${option == null or option.code == null or option.code == '' or option.code == '0'}">
                         <span class="str-radio">전체</span>
                     </label>
 
                     <!-- 💡 스텝 -->
                     <label>
-                        <input type="radio" name="code" class="code-radio" value="00" th:onchange="filterUserList(this, [[${campaignId}]])"
-                            th:checked="${option != null and option.code == '00'}">
-                        <span class="str-radio">스텝</span>
-                    </label>
+                    <input type="radio" name="code" class="code-radio" value="00" th:onchange="loadUserList(false, [[${campaignId}]])"
+                        th:checked="${option != null and option.code == '00'}">
+                    <span>스텝</span>
+                </label>
 
-                    <!-- 💡 경호 -->
-                    <label>
-                        <input type="radio" name="code" class="code-radio" value="02" th:onchange="filterUserList(this, [[${campaignId}]])"
-                            th:checked="${option != null and option.code == '02'}">
-                        <span class="str-radio">경호</span>
-                    </label>
+                <!-- 💡 경호 -->
+                <label>
+                    <input type="radio" name="code" class="code-radio" value="02" th:onchange="loadUserList(false, [[${campaignId}]])"
+                        th:checked="${option != null and option.code == '02'}">
+                    <span>경호</span>
+                </label>
 
-                    <!-- 💡 수행 -->
-                    <label>
-                        <input type="radio" name="code" class="code-radio" value="03" th:onchange="filterUserList(this, [[${campaignId}]])"
-                            th:checked="${option != null and option.code == '03'}">
-                        <span class="str-radio">수행</span>
-                    </label>
+                <!-- 💡 수행 -->
+                <label>
+                    <input type="radio" name="code" class="code-radio" value="03" th:onchange="loadUserList(false, [[${campaignId}]])"
+                        th:checked="${option != null and option.code == '03'}">
+                    <span>수행</span>
+                </label>
 
-                    <!-- 💡 인솔자 -->
-                    <label>
-                        <input type="radio" name="code" class="code-radio" value="04" th:onchange="filterUserList(this, [[${campaignId}]])"
-                            th:checked="${option != null and option.code == '04'}">
-                        <span class="str-radio">인솔자</span>
-                    </label>
+                <!-- 💡 인솔자 -->
+                <label>
+                    <input type="radio" name="code" class="code-radio" value="04" th:onchange="loadUserList(false, [[${campaignId}]])"
+                        th:checked="${option != null and option.code == '04'}">
+                    <span>인솔자</span>
+                </label>
                 </div>
 
                 <!-- <select id="dates" name="applyDate" onchange="changeRole(this)" class="sync-nm mrg16 purpleFont">
@@ -57,9 +59,9 @@
                 </select> -->
                 <div id="inputArea" class="inputArea">
                     <!-- 🔥 input 태그에 onkeydown 연결 및 Enter 처리 -->
-                    <input type="text" class="search_keyword" id="searchKeyword" name="keyword" th:value="${option != null ? option.keyword : ''}" placeholder="검색어를 입력해 주세요." th:onkeydown="if(event.key === 'Enter') { event.preventDefault(); filterUserList(this, [[${campaignId}]]); }">
+                    <input type="text" class="search_keyword" id="popupKeyword" name="keyword" th:value="${option != null ? option.keyword : ''}" placeholder="검색어를 입력해 주세요." th:onkeydown="if(event.key === 'Enter') { event.preventDefault(); filterUserList(this, [[${campaignId}]]); }">
                     <!-- 🔥 button 태그 오타 수정 및 onclick 유지 -->
-                    <button class="optionSubmit" id="btnSearch" type="button" th:onclick="filterUserList(this, [[${campaignId}]])">검색</button>
+                    <button class="optionSubmit" id="btnSearch" type="button" th:onclick="loadUserList(false, [[${campaignId}]])">검색</button>
                 </div>
                 <!-- <input type="text" name="keyword"  th:value="${param.keyword}"> -->
             <!-- </form> -->
@@ -67,14 +69,16 @@
         <div class="popup-body">
             <table class="user_info table table-hover">
                 <colgroup>
-                    <col width="10%"></col>
-                    <col width="40%"></col>
-                    <col width="*"></col>
+                    <col width="3%"></col>
+                    <col width="*%"></col>
+                    <col width="20%"></col>
+                    <col width="20%"></col>
                 </colgroup>
                 <thead class="table-light">
                     <tr>
                         <th></th>
                         <th>이름</th>
+                        <th>직급</th>
                         <th>휴대폰번호</th>
                     </tr>
                 </thead>
@@ -91,13 +95,14 @@
                         <tr>
                             <td>
                                 <input type="hidden" th:value="${userInfo.userId}" class="user_Id" name="userId">
-                                <!-- <input th:value="${userInfo.id}" type="checkbox" class="user_Chk" name="Attendance"> -->
                                 <input th:value="${userInfo.id}" type="checkbox"
-                                    th:classappend="${userInfo.isApplied == 'Y'} ? 'already-applied' : ''"
-                                    class="user_Chk" name="Attendance" onclick="chkBoxSelect(this)">
+                                    th:classappend="${userInfo.isApplied == 'Y'} ? 'chk-applied' : ''"
+                                    class="user_Chk" name="Attendance" th:data-user-id="${userInfo.userId}"
+                                    onclick="chkBoxSelect(this)">
                             </td>
                             <td><span th:text="${userInfo.userNm}"></span></td>
                             <td><span th:text="${userInfo.phoneNum}"></span></td>
+                            <td><span th:text="${userInfo.guardTypeNm}"></span></td>
                             <!-- <td><span th:text="${userInfo.isApplied}"></span></td> -->
                         </tr>
                     </th:block>
@@ -108,7 +113,7 @@
             <div class="chkNum">
                 체크 수 : <span id="chkPcs"></span> / <span id="recPcs"></span>
             </div>
-            <button type="button" class="btn btn-secondary" th:onclick="applyCampaign([[${campaignId}]])">신청하기</button>
+            <button type="button" class="btn btn-secondary" th:onclick="PopupApplyCampaign([[${campaignId}]])">신청하기</button>
             <button type="button" class="btn btn-secondary" th:onclick="cancelCampaign([[${campaignId}]])">취소하기</button>
 
             <button type="button" class="btn btn-secondary" onclick="closeModal()">닫기</button>

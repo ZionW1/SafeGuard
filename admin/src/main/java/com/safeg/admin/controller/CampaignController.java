@@ -338,16 +338,58 @@ public class CampaignController {
     }
 
     // 팝업 내부 실시간 검색/필터링 전용 (JSON 반환)
-    @GetMapping("/campPopupS/{campaignId}/search")
+    @PostMapping("/search/{campaignId}")
     @ResponseBody
-    public List<UserVO> searchPopupUsers(@PathVariable("campaignId") Long campaignId, Option option) throws Exception {
-        String keyword = option.getKeyword();
+    public List<UserVO> searchPopupUsers(@PathVariable("campaignId") Long campaignId, Option option, @RequestBody Map<String, String> paramMap) throws Exception {
+        // String keyword = option.getKeyword();
 
-        if (keyword != null && keyword.startsWith("010")) {
-            option.setKeyword(EncryptionUtil.hash(option.getKeyword()));
+        // if (keyword != null && keyword.startsWith("010")) {
+        //     option.setKeyword(EncryptionUtil.hash(option.getKeyword()));
+        // }
+        // // SQL에서 option(role, keyword 등)을 조건으로 조회한 리스트 반환
+        // return userService.userInfoList(campaignId, option);
+
+
+
+
+
+
+
+
+        log.info("search paramMap: {}", paramMap);
+
+        // 1. 필수 값 안전하게 추출 (Null 체크 또는 기본값 처리)
+        String code = paramMap.get("code");
+        String keyword = paramMap.get("keyword");
+
+        String campaignIdStr = paramMap.get("campaignId");
+        // Long campaignId = (campaignIdStr != null && !campaignIdStr.isEmpty()) ? Long.valueOf(campaignIdStr) : 0L;
+
+        String dates = paramMap.get("dates");
+        String eventStr = paramMap.get("eventPeriodStr");
+        String eventEnd = paramMap.get("eventPeriodEnd");
+
+        // 2. Option 객체 세팅
+        // Option option = new Option();
+        option.setCode(code);
+        option.setKeyword(keyword);
+
+        // LocalDate eventPeriodStr = LocalDate.parse(paramMap.get("eventPeriodStr"));
+        // LocalDate eventPeriodEnd = LocalDate.parse(paramMap.get("eventPeriodEnd"));
+
+        LocalDate eventPeriodStr = (eventStr != null && !eventStr.isEmpty()) ? LocalDate.parse(eventStr) : LocalDate.now();
+        LocalDate eventPeriodEnd = (eventEnd != null && !eventEnd.isEmpty()) ? LocalDate.parse(eventEnd) : LocalDate.now();
+
+        log.info("eventPeriodStr : " + eventPeriodStr);
+        if("ALL".equals(dates)) {
+            dates = eventPeriodStr.toString();
         }
-        // SQL에서 option(role, keyword 등)을 조건으로 조회한 리스트 반환
-        return userService.userInfoList(campaignId, option);
+
+        log.info("option : {}, campaignId : {}, dates : {}", option, campaignId, dates);        // MyBatis Mapper를 호출해서 조건에 맞는 유저 리스트Clean the workspace를 가져옵니다.
+        List<UserVO> userInfoList = campaignService.userInfoList(campaignId, option, LocalDate.parse(dates));
+        // model.addAttribute("option", option);
+
+        return userInfoList;
     }
 
     @PostMapping("/chgDate/{campaignId}")
@@ -463,5 +505,105 @@ public class CampaignController {
         }
     }
 
+    @PostMapping("/search")
+    @ResponseBody // 🔥 HTML이 아닌 JSON 데이터를 리턴하겠다는 선언!
+    public List<UserVO> search(Model model, @RequestBody Map<String, String> paramMap)
+            throws Exception { // code, keyword 등이 담긴 객체
+        log.info("search paramMap: {}", paramMap);
+
+        // 1. 필수 값 안전하게 추출 (Null 체크 또는 기본값 처리)
+        String code = paramMap.get("code");
+        String keyword = paramMap.get("keyword");
+
+        String campaignIdStr = paramMap.get("campaignId");
+        Long campaignId = (campaignIdStr != null && !campaignIdStr.isEmpty()) ? Long.valueOf(campaignIdStr) : 0L;
+
+        String dates = paramMap.get("dates");
+        String eventStr = paramMap.get("eventPeriodStr");
+        String eventEnd = paramMap.get("eventPeriodEnd");
+
+        // 2. Option 객체 세팅
+        Option option = new Option();
+        option.setCode(code);
+        option.setKeyword(keyword);
+
+        // LocalDate eventPeriodStr = LocalDate.parse(paramMap.get("eventPeriodStr"));
+        // LocalDate eventPeriodEnd = LocalDate.parse(paramMap.get("eventPeriodEnd"));
+
+        LocalDate eventPeriodStr = (eventStr != null && !eventStr.isEmpty()) ? LocalDate.parse(eventStr) : LocalDate.now();
+        LocalDate eventPeriodEnd = (eventEnd != null && !eventEnd.isEmpty()) ? LocalDate.parse(eventEnd) : LocalDate.now();
+
+        log.info("eventPeriodStr : " + eventPeriodStr);
+        if("ALL".equals(dates)) {
+            dates = eventPeriodStr.toString();
+        }
+
+        log.info("option : {}, campaignId : {}, dates : {}", option, campaignId, dates);        // MyBatis Mapper를 호출해서 조건에 맞는 유저 리스트Clean the workspace를 가져옵니다.
+        List<UserVO> userInfoList = campaignService.userInfoList(campaignId, option, LocalDate.parse(dates));
+        // model.addAttribute("option", option);
+
+        return userInfoList;
+    }
+
+    @PostMapping("/save")
+    @ResponseBody
+    public ResponseEntity<?> save(@RequestBody CampaignVO dto) throws Exception {
+        log.info("userApply : " + dto);
+
+        Map<String, String> response = new HashMap<>();
+        int result = 0;
+        try {
+            UserCampaignVO overlapTitle = campaignService.overlapTitle(dto);
+            log.info("overlapTitle : " + overlapTitle);
+
+            // 중복된 타이틀이 존재한다면 안내 메시지와 함께 400 Bad Request 리턴
+            if (overlapTitle != null) {
+                log.info("save is overlapTitle : ");
+                // // 중복이 발견되었더라도 사용자가 선택한 날짜가 'ALL'이 아니고,
+                // // 실제 중복된 날짜(applyDate)와 사용자가 선택한 날짜(applyDateS)가 다르다면 패스해야 함
+                // if (!"ALL".equals(dto.getApplyDateS()) && !dto.getApplyDateS().equals("")) {
+                //     log.info("dto.getApplyDateS(). " + dto.getApplyDateS());
+                //     // 겹치는 날짜는 6,7일인데 사용자는 8일을 골랐으므로 신청 진행!
+                //     // result = applyService.userApply(dto);
+                //     response.put("message", "캠페인 신청이 완료되었습니다.");
+                //     return ResponseEntity.ok().body(response);
+                // }
+
+                // 진짜로 날짜가 겹치거나 ALL인 경우엔 가차없이 튕기기
+                response.put("message", "이미 [" + overlapTitle.getCampaignTitle() + "] 캠페인 일정이 있는 '"
+                        + overlapTitle.getUserNm() + "' 유저가 포함되어 있습니다.");
+                return ResponseEntity.badRequest().body(response);
+            } else {
+                log.info("save not overlapTitle : ");
+                if (!"ALL".equals(dto.getApplyDateS()) && !dto.getApplyDateS().equals("")) {
+                    log.info("dto.getApplyDateS : " + dto.getApplyDateS());
+                    // 겹치는 날짜는 6,7일인데 사용자는 8일을 골랐으므로 신청 진행!
+                    // result = applyService.userApply(dto);
+                    result = campaignService.save(dto);
+                    response.put("message", "캠페인 신청이 완료되었습니다.");
+                    return ResponseEntity.ok().body(result);
+                }
+                // result = applyService.userApply(dto);
+                log.info("save not overlapTitle dto : " + dto);
+
+                result = campaignService.save(dto);
+                // response.put("message", "캠페인 신청이 완료되었습니다.");
+                // return ResponseEntity.ok().body(response);
+                // response.put("message", String.valueOf(result));
+                // return ResponseEntity.ok().body(response);
+                return ResponseEntity.ok().body(result);
+            }
+            // return ResponseEntity.ok().body("{\"message\": \"성공\"}");
+        } catch (IllegalArgumentException e) {
+            // 서비스에서 throw한 에러 메시지를 그대로 프론트로 전달
+            log.info("e.getMessage()" + e.getMessage());
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            response.put("message", "서버 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
 }
 

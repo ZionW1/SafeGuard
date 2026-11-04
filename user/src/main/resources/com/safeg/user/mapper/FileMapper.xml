@@ -157,7 +157,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             SELECT
                 campaign_id,
                 user_id,
-                id AS user_no,
+                user_no,
                 status,
                 apply_date,
                 time_segment,

@@ -50,12 +50,12 @@ public class UserController {
                         .build()
                         .toUriString();
             // 2. DB 검색을 위한 파라미터 가공 (내부 로직)
-            if(option.getCode() == 5 && option.getKeyword() != null) {
+            if(option.getCode() == "5" && option.getKeyword() != null) {
                 // DB 조회용 객체에만 해시값을 담아서 서비스로 넘김
                 option.setKeyword(EncryptionUtil.hash(option.getKeyword()));
             }
 
-            if (option.getCode() == 6 && option.getKeyword() != null) {
+            if (option.getCode() == "6" && option.getKeyword() != null) {
                 Map<String, String> typeMap = Map.of(
                     "스텝", "00",
                     "경호원 신청 중", "01",

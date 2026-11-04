@@ -78,7 +78,7 @@ public interface ApplyMapper {
 
     public int getPointInfo(@Param("campaignId") String campaignId, @Param("finalDate") LocalDate finalDate) throws Exception;
 
-    public int countApplicants(Long campaignId) throws Exception;
+    public int countApplicants(@Param("campaignId")Long campaignId, @Param("applyDate") String applyDate) throws Exception;
 
     public UserCampaignVO overlapTitle(@Param("dto") CampaignVO dto, @Param("userNo") String userNo) throws Exception;
 
@@ -95,4 +95,6 @@ public interface ApplyMapper {
     public List<UserVO> userDateInfo(@Param("campaignId") Long campaignId, @Param("code") String code, @Param("keyword") String keyword) throws Exception;
 
     public List<UserVO> dateSelect(@Param("campaignId") Long campaignId, @Param("code") String code, @Param("keyword") String keywordㅊ, @Param("applyDate") String applyDate) throws Exception;
+
+    public int save(Map<String,Object> paramMap) throws Exception;
 }

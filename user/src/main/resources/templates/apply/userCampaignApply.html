@@ -12,31 +12,31 @@
     <input type="hidden" id="workHour" name="workHour" th:value="${workHour}">
     <input type="hidden" id="wageChk" name="wageChk" th:value="${wageChk}">
 
-    <div th:if="${not #lists.isEmpty(userCampaignApply)}">
-        <div id="campaignArea" th:data-campaign-id="${userCampaignApply[0].campaignId}">
-            <div id="campaignIdDown" th:data-campaign-id="${userCampaignApply[0].campaignId}">
-                <div id="campaignTitleDown" th:data-campaign-title="${userCampaignApply[0].campaignTitle}">
+    <div th:if="${not #lists.isEmpty(apply)}">
+        <div id="campaignArea" th:data-campaign-id="${apply[0].campaignId}">
+            <div id="campaignIdDown" th:data-campaign-id="${apply[0].campaignId}">
+                <div id="campaignTitleDown" th:data-campaign-title="${apply[0].campaignTitle}">
                     <div class="notice-box">
-                        <h2 th:if="${userCampaignApply != null}" th:text="${userCampaignApply[0].campaignTitle}"></h2>
-                        <strong>신청자 / 모집인 수 : </strong><strong th:text="${userCampaignApply[0].applicantsNum}"></strong> / <strong th:text="${userCampaignApply[0].recruitmentNum}"></strong><br />
-                        <strong>업체명 : </strong><strong th:text="${userCampaignApply[0].companyNm}"></strong><br>
-                        <strong> 담당자 번호 : </strong><strong th:text="${userCampaignApply[0].companyPh}"></strong>
+                        <h2 th:if="${apply != null}" th:text="${apply[0].campaignTitle}"></h2>
+                        <strong>신청자 / 모집인 수 : </strong><strong th:text="${apply[0].applicantsNum}"></strong> / <strong th:text="${apply[0].recruitmentNum}"></strong><br />
+                        <strong>업체명 : </strong><strong th:text="${apply[0].companyNm}"></strong><br>
+                        <strong> 담당자 번호 : </strong><strong th:text="${apply[0].companyPh}"></strong>
                         <p><strong>기간</strong><br />
-                            <strong th:text="${userCampaignApply[0].eventPeriodStr}"></strong> ~ <strong th:text="${userCampaignApply[0].eventPeriodEnd}"></strong>
+                            <strong th:text="${apply[0].eventPeriodStr}"></strong> ~ <strong th:text="${apply[0].eventPeriodEnd}"></strong>
                         </p>
                         <p>
-                            <strong>근무 형태 : </strong><strong th:text="${userCampaignApply[0].timeSegment == 'DAY' ? '주간' : '야간'}"></strong>
+                            <strong>근무 형태 : </strong><strong th:text="${apply[0].timeSegment == 'DAY' ? '주간' : '야간'}"></strong>
                         </p>
                         <a th:class="|review_btn|"
                                     href="#"
-                                    th:data-url="@{/apply/popup01/{campaignId}(campaignId=${userCampaignApply[0].campaignId})}"
+                                    th:data-url="@{/apply/popup01/{campaignId}(campaignId=${apply[0].campaignId})}"
                                     th:onclick="|openPopup(this.dataset.url); return false;|">캠페인 신청</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div th:if="${#lists.isEmpty(userCampaignApply)}" class="section">
+    <div th:if="${#lists.isEmpty(apply)}" class="section">
         <p>해당 날짜에는 신청자가 없습니다.</p>
     </div>
     <div class="section">
@@ -67,7 +67,7 @@
 
     <div class="section applicant-list-area user-List">
         <div class="list-header">
-            <span>신청자 수 : <span th:text="${#lists.size(userCampaignApply) - #lists.size(leaderList)}">0</span>명</span>
+            <span>신청자 수 : <span th:text="${#lists.size(apply) - #lists.size(leaderList)}">0</span>명</span>
         </div>
         <p>현재 사용자 ID : <span th:text="${userId}">guest</span></p>
         <div class="applicant-item3">
@@ -75,7 +75,7 @@
                 <label>
                     <input type="checkbox" class="chkAll" id="checkAll" name="checkAll" onclick="toggleAll(this)"><span class="checkAllfont">전체선택</span>
                 </label>
-                <div class="width100 mrg-b5 applicant-item" th:each="userCampaign, stat: ${userCampaignApply}" th:data-applicant-user-no="${userCampaign.userNo}"
+                <div class="width100 mrg-b5 applicant-item" th:each="userCampaign, stat: ${apply}" th:data-applicant-user-no="${userCampaign.userNo}"
                 th:data-choose-status="${userCampaign.status}"> <!-- ⭐ userCampaign의 현재 status 값을 데이터 속성으로 추가 ⭐ -->
                     <div class="applyInfo" th:with="index=${stat.index}, userId=${userCampaign.userId}, currentUserNo=${userCampaign.userNo}, campaignId=${userCampaign.campaignId}, applyDate=${userCampaign.applyDate}">
                         <div th:unless="${userCampaign.status=='8' || userCampaign.status=='9'}">
@@ -100,17 +100,11 @@
                                     th:data-url="@{/apply/significant/{userNo}/{userId}/{campaignId}/{applyDate}(userNo=${currentUserNo}, userId=${userId}, campaignId=${campaignId}, applyDate=${applyDate})}"
                                     th:data-status="3" th:data-status-now="${userCampaign.status}"
                                     onclick="openSignificantModal(this); return false;">특이사항</a>
-                                <div id="significantModal" onclick="closeModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
-                                    <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
-                                        <span onclick="closeSignificantModal();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
-                                        <div id="modalContent"></div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div id="significantModal" onclick="closeModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+                <div id="applyModal" onclick="closeModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
                     <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
                         <span onclick="closeSignificantModal();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
                         <div id="modalContent"></div>
@@ -138,10 +132,10 @@
                                 <img id="imgFile" src="/images/not-image.png" alt="파일이미지" width="50" height="50" />
                             </div>
                             <div class="width100" th:unless="${leader.filePath == null}">
-                                <input type="checkbox" class="chkSelect chkSelectLeader" name="Attendance"th:data-user-no="${leader.userNo}" th:data-user-id="${leader.userId}" th:data-campaign-id="${leader.campaignId}" th:data-apply-date="${leader.applyDate}">
+                                <!-- <input type="checkbox" class="chkSelect chkSelectLeader" name="Attendance"th:data-user-no="${leader.userNo}" th:data-user-id="${leader.userId}" th:data-campaign-id="${leader.campaignId}" th:data-apply-date="${leader.applyDate}"> -->
                                 <img id="imgFile" th:src="|/selectProfile?id=${leader.userNo}&args=profile|" alt="파일이미지" width="50" height="50" />
                             </div>
-                            <div style="margin-left: 95px; margin-top: -60px;">
+                            <div style="margin-left: 55px; margin-top: -60px;">
                                 <span class="userInfofont" th:text="${leader.userNm}"></span>/
                                 <span th:text="${leader.hyphenPhone}">010-0000-0000</span>
                                 <button th:onclick="initStatus([[${index}]], [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], '2')" th:class="|btn-state mrg5 button_status${stat.index}|">초기화</button>
@@ -152,12 +146,6 @@
                                         <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" th:data-url="@{/apply/significant/{userNo}/{userId}/{campaignId}/{applyDate}(userNo=${currentUserNo}, userId=${userId}, campaignId=${campaignId}, applyDate=${applyDate})}" th:data-status="3" th:data-status-now="${leader.status}" onclick="openSignificantModal(this); return false;">특이사항</a>
                                     </div>
                                 </div>
-                                <div id="significantModal" onclick="closeModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
-                                    <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
-                                        <span onclick="closeSignificantModal();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
-                                        <div id="modalContent"></div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -166,39 +154,43 @@
             <!-- <button type="button" class="btn-info" onclick="processAttendance('8')" style="background-color: red; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">인솔자 체크 퇴근</button> -->
         </div>
     </div>
-
-    <div id="fileDownloadListSection" style="margin-top: 30px; padding: 15px; border-top: 1px solid #eee; display: none;">
-        <h4><i class="fa fa-download" aria-hidden="true"></i> 다운로드 가능한 파일 목록</h4>
-        <ul id="downloadLinksContainer" style="list-style: none; padding: 0;">
-        </ul>
-        <p id="noFilesMessage" style="color: #999; display: none;">다운로드할 파일이 없습니다.</p>
-    </div>
     <div class="btn-area">
         <a class="btn-info" onclick="imgDownload('1')">신분증 사진<br>다운로드</a>
         <a class="btn-info" onclick="imgDownload('2')">이수증 사진<br>다운로드</a>
-        <th:block th:if="${userCampaignApply != null and not #lists.isEmpty(userCampaignApply) and userCampaignApply[0].campaignId != null}">
+        <th:block th:if="${apply != null and not #lists.isEmpty(apply) and apply[0].campaignId != null}">
             <a class="btn-info" type="button"
-                    th:onclick="downloadExcel([[${userCampaignApply[0].campaignId}]], [[${userCampaignApply[0].applyDate}]], [[${userCampaignApply[0].timeSegment}]])">
+                    th:onclick="downloadExcel([[${apply[0].campaignId}]], [[${apply[0].applyDate}]], [[${apply[0].timeSegment}]])">
                 엑셀<br>다운로드
             </a>
         </th:block>
-        <th:block th:unless="${userCampaignApply != null and not #lists.isEmpty(userCampaignApply) and userCampaignApply[0].campaignId != null}">
+        <th:block th:unless="${apply != null and not #lists.isEmpty(apply) and apply[0].campaignId != null}">
             <p>엑셀 다운로드 불가 (캠페인 정보 없음)</p>
         </th:block>
     </div>
     <div class="btn-area" th:if="${getPointInfo == 0}">
         <button class="btn-info" id="leaveWorkBtn">퇴근 포인트 적립하기</button>
     </div>
-    <div id="modalPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
-        <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
-            <span onclick="closeModalApply();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
+
+    <!-- 1. 유저 선택/등록 팝업 -->
+    <div id="modalPopup" class="modal" onclick="closeModal(event, 'modalPopup');">
+        <div id="userBox" class="modal-box">
+            <span onclick="closeModal('modalPopup');" class="close-popup">&times;</span>
             <div id="modalContentUser"></div>
         </div>
     </div>
+
+    <!-- 2. 특이사항 입력 팝업 -->
+    <div id="significantModal" class="modal" onclick="closeModal(event, 'significantModal');">
+        <div id="significantBox" class="modal-box">
+            <span onclick="closeModal('significantModal');" class="close-popup">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
     <script th:inline="javascript">
         const csrfToken = /*[[${_csrf.token}]]*/ '';
         const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
-        const userCampaignApply = /*[[${userCampaignApply}]]*/ [];
+        const apply = /*[[${apply}]]*/ [];
         const campId = /*[[${campaignId}]]*/ null;
     </script>
     <script th:src="@{/js/apply-confirm.js}" defer></script>

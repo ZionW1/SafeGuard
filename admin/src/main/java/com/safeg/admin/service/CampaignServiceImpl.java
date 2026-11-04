@@ -290,13 +290,9 @@ public class CampaignServiceImpl implements CampaignService{
 
             UserCampaignVO overlapTitle = campaignMapper.overlapTitle(dto, userNo);
             // 공백이나 null이 아니라는 것은 무언가 중복된 캠페인 타이틀이 조회되었다는 뜻!
-            if (overlapTitle != null) {
-                // log.info("중복 발견 - 유저 번호: {}, 중복 캠페인: {}", userNo, overlapTitle);
-
+            if (overlapTitle != null && overlapTitle.getCampaignId() != null) {
+                log.info("진짜 중복 발견!");
                 return overlapTitle;
-                // 컨트롤러의 .catch(error => alert(error.message)) 로 전달될 에러 메시지
-                // throw new IllegalArgumentException("이미 [" + overlapTitle + "] 캠페인 일정이 있는 유저가 포함되어 있습니다.\n기간을 확인해 주세요.");
-
             }
         }
         return null;
@@ -940,5 +936,101 @@ public class CampaignServiceImpl implements CampaignService{
 
         return result;
 
+    }
+
+    public List<UserVO> userInfoList(Long campaignId, Option option, LocalDate applyDate) throws Exception{
+        LocalDate dateParam = null;
+        if (applyDate != null && !"ALL".equals(applyDate.toString())) {
+            dateParam = applyDate; // "2026-10-14" 형태의 문자열을 LocalDate로 파싱
+        }
+        // applyDate = null; // applyDateS를 null로 초기화하여 ALL 처리
+        log.info("userInfoList called with campaignId: {}, option: {}, applyDate: {}", campaignId, option, dateParam);
+
+        List<UserVO> userInfoList = campaignMapper.userInfoList(campaignId, option, dateParam);
+        log.info("userInfoList : " + userInfoList);
+
+        return userInfoList;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int save(CampaignVO dto) throws Exception {
+        log.info("save : ");
+        // 2단계: [등록] 위의 for문(검증)을 에러 없이 '완전히' 통과했다면 중복이 없는 것입니다.
+        // 이제 안전하게 하나씩 insert를 진행합니다.
+        Long campaignId = dto.getCampaignId();
+        List<String> userNoList = dto.getUserNos();
+        List<String> userIdList = dto.getUserIds();
+
+        LocalDate startDate = dto.getEventPeriodStr(); // 예: "2026-01-19" -> LocalDate
+        LocalDate endDate = dto.getEventPeriodEnd();   // 예: "2026-01-21" -> LocalDate
+
+        List<LocalDate> datesInRange = Stream.iterate(startDate, date -> date.plusDays(1))
+                                            // startDate와 endDate 모두 포함
+                                            .limit(endDate.toEpochDay() - startDate.toEpochDay() + 1)
+                                            .collect(Collectors.toList());
+        log.info("datesInRange : " + datesInRange);
+
+        List<Map<String, Object>> insertList = new ArrayList<>();
+        // datesInRange는 이미 자바단에 계산되어 있는 [2026-07-06, 2026-07-07...] 리스트
+        log.info("equals(dto.getApplyDateS() : " + "ALL".equals(dto.getApplyDateS()) + ", dto.getApplyDateS() : " + dto.getApplyDateS());
+        if ("ALL".equals(dto.getApplyDateS())) {
+            // 1. ALL(전체)일 때는 [유저 수 × 날짜 수] 만큼 조합해서 리스트를 만듭니다. (2중 for문)
+            for (int i = 0; i < userNoList.size(); i++) {
+                for (LocalDate date : datesInRange) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("userNo", userNoList.get(i));
+                    row.put("userId", userIdList.get(i));
+                    row.put("applyDate", date); // 각 날짜별로 한 행씩 생성
+                    insertList.add(row);
+                }
+            }
+        } else {
+            // 2. 단일 날짜일 때는 [유저 수] 만큼만 행을 만듭니다. (1중 for문)
+            for (int i = 0; i < userNoList.size(); i++) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("userNo", userNoList.get(i));
+                row.put("userId", userIdList.get(i));
+                row.put("applyDate", dto.getApplyDateS()); // 사용자가 고른 단일 날짜 고정
+                insertList.add(row);
+            }
+        }
+
+        // 4. 각 날짜별로 DB에 삽입할 DTO 객체 생성
+        // Map<String, Object> paramMap = new HashMap<>();
+        // paramMap.put("campaignId", dto.getCampaignId());
+        // paramMap.put("timeSegment", dto.getTimeSegment());
+        // paramMap.put("eventPeriodStr", dto.getEventPeriodStr());
+        // paramMap.put("eventPeriodEnd", dto.getEventPeriodEnd());
+
+        // paramMap.put("userNoList", dto.getUserNos()); // [43, 34]
+        // paramMap.put("userIdList", dto.getUserIds()); // [admin123, test01]
+        // paramMap.put("datesInRange", datesInRange);    // [2026-06-26]
+        // paramMap.put("applyDate", dto.getApplyDateS());
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("campaignId", dto.getCampaignId());
+        paramMap.put("timeSegment", dto.getTimeSegment());
+        paramMap.put("appPeriodStr", dto.getAppPeriodStr());
+        paramMap.put("appPeriodEnd", dto.getAppPeriodEnd());
+        paramMap.put("eventPeriodStr", dto.getEventPeriodStr());
+        paramMap.put("eventPeriodEnd", dto.getEventPeriodEnd());
+        paramMap.put("insertList", insertList); // 🔥 2중 구조를 하나로 푼 이 리스트만 던집니다!
+
+        log.info("paramMap + " + paramMap);
+
+        int result = campaignMapper.save(paramMap);
+
+        log.info("총 " + insertList.size() + "명 중, 실제 신규 등록된 건수: " + result + "건");
+        // log.info("result + " + result);
+
+        if(result > 0) {
+            campaignMapper.updateApplicantsNum(campaignId);
+        }
+
+        // log.info("총 등록된 날짜별 데이터 건수: " + result);
+
+        // 모든 작업이 성공적으로 끝나면 성공 메시지 반환
+        return result;
     }
 }

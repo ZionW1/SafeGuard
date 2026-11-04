@@ -133,4 +133,8 @@ public interface CampaignMapper {
 
     public void copyLeader(UserCampaignVO userCampaignVO) throws Exception;
 
+    public List<UserVO> userInfoList(@Param("campaignId") Long campaignId, @Param("option") Option option, @Param("applyDate") LocalDate applyDate) throws Exception;
+
+    public int save(Map<String,Object> paramMap) throws Exception;
+
 }

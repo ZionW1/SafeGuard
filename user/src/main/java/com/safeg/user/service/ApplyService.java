@@ -61,4 +61,6 @@ public interface ApplyService {
 
     public List<UserVO> dateSelect(Long campaignId, String code, String keyword, String applyDate) throws Exception;
 
+    public int save(CampaignVO dto) throws Exception;
+
 }

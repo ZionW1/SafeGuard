@@ -21,12 +21,12 @@ import lombok.Data;
 @AllArgsConstructor
 public class Option {
     String keyword; // 검색어
-    int code; // 검색 옵션 코드
+    String code; // 검색 옵션 코드
     int orderCode; // 순서 옵션 코드
     String role;
     public Option() {
         this.keyword = "";
-        this.code = 0;
+        this.code = "";
         this.role = "";
     }
 }

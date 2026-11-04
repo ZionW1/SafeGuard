@@ -1,5 +1,6 @@
 package com.safeg.admin.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.safeg.admin.vo.CampLeaderVO;
@@ -48,5 +49,9 @@ public interface CampaignService {
     public int leaderUpdate(CampaignVO dto) throws Exception;
 
     public UserCampaignVO applySelect(Long campaignId) throws Exception;
+
+    public List<UserVO> userInfoList(Long campaignId, Option option, LocalDate localDate) throws Exception;
+
+    public int save(CampaignVO dto) throws Exception;
 
 }

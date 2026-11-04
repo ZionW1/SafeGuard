@@ -386,6 +386,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.phone_num,
             <!-- REPLACE(u.phone_num, '-', '') AS phone_num, -->
             u.role,
+            (CASE
+                WHEN u.guard_type = '00' THEN '스텝'
+                WHEN u.guard_type = '01' THEN '경호원 신청 중'
+                WHEN u.guard_type = '02' THEN '경호원'
+                WHEN u.guard_type = '03' THEN '수행'
+                WHEN u.guard_type = '04' THEN '인솔자'
+                ELSE '미지정'
+            END) AS guard_type_nm,
             CASE WHEN sub.user_no IS NOT NULL THEN 'Y' ELSE 'N' END AS is_applied
         FROM
             user u

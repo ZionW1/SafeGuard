@@ -15,7 +15,7 @@
         <div th:replace="~{fragments/sidebar :: sidebarFragment}"></div>
         <div class="main-content">
             <h1>유저 수정</h1>
-            <h4><span>생성일 : </span><span th:text="${userSelect.createdAt}">캠페인 수정</span></h4>
+            <h4><span>생성일 : </span><span th:text="${userSelect.createdAt}"></span></h4>
             <form class="normalForm" th:action="@{/user03}" method="post" id="form" enctype="multipart/form-data">
                 <!-- <th:block th:replace="~{fragments/csrfFragments :: inputCsrf}"></th:block> -->
                 <!-- <div th:insert="~{fragments/csrfFragments :: inputCsrf}"></div> -->
@@ -80,7 +80,7 @@
                         </span>
                     </div>
                 </div>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="bankNm">은행명</label>
@@ -131,12 +131,10 @@
                     </div>
                     <div class="form-group">
                         <div class="checkbox-group" style="margin-bottom: 15px;">
-
                                 <label style="margin: 18px 0 0; font-size: 1.2em; color: #333; cursor: pointer;">
                                     <input class="agreeChk" type="checkbox" id="privAgree" name="privAgree" th:checked="${userSelect.privAgree == 'Y'}">
                                     (필수) 개인정보 수집 및 동의
                                 </label>
-
                         </div>
                     </div>
                 </div>
@@ -188,13 +186,13 @@
                         <span th:if="${userSelect.guardType == '03'}">
                             <button type="button" class="stop-btn" onclick="guardTypeChnage('02')">경호원 변경</button>
                         </span>
-                        <button type="button" 
-                        class="stop-btn" 
-                        th:if="${userSelect != null && #strings.equalsIgnoreCase(#strings.trim(userSelect.role), 'LEADER')}" 
+                        <button type="button"
+                        class="stop-btn"
+                        th:if="${userSelect != null && #strings.equalsIgnoreCase(#strings.trim(userSelect.role), 'LEADER')}"
                         onclick="userUpdate()">일반 유저 변경</button>
-                        <button type="button" 
-                        class="stop-btn" 
-                        th:unless="${userSelect != null && #strings.equalsIgnoreCase(#strings.trim(userSelect.role), 'LEADER')}" 
+                        <button type="button"
+                        class="stop-btn"
+                        th:unless="${userSelect != null && #strings.equalsIgnoreCase(#strings.trim(userSelect.role), 'LEADER')}"
                         onclick="leaderUpdate()">인솔자 변경</button>
                         <button type="button" class="stop-btn" th:if="${userSelect.isStopped == 'N'}" onclick="userStop()">정지하기</button>
                         <button type="button" class="stop-btn" th:unless="${userSelect.isStopped == 'N'}" onclick="userUnstop()">정지풀기</button>
@@ -223,7 +221,7 @@
             <img class="modal-content" id="imgTarget">
         </div>
     </div>
-    
+
     <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function() {
             console.log("DOM이 준비되었습니다!");
@@ -231,7 +229,7 @@
             console.log(userSelect);
 
             console.log(userSelect.guardType);
-            
+
         });
         const csrfToken = /*[[${_csrf.token}]]*/ '';
         const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
@@ -322,7 +320,7 @@
         }
 
         function leaderUpdate(){
-            
+
             if(!confirm('이 사용자를 인솔자로 변경하시겠습니까?')){
                 return;
             }
@@ -591,7 +589,7 @@
 
             const formData = new FormData(form);
             const url = '/admin/updateUserInfo';
-            
+
             if (!privAgree || !privAgree.checked) {
                 alert("개인정보 수집 및 이용에 동의해 주세요.");
                 if(privAgree) privAgree.focus();
@@ -615,7 +613,7 @@
                 if (residentNum.value.length != 13) {
                     alert("주민등록번호 13자리를 올바르게 입력해주세요.");
                     if (residentNum) residentNum.focus();
-                    
+
                     // 숫자가 아닌 문자 제거 (선택 사항: 입력 도중 잘못 섞인 문자 정화)
                     residentNum.value = residentNum.value.replace(/[^0-9]/g, '');
                     return false;

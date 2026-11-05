@@ -225,6 +225,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="referrerNo != null">
                 referrer_no = #{referrerNo},
             </if>
+            resident_num = #{residentNum},
             course_num = #{courseNum},
             priv_agree = #{privAgree},
             updated_at = NOW()

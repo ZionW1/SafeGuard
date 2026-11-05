@@ -219,6 +219,25 @@ public class UserController {
             userVO.setPrivAgree("Y");
         }
 
+        if (userVO.getResidentNum() != null && !userVO.getResidentNum().trim().isEmpty()) {
+            try {
+                // 보내주신 EncryptionUtil의 encrypt 메서드 호출
+                String encryptedData = EncryptionUtil.encrypt(userVO.getResidentNum());
+                log.info("::::: 주민등록번호 암호화 성공 ::::: " + encryptedData);
+
+                // 암호화된 텍스트(Base64 형태)를 다시 VO에 저장
+                userVO.setResidentNum(encryptedData);
+
+                log.info("::::: 주민등록번호 암호화 성공 :::::");
+            } catch (Exception e) {
+                log.error("::::: 주민등록번호 암호화 중 오류 발생 :::::", e);
+                // response.put("result", "FAIL");
+                // response.put("message", "보안 처리 중 오류가 발생했습니다.");
+                return "주민등록번호 암호화 중 오류 발생";
+            }
+        }
+
+        log.info("userVO : " + userVO);
         int result = userService.userInfoUpdate(userVO);
 
         FilesVO file = fileService.select(userId);
@@ -226,11 +245,11 @@ public class UserController {
         if(file != null){
             model.addAttribute("file", file);
         }
-        if(result > 0){
-            model.addAttribute("msg", "");
-        } else {
-            model.addAttribute("msg", "");
-        }
+        // if(result > 0){
+        //     model.addAttribute("msg", "");
+        // } else {
+        //     model.addAttribute("msg", "");
+        // }
         return "redirect:/user01?page=" + page ;
     }
 

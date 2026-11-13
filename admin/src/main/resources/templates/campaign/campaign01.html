@@ -655,7 +655,7 @@
             const timeSegment = campaign[selectIndex].timeSegment; // 혹은 해당 캠페인의 timeSegment 값
             // 1. 팝업창이 열렸을 당시 '이미 신청 상태였던' 유저들의 No 목록 (already-applied 클래스 활용)
             const appliedUsers = [];
-            document.querySelectorAll('.user_Chk.already-applied').forEach(cb => {
+            document.querySelectorAll('.user_Chk.chk-applied').forEach(cb => {
                 appliedUsers.push(cb.value);
             });
 
@@ -690,6 +690,7 @@
                     // 만약 날짜 정보도 필요하다면 dto에 맞게 추가 (예: eventPeriodStr, eventPeriodEnd 등)
                 };
 
+                console.log("취소 요청 데이터:", cancelData);
                 fetch('/admin/userCancel', { // 본인의 Controller URL 확인
                     method: 'POST',
                     headers: {
@@ -710,11 +711,6 @@
             } else {
                 alert("수정된 내역이 없습니다.");
             }
-        }
-
-        function roleChg(roleValue) {
-            console.log(roleValue.value);
-
         }
 
         // 1. 전역 변수로 체크된 유저 ID 보관 (Set 구조)

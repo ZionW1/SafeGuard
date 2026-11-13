@@ -28,7 +28,7 @@ public class EncryptionUtil {
     public static String encrypt(String privateData) throws Exception {
 
         if (privateData == null) return null;
-        
+
         byte[] iv = new byte[IV_LENGTH_BYTE];
         new SecureRandom().nextBytes(iv);
 
@@ -62,7 +62,7 @@ public class EncryptionUtil {
         cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmSpec);
         return new String(cipher.doFinal(cipherText), StandardCharsets.UTF_8);
     }
-    
+
     public static String hash(String text) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

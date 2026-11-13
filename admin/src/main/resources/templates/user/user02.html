@@ -224,12 +224,7 @@
 
     <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function() {
-            console.log("DOM이 준비되었습니다!");
             const userSelect = /*[[${userSelect}]]*/ [];
-            console.log(userSelect);
-
-            console.log(userSelect.guardType);
-
         });
         const csrfToken = /*[[${_csrf.token}]]*/ '';
         const csrfHeader = /*[[${_csrf.headerName}]]*/ '';

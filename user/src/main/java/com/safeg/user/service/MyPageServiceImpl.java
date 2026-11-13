@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MyPageServiceImpl implements MyPageService {
 
     private final PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private MyPageMapper myPageMapper;
 
@@ -51,7 +51,7 @@ public class MyPageServiceImpl implements MyPageService {
     }
     @Override
     public List<CalendarEventVO> getCompletedDatesForUser(String userId, LocalDateTime start, LocalDateTime end) throws Exception {
-        
+
         // TODO Auto-generated method stub
         // return Arrays.asList(LocalDate.of(2025, 12, 5), LocalDate.of(2025, 12, 12));
         return myPageMapper.getCompletedDatesForUser(userId, start, end);
@@ -66,42 +66,42 @@ public class MyPageServiceImpl implements MyPageService {
     public int updateInfo(UserVO userVo) throws Exception {
         // 1. 휴대폰 중복 체크 (나를 제외한 타인 중복 확인)
         String hashedPhone = EncryptionUtil.hash(userVo.getPhoneNum());
-        log.info("updateInfo hashedPhone : " + hashedPhone);
-        if (userMapper.phoneDuplicate(hashedPhone, userVo.getUserId())) {
+
+        if (userMapper.phoneDuplicate(hashedPhone)) {
             throw new RuntimeException("DUPLICATE_PHONE");
         }
         userVo.setPhoneHash(hashedPhone);
-    
+
         // 2. 회원 기본 정보 업데이트 (전화번호, 이름 등)
         int result = myPageMapper.updateInfo(userVo);
         if (result < 1) throw new RuntimeException("USER_UPDATE_FAILED");
-    
+
         // 3. 주소 처리 (기존 주소 삭제 처리 후 신규 삽입)
         if (userVo.getFullAddress() != null && !userVo.getFullAddress().isEmpty()) {
             // 기존에 등록된 주소가 있는지 확인 (삭제 안 된 것 위주)
             UserAddressVO existingAddress = myPageMapper.getAddress(userVo.getId());
-    
+
             if (existingAddress != null) {
                 // [중요] 기존 주소를 'Y'로 마킹 (작성하신 updateAddress 호출)
                 myPageMapper.updateAddress(userVo);
                 log.info("기존 주소 삭제(Soft Delete) 완료");
             }
-            
+
             // 항상 새로운 주소를 Insert (이력을 남기기 위해)
             myPageMapper.insertAddress(userVo);
             log.info("새로운 주소 데이터 삽입 완료");
         }
-    
+
         return result;
     }
 
     @Override
     public boolean uploadImage(UserVO userVo) throws Exception {
         // TODO Auto-generated method stub
-        
+
         MultipartFile getCertImage = userVo.getCertImage();
         MultipartFile getIdImage = userVo.getIdImage();
-        
+
         if (userVo.getId() == null) {
             // 캠페인 ID를 가져오지 못했다면 예외 처리
             throw new RuntimeException("인수증 사진 등록 실패: 유저의 ID를 가져올 수 없습니다.");
@@ -111,14 +111,14 @@ public class MyPageServiceImpl implements MyPageService {
         FilesVO uploadFileId = new FilesVO();
 
         if(getCertImage != null){
-            
+
             // Files uploadFile = new Files();
             // uploadFile.setFile(file);
             // uploadFile.setParentTable("campaign");
             // uploadFile.setParentNo(campaignsVO.getId());
             // uploadFile.setType("main");
             // fileService.upload(uploadFile);
-            
+
             uploadFileCert.setFile(getCertImage);
             uploadFileCert.setFileSize(getCertImage.getSize());
             uploadFileCert.setFileType("user_File");
@@ -129,9 +129,9 @@ public class MyPageServiceImpl implements MyPageService {
             log.info("등록 처리 uploadFile : " + uploadFileCert);
 
             result = fileService.upload(uploadFileCert);
-            
-        } 
-        
+
+        }
+
         if(getIdImage != null){
             uploadFileId.setFile(getIdImage);
             uploadFileId.setFileSize(getIdImage.getSize());
@@ -144,7 +144,7 @@ public class MyPageServiceImpl implements MyPageService {
 
             result = fileService.upload(uploadFileId);
         }
-        
+
         return result;
     }
 
@@ -202,7 +202,7 @@ public class MyPageServiceImpl implements MyPageService {
 
         return result;
     }
-    
+
     @Transactional // 트랜잭션 관리
     @Override
     public boolean changeUserPassword(Long userId, String currentPassword, String newPassword) throws Exception {
@@ -225,7 +225,7 @@ public class MyPageServiceImpl implements MyPageService {
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
             throw new IllegalArgumentException("새 비밀번호는 현재 비밀번호와 달라야 합니다.");
         }
-        
+
         // 4. 새 비밀번호를 해싱
         String encodedNewPassword = passwordEncoder.encode(newPassword);
 
@@ -255,9 +255,9 @@ public class MyPageServiceImpl implements MyPageService {
         // TODO Auto-generated method stub
         log.info("MyPageServiceImpl referrerList userNo : " + userNo);
         log.info("MyPageServiceImpl referrerList targetMonth : " + targetMonth);
-        
+
         List<PointHistoryVO> referrerList = myPageMapper.referrerList(userNo, targetMonth);
-        
+
         log.info("MyPageServiceImpl referrerList referrerList : " + referrerList);
 
         return referrerList;
@@ -299,7 +299,7 @@ public class MyPageServiceImpl implements MyPageService {
 
         return referrerAmount;
     }
-    
+
     @Override
     public String attendAmount(Long userNo, String targetMonth) throws Exception {
         // TODO Auto-generated method stub
@@ -339,11 +339,11 @@ public class MyPageServiceImpl implements MyPageService {
 
         return getUserAuth;
     }
-    
+
     @Override
     public int updateUserInfo(Long userIdFromDb, UserVO userVo) throws Exception {
-        log.info("userIdFormDb + " + userIdFromDb);
-        log.info("userVO + " + userVo);
+        log.info("updateUserInfo userIdFromDb + " + userIdFromDb);
+        log.info("updateUserInfo userVO + " + userVo);
         int result = myPageMapper.updateUserInfo(userIdFromDb, userVo);
 
         return result;

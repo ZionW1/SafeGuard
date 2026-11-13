@@ -39,17 +39,17 @@ public class AuthController {
     public CompletableFuture<ResponseEntity<String>> sendCode(@RequestParam("phoneNumber") String phoneNumber) throws Exception {
         String hashedPhone = EncryptionUtil.hash(phoneNumber);
 
-        boolean phoneDuplicate = userService.phoneDuplicate(hashedPhone, null);
+        boolean phoneDuplicate = userService.phoneDuplicate(hashedPhone);
         if (phoneDuplicate) {
             Map<String, Object> response = Map.of(
-            "success", false, 
+            "success", false,
             "duplicate", true, // 차라리 이 필드를 추가하는 게 명확합니다.
             "message", "이미 가입된 휴대폰 번호입니다."
             );
-            
+
             // Map 객체를 "{\"success\":false, ...}" 형태의 문자열로 변환
             String jsonResponse = objectMapper.writeValueAsString(response);
-            
+
             return CompletableFuture.completedFuture(
                 ResponseEntity.badRequest().body(jsonResponse)
             );

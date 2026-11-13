@@ -23,7 +23,7 @@ public interface UserService {
 
     // 직원 회원가입
     public int employeeJoin(UserVO userVO) throws Exception;
-    
+
     // 회원 수정
     public int update(Users user) throws Exception;
 
@@ -40,7 +40,7 @@ public interface UserService {
 
     public List<PointHistoryVO> bestPayList() throws Exception;
 
-    public boolean phoneDuplicate(String phoneNum, String userId) throws Exception;
+    public boolean phoneDuplicate(String phoneNum) throws Exception;
 
     public String findUserId(String userNm, String phoneNum) throws Exception;
 

@@ -221,73 +221,46 @@ public class MyPageController {
     @PostMapping("/applyBodyguard")
     @ResponseBody
     public Map<String, Object> applyBodyguard(@AuthenticationPrincipal CustomUser authUser, @ModelAttribute UserVO userVO, Model model) throws Exception{
-        log.info(":::::::::: applyBodyguard :::::::::: + " + authUser.getUserVo().getUserId());
         Map<String, Object> response = new HashMap<>();
+        log.info("applyBodyguard userVO : " + userVO.toString());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int result = 0;
 
-        if ("on".equals(userVO.getPrivAgree())) {
-            userVO.setPrivAgree("Y");
-        } else {
-            userVO.setPrivAgree("N"); // 체크박스가 해제되어 null로 넘어왔을 때 방어 코드
-            response.put("error", false);
-            response.put("message", "사용자 변경 중 오류가 발생했습니다");
-            return response;
-        }
-
-        log.info(":::::::::: authUser 회원 마이 페이지 :::::::::: + " + authUser);
-        log.info(":::::::::: userVO.getGuardType :::::::::: + " + userVO.getGuardType());
-        log.info(":::::::::: userVO.getResidentNum :::::::::: + " + userVO.getResidentNum());
-        log.info(":::::::::: userVO.getCourseNum :::::::::: + " + userVO.getCourseNum());
-        log.info(":::::::::: userVO.getPrivAgree :::::::::: + " + userVO.getPrivAgree());
+        // if ("Y".equals(userVO.getPrivAgree())) {
+        //     userVO.setPrivAgree("Y");
+        // } else {
+        //     userVO.setPrivAgree("N"); // 체크박스가 해제되어 null로 넘어왔을 때 방어 코드
+        //     response.put("error", false);
+        //     response.put("message", "사용자 변경 중 오류가 발생했습니다");
+        //     return response;
+        // }
 
         if(authentication.getPrincipal() instanceof CustomUser){
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
             Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
             String username = customUser.getUsername(); // 로그인 아이디 (userId)
-            log.info("userIdFromDb : " + userIdFromDb);
-            log.info("username : " + username);
-            // result = myPageService.applyBodyguard(userVo);
 
             try {
-                if (userVO.getResidentNum() != null && !userVO.getResidentNum().trim().isEmpty()) {
-                    try {
-                        // 보내주신 EncryptionUtil의 encrypt 메서드 호출
-                        String encryptedData = EncryptionUtil.encrypt(userVO.getResidentNum());
-                        log.info("::::: 주민등록번호 암호화 성공 ::::: " + encryptedData);
+                result = myPageService.applyBodyguard(userIdFromDb, userVO.getGuardType());
 
-                        // 암호화된 텍스트(Base64 형태)를 다시 VO에 저장
-                        userVO.setResidentNum(encryptedData);
-
-                        log.info("::::: 주민등록번호 암호화 성공 :::::");
-                    } catch (Exception e) {
-                        log.error("::::: 주민등록번호 암호화 중 오류 발생 :::::", e);
-                        response.put("result", "FAIL");
-                        response.put("message", "보안 처리 중 오류가 발생했습니다.");
-                        return response;
-                    }
+                if(result > 0) {
+                    // 경호원 신청 성공
+                    response.put("success", true);
+                    response.put("message", "사용자가 성공적으로 경호원 요청 되었습니다.");
+                } else {
+                    // 경호원 신청 실패
+                    response.put("error", false);
+                    response.put("message", "사용자 변경 중 오류가 발생했습니다.");
                 }
-                // 일반 유저로 변경하는 서비스 로직 호출
-                result = myPageService.updateUserInfo(userIdFromDb, userVO);
-                if(result > 0 ) {
-                    result = myPageService.applyBodyguard(userIdFromDb, userVO.getGuardType());
-                }else {
-                    response.put("error", true);
-                    response.put("message", "사용자 변경 중 오류가 발생했습니다");
-                }
-                response.put("success", true);
-                response.put("message", "사용자가 성공적으로 경호원 요청 되었습니다.");
             } catch (Exception e) {
                 response.put("error", false);
                 response.put("message", "사용자 변경 중 오류가 발생했습니다: " + e.getMessage());
                 // 필요하다면 에러 코드 등 추가 정보 포함
             }
+        } else {
+            response.put("error", false);
+            response.put("message", "사용자 인증 정보가 없습니다.");
         }
-
-        log.info(":::::::::: 회원 프로필 업데이트 완료 :::::::::: + " + result);
-
-        // Users mypageSelect = userService.mypageSelect(authUser.getUser().getId());
-
         return response;
     }
 
@@ -575,11 +548,34 @@ public class MyPageController {
     @PostMapping("/uploadImage")
     @ResponseBody
     public String uploadImage(@AuthenticationPrincipal CustomUser authUser, UserVO userVO, Model model) throws Exception{
-        // log.info(":::::::::: uploadImage :::::::::: + " + authUser.getUserVo().getUserId());
-        log.info(":::::::::: uploadImage :::::::::: + " + userVO);
+        if (userVO.getResidentNum() != null && !userVO.getResidentNum().trim().isEmpty()) {
+            try {
+                // 보내주신 EncryptionUtil의 encrypt 메서드 호출
+                String encryptedData = EncryptionUtil.encrypt(userVO.getResidentNum());
+                log.info("::::: 주민등록번호 암호화 성공 ::::: " + encryptedData);
+
+                // 암호화된 텍스트(Base64 형태)를 다시 VO에 저장
+                userVO.setResidentNum(encryptedData);
+
+                log.info("::::: 주민등록번호 암호화 성공 :::::");
+            } catch (Exception e) {
+                log.error("::::: 주민등록번호 암호화 중 오류 발생 :::::", e);
+                return "주민등록번호 암호화 중 오류 발생";
+            }
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal() instanceof CustomUser) { // CustomUser 클래스로 확인
+        CustomUser customUser = (CustomUser) authentication.getPrincipal();
+        Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
+
+        int result = myPageService.updateUserInfo(userIdFromDb, userVO);
+
+        if(result > 0) {
+            log.info(":::::::::: 회원 프로필 업데이트 완료 :::::::::: + " + result);
             myPageService.uploadImage(userVO);
+        } else {
+            log.info(":::::::::: 회원 프로필 업데이트 실패 :::::::::: + " + result);
+            return "회원 프로필 업데이트 실패";
         }
 
         // if (!userVO.isPasswordConfirmed()) {
@@ -820,32 +816,47 @@ public class MyPageController {
         }
     }
 
-    // @GetMapping("guardApply")
-    // public String guardApply(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception {
     @GetMapping("/guardApply")
     public String guardApply(@AuthenticationPrincipal CustomUser authUser, HttpServletRequest request, Model model) throws Exception {
         log.info("guardApply : guardApply : " + authUser.getUserVo());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();        // Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
-        if (authentication.getPrincipal() instanceof CustomUser){
-            CustomUser customUser = (CustomUser) authentication.getPrincipal();
-            log.info("user.guardType : " + customUser);
-            Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
-            String username = customUser.getUsername(); // 로그인 아이디 (userId)
+        // Long userIdFromDb = customUser.getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
+        Long userIdFromDb = authUser.getUserVo().getId(); // ⭐ users 테이블의 실제 id 값을 가져왔다! ⭐
+        String username = authUser.getUserVo().getUserId(); // 로그인 아이디 (userId)
 
-            UserVO userInfo = userService.select(username);
+        UserVO userInfo = userService.select(username);
+        String residentNum = userInfo.getResidentNum();
+        if(residentNum == null){
+            log.info("주민등록번호가 null입니다.");
+        } else {
+            String cleanNum = residentNum.replaceAll("-", "").trim();
+            if (cleanNum.length() != 13) {
+                log.info("주민등록번호가 13자리가 아닙니다.");
+                // 주민등록번호가 13자리가 아닌 경우 처리 (예: 오류 메시지 반환)
+                model.addAttribute("error", "주민등록번호가 올바르지 않습니다.");
+                return "mypage/guardApply"; // 또는 다른 적절한 뷰로 리다이렉트
+            } else {
+                log.info("주민등록번호 13자리 확인 완료");
 
-            FilesVO selectProfile = fileService.getMypageImage(String.valueOf(userIdFromDb), "profile");
-            FilesVO getIdentity = fileService.getMypageImage(String.valueOf(userIdFromDb), "identification");
-            FilesVO getCertificate = fileService.getMypageImage(String.valueOf(userIdFromDb), "certificate");
+                // 3. 마스킹 처리 (예: 990101-1****** 형태로 변환)
+                // 앞 6자리 + "-" + 성별자리(1자리) + 뒷자리 6자리를 '*'로 마스킹
+                String maskedNum = cleanNum.substring(0, 6) + "-" + cleanNum.substring(6, 7) + "******";
 
-            model.addAttribute("currentURI", request.getRequestURI());
-            model.addAttribute("userId", userIdFromDb); // 뷰에서 DB ID를 사용할 수 있도록 모델에 추가
-            model.addAttribute("username", username); // 필요한 경우 username도 추가
-            model.addAttribute("file", selectProfile); // 필요한 경우 username도 추가
-            model.addAttribute("getCertificate", getCertificate); // 필요한 경우 username도 추가
-            model.addAttribute("getIdentity", getIdentity); // 필요한 경우 username도 추가
-            model.addAttribute("user", userInfo);
+                // 4. 모델이나 객체에 세팅
+                userInfo.setResidentNum(maskedNum);
+            }
         }
+
+        FilesVO selectProfile = fileService.getMypageImage(String.valueOf(userIdFromDb), "profile");
+        FilesVO getIdentity = fileService.getMypageImage(String.valueOf(userIdFromDb), "identification");
+        FilesVO getCertificate = fileService.getMypageImage(String.valueOf(userIdFromDb), "certificate");
+
+        model.addAttribute("currentURI", request.getRequestURI());
+        model.addAttribute("userId", userIdFromDb); // 뷰에서 DB ID를 사용할 수 있도록 모델에 추가
+        model.addAttribute("username", username); // 필요한 경우 username도 추가
+        model.addAttribute("file", selectProfile); // 필요한 경우 username도 추가
+        model.addAttribute("getIdentity", getIdentity); // 필요한 경우 username도 추가
+        model.addAttribute("getCertificate", getCertificate); // 필요한 경우 username도 추가
+        model.addAttribute("userInfo", userInfo);
 
         return "mypage/guardApply";
     }

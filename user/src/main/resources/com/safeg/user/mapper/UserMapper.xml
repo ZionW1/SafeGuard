@@ -35,6 +35,10 @@
         <result property="enabled" column="enabled" />
         <result property="guardType" column="guard_type" />
         <result property="phoneHash" column="phone_hash" />
+        <result property="courseNum" column="course_num" />
+        <result property="privAgree" column="priv_agree" />
+        <result property="residentNum" column="resident_num"
+                typeHandler="com.safeg.user.util.CryptoTypeHandler" />
         <result property="fullAddress" column="full_address"
                 typeHandler="com.safeg.user.util.CryptoTypeHandler" />
         <result property="savedName" column="saved_name" />
@@ -76,6 +80,11 @@
                 WHEN auth_id = '03' THEN 'ROLE_LEADER'
                 ELSE 'X'
             END) AS auth,
+            u.course_num,
+            u.resident_num,
+            u.referrer_no,
+            u.role,
+            priv_agree,
             f.saved_name
         FROM
             user u
@@ -101,7 +110,9 @@
             phone_num,
             phone_hash,
             referrer_no,
-            auth_id, role,
+            auth_id,
+            role,
+            priv_agree,
             guard_type
         )
         VALUES (
@@ -114,6 +125,7 @@
             #{referrerNo},
             '02',
             'User',
+            #{privAgree},
             '00'
         )
     </insert>
@@ -242,14 +254,6 @@
         FROM user
         ]]>
         WHERE phone_hash = #{phoneHash}
-
-        <if test="userId != null and userId != ''">
-            AND user_id != #{userId}
-        </if>
-
-    <!-- SELECT
-    CONCAT(LEFT(phone, 3), '-****-', RIGHT(phone, 4)) AS masked_phone
-FROM member; -->
     </select>
 
     <select id="findUserId" resultType="String">

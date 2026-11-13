@@ -106,14 +106,13 @@ public class UserController {
             userSelect.setPhoneNum(formattedPhone); // 하이픈이 포함된 값으로 세팅
         }
 
-        String ResidentNum = userSelect.getResidentNum();
+        String residentNum = userSelect.getResidentNum();
         String rrn = "";
         // 1. 먼저 null 및 빈값 체크를 수행하여 안전성 확보
-        if (ResidentNum != null && !ResidentNum.trim().isEmpty()) {
+        if (residentNum != null && !residentNum.trim().isEmpty()) {
             try {
                 // 2. 먼저 암호화된 주민번호를 평문(순수 숫자)으로 복호화
-                String decryptRrn = EncryptionUtil.decrypt(ResidentNum);
-
+                String decryptRrn = EncryptionUtil.decrypt(residentNum);
                 // 3. 복호화된 결과물에서 숫자만 추출
                 rrn = decryptRrn.replaceAll("[^0-9]", "");
 
@@ -124,7 +123,7 @@ public class UserController {
                 // userSelect.setResidentNum(rrn);
             }
             catch (Exception e) {
-                log.error("주민등록번호 복호화 실패: {}", ResidentNum, e);
+                log.error("주민등록번호 복호화 실패: {}", residentNum, e);
                 rrn = "복호화 실패";
             }
         } else {

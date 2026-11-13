@@ -1,9 +1,5 @@
 package com.safeg.user.controller;
 
-import java.nio.file.Files;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,20 +18,15 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.safeg.user.vo.CampaignVO;
 import com.safeg.user.vo.CustomUser;
 import com.safeg.user.vo.PointHistoryVO;
 import com.safeg.user.vo.UserVO;
-import com.safeg.user.vo.Users;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import com.safeg.user.service.UserService;
@@ -138,14 +129,16 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("success", false, "errors", errors));
         }
 
-        // String hashedPhone = EncryptionUtil.hash(userVO.getPhoneNum());
+        String hashedPhone = EncryptionUtil.hash(userVO.getPhoneNum());
 
-        // // 2. 중복 체크 (DB의 phone_hash 컬럼과 비교)
-        // if (userService.phoneDuplicate(hashedPhone, userVO.getUserId())) {
-        //     throw new RuntimeException("이미 사용 중인 번호입니다.");
-        // }
+        // 2. 중복 체크 (DB의 phone_hash 컬럼과 비교)
+        if (userService.phoneDuplicate(hashedPhone)) {
+            // throw new RuntimeException("이미 사용 중인 번호입니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(Map.of("success", false, "message", "휴대폰 번호가 이미 사용 중 입니다."));
+        }
 
-        // userVO.setPhoneHash(hashedPhone);
+        userVO.setPhoneHash(hashedPhone);
 
         // 3. 비밀번호 암호화 및 저장
         String rawPassword = userVO.getPassword();
@@ -226,11 +219,6 @@ public class UserController {
         log.info(":::::::::: 회원 마이 페이지 :::::::::: + " + userVo);
 
         boolean result = false;
-        // if(authUser != null){
-        //     result = userService.updateProfile(userVo);
-        // }
-        // log.info(":::::::::: 회원 프로필 업데이트 완료 :::::::::: + " + result);
-
 
         try {
             // 이미지 저장 로직 실행 (Service 호출)
@@ -239,9 +227,6 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
         }
-        // Users mypageSelect = userService.mypageSelect(authUser.getUser().getId());
-
-        // return "redirect:/mypage/calendarPage";
     }
 
     @GetMapping("/addressCode")
@@ -484,14 +469,15 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("success", false, "errors", errors));
         }
 
-        // String hashedPhone = EncryptionUtil.hash(userVO.getPhoneNum());
+        String hashedPhone = EncryptionUtil.hash(userVO.getPhoneNum());
+        // 2. 중복 체크 (DB의 phone_hash 컬럼과 비교)
+        if (userService.phoneDuplicate(hashedPhone)) {
+            // throw new RuntimeException("이미 사용 중인 번호입니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(Map.of("success", false, "message", "휴대폰 번호가 이미 사용 중 입니다."));
+        }
 
-        // // 2. 중복 체크 (DB의 phone_hash 컬럼과 비교)
-        // if (userService.phoneDuplicate(hashedPhone)) {
-        //     throw new RuntimeException("이미 사용 중인 번호입니다.");
-        // }
-
-        // userVO.setPhoneHash(hashedPhone);
+        userVO.setPhoneHash(hashedPhone);
 
         // 3. 비밀번호 암호화 및 저장
         String rawPassword = userVO.getPassword();

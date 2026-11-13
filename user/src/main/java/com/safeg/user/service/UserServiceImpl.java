@@ -106,6 +106,7 @@ public class UserServiceImpl implements UserService {
     public UserVO select(String username) throws Exception {
         log.info("userSelect");
         UserVO user = userMapper.select(username);
+        log.info("user : " + user);
         return user;
     }
 
@@ -119,17 +120,6 @@ public class UserServiceImpl implements UserService {
         // userVo.setPassword(encodedPassword);
         // getInputReferrerUserId
         Long referrerNo = userMapper.getReferrerNo(userVo);
-
-        String hashedPhone = EncryptionUtil.hash(userVo.getPhoneNum());
-        log.info("hashedPhone : " + hashedPhone);
-
-        if (userMapper.phoneDuplicate(hashedPhone, null)) {
-            throw new RuntimeException("이미 등록된 번호입니다.");
-        }
-
-        // 2. 저장 (해시값 세팅)
-        userVo.setPhoneHash(hashedPhone);
-
         if (referrerNo == null || referrerNo == 0) {
             userVo.setReferrerNo(null); // DB에 NULL 저장
         } else {
@@ -137,7 +127,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 회원 등록
-        int result = userMapper.join(userVo); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!
+        int result = userMapper.join(userVo);
 
         log.info("result : " + result);
         log.info("result : " + userVo.getId());
@@ -161,21 +151,7 @@ public class UserServiceImpl implements UserService {
     public int employeeJoin(UserVO userVo) throws Exception {
         String id = userVo.getUserId();
         String name = userVo.getName();
-        // String password = userVo.getPassword();
-        // String encodedPassword = passwordEncoder.encode(password);  // 🔒 비밀번호 암호화
-        // userVo.setPassword(encodedPassword);
-        // getInputReferrerUserId
         Long referrerNo = userMapper.getReferrerNo(userVo);
-
-        String hashedPhone = EncryptionUtil.hash(userVo.getPhoneNum());
-        log.info("hashedPhone : " + hashedPhone);
-
-        // if (userMapper.phoneDuplicate(hashedPhone, null)) {
-        //     throw new RuntimeException("이미 등록된 번호입니다.");
-        // }
-
-        // 2. 저장 (해시값 세팅)
-        userVo.setPhoneHash(hashedPhone);
 
         if (referrerNo == null || referrerNo == 0) {
             userVo.setReferrerNo(null); // DB에 NULL 저장
@@ -185,9 +161,7 @@ public class UserServiceImpl implements UserService {
 
         // 회원 등록
         int result = userMapper.join(userVo); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!
-
         log.info("result : " + result);
-        log.info("result : " + userVo.getId());
 
         if( result > 0 ) {
             // 회원 기본 권한 등록
@@ -283,12 +257,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean phoneDuplicate(String phoneNumber, String userId) throws Exception{
-        log.info("phoneNum : " + phoneNumber + ", userId : " + userId);
-        // String hashedPhone = EncryptionUtil.hash(phoneNumber);
-        log.info("hashedPhone : " + phoneNumber);
-        // DB에서 해당 번호로 가입된 유저가 있는지 확인 (count나 select)
-        boolean isDuplicate = userMapper.phoneDuplicate(phoneNumber, userId);
+    public boolean phoneDuplicate(String phoneNumber) throws Exception{
+        // DB에서 해당 번호로 가입된 유저가 있는지 확인
+        boolean isDuplicate = userMapper.phoneDuplicate(phoneNumber);
         log.info("isDuplicate : " + isDuplicate);
         return isDuplicate;
     }
@@ -323,7 +294,7 @@ public class UserServiceImpl implements UserService {
         // 회원 패스워드 재 등록
         int result = 0;
         try {
-            result= userMapper.reRegPw(userVo); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!
+            result= userMapper.reRegPw(userVo);
             log.info("result + " + result);
         } catch (Exception e) {
             // TODO: handle exception
@@ -335,13 +306,13 @@ public class UserServiceImpl implements UserService {
     }
 
     public String inquiryPhoneNum(String inquiryPhoneNum) throws Exception {
-        String result = userMapper.inquiryPhoneNum(inquiryPhoneNum); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!
+        String result = userMapper.inquiryPhoneNum(inquiryPhoneNum);
 
         return result;
     }
 
     public boolean checkId(String userId) throws Exception {
-        boolean checkId = userMapper.checkId(userId); // ⭐join 메서드가 userVo 하나만 받아서 처리하도록!
+        boolean checkId = userMapper.checkId(userId);
         log.info("checkId = " + checkId);
         return checkId;
     }

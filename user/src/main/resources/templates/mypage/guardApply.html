@@ -12,8 +12,8 @@
       font-size: 1.5rem;
       font-weight: 700;
     }
-    
-    
+
+
     label {
       width: 130px;
       font-weight: 600;
@@ -117,28 +117,28 @@
             </div>
             <!-- 이수증 수정할 곳 -->
             <form id="certForm" class="guardApply_form certificate-preview" action="/mypage/uploadCertImage" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="id" th:value="${user.id}" />
-                <input type="hidden" name="userId" th:value="${user.userId}" />
+                <input type="hidden" name="id" th:value="${userInfo.id}" />
+                <input type="hidden" name="userId" th:value="${userInfo.userId}" />
                 <div class="checkbox-group" style="margin-bottom: 15px;">
                     <label style="font-size: 1.2em; color: #333; cursor: pointer;">
-                        <input class="agreeChk" type="checkbox" id="privAgree" name="privAgree">
+                        <input class="agreeChk" type="checkbox" id="privAgree" name="privAgree" th:value="${userInfo.privAgree}">
                         (필수) 개인정보 수집 및 이용에 동의합니다.
                     </label>
                 </div>
                 <div class="form-row">
                     <label for="courseNum">이수 번호</label>
-                    <input type="text" class="mypageInput" id="courseNum" name="courseNum" placeholder="이수 번호를 입력하세요.">
+                    <input type="text" class="mypageInput" id="courseNum" name="courseNum" placeholder="이수 번호를 입력하세요." th:value="${userInfo.courseNum}">
                     <div id="courseNumError" style="color: #ff4d4d; font-size: 13px; margin: 5px 5px 0; min-height: 18px;"></div>
                 </div>
                 <div class="form-row">
                     <label for="residentNum">주민등록번호</label>
-                    <input type="tel" pattern="\d*" id="residentNum" name="residentNum" class="mypageInput" placeholder="숫자만 입력하세요.">
+                    <input type="tel" pattern="\d*" id="residentNum" name="residentNum" class="mypageInput" placeholder="숫자만 입력하세요." th:value="${userInfo.residentNum}">
                     <div id="residentNumError" style="color: #ff4d4d; font-size: 13px; margin: 5px 5px 0; min-height: 18px;"></div>
                 </div>
                 <div class="section">
                     <div class="guard_apply_title">신분증</div>
                     <div th:if="${getIdentity != null}" class="form-remove">
-                        <img id="imgIdttFile" th:src="|/selectProfile?id=${user.id}&args=2|" alt="신분증" style="max-width: 100%;" />
+                        <img id="imgIdttFile" th:src="|/selectProfile?id=${userInfo.id}&args=2|" alt="신분증" style="max-width: 100%;" />
                         <div>
                             <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
                             th:onclick="fileRemove([[${userId}]], '1')">신분증 이미지 삭제</button>
@@ -155,7 +155,7 @@
                 <div class="section">
                     <div class="guard_apply_title">이수증</div>
                     <div th:if="${getCertificate != null}" class="form-remove">
-                        <img id="imgCertFile" th:src="|/selectProfile?id=${user.id}&args=3|" alt="이수증" style="max-width: 100%;" />
+                        <img id="imgCertFile" th:src="|/selectProfile?id=${userInfo.id}&args=3|" alt="이수증" style="max-width: 100%;" />
                         <div>
                             <button type="button" style="margin-top: 10px; background-color: #aaa; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;"
                             th:onclick="fileRemove([[${userId}]], '2')">이수증 이미지 삭제</button>                                </div>
@@ -187,17 +187,17 @@
                     <hr style="margin: 20px 0; border: 0.5px solid #eee;">
                     <h1>경호원 신청</h1>
                     <div class="form-row">
-                        <button id="applyBtn" class="mypage_button_width" type="button" 
-                                onclick="ApplyBodyguard(this, '01')" 
-                                th:if="${user.guardType == '00'}">경호원 신청하기</button>
-                        <button class="mypage_gray_button" type="button" disabled 
-                                th:if="${user.guardType == '01'}">경호원 신청 중</button>
-                        <button class="mypage_gray_button" type="button" disabled 
-                                th:if="${user.guardType == '02'}">경호원 신청 완료</button>
+                        <button id="applyBtn" class="mypage_button_width" type="button"
+                                onclick="ApplyBodyguard(this, '01')"
+                                th:if="${userInfo.guardType == '00'}">경호원 신청하기</button>
                         <button class="mypage_gray_button" type="button" disabled
-                                th:if="${user.guardType == '03'}">수행</button>
+                                th:if="${userInfo.guardType == '01'}">경호원 신청 중</button>
                         <button class="mypage_gray_button" type="button" disabled
-                                th:if="${user.guardType == '04'}">인솔자</button>
+                                th:if="${userInfo.guardType == '02'}">경호원 신청 완료</button>
+                        <button class="mypage_gray_button" type="button" disabled
+                                th:if="${userInfo.guardType == '03'}">수행</button>
+                        <button class="mypage_gray_button" type="button" disabled
+                                th:if="${userInfo.guardType == '04'}">인솔자</button>
                     </div>
                 </div>
             </form>
@@ -211,10 +211,12 @@
     <!-- ✅ 드래그앤드롭 스크립트 -->
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
+            const userInfo = /*[[${userInfo}]]*/ null;
+            const privAgree = document.getElementById('privAgree');
             // CSRF 토큰 전역 설정 (Meta 태그에서 가져오기)
             const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
             const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-        
+
             const idCert = document.getElementById("id_drop");
             const dropCert = document.getElementById("cert_drop");
             const idImage = document.getElementById("idImage");
@@ -224,12 +226,28 @@
             const idPlaceholderMessage = document.getElementById("id_placeholder_message");
             const certPlaceholderMessage = document.getElementById("cert_placeholder_message");
             const certUploadForm = document.getElementById("certForm");
-            
+
             const courseNum = document.getElementById('courseNum');
             const residentNum = document.getElementById('residentNum');
             const residentNumError = document.getElementById('residentNumError');
+            console.log("JavaScript: 사용자 정보", userInfo.privAgree);
+
+            if(userInfo.privAgree == 'Y') {
+                privAgree.checked = true;
+            } else {
+                privAgree.checked = false;
+            }
+
+            if(userInfo.courseNum != "" || userInfo.courseNum != null) {
+                courseNum.disabled = true;
+
+            }
 
             if (residentNum && residentNumError) {
+                if(userInfo.residentNum != "" || userInfo.residentNum != null) {
+                    residentNum.disabled = true;
+                }
+
                 residentNum.addEventListener('input', function(event) {
                     const inputValue = event.target.value;
 
@@ -237,7 +255,7 @@
                     if (/[^0-9]/g.test(inputValue)) {
                         // 1. 빨간색 경고 메시지 출력
                         residentNumError.textContent = "숫자만 입력 가능합니다.";
-                        
+
                         // 2. [선택] 숫자가 아닌 문자는 실시간으로 지워버리고 싶다면 아래 코드 활성화
                         // event.target.value = inputValue.replace(/[^0-9]/g, '');
                     } else {
@@ -246,7 +264,7 @@
                     }
                 });
             }
-            
+
             // --- [1] 미리보기 및 표시 업데이트 함수 ---
             function showPreview(file, type) {
                 const reader = new FileReader();
@@ -263,7 +281,7 @@
                 };
                 reader.readAsDataURL(file);
             }
-        
+
             // --- [2] 드래그 앤 드롭 및 클릭 이벤트 (신분증) ---
             if (idCert && idImage) {
                 idCert.addEventListener("click", () => idImage.click());
@@ -283,7 +301,7 @@
                     if (idImage.files[0]) showPreview(idImage.files[0], "1");
                 });
             }
-        
+
             // --- [3] 드래그 앤 드롭 및 클릭 이벤트 (이수증) ---
             if (dropCert && certImage) {
                 dropCert.addEventListener("click", () => certImage.click());
@@ -302,25 +320,59 @@
                     if (certImage.files[0]) showPreview(certImage.files[0], "2");
                 });
             }
-        
+
             // --- [4] 신분증 & 이수증 비동기 업로드 버튼 ---
             const uploadBtn = document.getElementById('imageUploadBtnBoth');
             if (uploadBtn) {
                 uploadBtn.addEventListener('click', function() {
                     const certFile = certImage?.files[0];
                     const idFile = idImage?.files[0];
-                    
+                    const rNumVal = residentNum.value.trim();
+
                     if (!idFile || !certFile) {
                         alert("신분증과 이수증 이미지를 모두 선택해주세요.");
                         return;
                     }
-        
+
+                    if(!courseNum || !courseNum.value.trim()) {
+                        alert("이수 번호를 입력해 주세요.");
+                        if(courseNum) courseNum.focus();
+                        return;
+                    }
+
+                    // 1. 빈 값 체크
+                    if (rNumVal === "") {
+                        alert("주민등록번호를 입력해주세요.");
+                        residentNum.focus();
+                        return;
+                    }
+
+                    // 2. 형식 및 자릿수 체크 (숫자와 하이픈만 허용, 길이는 13자리 또는 14자리)
+                    const isValidFormat = /^[0-9]+$/.test(rNumVal);
+                    const isValidLength = (rNumVal.length === 13);
+
+                    if (!isValidFormat || !isValidLength) {
+                        alert("주민등록번호는 13자리의 숫자만 입력할 수 있습니다.");
+                        residentNum.focus();
+                        return;
+                    }
+
                     const formData = new FormData();
                     formData.append('idImage', idFile);
                     formData.append('certImage', certFile);
+                    if (userInfo.courseNum == null && userInfo.courseNum == '') {
+                        formData.append('courseNum', courseNum?.value || '');
+                    }
+                    if(userInfo.residentNum == null && userInfo.residentNum == '') {
+                        formData.append('residentNum', residentNum?.value || '');
+                    }
+                    formData.append('residentNum', residentNum?.value || '');
+                    formData.append('privAgree', privAgree?.checked ? 'Y' : 'N');
                     formData.append('id', document.querySelector('input[name="id"]').value);
                     formData.append('userId', document.querySelector('input[name="userId"]').value);
-        
+
+                    console.log("FormData 확인:", formData.get('idImage'), formData.get('certImage'), formData.get('courseNum'), formData.get('residentNum'));
+
                     fetch('/mypage/uploadImage', {
                         method: 'POST',
                         headers: { [csrfHeader]: csrfToken },
@@ -340,12 +392,14 @@
         });
 
         function imageUpload (imageUpload, type) {
+            const userInfo = /*[[${userInfo}]]*/ null;
             const idFile = document.getElementById("idImage")?.files[0];
             const certFile = document.getElementById("certImage")?.files[0];
             const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
             const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
             const formData = new FormData();
-
+            const residentNum = document.getElementById('residentNum')?.value.trim();
+            const courseNum = document.getElementById('courseNum')?.value.trim();
 
             // [수정 포인트 1] 유효성 검사 및 데이터 추가 논리 분리
             if (type === '1') {
@@ -368,9 +422,16 @@
                 formData.append('idImage', idFile);
                 formData.append('certImage', certFile);
             }
-        
+
             formData.append('id', document.querySelector('input[name="id"]').value);
             formData.append('userId', document.querySelector('input[name="userId"]').value);
+            if (userInfo.courseNum == null || userInfo.courseNum.trim() === '') {
+                formData.append('courseNum', courseNum || '');
+            }
+            if(userInfo.residentNum == null || userInfo.residentNum.trim() === '') {
+                formData.append('residentNum', residentNum || '');
+            }
+            formData.append('privAgree', document.getElementById('privAgree')?.checked ? 'Y' : 'N');
 
             fetch('/mypage/uploadImage', {
                 method: 'POST',
@@ -387,14 +448,14 @@
         // --- [5] 이미지 삭제 함수 (전역) ---
         function fileRemove(userId, type) {
             if (!confirm("정말로 이미지를 삭제하시겠습니까?")) return;
-            
+
             const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
             const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-        
+
             const formData = new FormData();
             formData.append('userId', userId);
             formData.append('type', type);
-        
+
             fetch('/mypage/deleteImage', {
                 method: 'POST',
                 headers: { [csrfHeader]: csrfToken },
@@ -452,7 +513,7 @@
                 if(courseNum) courseNum.focus();
                 return;
             }
-            
+
             if (!residentNum || !residentNum.value.trim()) {
                 alert('주민등록번호를 입력하고 경호원 신청 해주세요.');
                 if(residentNum) residentNum.focus();
@@ -470,27 +531,27 @@
                 if (residentNum.value.length != 13) {
                     alert("주민등록번호 13자리를 올바르게 입력해주세요.");
                     if (residentNum) residentNum.focus();
-                    
+
                     // 숫자가 아닌 문자 제거 (선택 사항: 입력 도중 잘못 섞인 문자 정화)
                     residentNum.value = residentNum.value.replace(/[^0-9]/g, '');
                     return false;
                 }
             }
-        
+
             if(!confirm("경호원 신청을 하시겠습니까?")) return;
             // 1. 비활성화 (중복 클릭 방지)
             btnElement.disabled = true;
 
             // 2. 텍스트 변경
             btnElement.innerText = "신청 처리 중...";
-        
+
             const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
             const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
-        
+
             const form = document.getElementById('certForm');
             const formData = new FormData(form);
             formData.append('guardType', param);
-        
+
             fetch('/mypage/applyBodyguard', {
                 method: 'POST',
                 headers: { [csrfHeader]: csrfToken },

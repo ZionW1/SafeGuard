@@ -15,8 +15,8 @@
       font-size: 1.5rem;
       font-weight: 700;
     }
-    
-    
+
+
     label {
       width: 130px;
       font-weight: 600;
@@ -269,8 +269,8 @@ function execDaumPostcode() {
                 </form>
             </div>
         </div>
-    
-        <div id="address_modal_background" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+
+        <div id="address_modal_background" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
         background-color: rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999;">
             <div id="address_search_wrap" style="position:relative; width:90%; max-width:500px; height:460px; background:#fff; border-radius:8px; padding:10px; box-sizing: border-box;">
                 <button onclick="foldDaumPostcode()" style="position:absolute; top:10px; right:10px; z-index:10; cursor:pointer;">✕</button>
@@ -285,6 +285,7 @@ function execDaumPostcode() {
     <!-- ✅ 드래그앤드롭 스크립트 -->
     <script th:inline="javascript">
         const infoForm = document.getElementById("form");
+        console.log("infoForm : " + infoForm);
         infoForm.addEventListener('submit', function(e) {
             e.preventDefault();
             let getAddress = /*[[${getAddress}]]*/ null;
@@ -296,7 +297,7 @@ function execDaumPostcode() {
             const address = document.getElementById("address")?.value || "";
             const csrfTokenTag = document.querySelector('meta[name="_csrf"]');
             const csrfHeaderTag = document.querySelector('meta[name="_csrf_header"]');
-            
+
             if (!csrfTokenTag || !csrfHeaderTag) {
                 alert("보안 토큰을 찾을 수 없습니다.");
                 return;

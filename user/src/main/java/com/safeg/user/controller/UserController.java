@@ -144,6 +144,10 @@ public class UserController {
         String rawPassword = userVO.getPassword();
         userVO.setPassword(passwordEncoder.encode(rawPassword));
 
+        if("on".equals(userVO.getPrivAgree())) {
+            userVO.setPrivAgree("Y");
+        }
+
         int result = userService.join(userVO);
 
         if (result > 0) {
@@ -490,7 +494,7 @@ public class UserController {
         if("on".equals(userVO.getPrivAgree())) {
             userVO.setPrivAgree("Y");
         }
-        
+
         int result = userService.employeeJoin(userVO);
 
         if (result > 0) {

@@ -455,6 +455,10 @@ public class UserController {
     public ResponseEntity<?> employeeJoinPost(@Valid @ModelAttribute("userVO") UserVO userVO, BindingResult bindingResult, HttpServletRequest request) throws Exception {
         log.info(":::::::::: 회원 가입 처리 (Async) :::::::::: " + userVO);
 
+        if(userVO.getUserId() == null || userVO.getUserId().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "아이디를 입력해주세요."));
+        }
+
         // 1. 비밀번호 일치 확인
         if (!userVO.isPasswordConfirmed()) {
             bindingResult.rejectValue("passwordConfirm", "password.mismatch", "비밀번호가 일치하지 않습니다.");
@@ -483,6 +487,10 @@ public class UserController {
         String rawPassword = userVO.getPassword();
         userVO.setPassword(passwordEncoder.encode(rawPassword));
 
+        if("on".equals(userVO.getPrivAgree())) {
+            userVO.setPrivAgree("Y");
+        }
+        
         int result = userService.employeeJoin(userVO);
 
         if (result > 0) {

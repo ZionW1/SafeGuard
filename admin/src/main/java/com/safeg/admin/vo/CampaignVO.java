@@ -97,4 +97,6 @@ public class CampaignVO {
     //private List<CampaignFilesVO> campaignFilesList; //첨부 파일 정보
 
     private String ucChoice;
+
+    private String pointYn;
 }

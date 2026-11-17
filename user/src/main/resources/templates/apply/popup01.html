@@ -1,4 +1,4 @@
-<div id="modalPop" class="modal-dialog modal-lg modal-dialog-scrollable">
+<div id="modalPop" class="modal-dialog modal-lg modal-dialog-scrollable" th:data-selected-date="${dates}">
     <div class="popup-content">
 
         <div class="modal-header">
@@ -14,7 +14,7 @@
             <label class="purpleFont" for="dates">캠페인 기간</label>
             <select id="dates" name="applyDate" onchange="loadUserList(true)" class="sync-nm mrg16 purpleFont dates">
                 <!-- <option value="ALL">전체</option> -->
-                <option th:each="date : ${dates}" th:value="${date}" th:text="${date}"></option>
+                <option th:each="date : ${dateList}" th:value="${date}" th:text="${date}"></option>
             </select>
             <input type="hidden" id="savedKeyword" th:value="${option.keyword}">
             <label class="purpleFont" for="">경호원/진행/수행</label>

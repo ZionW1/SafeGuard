@@ -55,7 +55,7 @@ public class FileController {
     public ResponseEntity<byte[]> getFile(
             @RequestParam(value = "id", required = false) String id,
             @RequestParam(value = "fileName", required = false) String fileName) throws Exception {
-        
+
         String filePath = "";
         String uploadPath = CommonData.getUploadPath(); // 업로드 베이스 경로
 
@@ -65,7 +65,7 @@ public class FileController {
             if (file != null) {
                 filePath = file.getFilePath();
             }
-        } 
+        }
         // 2. 만약 fileName(UUID_파일명)이 직접 들어온 경우 ➡️ Quill 에디터 이미지 조회 로직
         else if (fileName != null && !fileName.isEmpty()) {
             File f = new File(uploadPath, fileName);
@@ -97,7 +97,7 @@ public class FileController {
         if(args == null || args.equals("")) {
             log.warn("Invalid args parameter for selectProfile: {}", args);
             log.info("Invalid args parameter for selectProfile: {}", args);
-            
+
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else if(args.equals("2")) {
             file = fileService.getMypageImage(id, "identification");
@@ -132,7 +132,7 @@ public class FileController {
         File f = new File(filePath);
         // 파일 데이터
         byte[] fileData = FileCopyUtils.copyToByteArray(f);
-        
+
         // 컨텐츠 파일 지정
         // 확장자로 컨텐츠 타입 지정
         // - 확장자 : .jpg, .png ...
@@ -144,7 +144,7 @@ public class FileController {
 
         return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
     }
-    
+
     /**
      * 다운로드
      * @param id
@@ -210,10 +210,10 @@ public class FileController {
         String encodedFileName = URLEncoder.encode(fileInfo.getOriginalName(), StandardCharsets.UTF_8.toString()).replace("+", "%20");
         headers.setContentDispositionFormData("attachment", encodedFileName);
         headers.setContentLength(fileData.length); // 중요!
-        
+
         return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
     }
-    
+
     // 이 헬퍼 메서드는 기존과 동일하게 유지
     private String getContentType(String fileName) {
         String fileExtension = "";
@@ -240,12 +240,12 @@ public class FileController {
 
         try {
             // fileService를 통해 해당 campaignId에 연결된 모든 파일을 ZIP으로 압축한 Resource를 반환받음
-            Resource zipFileResource = fileService.createZipFile(requestData.getCampaignId(), requestData.getCode());
+            Resource zipFileResource = fileService.createZipFile(requestData.getCampaignId(), requestData.getCode(), requestData.getApplyDate());
             String zipFileName = "";
             if("1".equals(requestData.getCode())){
-                zipFileName = URLEncoder.encode(requestData.getCampaignTitle() + "_" + requestData.getCampaignId() + "_신분증_파일묶음.zip", StandardCharsets.UTF_8.toString()).replace("+", "%20");
+                zipFileName = URLEncoder.encode(requestData.getCampaignTitle() + "_" + requestData.getCampaignId() + "_" + requestData.getApplyDate().replaceAll("-", "") + "_신분증_파일묶음.zip", StandardCharsets.UTF_8.toString()).replace("+", "%20");
             } else {
-                zipFileName = URLEncoder.encode(requestData.getCampaignTitle() + "_" + requestData.getCampaignId() + "_이수증_파일묶음.zip", StandardCharsets.UTF_8.toString()).replace("+", "%20");
+                zipFileName = URLEncoder.encode(requestData.getCampaignTitle() + "_" + requestData.getCampaignId() + "_" + requestData.getApplyDate().replaceAll("-", "") + "_이수증_파일묶음.zip", StandardCharsets.UTF_8.toString()).replace("+", "%20");
             }
 
             log.info("캠페인 {} ZIP 파일 다운로드 요청 처리 - 생성된 ZIP 파일: {}", requestData.getCampaignId(), zipFileResource.getFilename());
@@ -310,7 +310,7 @@ public class FileController {
         File f = new File(filePath);
         // 파일 데이터
         byte[] fileData = FileCopyUtils.copyToByteArray(f);
-        
+
         // 컨텐츠 파일 지정
         // 확장자로 컨텐츠 타입 지정
         // - 확장자 : .jpg, .png ...
@@ -326,7 +326,7 @@ public class FileController {
     @GetMapping("/file/excelDownload/{id}/{applyDate}/{timeSegment}")
     public ResponseEntity<byte[]> downloadCampaignApplicationsExcel(@PathVariable("id") String campaignId, @PathVariable("applyDate") LocalDate applyDate, @PathVariable("timeSegment") String timeSegment) throws Exception {
         log.info("downloadCampaignApplicationsExcel " + campaignId);
-        
+
         // 1. DB에서 해당 캠페인의 모든 신청 정보 조회
         // List<UserCampaignVO> applications = userCampaignApplyService.getAllApplicationsForCampaign(campaignId);
         List<UserCampaignVO> applications = fileService.excelFileInfo(campaignId, timeSegment, applyDate);
@@ -347,7 +347,7 @@ public class FileController {
         // 4. HTTP 응답 헤더 설정 (다운로드하도록 유도)
         HttpHeaders headers = new HttpHeaders();
         // 파일명에 캠페인 이름과 ID를 포함하고 한글이 깨지지 않도록 인코딩
-        String fileName = URLEncoder.encode(finalCampaignName + "_신청_목록_" + campaignId + ".xlsx", StandardCharsets.UTF_8);
+        String fileName = URLEncoder.encode(finalCampaignName + "_신청_목록_" + campaignId + "_" + applyDate.toString().replaceAll("-", "") + ".xlsx", StandardCharsets.UTF_8);
 
         // 엑셀 파일 (xlsx) MIME 타입 설정
         headers.setContentType(MediaType.valueOf("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
@@ -356,5 +356,5 @@ public class FileController {
 
         return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
     }
-    
+
 }

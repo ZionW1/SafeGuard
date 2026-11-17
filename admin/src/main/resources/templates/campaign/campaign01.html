@@ -42,12 +42,13 @@
                         <col width="6%"></col>
                         <col width="5%"></col>
                         <col width="5%"></col>
+                        <col width="5%"></col>
                         <col width="7%"></col>
                         <col width="5%"></col>
                         <col width="5%"></col>
                         <col width="6%"></col>
                         <col width="10%"></col>
-                        <col width="12%"></col>
+                        <col width="16%"></col>
                     </colgroup>
                     <thead>
                         <th>ID</th>
@@ -55,6 +56,7 @@
                         <th>캠페인 신청</th>
                         <th>명단 보기</th>
                         <th>상세 보기</th>
+                        <th>적립 유무</th>
                         <th>포인트 유형</th>
                         <th>신청자수</th>
                         <th>모집인원</th>
@@ -84,6 +86,17 @@
                                 </td>
                                 <td class="pointer">
                                     <a th:href="@{/campaign02(id=${campaign.campaignId})}" target="_blank">상세 보기</a>
+                                </td>
+                                <td class="pointer">
+                                    <span th:if="${campaign.pointYn == 'Y'}">
+                                        <!-- style="background-color: #e2f0d9; color: #385723; padding: 3px 8px; border-radius: 4px; font-weight: bold;"> -->
+                                        적립완료
+                                    </span>
+                                    <span th:if="${campaign.pointYn == 'N'}">
+                                        <!-- style="background-color: #fce4d6; color: #c65911; padding: 3px 8px; border-radius: 4px;"> -->
+                                        미적립
+                                    </span>
+                                    <!-- <a th:href="@{/campaign02(id=${campaign.campaignId})}" target="_blank"></a> -->
                                 </td>
                                 <td><span th:text="${campaign.ucChoice}"></span></td>
                                 <td><span th:text="${campaign.applicantsNum}"></span></td>

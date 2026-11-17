@@ -1,0 +1,29 @@
+<div id="modalPop" class="modal-dialog modal-lg modal-dialog-scrollable" th:data-selected-date="${dates}">
+    <div class="popup-content">
+
+        <div class="modal-header">
+        </div>
+        <div class="img-popup">
+            <div th:if="${path == null}">
+                <img class="imgFile" id="imgFile" src="/images/not-image.png" alt="파일이미지" width="50" height="50" th:data-user-no="${userNo}"/>
+            </div>
+            <div class="" th:unless="${path == null}">
+                <!-- <img class="imgFile" id="imgFile" th:src="|/selectProfile?id=${userNo}&args=profile|" alt="파일이미지" width="50" height="50"/> -->
+                <img class="popupImg" id="imgFile"
+                    th:src="|/selectProfile?id=${userNo}&args=profile|"
+                    alt="파일이미지" th:data-user-no="${userNo}" onclick="closeModal('modalPopup')"/>
+                <!-- <img class="imgFile" id="imgFile" th:src="${path}" alt="파일이미지" width="50" height="50" th:data-user-no="${userNo}"/> -->
+            </div>
+            <!-- <div class="userInfo">
+                <div class="userName" th:text="${userCampaign.userName}"></div>
+                <div class="userId" th:text="${userCampaign.userId}"></div>
+                <div class="userCode" th:text="${userCampaign.codeName}"></div>
+                <div class="userApplyDate" th:text="${userCampaign.applyDate}"></div>
+            </div> -->
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="closeModalBtn" onclick="closeModal('modalPopup')">닫기</button>
+        </div>
+    </div>
+</div>
+

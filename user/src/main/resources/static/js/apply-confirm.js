@@ -129,6 +129,7 @@ async function imgDownload(code) {
     const campaignIdToDownload = Number(campaignArea.dataset.campaignId);
     const campaignId = Number(campaignIdDown.dataset.campaignId);
     const campaignTitle = String(campaignTitleDown.dataset.campaignTitle);
+    const applyDate = document.getElementById('applyDate').value;
 
     if (!campaignArea) {
         alert('다운로드할 캠페인 정보를 찾을 수 없습니다.');
@@ -144,6 +145,7 @@ async function imgDownload(code) {
         const requestData = {
             campaignId: campaignId,
             campaignTitle: campaignTitle,
+            applyDate: applyDate,
             code: code
         };
         const response = await fetch('/file/imgDownload', {
@@ -789,6 +791,38 @@ document.getElementById('leaveWorkBtn').addEventListener('click', () => {
     .catch(err => console.error("통신 에러:", err));
 });
 
+document.querySelectorAll('.imgFile').forEach(img => {
+    img.addEventListener('click', function(event) {
+        event.preventDefault(); // 기본 동작 방지
+        const userNo = event.target.dataset.userNo;
+
+        fetch('/apply/profilePopup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(userNo)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('네트워크 응답 실패');
+            return response.text();
+        })
+        .then(html => {
+            // 2. 모달 컨텐츠 영역에 서버에서 가져온 HTML 주입
+            document.getElementById('modalContentUser').innerHTML = html;
+            document.getElementById('modalPopup').style.display = 'flex';
+
+        })
+        .catch(error => {
+            console.error('모달 로드 중 에러 발생:', error);
+            alert('페이지를 불러오는 중 오류가 발생했습니다.');
+        });
+        console.log("userNo : ", userNo);
+    });
+});
+
+
 function openPopup(url) {
     console.log("url : ", url);
     var sendData = {
@@ -818,10 +852,24 @@ function openPopup(url) {
         // 2. 모달 컨텐츠 영역에 서버에서 가져온 HTML 주입
         document.getElementById('modalContentUser').innerHTML = html;
         document.getElementById('modalPopup').style.display = 'flex';
+
         // 💡 [추가] 팝업이 열릴 때 날짜 selectbox의 두 번째 값(index 1)을 기본 선택하고 목록 로드
         const dateSelect = document.getElementById('dates');
+        const serverDate = document.getElementById('modalPop').dataset.selectedDate;
+        console.log("서버에서 받은 날짜:", serverDate);
+        console.log("dateSelect.index:", dateSelect.selectedIndex);
 
+        for(let i = 0; i < dateSelect.options.length; i++) {
+            if(dateSelect.options[i].value === serverDate) {
+                dateSelect.selectedIndex = i; // 서버가 알려준 날짜로 selectbox 선택
+                break;
+            }
+        }
+        // if (dateSelect.selectedOptions[dateSelect.selectedIndex] && serverDate) {
+        //     dateSelect.value = dateSelect.selectedOptions[dateSelect.selectedIndex]; // 서버가 알려준 날짜로 selectbox 선택
+        // }
         // if (dateSelect && dateSelect.options.length > 1) {
+        //     if (dateSelect.value == html.dates)
         //     dateSelect.selectedIndex = 0; // 두 번째 옵션(인덱스 1) 선택
 
         //     // // onchange에 등록된 loadUserList 함수 실행 (또는 이벤트 트리거)
@@ -1180,10 +1228,6 @@ function applyCampaign() {
         applyDateS: applyDate ? applyDate.value : ""
     };
 
-    console.log("sendData : " + JSON.stringify(sendData))
-    console.log("sendData : " + JSON.stringify(sendData.userList[0].userNo))
-    console.log("sendData : " + JSON.stringify(sendData.userList[0].userId))
-
     // 서버로 POST 전송
     fetch('/apply/save', {
         method: 'POST',
@@ -1192,28 +1236,30 @@ function applyCampaign() {
     })
 
     .then(async res => {
-    // 서버에서 보내준 응답을 JSON으로 파싱
-    const data = await res.json();
+        // 서버에서 보내준 응답을 JSON으로 파싱
+        const data = await res.json();
 
-    // 만약 HTTP 상태 코드가 200대(성공)가 아니라면 (예: 400 Bad Request 등)
-    if (!res.ok) {
-        // 서버에서 던진 에러 메시지(data.message)를 담아서 에러를 throw 합니다.
-        throw new Error(data.message || '요청 처리에 실패했습니다.');
-    }
+        // 만약 HTTP 상태 코드가 200대(성공)가 아니라면 (예: 400 Bad Request 등)
+        if (!res.ok) {
+            // 서버에서 던진 에러 메시지(data.message)를 담아서 에러를 throw 합니다.
+            throw new Error(data.message || '요청 처리에 실패했습니다.');
+        }
 
-    return data; // 성공한 경우 데이터를 다음 .then으로 넘김
-})
-.then(result => {
-    // 💡 여기가 성공했을 때만 타는 곳입니다!
-    console.log("반영된 건수:", result);
-    alert("수정 사항 " + result + "건 성공적으로 반영되었습니다.");
-    loadUserList(false); // 리스트 새로고침
-})
-.catch(error => {
-    // 💡 백엔드의 IllegalArgumentException 메시지가 이곳으로 들어옵니다!
-    console.error("에러 발생:", error.message);
-    alert(error.message); // 서비스에서 throw한 에러 메시지가 경고창으로 뜹니다.
-});
+        return data; // 성공한 경우 데이터를 다음 .then으로 넘김
+    })
+    .then(result => {
+        // 💡 여기가 성공했을 때만 타는 곳입니다!
+        console.log("반영된 건수:", result);
+        alert("수정 사항 " + result + "건 성공적으로 반영되었습니다.");
+        // loadUserList(false); // 리스트 새로고침
+        window.location.href = `/apply/userCampaignApply/${campaignId}?date=${selectedDate}`;
+        refreshPage(currentDate); // 페이지 새로고침 함수 호출
+    })
+    .catch(error => {
+        // 💡 백엔드의 IllegalArgumentException 메시지가 이곳으로 들어옵니다!
+        console.error("에러 발생:", error.message);
+        alert(error.message); // 서비스에서 throw한 에러 메시지가 경고창으로 뜹니다.
+    });
 
     // .then(res => res.json())
     // .then(result => {
@@ -1253,6 +1299,7 @@ function cancelCampaign(campaignId) {
             campaignId: campaignId,
             timeSegment: timeSegment,
             userNos: usersToCancel, // [34, 43] 형태로 전송
+            applyDate: document.getElementById('dates').value,
             eventPeriodStr: apply[0].eventPeriodStr,
             eventPeriodEnd: apply[0].eventPeriodEnd
             // 만약 날짜 정보도 필요하다면 dto에 맞게 추가 (예: eventPeriodStr, eventPeriodEnd 등)
@@ -1270,6 +1317,7 @@ function cancelCampaign(campaignId) {
         .then(data => {
             alert("선택한 유저의 신청 취소가 완료되었습니다.");
             // location.reload(); // 화면 새로고침
+            refreshPage(currentDate); // 페이지 새로고침 함수 호출
         })
         .catch(error => {
             console.error("취소 처리 중 에러:", error);
@@ -1279,9 +1327,17 @@ function cancelCampaign(campaignId) {
     }
 }
 
-function loadUserList(isDateChanged = false) {
-    console.log("loadUserList")
+function refreshPage(applyDate) {
+        // 2. 현재 페이지의 경로(pathname)를 활용해 동적으로 URL 생성
+        // 예: /apply/userCampaignApply/52 또는 /apply/applyConfirm/52
+        const currentPath = window.location.pathname;
+        const url = `${currentPath}?date=${applyDate}`;
 
+        // 3. 페이지 이동 (새로고침)
+        window.location.href = url;
+    }
+
+function loadUserList(isDateChanged = false) {
     const applyDate = document.getElementById('dates').value;
     // const selectedCode = document.querySelector('input.code-radio:checked')?.value || '';
     const keyword = document.getElementById('keyword');

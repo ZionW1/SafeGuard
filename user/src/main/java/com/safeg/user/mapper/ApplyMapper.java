@@ -97,4 +97,8 @@ public interface ApplyMapper {
     public List<UserVO> dateSelect(@Param("campaignId") Long campaignId, @Param("code") String code, @Param("keyword") String keywordㅊ, @Param("applyDate") String applyDate) throws Exception;
 
     public int save(Map<String,Object> paramMap) throws Exception;
+
+    public List<String> getUsers(@Param("campaignId") Long campaignId, @Param("applyDate") String applyDate, @Param("timeSegment") String timeSegment);
+
+    public String profilePopup(@Param("userNo") String userNo) throws Exception;
 }

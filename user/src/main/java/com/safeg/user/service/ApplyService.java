@@ -63,4 +63,6 @@ public interface ApplyService {
 
     public int save(CampaignVO dto) throws Exception;
 
+    public String profilePopup(String userNo) throws Exception;
+
 }

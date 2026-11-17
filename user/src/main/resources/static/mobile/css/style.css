@@ -34,6 +34,7 @@ body {
     margin-bottom: 20px;
     font-size: 14px;
     color: #4a148c;
+    line-height: 1.4;
 }
 .section {
     background: white;
@@ -178,10 +179,15 @@ body {
 .btn-area-confirm {
     align-items: center;
     width: 100%;
-    margin: 5px auto 15px;
+    margin: 10px auto 15px;
     display: flex;
     justify-content: center;
     gap: 10px;
+}
+
+.popupImg {
+    width: 100%;
+    height: auto;
 }
 
 .btn-area-significant {
@@ -189,17 +195,6 @@ body {
     width: 100%;
     margin: 5px auto 15px;
 }
-
-.btn-area-confirmA {
-    align-items: center;
-    width: 100%;
-    margin: 20px auto 15px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-
 .btn-purple {
     width: 19.1%;
     padding: 12px;
@@ -385,6 +380,21 @@ body {
     position:relative;
 }
 
+.img-modal-box {
+    background:#fff;
+    padding:20px;
+    border-radius:8px;
+    width:400px;
+    max-width:90%;
+    height: 80%;
+    position:relative;
+}
+
+.img-popup {
+    max-height: 80vh; /* 화면 높이의 60%까지만 자람 */
+    overflow-y: auto; /* 데이터가 넘치면 세로 스크롤바 자동 생성 */
+}
+
 .close-popup {
     position: absolute;
     top: 10px;
@@ -539,14 +549,6 @@ body {
         background-color: #fff0fb;
         color: #333;
         padding: 10px;
-    }
-    .notice-box {
-        background-color: #e7c5f7;
-        border-radius: 12px;
-        padding: 15px;
-        margin-bottom: 20px;
-        font-size: 14px;
-        color: #4a148c;
     }
     .section {
         background: white;

@@ -882,18 +882,13 @@
         WHERE
             campaign_id = #{campaignId}
         AND
+            apply_date = #{applyDate}
+        AND
             time_segment = #{timeSegment}
-        AND (
-            <foreach collection="userNoList" item="userNo" index="i" separator="OR">
-
-                    user_no = #{userNo}
-                    AND apply_date IN
-                    <foreach collection="datesInRange" item="date" open="(" close=")" separator=",">
-                        #{date}
-                    </foreach>
-
-            </foreach>
-        )
+        AND user_no IN
+        <foreach collection="userNoList" item="userNo" open="(" close=")" separator=",">
+            #{userNo}
+        </foreach>
     </update>
 
     <!-- <select id="getPay" resultType="int"> -->
@@ -1114,6 +1109,38 @@
             u.user_nm, u.id
     </select>
 
+    <select id="getUsers" resultType="String">
+        SELECT
+            user_no
+        FROM
+            user_campaign uc
+        WHERE
+            uc.campaign_id = #{campaignId}
+        AND
+            uc.apply_date = #{applyDate}
+        AND
+            uc.time_segment = #{timeSegment}
+        AND
+            uc.is_deleted = 'N'
+        UNION
+        SELECT
+            user_no
+        FROM
+            camp_leader cl
+        LEFT OUTER JOIN
+            campaign c
+        ON
+            cl.campaign_id = c.campaign_id
+        AND
+            c.time_segment = #{timeSegment}
+        WHERE
+            cl.campaign_id = #{campaignId}
+        AND
+            cl.apply_date = #{applyDate}
+        AND
+            cl.is_deleted = 'N'
+    </select>
+
     <insert id="save" parameterType="map">
         INSERT INTO user_campaign (
             campaign_id,
@@ -1162,4 +1189,17 @@
             AND cl.apply_date = item.applyDate
         )
     </insert>
+
+    <select id="profilePopup" resultType="String">
+        SELECT
+            file_path
+        FROM
+            files
+        WHERE
+            target_type = 'profile'
+        AND
+            target_id = #{userNo}
+        AND
+            is_deleted = 'N'
+    </select>
 </mapper>

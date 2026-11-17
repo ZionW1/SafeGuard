@@ -48,12 +48,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             user_no
         FROM user_campaign
         WHERE campaign_id = #{id}
+        AND apply_date = #{applyDate}
         AND is_deleted = 'N'
         UNION
         SELECT
             user_no
         FROM camp_leader
         WHERE campaign_id = #{id}
+        AND apply_date = #{applyDate}
         AND is_deleted = 'N'
     </select>
 

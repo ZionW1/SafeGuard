@@ -605,5 +605,31 @@ public class CampaignController {
         }
         // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @GetMapping("/campaign10")
+    public String campaign10(@AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {
+        List<CampaignVO> campaignsList = campaignService.campaignMonthList(option, page);
+        model.addAttribute("campaignsList", campaignsList);
+        model.addAttribute("option", option);
+        model.addAttribute("rows", page.getRows());
+        model.addAttribute("page", page);
+
+        String pageUrl = UriComponentsBuilder.fromPath("/campaign01")
+                        //.queryParam("page", page.getPage())
+                        .queryParam("keyword", option.getKeyword())
+                        .queryParam("code", option.getCode())
+                        // .queryParam("rows", page.getRows())
+                        .queryParam("orderCode", option.getOrderCode())
+                        .build()
+                        .toUriString();
+        model.addAttribute("pageUrl", pageUrl);
+
+        if(authUser != null){
+            UserVO user = authUser.getUserVo();
+            model.addAttribute("user", user);
+        }
+
+        return "campaign/campaign10";
+    }
 }
 

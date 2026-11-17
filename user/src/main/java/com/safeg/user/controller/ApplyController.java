@@ -1,6 +1,7 @@
 package com.safeg.user.controller;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -574,8 +575,9 @@ public class ApplyController {
     @PostMapping("/popup01/{campaignId}")
     public String popup01(@PathVariable("campaignId") Long campaignId, @RequestBody CampaignVO dto, Option option,
             Model model) throws Exception {
-        log.info("popup01 : " + dto);
         log.info("dto.getApplyDateS : " + dto.getApplyDateS() + ", dto.getApplyDate : " + dto.getApplyDate());
+
+        List<LocalDate> dateList = dto.getEventPeriodStr().datesUntil(dto.getEventPeriodEnd().plusDays(1)).collect(Collectors.toList());
 
         // 1. applyDateS가 "ALL"이 아닌 경우, applyDate를 LocalDate로 변환
         List<UserVO> userInfoList = applyService.userInfoList(campaignId, option, LocalDate.parse(dto.getApplyDate()));
@@ -587,7 +589,8 @@ public class ApplyController {
         model.addAttribute("campaignTitle", dto.getCampaignTitle());
         model.addAttribute("campaignId", campaignId);
         model.addAttribute("userInfoList", userInfoList);
-        model.addAttribute("dates", dates);
+        model.addAttribute("dateList", dateList);
+        model.addAttribute("dates", dto.getApplyDate());
         model.addAttribute("option", option);
 
         return "apply/popup01";
@@ -864,5 +867,20 @@ public class ApplyController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
         // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @PostMapping("/profilePopup")
+    // @ResponseBody
+    // @PathVariable("campaignId") String campaignId
+    public String profilePopup(Model model, @RequestBody String userNo) throws Exception {
+        log.info("profilePopup : " + userNo);
+        String path = applyService.profilePopup(userNo);
+        if (userNo != null) {
+            userNo = userNo.replace("\"", "").trim();
+        }
+        model.addAttribute("path", path);
+        model.addAttribute("userNo", userNo);
+
+        return "apply/popup03";
     }
 }

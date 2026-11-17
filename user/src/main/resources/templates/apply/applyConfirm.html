@@ -11,6 +11,7 @@
 <body class="bodyApplyConfirm">
     <input type="hidden" id="workHour" name="workHour" th:value="${workHour}">
     <input type="hidden" id="wageChk" name="wageChk" th:value="${wageChk}">
+    <input type="hidden" id="applyDate" name="applyDate" th:value="${currentDate}">
 
     <div th:if="${not #lists.isEmpty(apply)}">
         <div id="campaignArea" th:data-campaign-id="${apply[0].campaignId}">
@@ -18,7 +19,7 @@
                 <div id="campaignTitleDown" th:data-campaign-title="${apply[0].campaignTitle}">
                     <div class="notice-box">
                         <h2 th:if="${apply != null}" th:text="${apply[0].campaignTitle}"></h2>
-                        <strong>신청자 / 모집인 수 : </strong><strong th:text="${apply[0].applicantsNum}"></strong> / <strong th:text="${apply[0].recruitmentNum}"></strong><br />
+                        <strong>신청자 / 모집인 수 : </strong><strong th:text="${#lists.size(apply)}"></strong> / <strong th:text="${apply[0].recruitmentNum}"></strong><br />
                         <strong>업체명 : </strong><strong th:text="${apply[0].companyNm}"></strong><br>
                         <strong> 담당자 번호 : </strong><strong th:text="${apply[0].companyPh}"></strong></p>
                         <p><strong>기간</strong><br />
@@ -75,11 +76,11 @@
                         <div class="width100" th:unless="${userCampaign.status=='8' || userCampaign.status=='9'}">
                             <div th:if="${userCampaign == null or userCampaign.filePath == null}">
                                 <input type="checkbox" class="chkSelect chkSelectUser" name="Attendance" th:data-user-no="${userCampaign.userNo}" th:data-user-id="${userCampaign.userId}" th:data-campaign-id="${userCampaign.campaignId}" th:data-apply-date="${userCampaign.applyDate}">
-                                <img id="imgFile" src="/images/not-image.png" alt="파일이미지" width="50" height="50" />
+                                <img class="imgFile" id="imgFile" src="/images/not-image.png" alt="파일이미지" width="50" height="50" th:data-user-no="${userCampaign.userNo}"/>
                             </div>
                             <div class="" th:unless="${userCampaign.filePath == null}">
                                 <input type="checkbox" class="chkSelect chkSelectUser" name="Attendance" th:data-user-no="${userCampaign.userNo}" th:data-user-id="${userCampaign.userId}" th:data-campaign-id="${userCampaign.campaignId}" th:data-apply-date="${userCampaign.applyDate}">
-                                <img id="imgFile" th:src="|/selectProfile?id=${userCampaign.userNo}&args=profile|" alt="파일이미지" width="50" height="50" />
+                                <img class="imgFile" id="imgFile" th:src="|/selectProfile?id=${userCampaign.userNo}&args=profile|" alt="파일이미지" width="50" height="50" th:data-user-no="${userCampaign.userNo}"/>
                             </div>
                             <div style="margin-left: 95px; margin-top: -60px;">
                                 <span class="userInfofont" th:text="${userCampaign.userNm}"></span>/
@@ -90,7 +91,7 @@
                                     <button th:onclick="initStatus([[${index}]], [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], '1')" th:class="|btn-state mrg5 button_status${stat.index}|">초기화</button>
                                 </div>
                             </div>
-                            <div class="btn-area-confirmA">
+                            <div class="btn-area-confirm">
                                 <a th:class="|statusInfoChange applyConfirmButotn button_status${stat.index}|" href="#" data-status="1" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">출근</a>
                                 <a th:class="|statusInfoChange applyConfirmButotn button_status${stat.index}|" href="#" data-status="2" th:onclick="updateAttendanceStatus(this.dataset.status, [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], [[${index}]])">퇴근</a>
                                 <a th:class="|statusInfoChange applyConfirmButotn button_status${stat.index}|"
@@ -121,11 +122,11 @@
                         <div th:if="${leader.status=='8' || leader.status=='9'}">
                             <div th:if="${leader.filePath == null}">
                                 <input type="checkbox" class="chkSelect chkSelectLeader" name="Attendance"th:data-user-no="${leader.userNo}" th:data-user-id="${leader.userId}" th:data-campaign-id="${leader.campaignId}" th:data-apply-date="${leader.applyDate}">
-                                <img id="imgFile" src="/images/not-image.png" alt="파일이미지" width="50" height="50" />
+                                <img class="imgFile" id="imgFile" src="/images/not-image.png" alt="파일이미지" width="50" height="50" th:data-user-no="${leader.userNo}"/>
                             </div>
                             <div class="width100" th:unless="${leader.filePath == null}">
                                 <!-- <input type="checkbox" class="chkSelect chkSelectLeader" name="Attendance"th:data-user-no="${leader.userNo}" th:data-user-id="${leader.userId}" th:data-campaign-id="${leader.campaignId}" th:data-apply-date="${leader.applyDate}"> -->
-                                <img id="imgFile" th:src="|/selectProfile?id=${leader.userNo}&args=profile|" alt="파일이미지" width="50" height="50" />
+                                <img class="imgFile" id="imgFile" th:src="|/selectProfile?id=${leader.userNo}&args=profile|" alt="파일이미지" width="50" height="50" th:data-user-no="${leader.userNo}"/>
                             </div>
                             <div style="margin-left: 55px; margin-top: -60px;">
                                 <span class="userInfofont" th:text="${leader.userNm}"></span>/
@@ -133,7 +134,7 @@
                                 <button th:onclick="initStatus([[${index}]], [[${currentUserNo}]], [[${campaignId}]], [[${applyDate}]], '2')" th:class="|btn-state mrg5 button_status${stat.index}|">초기화</button>
                             </div>
                                 <div th:with="leaderUserNo=${leader.userNo}, leaderStatus=${leader.status}, leaderCampaignId=${leader.campaignId}, leaderApplyDate=${leader.applyDate}">
-                                    <div class="btn-area-confirmA">
+                                    <div class="btn-area-confirm">
                                         <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|"  th:data-user-no="${leader.userNo}" th:data-status="9" th:data-campaign-id="${leader.campaignId}" th:data-apply-date="${leader.applyDate}" th:onclick="leaveWork(this)">퇴근</a>
                                         <a th:class="|statusInfoChange statusInfoChangeConfirm button_status${stat.index}|" href="#" th:data-url="@{/apply/significant/{userNo}/{userId}/{campaignId}/{applyDate}(userNo=${currentUserNo}, userId=${userId}, campaignId=${campaignId}, applyDate=${applyDate})}" th:data-status="3" th:data-status-now="${leader.status}" onclick="openSignificantModal(this); return false;">특이사항</a>
                                     </div>
@@ -166,6 +167,14 @@
     <!-- 1. 유저 선택/등록 팝업 -->
     <div id="modalPopup" class="modal">
         <div id="userBox" class="modal-box">
+            <span onclick="closeModal('modalPopup');" class="close-popup">&times;</span>
+            <div id="modalContentUser"></div>
+        </div>
+    </div>
+
+    <!-- 이미지 확대 팝업 -->
+    <div id="imgPopup" class="modal">
+        <div id="userBox" class="img-modal-box">
             <span onclick="closeModal('modalPopup');" class="close-popup">&times;</span>
             <div id="modalContentUser"></div>
         </div>

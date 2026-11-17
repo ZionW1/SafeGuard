@@ -187,7 +187,7 @@ public class FileServiceImpl implements FileService{
 
     @Override
     // ⭐⭐ 새로 추가되는 ZIP 파일 생성 메서드 ⭐⭐
-    public Resource createZipFile(Long campaginId, String code) throws Exception {
+    public Resource createZipFile(Long campaginId, String code, String applyDate) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         log.info("넘어온 값 : " + code + ", " + campaginId);
         try (ZipOutputStream zos = new ZipOutputStream(baos)) {
@@ -196,7 +196,7 @@ public class FileServiceImpl implements FileService{
 
             // 해당 userNo에 연결된 모든 fileId 목록을 조회
             // 캠페인 번호로 유저 번호 조회
-            List<Long> fileIdsForUser = fileMapper.userList(campaginId); // 예시: 'PROFILE'
+            List<Long> fileIdsForUser = fileMapper.userList(campaginId, applyDate); // 예시: 'PROFILE'
 
             log.info("UserNo: {} 에 대해 조회된 fileIds: {}", campaginId, fileIdsForUser);
 

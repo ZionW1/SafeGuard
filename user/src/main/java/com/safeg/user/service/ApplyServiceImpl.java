@@ -332,11 +332,7 @@ public class ApplyServiceImpl implements ApplyService {
         if (applyDate != null && !"ALL".equals(applyDate.toString())) {
             dateParam = applyDate; // "2026-10-14" 형태의 문자열을 LocalDate로 파싱
         }
-        // applyDate = null; // applyDateS를 null로 초기화하여 ALL 처리
-        log.info("userInfoList called with campaignId: {}, option: {}, applyDate: {}", campaignId, option, dateParam);
-
         List<UserVO> userInfoList = applyMapper.userInfoList(campaignId, option, dateParam);
-        log.info("userInfoList : " + userInfoList);
 
         return userInfoList;
     }
@@ -477,18 +473,12 @@ public class ApplyServiceImpl implements ApplyService {
             .limit(endDate.toEpochDay() - startDate.toEpochDay() + 1)
             .collect(Collectors.toList());
 
-        log.info("userNoList : " + userNoList);
-        log.info("datesInRange " + datesInRange);
         // 4. 각 날짜별로 DB에 삽입할 DTO 객체 생성
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("campaignId", dto.getCampaignId());
         paramMap.put("timeSegment", dto.getTimeSegment());
-        // paramMap.put("eventPeriodStr", dto.getEventPeriodStr());
-        // paramMap.put("eventPeriodEnd", dto.getEventPeriodEnd());
-
         paramMap.put("userNoList", dto.getUserNos()); // [43, 34]
-        // paramMap.put("userIdList", dto.getUserIds()); // [admin123, test01]
-        paramMap.put("datesInRange", datesInRange);    // [2026-06-26]
+        paramMap.put("applyDate", dto.getApplyDate());    // [2026-06-26]
 
         log.info("paramMap + " + paramMap);
 
@@ -524,15 +514,44 @@ public class ApplyServiceImpl implements ApplyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(CampaignVO dto) throws Exception {
-        log.info("save : ");
+        log.info("save : " + dto.toString());
         // 2단계: [등록] 위의 for문(검증)을 에러 없이 '완전히' 통과했다면 중복이 없는 것입니다.
         // 이제 안전하게 하나씩 insert를 진행합니다.
+        int result = 0;
+        int cancelCount = 0; // 취소 처리된 건수
+        int insertCount = 0; // 신규 등록된 건수
+
         Long campaignId = dto.getCampaignId();
         List<String> userNoList = dto.getUserNos();
         List<String> userIdList = dto.getUserIds();
 
         LocalDate startDate = dto.getEventPeriodStr(); // 예: "2026-01-19" -> LocalDate
         LocalDate endDate = dto.getEventPeriodEnd();   // 예: "2026-01-21" -> LocalDate
+
+        List<String> existingUsers = applyMapper.getUsers(dto.getCampaignId(), dto.getApplyDate(), dto.getTimeSegment());
+
+        List<String> usersToCancel = existingUsers.stream()
+            .filter(userNo -> !userNoList.contains(userNo))
+            .collect(Collectors.toList());
+
+        log.info("usersToCancel : " + usersToCancel);
+
+        if (!usersToCancel.isEmpty()) {
+            log.info("취소할 유저 내역이 있습니다. 취소 처리 진행 중...");
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("campaignId", dto.getCampaignId());
+            paramMap.put("timeSegment", dto.getTimeSegment());
+            paramMap.put("userNoList", usersToCancel); // [43, 34]
+            paramMap.put("applyDate", dto.getApplyDate());    // [2026-06-26]
+
+            log.info("paramMap + " + paramMap);
+
+            cancelCount = applyMapper.userCancel(paramMap);
+            // log.info("신청 취소 처리된 유저 수: " + usersToCancel.size());
+            log.info("신청 취소 처리된 유저 수: " + cancelCount);
+        } else {
+            log.info("취소할 유저 내역이 없습니다.");
+        }
 
         List<LocalDate> datesInRange = Stream.iterate(startDate, date -> date.plusDays(1))
                                             // startDate와 endDate 모두 포함
@@ -541,6 +560,7 @@ public class ApplyServiceImpl implements ApplyService {
         log.info("datesInRange : " + datesInRange);
 
         List<Map<String, Object>> insertList = new ArrayList<>();
+
         // datesInRange는 이미 자바단에 계산되어 있는 [2026-07-06, 2026-07-07...] 리스트
         log.info("equals(dto.getApplyDateS() : " + "ALL".equals(dto.getApplyDateS()) + ", dto.getApplyDateS() : " + dto.getApplyDateS());
         if ("ALL".equals(dto.getApplyDateS())) {
@@ -577,30 +597,44 @@ public class ApplyServiceImpl implements ApplyService {
         // paramMap.put("datesInRange", datesInRange);    // [2026-06-26]
         // paramMap.put("applyDate", dto.getApplyDateS());
 
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("campaignId", dto.getCampaignId());
-        paramMap.put("timeSegment", dto.getTimeSegment());
-        paramMap.put("appPeriodStr", dto.getAppPeriodStr());
-        paramMap.put("appPeriodEnd", dto.getAppPeriodEnd());
-        paramMap.put("eventPeriodStr", dto.getEventPeriodStr());
-        paramMap.put("eventPeriodEnd", dto.getEventPeriodEnd());
-        paramMap.put("insertList", insertList); // 🔥 2중 구조를 하나로 푼 이 리스트만 던집니다!
+        if (insertList != null && !insertList.isEmpty()) {
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("campaignId", dto.getCampaignId());
+            paramMap.put("timeSegment", dto.getTimeSegment());
+            paramMap.put("appPeriodStr", dto.getAppPeriodStr());
+            paramMap.put("appPeriodEnd", dto.getAppPeriodEnd());
+            paramMap.put("eventPeriodStr", dto.getEventPeriodStr());
+            paramMap.put("eventPeriodEnd", dto.getEventPeriodEnd());
+            paramMap.put("insertList", insertList); // 🔥 2중 구조를 하나로 푼 이 리스트만 던집니다!
 
-        log.info("paramMap + " + paramMap);
+            insertCount = applyMapper.save(paramMap);
+            log.info("실제 신규 등록된 건수: " + insertCount + "건");
+        }
 
-        int result = applyMapper.save(paramMap);
+        int totalProcessed = cancelCount + insertCount;
 
-        log.info("총 " + insertList.size() + "명 중, 실제 신규 등록된 건수: " + result + "건");
-        // log.info("result + " + result);
-
-        if(result > 0) {
+        if (totalProcessed > 0) {
+            // 취소되었거나 새로 등록된 건이 단 하나라도 있다면 인원수 갱신 실행!
             applyMapper.updateApplicantsNum(campaignId);
         }
 
-        // log.info("총 등록된 날짜별 데이터 건수: " + result);
-
-        // 모든 작업이 성공적으로 끝나면 성공 메시지 반환
-        return result;
+        // 총 처리된 건수(취소 + 신규)를 그대로 반환! (0이면 0이 반환됨)
+        return totalProcessed;
     }
 
+    public String profilePopup(String userNo) throws Exception {
+        // TODO Auto-generated method stub
+        log.info("--- profilePopup 서비스 진입 ---");
+        log.info("전달받은 userNo: " + userNo);
+        if (userNo != null) {
+            userNo = userNo.replace("\"", "").trim();
+        }
+
+        log.info("정제된 userNo: [" + userNo + "]");
+
+        String path = applyMapper.profilePopup(userNo);
+
+        log.info("DB에서 조회된 최종 path 값: [" + path + "]");
+        return path;
+    }
 }

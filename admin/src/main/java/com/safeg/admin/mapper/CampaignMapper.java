@@ -46,7 +46,7 @@ public interface CampaignMapper {
 
     public List<CampaignVO> noApplicant(@Param("option") Option option, @Param("page") Page page);
 
-    public int campNotApplyCount(@Param("option") Option option, @Param("page") Page page) throws Exception;
+    public int noApplicantCount(@Param("option") Option option, @Param("page") Page page) throws Exception;
 
     public int updateExpiredCampaignsStatus() throws Exception;
 

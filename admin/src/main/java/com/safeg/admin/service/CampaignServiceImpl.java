@@ -235,7 +235,7 @@ public class CampaignServiceImpl implements CampaignService{
         // TODO Auto-generated method stub
         log.info(":::::::::: CampaignsServiceImpl.list() ::::::::::");
 
-        int total = campNotApplyCount(option, page);
+        int total = noApplicantCount(option, page);
         log.info(":::::::::: total :::::::::: " + total);
         page.setTotal(total);
 
@@ -244,9 +244,10 @@ public class CampaignServiceImpl implements CampaignService{
         return list;
     }
 
-    private int campNotApplyCount(Option option, Page page) throws Exception{
+    // @Override 
+    private int noApplicantCount(Option option, Page page) throws Exception{
         // TODO Auto-generated method stub
-        return campaignMapper.campNotApplyCount(option, page);
+        return campaignMapper.noApplicantCount(option, page);
     }
 
     @Transactional(rollbackFor = Exception.class) // 모든 예외에 대해 롤백 설정

@@ -710,11 +710,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         LIMIT #{page.index}, #{page.rows}
     </select>
 
-    <select id="campNotApplyCount" resultType="int">
+    <select id="noApplicantCount" resultType="int">
         SELECT COUNT(*)
         FROM campaign c
         WHERE is_deleted = 'N'
-        AND applicants_num = 0
+        AND NOT EXISTS (
+            SELECT 1
+            FROM user_campaign uc
+            WHERE uc.campaign_id = c.campaign_id
+            AND uc.is_deleted = 'N'
+        )
         <if test="option.keyword != null and option.keyword != ''">
             <choose>
                 <when test="option.code == 0">

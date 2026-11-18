@@ -249,7 +249,7 @@ public class CampaignController {
     // 선정인원 없는 캠페인 목록
     @GetMapping("/campaign07")
     public String campaign07(Model model, Option option, Page page) throws Exception{
-        List<CampaignVO> campaign07 = campaignService.campaign07(option, page);
+        List<CampaignVO> campaign07 = campaignService.noApplicant(option, page);
 
         model.addAttribute("campaignsList", campaign07);
         model.addAttribute("option", option);

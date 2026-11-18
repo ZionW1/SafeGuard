@@ -34,7 +34,7 @@ public interface CampaignService {
 
     public List<CampaignVO> securityType() throws Exception;
 
-    public List<CampaignVO> campaign07(Option option, Page page) throws Exception;
+    public List<CampaignVO> noApplicant(Option option, Page page) throws Exception;
 
     public int updateExpiredCampaigns() throws Exception;
 

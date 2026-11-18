@@ -220,7 +220,7 @@ public class CampaignServiceImpl implements CampaignService{
     }
 
     @Override
-    public List<CampaignVO> campaign07(Option option, Page page) throws Exception {
+    public List<CampaignVO> noApplicant(Option option, Page page) throws Exception {
         // TODO Auto-generated method stub
         log.info(":::::::::: CampaignsServiceImpl.list() ::::::::::");
 
@@ -228,7 +228,7 @@ public class CampaignServiceImpl implements CampaignService{
         log.info(":::::::::: total :::::::::: " + total);
         page.setTotal(total);
 
-        List<CampaignVO> list = campaignMapper.campaign07(option, page);
+        List<CampaignVO> list = campaignMapper.noApplicant(option, page);
 
         return list;
     }

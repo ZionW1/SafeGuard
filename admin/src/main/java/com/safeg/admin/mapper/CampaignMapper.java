@@ -42,7 +42,7 @@ public interface CampaignMapper {
 
 	public List<CampaignVO> securityType() throws Exception;
 
-    public List<CampaignVO> campaign07(@Param("option") Option option, @Param("page") Page page);
+    public List<CampaignVO> noApplicant(@Param("option") Option option, @Param("page") Page page);
 
     public int campNotApplyCount(@Param("option") Option option, @Param("page") Page page) throws Exception;
 

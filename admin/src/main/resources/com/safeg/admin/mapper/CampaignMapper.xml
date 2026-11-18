@@ -642,12 +642,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         campaign_id = #{id}
     </update>
 
-    <select id="campaign07" resultType="CampaignVO">
-        select c.campaign_Id,
+    <select id="noApplicant" resultType="CampaignVO">
+        select
+            c.campaign_Id,
             place_addr,
             campaign_title,
             DATE_FORMAT(created_at, '%Y.%m.%d') created_at,
-            applicants_Num,
+            <!-- (SELECT count(*) from user_campaign where campaign_id = #{campaignId}), -->
+            result_date,
             recruitment_Num
         from campaign c
         where
@@ -666,7 +668,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             leader_code like CONCAT('%', #{option.keyword}, '%')
         </if>
         and is_deleted = 'N'
-        and applicants_num = 0
+        AND NOT EXISTS (
+            SELECT 1
+            FROM user_campaign uc
+            WHERE uc.campaign_id = c.campaign_id
+            AND uc.is_deleted = 'N'
+        )
         <if test="option.orderCode == 0">
             order by campaign_Id desc
         </if>

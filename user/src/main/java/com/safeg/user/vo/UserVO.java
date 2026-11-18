@@ -146,6 +146,7 @@ public class UserVO {
     private String stop_date;
     private String memo;
     private String authId;
+    private String authCd;
     private Long fileId;
     private int count;
     private int pay;

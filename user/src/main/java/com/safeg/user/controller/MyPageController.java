@@ -222,7 +222,6 @@ public class MyPageController {
     @ResponseBody
     public Map<String, Object> applyBodyguard(@AuthenticationPrincipal CustomUser authUser, @ModelAttribute UserVO userVO, Model model) throws Exception{
         Map<String, Object> response = new HashMap<>();
-        log.info("applyBodyguard userVO : " + userVO.toString());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int result = 0;
 
@@ -660,14 +659,14 @@ public class MyPageController {
             log.info("referrerPoint: " + referrerPoint);
 
             List<UserCampaignVO> leaderPayList = null;
-            String authId = null;
+            String authCd = null;
             int leaderPoint = 0;
 
-            if ((campaignIds != null && !campaignIds.isEmpty())&& "03".equals(campaignIds.get(0).getAuthId())){
-                authId = campaignIds.get(0).getAuthId();
-                log.info("authId: " + authId);
+            if ((campaignIds != null && !campaignIds.isEmpty())&& "03".equals(campaignIds.get(0).getAuthCd())){
+                authCd = campaignIds.get(0).getAuthCd();
+                log.info("authCd: " + authCd);
 
-                if ("03".equals(authId)) {
+                if ("03".equals(authCd)) {
                     log.info("campaignIds size: " + campaignIds.size());
                     leaderPayList = myPageService.leaderPayList(id, campaignIds);
                     if (leaderPayList != null && !leaderPayList.isEmpty()) {
@@ -688,7 +687,7 @@ public class MyPageController {
             int pointFull = myPageService.pointFull(id);
             int totalPoint = workPoint + referrerPoint + leaderPoint;
 
-            log.info("authID: " + authId);
+            log.info("authCd: " + authCd);
 
             log.info("totalPoint: " + totalPoint);
             LocalDate today = LocalDate.now();
@@ -699,7 +698,7 @@ public class MyPageController {
             model.addAttribute("today", todayStr);
 
             model.addAttribute("pointList", pointList != null ? pointList : Collections.emptyList());
-            model.addAttribute("authId", authId);
+            model.addAttribute("authCd", authCd);
             model.addAttribute("referrerPayList", referrerPayList != null ? referrerPayList : Collections.emptyList());
             model.addAttribute("id", id);
             model.addAttribute("pointFull", pointFull);
@@ -748,10 +747,10 @@ public class MyPageController {
         int lAmt = 0; // 리더 금액 초기화
         int opAmt = parseAmount(myPageService.overPayAmount(userNo, targetMonth));
 
-        // 4. 권한(authId)에 따른 추가 로직 처리
+        // 4. 권한(authCd)에 따른 추가 로직 처리
         String userAuth = myPageService.getUserAuth(userNo);
         if (userAuth != null && !userAuth.isEmpty()) {
-            model.addAttribute("authId", userAuth);
+            model.addAttribute("authCd", userAuth);
 
             if ("03".equals(userAuth)) {
                 List<PointHistoryVO> leaderList = myPageService.leaderList(userNo, targetMonth);

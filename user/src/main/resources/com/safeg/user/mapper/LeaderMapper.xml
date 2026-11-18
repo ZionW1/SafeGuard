@@ -34,7 +34,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         AND f.target_type = 'profile'
         AND f.is_deleted = 'N'
         WHERE
-            u.role = 'LEADER'
+            u.role = 'ROLE_LEADER'
+        AND
+            u.guard_type = '04'
         AND
             u.is_deleted = 'N'
     </select>

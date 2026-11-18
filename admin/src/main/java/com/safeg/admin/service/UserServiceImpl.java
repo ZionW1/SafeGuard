@@ -113,12 +113,11 @@ public class UserServiceImpl implements UserService{
     @Transactional
     // 01 = admin, 02 = user, 03 = leader
     // 02로 변경
-    public int userUpdate(Long id) throws Exception{
+    public int userUpdate(UserVO userVO) throws Exception{
         // TODO Auto-generated method stub
-        String idStr = String.valueOf(id);
-        int result = userMapper.userUpdate(idStr, "USER", "02");
+        String idStr = String.valueOf(userVO.getId());
+        int result = userMapper.userUpdate(idStr, "ROLE_USER", "02");
         if( result > 0 ){
-            log.info("userUpdate 성공");
             int result1 = userMapper.userAuthUpdate(idStr, "ROLE_USER", "02");
             log.info("userAuthUpdate 성공 : " + result1);
         } else {
@@ -131,19 +130,17 @@ public class UserServiceImpl implements UserService{
     @Transactional
     // 01 = admin, 02 = user, 03 = leader
     // 03로 변경
-    public int userLeaderUpdate(Long id) throws Exception{
+    public int userLeaderUpdate(UserVO userVO) throws Exception{
         // TODO Auto-generated method stub
-        log.info("userLeaderUpdate impl 호출 : " + id);
-        String idStr = String.valueOf(id);
-        int result = userMapper.userUpdate(idStr, "LEADER", "03");
+        String idStr = String.valueOf(userVO.getId());
+        int result = userMapper.userUpdate(idStr, "ROLE_LEADER", "04");
+        int result1 = 0;
         if( result > 0 ){
-            log.info("userUpdate 성공");
-            int result1 = userMapper.userAuthUpdate(idStr, "ROLE_LEADER", "03");
-            log.info("userAuthUpdate 성공 : " + result1);
+            result1 = userMapper.userAuthUpdate(idStr, "ROLE_LEADER", "04");
         } else {
             log.info("userUpdate 실패");
         }
-        return result;
+        return result1;
     }
 
     @Override
@@ -198,6 +195,7 @@ public class UserServiceImpl implements UserService{
     public void guardTypeChange(UserVO userVO) throws Exception {
         // TODO Auto-generated method stub
         userMapper.guardTypeChange(userVO);
+        userMapper.authChange(userVO);
     }
 
     @Override

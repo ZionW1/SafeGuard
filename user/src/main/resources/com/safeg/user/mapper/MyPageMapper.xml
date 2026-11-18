@@ -169,7 +169,7 @@
             c.time_segment,
             u.pay,
             c.leader_code,
-            u.auth_id
+            u.auth_cd
             FROM user_campaign uc
         LEFT OUTER JOIN
         campaign c
@@ -200,7 +200,7 @@
             c.time_segment,
             u.pay,
             c.leader_code,
-            u.auth_id
+            u.auth_cd
             FROM camp_leader cl
         LEFT OUTER JOIN
         campaign c
@@ -290,7 +290,7 @@
             uc.user_no,
             uc.status,
             uc.apply_date,
-            u.auth_id
+            u.auth_cd
         FROM
             user_campaign uc
         LEFT OUTER JOIN
@@ -613,7 +613,7 @@
     </select>
 
     <select id="getUserAuth" resultType="String">
-        SELECT auth_id
+        SELECT auth_cd
         FROM user
         WHERE id = #{userNo}
         AND is_deleted = 'N'

@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="phoneNum" column="phone_num" />
         <result property="gradeId" column="grade_id" />
         <result property="roleCd" column="role_cd" />
-        <result property="authId" column="auth_id" />
+        <result property="authCd" column="auth_cd" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAt" column="updated_at" />
         <result property="enabled" column="enabled" />
@@ -124,13 +124,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.account_number,
             u.created_at,
             u.updated_at,
-            u.auth_id,
+            u.auth_cd,
             (CASE
-                WHEN auth_id = '01' THEN 'ROLE_ADMIN'
-                WHEN auth_id = '02' THEN 'ROLE_USER'
+                WHEN auth_cd = '01' THEN 'ROLE_ADMIN'
+                WHEN auth_cd = '02' THEN 'ROLE_USER'
+                WHEN auth_cd = '03' THEN 'ROLE_LEADER'
                 ELSE 'X'
             END) AS auth
-        FROM user u 
+        FROM user u
         WHERE u.user_id = #{id}
     </select>
 </mapper>

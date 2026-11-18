@@ -166,7 +166,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             u.account_number,
             u.created_at,
             u.updated_at,
-            u.auth_id,
+            u.auth_cd,
             u.point_id,
             ua.address_Id,
             u.referrer_no,
@@ -177,8 +177,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ua.full_Address,
             u.course_num,
             (CASE
-                WHEN u.auth_id = '01' THEN 'ROLE_ADMIN'
-                WHEN u.auth_id = '02' THEN 'ROLE_USER'
+                WHEN u.auth_cd = '01' THEN 'ROLE_ADMIN'
+                WHEN u.auth_cd = '02' THEN 'ROLE_USER'
+                WHEN u.auth_cd = '03' THEN 'ROLE_LEADER'
                 ELSE 'X'
             END) AS auth,
             r.user_id AS referrer_id  -- 추천인 user_id
@@ -195,7 +196,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="userJoin" parameterType="UserVO" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO
-            user (user_id, user_nm, password, email, auth_id, role)
+            user (user_id, user_nm, password, email, auth_cd, role)
         VALUES
             (#{userId}, #{userNm}, #{password}, #{email}, '01', 'Admin')
     </insert>
@@ -244,7 +245,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         UPDATE user
         SET
             role = #{authRole},
-            auth_id = #{authCode},
+            auth_cd = #{authCode},
+            guard_type = #{authCode},
             updated_at = NOW()
         WHERE id = #{id}
         AND is_deleted = 'N'
@@ -261,8 +263,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="userLeaderUpdate">
         UPDATE user
         SET
-            role = 'LEADER',
-            auth_id = '03',
+            role = 'ROLE_LEADER',
+            auth_cd = '03',
             guard_type = '04'
             updated_at = NOW()
         WHERE id = #{id}
@@ -332,7 +334,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         UPDATE user
         SET
             guard_type = #{guardType},
+            auth_cd = #{guardType},
+            role = #{role},
             updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="authChange" parameterType="UserVO">
+        UPDATE user_auth
+        SET
+            auth_cd = #{guardType},
+            auth = #{role}
         WHERE id = #{id}
     </update>
 

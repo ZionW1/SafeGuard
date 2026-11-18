@@ -30,7 +30,7 @@
         <result property="filePath" column="file_path" />
         <collection property="authList" resultMap="authMap"></collection>
     </resultMap>
-        
+
     <resultMap type="UserAuth" id="authMap">
         <result property="no" column="no" />
         <result property="id" column="id" />
@@ -41,7 +41,7 @@
 
     <!-- 회원 조회 - id -->
     <select id="select" resultMap="userMap">
-        SELECT 
+        SELECT
             u.id,
             u.user_id,
             u.password,
@@ -55,21 +55,21 @@
             u.account_number,
             u.created_at,
             u.updated_at,
-            u.auth_id,
+            u.auth_cd,
             guard_type,
             full_Address,
             u.phone_hash,
             memo,
             (CASE
-                WHEN auth_id = '01' THEN 'ROLE_ADMIN'
-                WHEN auth_id = '02' THEN 'ROLE_USER'
-                WHEN auth_id = '03' THEN 'ROLE_LEADER'
+                WHEN auth_cd = '01' THEN 'ROLE_ADMIN'
+                WHEN auth_cd = '02' THEN 'ROLE_USER'
+                WHEN auth_cd = '03' THEN 'ROLE_LEADER'
                 ELSE 'X'
             END) AS auth,
             f.file_path file_path
-        FROM 
-            user u 
-        LEFT OUTER JOIN 
+        FROM
+            user u
+        LEFT OUTER JOIN
             user_address ua
         ON u.id = ua.user_id
 		and ua.is_deleted ='N'
@@ -93,7 +93,7 @@
     </insert>
 
     <update id="mypageUpdate">
-        update user set 
+        update user set
             nickname = #{nickname},
             email = #{email},
             phone = #{phone},

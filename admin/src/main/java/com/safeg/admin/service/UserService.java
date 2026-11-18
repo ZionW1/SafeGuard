@@ -19,9 +19,9 @@ public interface UserService {
 
     public int userRemove(String id) throws Exception;
 
-    public int userUpdate(Long id) throws Exception;
+    public int userUpdate(UserVO userVO) throws Exception;
 
-    public int userLeaderUpdate(Long id) throws Exception;
+    public int userLeaderUpdate(UserVO userVO) throws Exception;
 
     public int userStop(Long id) throws Exception;
 

@@ -54,6 +54,8 @@ public interface UserMapper {
 
     public void guardTypeChange(UserVO userVO) throws Exception;
 
+    public void authChange(UserVO userVO) throws Exception;
+
     public Long referrerId(String referrerId) throws Exception;
 
     public void resetAllUserApply() throws Exception;

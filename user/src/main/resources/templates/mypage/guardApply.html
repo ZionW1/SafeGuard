@@ -187,8 +187,7 @@
                     <hr style="margin: 20px 0; border: 0.5px solid #eee;">
                     <h1>경호원 신청</h1>
                     <div class="form-row">
-                        <button id="applyBtn" class="mypage_button_width" type="button"
-                                onclick="ApplyBodyguard(this, '01')"
+                        <button id="applyBtn" class="mypage_button_width" type="button" onclick="ApplyBodyguard(this, '01')"
                                 th:if="${userInfo.guardType == '00'}">경호원 신청하기</button>
                         <button class="mypage_gray_button" type="button" disabled
                                 th:if="${userInfo.guardType == '01'}">경호원 신청 중</button>

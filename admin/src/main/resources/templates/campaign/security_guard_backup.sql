@@ -450,7 +450,7 @@ CREATE TABLE `user` (
   `POINT_ID` int NOT NULL DEFAULT '0' COMMENT '포인트 ID',
   `COMMON_ID` varchar(2) DEFAULT NULL COMMENT '공통코드 ID',
   `ADDRESS_ID` varchar(5) DEFAULT NULL COMMENT '주소 ID',
-  `AUTH_ID` varchar(50) DEFAULT NULL COMMENT '권한 ID',
+  `auth_CD` varchar(50) DEFAULT NULL COMMENT '권한 ID',
   `STOP_DATE` date DEFAULT NULL COMMENT '이용 정지 일자',
   `MEMO` text COMMENT '메모',
   `FILE_ID` varchar(255) DEFAULT NULL COMMENT '첨부 파일 ID',

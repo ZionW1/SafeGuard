@@ -271,7 +271,7 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         try {
             // 일반 유저로 변경하는 서비스 로직 호출
-            userService.userUpdate(userVO.getId()); // 또는 userVO를 넘겨서 처리
+            userService.userUpdate(userVO); // 또는 userVO를 넘겨서 처리
             response.put("success", true);
             response.put("message", "사용자가 성공적으로 일반 유저로 변경되었습니다.");
         } catch (Exception e) {
@@ -288,7 +288,7 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         try {
             // 일반 유저로 변경하는 서비스 로직 호출
-            userService.userLeaderUpdate(userVO.getId()); // 또는 userVO를 넘겨서 처리
+            userService.userLeaderUpdate(userVO); // 또는 userVO를 넘겨서 처리
 
             response.put("success", true);
             response.put("message", "사용자가 성공적으로 일반 유저로 변경되었습니다.");

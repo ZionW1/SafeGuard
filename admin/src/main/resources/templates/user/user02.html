@@ -178,35 +178,32 @@
                     </div>
                     <div class="mgl439per">
                         <span th:if="${userSelect.guardType == '00' || userSelect.guardType == '01'}">
-                            <button type="button" class="stop-btn" onclick="guardTypeChnage('02')">경호원 변경</button>
+                            <button type="button" class="stop-btn" onclick="guardTypeChange('02')">경호원 변경</button>
                         </span>
                         <span th:if="${userSelect.guardType == '02'}">
-                            <button type="button" class="stop-btn" onclick="guardTypeChnage('03')">수행 변경</button>
+                            <button type="button" class="stop-btn" onclick="guardTypeChange('03')">수행 변경</button>
                         </span>
                         <span th:if="${userSelect.guardType == '03'}">
-                            <button type="button" class="stop-btn" onclick="guardTypeChnage('02')">경호원 변경</button>
+                            <button type="button" class="stop-btn" onclick="guardTypeChange('02')">경호원 변경</button>
                         </span>
-                        <button type="button"
-                        class="stop-btn"
-                        th:if="${userSelect != null && #strings.equalsIgnoreCase(#strings.trim(userSelect.role), 'LEADER')}"
-                        onclick="userUpdate()">일반 유저 변경</button>
-                        <button type="button"
-                        class="stop-btn"
-                        th:unless="${userSelect != null && #strings.equalsIgnoreCase(#strings.trim(userSelect.role), 'LEADER')}"
-                        onclick="leaderUpdate()">인솔자 변경</button>
+                        <span th:if="${userSelect.guardType == '04'}">
+                            <button type="button" class="stop-btn" onclick="guardTypeChange('02')">경호원 변경</button>
+                        </span>
+                        <button type="button" class="stop-btn" th:if="${userSelect != null && #strings.equalsIgnoreCase(#strings.trim(userSelect.role), 'ROLE_LEADER')}" onclick="userUpdate()">일반 유저 변경</button>
+                        <button type="button" class="stop-btn" th:unless="${userSelect != null && #strings.equalsIgnoreCase(#strings.trim(userSelect.role), 'ROLE_LEADER')}" onclick="leaderUpdate()">인솔자 변경</button>
                         <button type="button" class="stop-btn" th:if="${userSelect.isStopped == 'N'}" onclick="userStop()">정지하기</button>
                         <button type="button" class="stop-btn" th:unless="${userSelect.isStopped == 'N'}" onclick="userUnstop()">정지풀기</button>
                     </div>
 
                     <div class="mgl32per">
                         <span th:if="${userSelect.guardType == '00' || userSelect.guardType == '01'}">
-                            <button type="button" class="stop-btn" onclick="guardTypeChnage('02')">경호원 변경</button>
+                            <button type="button" class="stop-btn" onclick="guardTypeChange('02')">경호원 변경</button>
                         </span>
                         <span th:if="${userSelect.guardType == '02'}">
-                            <button type="button" class="stop-btn" onclick="guardTypeChnage('03')">수행 변경</button>
+                            <button type="button" class="stop-btn" onclick="guardTypeChange('03')">수행 변경</button>
                         </span>
                         <span th:if="${userSelect.guardType == '03'}">
-                            <button type="button" class="stop-btn" onclick="guardTypeChnage('02')">경호원 변경</button>
+                            <button type="button" class="stop-btn" onclick="guardTypeChange('02')">경호원 변경</button>
                         </span>
                         <button type="button" class="stop-btn" th:if="${userSelect.role == 'LEADER'}" onclick="userUpdate()">일반 유저 변경</button>
                         <button type="button" class="stop-btn" th:unless="${userSelect.role == 'LEADER'}" onclick="leaderUpdate()">인솔자 변경</button>
@@ -235,7 +232,6 @@
 
         function userRemove() {
             // const id = /*[[${userSelect.id}]]*/ '';
-            console.log(id);
             if(!confirm('이 사용자를 삭제하시겠습니까?')){
                 return;
             }
@@ -246,44 +242,22 @@
 
         // userUpdate 함수 수정 (fetch API 사용)
         function userUpdate(){
-            // userUpdate() 함수는 보통 'id' 파라미터를 받거나, form에서 'id' input의 value를 읽어와야 할 거야.
-            // 현재 코드에서는 console.log(id); 로 'id' 변수를 쓰고 있는데, 이 'id'가 어디서 오는지 코드상으로 명확하지 않아서 일단 전역 변수라고 가정할게!
-            // 아니면 hidden input의 값을 읽어올 수도 있어. 예시: document.getElementById('id').value;
+            const url = '/admin/user05';
+            const userId = document.getElementById('id').value; // <input type="hidden" name="id" id="id" ...> 에서 id 값을 가져옴
+            const form = document.getElementById('form');
+            const formData = new FormData(form);
 
             if(!confirm('이 사용자를 일반 유저로 변경하시겠습니까?')){
                 return;
             }
 
-            // 변경된 action URL (POST 요청)
-            const url = '/admin/user05';
-
-            // FormData 객체를 사용하여 form 데이터를 쉽게 구성
-            // <form id="form" ...> 태그의 모든 입력 필드 데이터를 자동으로 담아줘
-
-            // 만약 authRole, authCode 같은 값을 추가로 보내야 한다면 formData.append()를 사용
-            // formData.append('authRole', 'ROLE_USER');
-            // formData.append('authCode', '02');
-            const userId = document.getElementById('id').value; // <input type="hidden" name="id" id="id" ...> 에서 id 값을 가져옴
-            const form = document.getElementById('form');
-            const formData = new FormData(form);
-
-            fetch(url, {
+            fetch (url, {
                 method: 'POST', // 요청 방식은 POST
                 headers: {
                     // 'Content-Type': 'application/json',
                     [csrfHeader]: csrfToken
-                    // 만약 스프링 시큐리티를 사용하고 있다면 CSRF 토큰도 헤더에 추가해야 할 수 있어.
-                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
                 },
                 body: formData
-                // FormData 객체를 body에 바로 전달 (Content-Type 헤더는 자동으로 'multipart/form-data'로 설정됨)
-                            // 만약 application/json 형식으로 보내고 싶다면:
-                            // headers: { 'Content-Type': 'application/json' },
-                            // body: JSON.stringify({
-                            //    id: userId,
-                            //    authRole: 'ROLE_USER',
-                            //    authCode: '02'
-                            // })
             })
             .then(response => {
                 // 응답이 성공적인지 확인 (HTTP 상태 코드 200-299)
@@ -465,22 +439,25 @@
             });
         }
 
-        function guardTypeChnage(param){
+        function guardTypeChange(param){
+            let role = "";
             if(param === '02'){
+                role = "ROLE_USER"
                 if(!confirm('이 사용자를 경호원으로 변경하시겠습니까?')){
                     return;
                 }
             } else {
+                role = "ROLE_ESCORT"
                 if (!confirm('이 사용자를 수행 유저로 변경하시겠습니까?')){
                     return;
                 }
             }
 
             const url = '/admin/user09';
-
             const userId = document.getElementById('id').value;
             const form = document.getElementById('form');
             const formData = new FormData(form);
+            formData.append("role", role);
             formData.append('guardType', param);           // '01' 값을 bodyguardType 필드에 추가
 
             fetch(url, {

@@ -59,8 +59,9 @@ public class UserVO {
     private String stop_date;
     private String memo;
     private String authId;
+    private String authCd;
     private Long fileId;
-    
+
     private String address;
 	private String detail;
 	private String name;
@@ -81,7 +82,7 @@ public class UserVO {
     private String passwordResetKey;
     private String passwordResetRequestedAt;
 
-    
+
     private List<UserAuth> authList;
     private MultipartFile image; // 첨부 파일 목록
     private MultipartFile certImage;
@@ -103,7 +104,7 @@ public class UserVO {
     private String referrerId;
 
     private int pendingPoint;
-    
+
     private String courseNum;
     private String residentNum;
     private String privAgree;

@@ -69,15 +69,15 @@
             u.account_number,
             u.created_at,
             u.updated_at,
-            u.auth_id,
+            u.auth_cd,
             guard_type,
             full_address,
             u.phone_hash,
             memo,
             (CASE
-                WHEN auth_id = '01' THEN 'ROLE_ADMIN'
-                WHEN auth_id = '02' THEN 'ROLE_USER'
-                WHEN auth_id = '03' THEN 'ROLE_LEADER'
+                WHEN auth_cd = '01' THEN 'ROLE_ADMIN'
+                WHEN auth_cd = '02' THEN 'ROLE_USER'
+                WHEN auth_cd = '03' THEN 'ROLE_LEADER'
                 ELSE 'X'
             END) AS auth,
             u.course_num,
@@ -110,7 +110,7 @@
             phone_num,
             phone_hash,
             referrer_no,
-            auth_id,
+            auth_cd,
             role,
             priv_agree,
             guard_type

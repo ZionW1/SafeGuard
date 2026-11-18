@@ -63,7 +63,7 @@ public class UserCampaignVO {
     private int pay;
 
     private String authId;
-
+    private String authCd;
 
     private Long pointId;
     private int amount;

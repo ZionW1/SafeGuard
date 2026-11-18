@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- namespace="매퍼 인터페이스 경로" --> 
+<!-- namespace="매퍼 인터페이스 경로" -->
 <mapper namespace="com.safeg.admin.mapper.LeaderMapper">
     <resultMap type="UserVO" id="leaderMap">
         <result property="userId" column="user_id" />
@@ -14,7 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <select id="leaderSelect" resultType="AdminContentVO">
-        SELECT 
+        SELECT
             Admin_Content_id,
             title,
             content,
@@ -22,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             author,
             created_at,
             updated_at
-        FROM 
+        FROM
             Admin_Content
         where
             is_active = 'Y'
@@ -31,9 +31,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <insert id="leaderInsert" parameterType="AdminContentVO">
-        INSERT INTO Admin_Content 
-            (content, title, author, content_type, user_no) 
-        VALUES 
+        INSERT INTO Admin_Content
+            (content, title, author, content_type, user_no)
+        VALUES
             (#{content}, #{title}, #{author}, 'LEADER', #{userNo});
     </insert>
 
@@ -50,12 +50,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="leaderList" resultMap="leaderMap">
-        SELECT 
+        SELECT
             *
-        FROM 
+        FROM
             user
-        where
-            role = 'LEADER'
+        WHERE
+            role = 'ROLE_LEADER'
+        AND
+            guard_type = '04'
         AND
             is_deleted = 'N'
     </select>

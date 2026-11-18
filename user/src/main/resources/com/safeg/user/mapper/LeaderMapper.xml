@@ -42,15 +42,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="leaderSelect" resultType="AdminContentVO">
-        <!-- SELECT
-            content
-        FROM
-            Admin_Content
-        where
-            is_active = 'Y'
-            and content_type='LEADER'
- -->
-
         SELECT
             Admin_Content_id,
             title,

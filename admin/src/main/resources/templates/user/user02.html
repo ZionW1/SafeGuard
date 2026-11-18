@@ -117,10 +117,10 @@
                     <label>추천인</label>
                     <!-- <textarea name="memo" id="memo" rows="4" th:text="${userSelect.memo}"></textarea> -->
                     <span th:if="${#strings.isEmpty(userSelect?.referrerId)}">
-                        <input type="text" name="referrerId" id="referrerId" value="" placeholder="메모를 입력하세요" />
+                        <input type="text" name="referrerId" id="referrerId" value="" placeholder="추천인을 입력하세요" />
                     </span>
                     <span th:unless="${#strings.isEmpty(userSelect?.referrerId)}">
-                        <input type="text" name="referrerId" id="referrerId" th:value="${userSelect.referrerId}" placeholder="메모를 입력하세요" />
+                        <input type="text" name="referrerId" id="referrerId" th:value="${userSelect.referrerId}" placeholder="추천인을 입력하세요" />
                     </span>
                 </div>
                 <div class="form-row">

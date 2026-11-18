@@ -343,7 +343,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             phone_num
         FROM
             user
-        WHERE role = 'LEADER';
+        WHERE role = 'ROLE_LEADER'
+        AND guard_type = '04'
 <!--
         Select cl.no, cl.user_id, cl.user_no, u.phone_num u.user_nm
         FROM camp_leader cl

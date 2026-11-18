@@ -81,7 +81,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 ELSE 'X'
             END) AS type_nm,
             leader_code,
-            <!-- u.user_nm, -->
             app_period_str,
             app_period_end,
             event_period_str,

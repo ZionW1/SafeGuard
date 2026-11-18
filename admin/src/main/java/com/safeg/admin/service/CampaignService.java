@@ -16,6 +16,8 @@ public interface CampaignService {
 
     public List<CampaignVO> campaignMonthList(Option option, Page page) throws Exception;
 
+    public int campaignMonthCount(Option option, Page page) throws Exception;
+
     public int campaignCount(Option option, Page page) throws Exception;
 
     public CampaignVO campaignSelect(String campaignId) throws Exception;

@@ -614,7 +614,7 @@ public class CampaignController {
         model.addAttribute("rows", page.getRows());
         model.addAttribute("page", page);
 
-        String pageUrl = UriComponentsBuilder.fromPath("/campaign01")
+        String pageUrl = UriComponentsBuilder.fromPath("/campaign10")
                         //.queryParam("page", page.getPage())
                         .queryParam("keyword", option.getKeyword())
                         .queryParam("code", option.getCode())

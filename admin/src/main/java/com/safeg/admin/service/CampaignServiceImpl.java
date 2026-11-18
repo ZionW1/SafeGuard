@@ -52,12 +52,23 @@ public class CampaignServiceImpl implements CampaignService{
     }
 
     public List<CampaignVO> campaignMonthList(Option option, Page page) throws Exception {
-        return campaignMapper.campaignMonthList(option, page);
+        int total = campaignMonthCount(option, page);
+        log.info(":::::::::: total :::::::::: " + total);
+        page.setTotal(total);
+
+        List<CampaignVO> list = campaignMapper.campaignMonthList(option, page);
+
+        return list;
     }
 
     @Override
     public int campaignCount(Option option, Page page) throws Exception {
         return campaignMapper.campaignCount(option, page);
+    }
+
+    @Override
+    public int campaignMonthCount(Option option, Page page) throws Exception {
+        return campaignMapper.campaignMonthCount(option, page);
     }
 
     @Override

@@ -24,6 +24,8 @@ public interface CampaignMapper {
 
     public int campaignCount(@Param("option") Option option, @Param("page") Page page) throws Exception;
 
+    public int campaignMonthCount(@Param("option") Option option, @Param("page") Page page) throws Exception;
+
     public CampaignVO campaignSelect(@Param("id") String id) throws Exception;
 
     public int campaignInsert(CampaignVO campaignsVO) throws Exception;

@@ -477,11 +477,6 @@ public class ApplyController {
             @PathVariable("userNo") List<Long> userNo, @PathVariable("userId") List<String> userId,
             @PathVariable("campaignId") int campaignId, @PathVariable("applyDate") String applyDate, Model model)
             throws Exception {
-        log.info(";;;;;;;;;;;III : " + userNo);
-        log.info(";;;;;;;;;;;III userNo.size : " + userNo.size());
-        log.info(";;;;;;;;;;;III : " + userId);
-        log.info(";;;;;;;;;;;III userId.size : " + userId.size());
-
         if (userNo.size() <= 1) {
             PointHistoryVO getUserSgnf = applyService.getUserSgnf(campaignId, userNo, applyDate);
 

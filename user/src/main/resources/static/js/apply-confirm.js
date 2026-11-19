@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function openChkPopup(url) {
     // 1. 서버에 해당 url의 HTML 내용을 요청
+    console.log("processAttendance : " + url)
     fetch(url)
         .then(response => {
             if (!response.ok) throw new Error('네트워크 응답 실패');
@@ -61,7 +62,6 @@ function openChkPopup(url) {
             document.getElementById('modalContent').innerHTML = html;
             // 3. 모달 display를 flex로 바꿔서 화면에 노출
             document.getElementById('significantModal').style.display = 'flex';
-
         })
         .catch(error => {
             console.error('모달 로드 중 에러 발생:', error);
@@ -582,6 +582,7 @@ function processAttendance(statusValue) {
 
         // 최종적으로 요청할 동적 URL 생성
         const targetUrl = `/apply/significant/${userNoStr}/${userIdStr}/${campaignId}/${applyDate}`;
+        console.log("processAttendance : " + targetUrl)
 
         // 작성하신 함수 호출! (HTML 조각을 받아와 모달을 열어줌)
         openChkPopup(targetUrl);

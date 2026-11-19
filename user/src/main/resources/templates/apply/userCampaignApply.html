@@ -105,12 +105,6 @@
                         </div>
                     </div>
                 </div>
-                <div id="applyModal" onclick="closeModal(event)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
-                    <div style="background:#fff; padding:20px; border-radius:8px; width:400px; max-width:90%; position:relative;">
-                        <span onclick="closeSignificantModal();" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
-                        <div id="modalContent"></div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -189,7 +183,7 @@
     </div>
 
     <!-- 2. 특이사항 입력 팝업 -->
-    <div id="significantModal" class="modal" onclick="closeModal(event, 'significantModal');">
+    <div id="significantModal" class="modal">
         <div id="significantBox" class="modal-box">
             <span onclick="closeModal('significantModal');" class="close-popup">&times;</span>
             <div id="modalContent"></div>

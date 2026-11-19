@@ -244,7 +244,7 @@ public class CampaignServiceImpl implements CampaignService{
         return list;
     }
 
-    // @Override 
+    // @Override
     private int noApplicantCount(Option option, Page page) throws Exception{
         // TODO Auto-generated method stub
         return campaignMapper.noApplicantCount(option, page);
@@ -829,7 +829,7 @@ public class CampaignServiceImpl implements CampaignService{
 
                 if (vacantSeats > 0) {
                     // 억울하게 잘려 있는 사람 목록을 가져와서 다시 'N'으로 부활시킨다!
-                    sourceDate = (oldDateSize > 0) ? newDates.get(oldDateSize - 1) : null;
+                    sourceDate = (newDates != null && !newDates.isEmpty() && oldDateSize > 0) ? newDates.get(Math.min(oldDateSize - 1, newDates.size() - 1)) : null;
 
                     List<Long> targetUserNos = campaignMapper.targetUserNos(campaignId, timeSegment, vacantSeats, sourceDate);
 

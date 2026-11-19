@@ -726,10 +726,11 @@
         th:src="${campaignSelect == null || #lists.isEmpty(campaignSelect.leaderList) ? '/images/not-image.png' : '/selectProfile?id=' + campaignSelect.leaderList[0].leaderNo + '&amp;args=profile'}"
             alt="파일이미지"
             class="profile_img"/><br>
-        <br>
+        <div>
             <div>신청기간 : <span th:text="${campaignSelect.appPeriodStr}"></span> ~<span th:text="${campaignSelect.appPeriodEnd}"></span></div>
             <!-- <div>결과발표 : <span th:text="${campaignSelect.resultDate}">11.03</span></div> -->
             <div>행사 날짜 : <span th:text="${campaignSelect.eventPeriodStr}"></span> ~<span th:text="${campaignSelect.eventPeriodEnd}"></span></div>
+        </div>
         <br>
         <div id="calendar">
         </div>

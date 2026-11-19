@@ -1832,7 +1832,7 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     width: 80vw;
 }
 .profile_img {
-    width: 60%;
+    width: 50%;
     height: 250px;
     margin: 0 auto;
     display: block;

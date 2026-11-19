@@ -785,6 +785,7 @@ document.getElementById('leaveWorkBtn').addEventListener('click', () => {
         if(data.success) {
             alert("🎉 퇴근 포인트 적립 및 업데이트가 " + data.message + "건 완료되었습니다!");
             // location.reload();
+            document.getElementById("leaveWorkBtn").disabled = true;
         } else {
             alert(`❌ 실패: ${data.message}`);
         }

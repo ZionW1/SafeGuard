@@ -670,6 +670,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         campaign_id = #{id}
     </update>
 
+    <update id="leaderDelete">
+        update camp_leader set
+            is_deleted = 'Y',
+            status = '8',
+            apply_date = NULL,
+            updated_at = NOW()
+        where
+        campaign_id = #{id}
+    </update>
+
     <select id="noApplicant" resultType="CampaignVO">
         select
             c.campaign_Id,
@@ -750,7 +760,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 is_active = 'N',
                 updated_at = NOW()
             WHERE
-                result_date < CURDATE()
+                result_date <= CURDATE()
             AND is_active = 'Y'
         ]]>
     </update>
@@ -804,7 +814,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             END) as type_nm,
             applicants_Num,
             recruitment_Num,
-            result_date,
+            DATE_FORMAT(c.result_date, '%Y-%m-%d') AS result_date,
             u.user_nm,
             c.app_period_str,
             c.app_period_end,
@@ -812,18 +822,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.event_Period_End,
             u.phone_num leader_Phone
         FROM campaign c
+        LEFT OUTER JOIN camp_leader cl
+            ON c.CAMPAIGN_ID = cl.CAMPAIGN_ID
         LEFT OUTER JOIN user u
-        ON c.leader_code = u.id
-        where
-        c.is_deleted = 'N'
+            ON cl.user_no = u.id
+        WHERE
+            c.is_deleted = 'N'
         AND c.is_active = 'N'
-        order by campaign_Id desc
+        AND c.result_date = CURDATE()
+        ORDER BY campaign_Id DESC
     </select>
-
-
-
-
-
 
     <update id="reApplyLeader" parameterType="UserCampaignVO">
         UPDATE camp_leader

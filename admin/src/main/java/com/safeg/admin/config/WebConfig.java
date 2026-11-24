@@ -26,10 +26,10 @@ public class WebConfig implements WebMvcConfigurer {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        log.info("addResourceHandlers " + " addResourceHandlers registry + " + registry);
+        
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:" + path)
                 .setCachePeriod(0);
     }
-    
+
 }

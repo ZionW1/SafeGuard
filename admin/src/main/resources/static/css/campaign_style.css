@@ -1,0 +1,33 @@
+.img-area {
+    margin: -30px 0 -15px 0;
+}
+
+.img-box {
+    border: 2px dashed #b594ff;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    width: 90.5%
+}
+
+.btn-update {
+    flex: 1;
+    height: 48px;
+    background-color: #bfa2db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-delete {
+    flex: 1;
+    height: 48px;
+    background-color: #d8b4e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}

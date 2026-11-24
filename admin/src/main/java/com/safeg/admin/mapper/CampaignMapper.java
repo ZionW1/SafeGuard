@@ -40,6 +40,8 @@ public interface CampaignMapper {
 
     public int applyDelete(String id) throws Exception;
 
+    public int leaderDelete(String id) throws Exception;
+
     public int insertSchedule(CampaignVO campaignsVO);
 
 	public List<CampaignVO> securityType() throws Exception;

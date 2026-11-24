@@ -168,8 +168,7 @@ footer {
 }
 .main-content {
     flex: 1;
-    padding: 10px;
-    margin-top: 40px;
+    padding: 0 20px;
     overflow-y: auto;
     flex-grow: 1;
     float: right;
@@ -177,6 +176,7 @@ footer {
 }
 .main-content h1 {
     color: #5e4b8b;
+    margin-top: 40px;
     margin-bottom: 20px;
 }
 form.form {

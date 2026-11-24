@@ -133,7 +133,7 @@ a {
     justify-content: space-between;
     align-items: center;
     width: 90%;
-    margin: 0 auto;
+    margin: -2% auto;
     padding: 0 40px;
     /* height: 100px; */
     background-color: white;
@@ -148,7 +148,7 @@ a {
 }
 
 .logo_image {
-    margin-top: 20px;
+    margin-top: 60px;
     width: 210px;
 }
 
@@ -189,6 +189,7 @@ a {
     flex-direction: column;
     align-items: flex-end;
     gap: 4px;
+    margin-top: 5%;
 }
 .ad-icon {
     width: 32px;
@@ -212,7 +213,7 @@ a {
 }
 .nav-container {
     width: 90%;
-    margin: 0 auto;
+    margin: 20px auto 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -506,13 +507,117 @@ a {
   .slider-btn.next {
     right: -10px;
   }
-
+.leader-name {
+    font-size: 1.2em;
+    font-weight: 700;
+}
     .left-view, .right-view {
         display: block;
         background: #fff;
         box-shadow: 0 0 12px rgb(0 0 0 / 0.05);
         border-radius: 20px;
-        padding: 24px 32px;
+        padding: 24px 15px;
+    }
+
+    .left-view {
+        flex: 2;
+    }
+
+    .right-view {
+        flex: 1.2;
+        max-width: 450px;
+    }
+
+    .calendar {
+        max-width: 900px;
+        height: 515px;
+        margin: 10px 10px;
+        padding: 0 auto;
+    }
+
+    .schedule-item {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 13px;
+    }
+
+    .schedule-item .label {
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .schedule-item .date {
+        font-size: 1.5em;
+        color: #475569;
+        font-weight: 500;
+    }
+
+    /* 상태 배지 */
+    .status-badge {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-left: auto;
+    }
+
+    .status-badge.closed {
+        background-color: #e2e8f0;
+        color: #64748b;
+    }
+
+    .status-badge.active {
+        background-color: #dcfce7;
+        color: #16a34a;
+    }
+
+    .icon {
+        width: 30px;
+        height: 35px;
+        font-size: 2em;
+    }
+
+    /* 상태 배지 */
+    .schedule-badge {
+        font-size: 0.8em;
+        font-weight: 500;
+        /* padding: 2px px; */
+        border-radius: 12px;
+        /* margin-left: auto; */
+    }
+
+    .schedule-badge.closed {
+        background-color: #e2e8f0;
+        color: #64748b;
+    }
+    .status-badge.active {
+        background-color: #dcfce7;
+        color: #16a34a;
+    }
+
+    .schedule-info {
+        margin: 10px 10px 0 ;
+        font-weight: 800;
+        font-size: 1.2rem;
+    }
+
+    .timeline {
+        margin: 10px 10px;
+        font-size: 1.2em;
+        font-weight: 800;
+    }
+
+    .d-day {
+
+    }
+
+    .dDay {
+        color: #ff4d4f;
+        font-weight: bold;
+        text-decoration: underline;
+        font-size: 1.2em;
     }
 
     .campaign-image {
@@ -677,7 +782,7 @@ a {
     color: #333;
     margin-bottom: 10px;
   }
-  .campaign_mission {
+    .campaign_mission {
         font-weight: bold;
         font-size: 1.5em;
         /* padding: 10px 0px; */
@@ -686,12 +791,31 @@ a {
         margin-bottom: 10px;
     }
 
+    .tab-content {
+        margin: 0 30px;
+    }
+
+    /* 주소 */
+    .address-box {
+        border: 1px solid;
+        border-radius: 10px;
+        box-shadow: 10px 10px 10px 1px rgba(0, 0, 0, 0.1);
+        margin: 15px 0 0;
+        color: #333;
+    }
+
+    .address {
+        font-size: 1.5em;
+        font-weight: 700;
+        margin: 15px;
+    }
+
+    .map {
+        margin: -10px 15px 15px;
+    }
+
     .campaign_tile {
         font-size: 1.5em;
-        margin-block-start: 0.67em;
-        margin-block-end: 0.67em;
-        margin-inline-start: 0px;
-        margin-inline-end: 0px;
         font-weight: bold;
         unicode-bidi: isolate;
     }
@@ -1803,11 +1927,6 @@ flex-grow: 1; /* 내용이 길어지면 공간을 채우도록 */
     font-size: 16px;
     color: #555;
 }
-.icon {
-    margin-top: 15px;
-    width: 40px;
-    height: 40px;
-}
 
 .w100vh {
     min-width: 100vh;
@@ -1931,6 +2050,7 @@ table.bestPayList {
     width: 80%;
     margin-top: 30px;
     margin-bottom: 10px;
+    margin: 15px 30px;
     font-weight: 700;
     font-size: 1.4rem;
     line-height: 1.8;
@@ -1984,12 +2104,6 @@ table.bestPayList {
     max-width: 1200px;
     border-collapse: collapse;
     margin: 0px auto;
-}
-.calendar {
-    max-width: 900px;
-    height: auto;
-    margin: 0px 23%;
-    padding: 0 auto;
 }
 
 .date_Select{
@@ -2255,14 +2369,15 @@ table.bestPayList {
 }
 
 .campaignTitle {
-    display: flex;
+    margin: 0 30px 0;
+    display: inline;
     align-items: center;
 }
 
 .mrglAuto {
-    margin-left: auto;
+    margin: 15px 30px 0;
     color: #ff7448;
-    font-size: 2em;
+    font-size: 1em;
 }
 
 #reviewSection .review-bg-wrapper {
@@ -2346,6 +2461,14 @@ table.bestPayList {
     .desktop-header {
         display: none !important;
     }
+}
+
+.calendar-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    /* padding: 24px; */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
   /* 모바일 화면 (예: 768px 이하) */
@@ -2456,7 +2579,7 @@ table.bestPayList {
     }
 
     .map {
-        margin-bottom: 15px;
+        margin: 0 15px 0;
     }
 
     .map_area {
@@ -3002,12 +3125,6 @@ table.bestPayList {
         margin-bottom: 20px;
     }
 
-    .calendar {
-        max-width: 900px;
-        height: 455px;
-        margin: 70px auto 10px;
-        padding: 0 auto;
-    }
     .mypage_hr {
         display: block;
         border: none;

@@ -37,7 +37,6 @@ public class InquiryController {
                         .queryParam("orderCode", option.getOrderCode())
                         .build()
                         .toUriString();
-        log.info("pageRows : " + page.getRows());
 
         model.addAttribute("inquiryList", inquiryList);
         model.addAttribute("currentURI", request.getRequestURI());
@@ -48,7 +47,7 @@ public class InquiryController {
     @GetMapping("/inquiry02")
     public String supportSelect(@RequestParam("inquiryId") String inquiryId, Model model, HttpServletRequest request) throws Exception{
         InquiryVO inquirySelect = inquiryService.inquirySelect(inquiryId);
-        
+
         model.addAttribute("inquirySelect", inquirySelect);
         model.addAttribute("currentURI", request.getRequestURI());
 

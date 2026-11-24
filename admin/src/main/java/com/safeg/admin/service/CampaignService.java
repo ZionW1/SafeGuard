@@ -32,6 +32,8 @@ public interface CampaignService {
 
     public int applyDelete(String id) throws Exception;
 
+    public int leaderDelete(String id) throws Exception;
+
     public List<UserVO> leaderList() throws Exception;
 
     public List<CampaignVO> securityType() throws Exception;

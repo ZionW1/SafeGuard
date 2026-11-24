@@ -6,6 +6,7 @@
         <th:block th:replace="~{fragments/csrfFragments :: metaCsrf}"></th:block>
         <title>캠페인 수정</title>
         <link rel="stylesheet" th:href="@{/css/style.css}">
+        <link rel="stylesheet" th:href="@{/css/campaign_style.css}">
     </head>
     <body>
         <div class="admin-container">
@@ -54,7 +55,8 @@
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>인솔자 선택</label>
-                                        <select id="leaderNm_pc" onchange="inputLeaderPhoneNumber(this)" class="sync-nm">
+                                        <select name="leaderList[].leaderSelect" onchange="inputLeaderPhoneNumber(this)" class="sync-nm">
+                                        <!-- <select id="leaderNm_pc" onchange="inputLeaderPhoneNumber(this)" class="sync-nm"> -->
                                             <option value="">-- 선택하세요 --</option>
                                             <option th:each="leader, stat : ${leaderList}"
                                                     th:value="${stat.index}"
@@ -245,8 +247,8 @@
                     <!-- ⭐️ 하단 버튼 3개 배치 (방법 B 적용) ⭐️ -->
                     <div class="form-row" style="margin-top: 24px; gap: 12px;">
                         <!-- <button type="button" class="btn-leader" onclick="fn_updateLeader()" style="flex: 1; height: 48px; background-color: #a582e8; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">인솔자 변경</button> -->
-                        <button type="submit" class="btn-update" style="flex: 1; height: 48px; background-color: #bfa2db; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">캠페인 수정</button>
-                        <button type="button" class="btn-delete" onclick="campaignRemove()" style="flex: 1; height: 48px; background-color: #d8b4e2; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">캠페인 삭제</button>
+                        <button type="submit" id="campUpdate" class="btn-update">캠페인 수정</button>
+                        <button type="button" class="btn-delete" onclick="campaignRemove()" style="">캠페인 삭제</button>
                     </div>
                 </form>
             </div>
@@ -259,7 +261,19 @@
             const form = document.getElementById("form");
             const leaderList = /*[[${leaderList}]]*/ [];
             const campaignSelect = /*[[${campaignSelect}]]*/ {};
-            console.log("campaignSelect" + JSON.stringify(campaignSelect))
+
+            const mediaQuery = window.matchMedia("(max-width: 768px)");
+            const companyNm = document.getElementById("companyNm");
+            const companyPh = document.getElementById("companyPh");
+            const campaignTitle = document.getElementById("campaignTitle");
+            const typeCode = document.getElementById("typeCode");
+            const dailyPayInput = document.getElementById("dailyPayInput");
+            const recruitmentNum = document.getElementById("recruitmentNum");
+            const AppPeriodStr = document.getElementById("AppPeriodStr");
+            const AppPeriodEnd = document.getElementById("AppPeriodEnd");
+            const placeAddr = document.getElementById("placeAddr");
+            const mission = document.getElementById("mission");
+
             // DOM 이 로드된 후 실행할 초기화 작업 모음
             document.addEventListener("DOMContentLoaded", function() {
                 console.log("DOM이 준비되었습니다!");
@@ -316,6 +330,118 @@
 
                 // 5. 드래그 앤 드롭 및 파일 업로드 이벤트 바인딩
                 initImageUploadEvents();
+
+                const campUpdate = document.getElementById("campUpdate");
+                campUpdate.addEventListener("click", (e) => {
+                    let eventPeriodStr = null;
+                    let eventPeriodEnd = null;
+                    let resultDateVal = null;
+
+                    if (window.innerWidth <= 768) {
+                        eventPeriodStr = document.getElementById("eventPeriodStr_mo");
+                        eventPeriodEnd = document.getElementById("eventPeriodEnd_mo");
+                        resultDateVal = document.getElementById("resultDate_mo");
+                    } else {
+                        eventPeriodStr = document.getElementById("eventPeriodStr_pc");
+                        eventPeriodEnd = document.getElementById("eventPeriodEnd_pc");
+                        resultDateVal = document.getElementById("resultDate_pc");
+                    }
+                    let leaderPay = document.querySelector(".leaderPay");
+                    let leaderPoint = document.querySelector(".leaderPoint");
+
+                    const validationList = [
+                        { el: companyNm, msg: "업체명을 입력해주세요." },
+                        { el: companyPh, msg: "연락처를 입력해주세요." },
+                        { el: campaignTitle, msg: "캠페인 제목을 입력해주세요." },
+                        { el: typeCode, msg: "모집 구분을 선택해주세요." },
+                        { el: dailyPayInput, msg: "캠페인 급여를 입력해주세요." },
+                        { el: recruitmentNum, msg: "모집 인원을 입력해주세요." },
+                        { el: placeAddr, msg: "행사 장소를 입력해주세요." },
+                        { el: mission, msg: "안내사항 내용을 입력해주세요." },
+                        { el: AppPeriodStr, msg: "신청 시작일을 입력해주세요." },
+                        { el: AppPeriodEnd, msg: "신청 마감일을 입력해주세요." },
+                        { el: eventPeriodStr, msg: "행사 시작일을 입력해주세요." },
+                        { el: eventPeriodEnd, msg: "행사 마감일을 입력해주세요." },
+                        { el: resultDateVal, msg: "명단 발표 기간을 입력해주세요." }
+                    ];
+
+                    const leaderFormGroups = document.querySelectorAll("#leaderContainer .leader-form-group");
+                    const phoneList = [];
+
+                    if (leaderFormGroups.length > 0) {
+                        leaderFormGroups.forEach((group, index) => {
+                            // 각 인솔자 폼 안의 선택된 select 및 입력 필드들을 찾습니다.
+                            const leaderSelect = group.querySelector("select[name*='leaderSelect']");
+                            const phoneInput = group.querySelector(".sync-phone"); // 인솔자 연락처 input
+                            // PC 또는 모바일 화면 여부에 따라 급여/포인트 입력창이 다르므로 둘 중 화면에 보이는 것을 잡거나 각각 체크합니다.
+                            const payInput = window.innerWidth <= 768 ? group.querySelector(".sync-pay-mo") : group.querySelector(".sync-pay-pc");
+                            const pointInput = window.innerWidth <= 768 ? group.querySelector(".sync-point-mo") : group.querySelector(".sync-point-pc");
+
+                            if(leaderSelect )
+                            // 검증 리스트에 추가
+                            validationList.push(
+                                { el: leaderSelect, msg: `인솔자 ${index + 1}: 인솔자를 선택해주세요.` },
+                                { el: phoneInput, msg: `인솔자 ${index + 1}: 연락처를 확인해주세요.` },
+                                { el: payInput, msg: `인솔자 ${index + 1}: 급여를 입력해주세요.` },
+                                { el: pointInput, msg: `인솔자 ${index + 1}: 포인트를 입력해주세요.` }
+                            );
+
+                            if (phoneInput && phoneInput.value.trim() !== "") {
+                                const phoneNumber = phoneInput.value.trim();
+
+                                if (phoneList.includes(phoneNumber)) {
+                                    alert(`중복된 인솔자가 존재합니다. (연락처: ${phoneNumber})`);
+                                    phoneInput.focus();
+                                    e.preventDefault();
+                                    return; // 함수 전체 종료
+                                }
+                                phoneList.push(phoneNumber);
+                            }
+                        });
+                    }
+
+                    const appStartDate = new Date(AppPeriodStr.value);
+                    const appEndDate = new Date(AppPeriodEnd.value);
+                    const startDate = new Date(eventPeriodStr.value);
+                    const endDate = new Date(eventPeriodEnd.value);
+                    const resultDate = new Date(resultDateVal.value);
+
+                    // 2. 신청 기간 검증
+                    if (appStartDate > appEndDate) {
+                        alert("신청 시작일은 신청 마감일보다 이후일 수 없습니다. 날짜를 다시 확인해주세요.");
+                        AppPeriodStr.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    // 3. 명단 발표일 검증 (오타 수정 및 e.preventDefault, return 추가)
+                    // 명단 발표일은 신청 마감일보다 빠를 수 없고, 행사 시작일보다 느릴 수 없음
+                    if (appEndDate > resultDate || resultDate > startDate) {
+                        alert("명단 발표일은 신청 마감일보다 빠를 수 없으며, 행사 시작일보다 늦을 수 없습니다.");
+                        resultDateVal.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    // 4. 행사 기간 검증
+                    if (startDate > endDate) {
+                        alert("행사 시작일은 행사 마감일보다 이후일 수 없습니다. 날짜를 다시 확인해주세요.");
+                        eventPeriodStr.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    for (const item of validationList) {
+                        if (!item.el || !item.el.value.trim()) {
+                            alert(item.msg);
+                            item.el.focus(); // 이제 정상적으로 요소를 찾아 커서를 이동시킵니다.
+                            e.preventDefault();
+                            return;
+                        }
+                    }
+
+                    console.log("유효성 검사 통과! 캠페인 수정 진행");
+                });
             });
 
             function syncPay(inputElement) {
@@ -493,10 +619,10 @@
             // 인솔자 폼 삭제
             function removeLeaderForm(button) {
                 const currentFormCount = document.querySelectorAll('.leader-form-group').length;
-                if (currentFormCount <= 1) {
-                    alert("최소 1명의 인솔자 정보는 입력해야 합니다.");
-                    return;
-                }
+                // if (currentFormCount <= 1) {
+                //     alert("최소 1명의 인솔자 정보는 입력해야 합니다.");
+                //     return;
+                // }
 
                 const formGroup = button.closest('.leader-form-group');
                 if (confirm("정말로 이 인솔자 정보를 삭제하시겠습니까?")) {

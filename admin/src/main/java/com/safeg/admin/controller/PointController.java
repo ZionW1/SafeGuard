@@ -34,22 +34,15 @@ public class PointController {
 
     @GetMapping("/point01")
     public String pointList(@RequestParam(value = "selectedMonth", required = false) String selectedMonth, @AuthenticationPrincipal CustomUser authUser, Model model, Option option, Page page) throws Exception {
-        log.info("pointList called with selectedMonth: {}", selectedMonth);
-        log.info("pointList called with option: {}", option);
-        log.info("pointList called with page: {}", page);
         // 1. 만약 사용자가 월을 선택하지 않고 처음 들어왔다면(selectedMonth가 null이거나 비어있다면)
         if (selectedMonth == null || selectedMonth.trim().isEmpty()) {
             // 현재 날짜를 기준으로 'YYYY-MM' 형식의 문자열 생성 (예: "2026-09")
             selectedMonth = LocalDate.now().format(DateTimeFormatter.ofPattern("YYYY-MM"));
         }
-        // 1. 포인트 목록 조회
-        log.info("Selected Month: {}", selectedMonth);
+
         List<PointHistoryVO> pointList = pointService.getPointList(option, page, selectedMonth);
 
-        // 2. 포인트 합계 조회
-        // int totalPoint = pointService.getTotalPoint(null, selectedMonth); // userNo를 null로 전달하여 전체 포인트 합계를 가져옴
-
-        // 3. 모델에 데이터 추가
+        // 모델에 데이터 추가
         model.addAttribute("pointList", pointList);
         model.addAttribute("selectedMonth", selectedMonth);
         // model.addAttribute("totalPoint", totalPoint);
@@ -77,8 +70,6 @@ public class PointController {
 
     @GetMapping("/point02")
     public String pointSelect(Model model, @RequestParam("userNo") String userNo, @RequestParam("selectedMonth") String selectedMonth) throws Exception {
-
-        log.info("pointSelect called with userNo: {}, selectedMonth: {}", userNo, selectedMonth);
         // 1. 포인트 상세 조회
         List<PointHistoryVO> pointSelect = pointService.pointSelect(userNo, selectedMonth);
         int totalPoint = pointService.getTotalPoint(userNo, selectedMonth);

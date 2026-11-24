@@ -3,6 +3,9 @@ package com.safeg.admin.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -23,9 +26,8 @@ public class Scheduler {
     private final AligoSmsService aligoSmsService; // @Autowired 대신 생성자 주입 권장 (이미 RequiredArgsConstructor가 있음)
 
     // 1. 새벽 2시 스케줄러 (정상)
-    @Scheduled(cron = "0 0 2 * * *")
+    @Scheduled(cron = "0 0 14 * * *")
     public void campaignScheduler() {
-        log.info("CampaignScheduler - 만료된 캠페인 처리 시작.");
         try {
             campaignService.updateExpiredCampaigns();
             log.info("CampaignScheduler - 만료된 캠페인 처리 완료.");
@@ -35,16 +37,9 @@ public class Scheduler {
     }
 
     // 2. 오전 10시 알림톡 스케줄러 (수정 완료)
-    @Scheduled(cron = "0 0 10 * * *")
+    @Scheduled(cron = "0 0 15 * * *")
     public void closeCampaignScheduler() { // 👈 Model model 파라미터 제거!
         log.info("CloseCampaignScheduler - 알림톡 발송 스케줄러 시작.");
-         // 현재 날짜 구하기
-        LocalDate now = LocalDate.now();
-
-        // 포맷 정의
-        // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        // 포맷 적용
-        // String formatedNow = now.format(formatter);
 
         try {
             List<CampaignVO> closedCampaign = campaignService.closedCampaign();
@@ -54,14 +49,31 @@ public class Scheduler {
 
             for (CampaignVO campaignsVO : closedCampaign) {
                 try {
-                    // 안전한 문자열 조립 (String.valueOf는 null일 경우 "null" 문자열을 반환하여 에러를 막음)
-                    String appPeriod = String.valueOf(campaignsVO.getAppPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getAppPeriodEnd());
-                    String eventPeriod = String.valueOf(campaignsVO.getEventPeriodStr()) + " ~ " + String.valueOf(campaignsVO.getEventPeriodEnd());
-                    // LocalDate resultDate = campaignsVO.getResultDate();
-
-                    if (now.isEqual(campaignsVO.getResultDate())) {
-                        aligoSmsService.rosterCheckAsync(campaignsVO.getLeaderPhone(), campaignsVO.getTypeNm(), campaignsVO.getCampaignTitle(), campaignsVO.getRecruitmentNum(), appPeriod, eventPeriod, "https://행집.com/campaign/" + campaignsVO.getCampaignId(), "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(), campaignsVO.getCompanyPh());
+                    String leaderPhone = campaignsVO.getLeaderPhone();
+                    if (leaderPhone == null || leaderPhone.trim().isEmpty()) {
+                        log.warn("캠페인 ID {} - 담당자 연락처가 없어 알림톡 발송을 건너뜁니다.", campaignsVO.getCampaignId());
+                        continue;
                     }
+
+                    // 안전한 문자열 조립 (String.valueOf는 null일 경우 "null" 문자열을 반환하여 에러를 막음)
+                    String appStr = campaignsVO.getAppPeriodStr() != null ? String.valueOf(campaignsVO.getAppPeriodStr()) : "";
+                    String appEnd = campaignsVO.getAppPeriodEnd() != null ? String.valueOf(campaignsVO.getAppPeriodEnd()) : "";
+                    String appPeriod = appStr + " ~ " + appEnd;
+
+                    String eventStr = campaignsVO.getEventPeriodStr() != null ? String.valueOf(campaignsVO.getEventPeriodStr()) : "";
+                    String eventEnd = campaignsVO.getEventPeriodEnd() != null ? String.valueOf(campaignsVO.getEventPeriodEnd()) : "";
+                    String eventPeriod = eventStr + " ~ " + eventEnd;
+                    // 날짜 문자열(YYYY-MM-DD)이 완전히 일치할 때만 실행
+                    aligoSmsService.rosterCheckAsync(
+                        campaignsVO.getLeaderPhone(),
+                        campaignsVO.getTypeNm(),
+                        campaignsVO.getCampaignTitle(),
+                        campaignsVO.getRecruitmentNum(),
+                        appPeriod, eventPeriod,
+                        "https://행집.com/campaign/" + campaignsVO.getCampaignId(),
+                        "https://행집.com/apply/userCampaignApply/" + campaignsVO.getCampaignId(),
+                        campaignsVO.getCompanyPh()
+                    );
                 } catch (Exception e) {
                     log.error("캠페인 ID {} 발송 중 개별 오류: {}", campaignsVO.getCampaignId(), e.getMessage());
                 }

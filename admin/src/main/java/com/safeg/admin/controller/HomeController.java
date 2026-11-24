@@ -145,7 +145,6 @@ public class HomeController {
         // Random random = new Random();
 
         // int code = 100000 + random.nextInt(900000);
-        // log.info("code + " + code);
 
         // return String.valueOf(code);
         // 만약 회원가입 시 평문 'MJordan23!'을 암호화한 해시와 로그인 시 'MJordan23!'을 비교해서 일치하는지 확인

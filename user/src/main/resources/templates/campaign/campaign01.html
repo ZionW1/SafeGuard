@@ -15,13 +15,6 @@
         margin: 0 auto;
     }
 
-    .left-view {
-        flex: 2;
-    }
-    .right-view {
-        flex: 1;
-        max-width: 450px;
-    }
     .image-row {
         display: flex;
         gap: 20px;
@@ -83,10 +76,10 @@
     }
 
     /* 신청기간 및 달력 */
-    .right-view h2 {
+    .schedule-info {
         font-weight: 800;
         font-size: 1.25rem;
-        margin-bottom: 14px;
+        /* margin-bottom: 14px; */
     }
     .right-view h2 .highlight-pink {
         font-weight: 900;
@@ -201,18 +194,13 @@
     .fc-view-harness fc-view-harness-active{
         height: 450px;
     }
-    #calendar {
-        width: 100%;  /* 너비는 컨테이너에 맞게 조절 */
-        max-width: 900px;  /* 필요에 따라 최대 너비 지정 */
-        margin: 0 auto;  /* 가운데 정렬 */
-    }
 
     .fc-prev-button,
     .fc-next-button {
         font-size: 1rem;
-        padding: 0.4em 0.8em;
-        height: 36px;
-        line-height: 1.2;
+        /* padding: 0.4em 0.8em; */
+        height: 40px;
+        /* line-height: 1.2; */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -220,7 +208,6 @@
         margin: 0 4px;
         box-sizing: border-box;
     }
-
 
     .fc-icon-chevron-left::before,
     .fc-icon-chevron-right::before {
@@ -288,15 +275,14 @@
 
         var calendarEl = document.getElementById('calendar');
         var calendar_month = campaign.eventPeriodStr;
+        const today = new Date();
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth', // 월별 보기
-            initialDate: calendar_month,   // ← 원하는 날짜
+            initialDate: today,   // ← 원하는 날짜
             locale: 'ko', // 한국어 설정
             headerToolbar: {
                 right: 'prev next today',
             },
-            width: '100%',
-            height: 600,
             events: function(fetchInfo, successCallback, failureCallback) {
                 // Spring Boot 백엔드 API 호출
                 fetch("/campaign07?id=" + campaign.campaignId)
@@ -363,10 +349,9 @@
         });
         calendar.render();
 
-        const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const badge = document.querySelector('.d-Day');
-        document.querySelectorAll('.d-Day').forEach(function(badge) {
+        const badge = document.querySelector('.d-day');
+        document.querySelectorAll('.d-day').forEach(function(badge) {
 
             if (badge) {
                 const dateStr = badge.dataset.eventEndDateStr;
@@ -380,11 +365,13 @@
                         badge.textContent = '날짜 오류';
                     } else {
                         const diffDays = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
+
                         if (diffDays === 0) {
                             badge.textContent = `오늘이 신청 마지막 날이에요.`;
                             badge.classList.add('today');
                         } else if (diffDays > 0) {
-                            badge.textContent = `신청기간이 D-${diffDays} 남았어요`;
+                            // badge.textContent = `신청기간이 D-${diffDays} 남았어요`;
+                            badge.innerHTML = `신청기간이 <span class="dDay">D-${diffDays}</span> 남았어요`;
                         } else {
                             badge.textContent = '마감됨';
                         }
@@ -546,7 +533,11 @@
     <div class="container_campaign">
     <section aria-labelledby="campaign-title" class="campaign-info">
         <div class="mrg75-top" style="display: flex; align-items: center;">
-            <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span><span class="campaign_tile"  th:text="${campaignSelect.timeSegment == 'DAY' || campaignSelect.timeSegment == null ? '(주간)' : '(야간)'}"></span>
+            <span class="campaign_tile">[</span>
+            <span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span>
+            <span class="campaign_tile">]</span>&nbsp;
+            <span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span>&nbsp;
+            <span class="campaign_tile" th:text="${campaignSelect.timeSegment == 'DAY' || campaignSelect.timeSegment == null ? '(주간)' : '(야간)'}"></span>
         </div>
 
         <div class="info-section">
@@ -562,28 +553,27 @@
                     <span class="highlight-pink">총 <span th:text="${campaignSelect.applicantsNum}"></span> / <span th:text="${campaignSelect.recruitmentNum}"></span>명</span>
                 </div>
             </div>
-            <!-- <div class="mrg15-bottom ">
-                <span class="d-Day d-Day-info"th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
-                        th:data-campaign-id="${campaignSelect.campaignId}"></span>
-            </div> -->
             <img id="imgFile" th:src="${campaignSelect == null || #lists.isEmpty(campaignSelect.leaderList) ? '/images/not-image.png' : '/selectProfile?id=' + campaignSelect.leaderList[0].leaderNo + '&amp;args=profile'}" alt="파일이미지" class="profile-img"/><br>
         </div>
         <div>
-            <span class="d-Day d-Day-info" th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
+            <span class="d-day d-day-info" th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
                 th:data-campaign-id="${campaignSelect.campaignId}"></span>
         </div>
     </section>
     <section class="left-view">
         <div class="campaignTitle">
-            <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
-            <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span> <span class="campaign_tile"  th:text="${campaignSelect.timeSegment == 'DAY' || campaignSelect.timeSegment == null ? '(주간)' : '(야간)'}"></span>
-            <span class="campaign_tile mrglAuto" th:text="${campaignSelect.ucChoice}"></span>
+            <!-- <span class="campaign_tile">[</span><span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span><span class="campaign_tile">] </span><span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span> <span class="campaign_tile"  th:text="${campaignSelect.timeSegment == 'DAY' || campaignSelect.timeSegment == null ? '(주간)' : '(야간)'}"></span> -->
+            <span class="campaign_tile">[</span>
+            <span class="campaign_tile" th:text="${campaignSelect.typeNm}"></span>
+            <span class="campaign_tile">]</span>&nbsp;
+            <span class="campaign_tile" th:text="${campaignSelect.campaignTitle}"></span>&nbsp;
+            <span class="campaign_tile" th:text="${campaignSelect.timeSegment == 'DAY' || campaignSelect.timeSegment == null ? '(주간)' : '(야간)'}"></span>
+            <span class="campaign_tile highlight-pink"> - <span th:text="${campaignSelect.applicantsNum}"></span> / <span th:text="${campaignSelect.recruitmentNum}"></span>명</span>
         </div>
-        <div class="image-row">
-            <img id="imgFile" style="margin: 15px auto" th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" class=""/><br>
-            <!-- 이미지 경로는 마이클 환경에 맞게 수정해주세요 -->
-            <!-- <img src="image2.jpg" alt="음식 이미지 2" /> -->
+        <div class="mrglAuto">
+            <span class="campaign_tile" th:text="${campaignSelect.ucChoice}"></span>
         </div>
+
 
         <div class="mobile_view">
             <div class="mrg15-bottom">
@@ -620,13 +610,9 @@
         <div class="campaign-info">
             <span class="campaign_tile mrglAuto" th:text="${campaignSelect.ucChoice}"></span>
         </div>
+
         <div class="section-title">
-            모집인원 <span class="highlight-pink">총 <span th:text="${campaignSelect.applicantsNum}"></span> / <span th:text="${campaignSelect.recruitmentNum}"></span>명</span>
-        </div>
-        <div class="section-title">
-            <!-- <span>캠페인 명 : </span><span th:text="${campaignSelect.campaignTitle}"></span> -->
-            <!-- <div class="campaign-point-text">포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span></div>
-            <div class="campaign-point-text"> [만근포인트 : 10,000]</div> -->
+            <div class="campaign-point-text">포인트 : <span th:text="${#numbers.formatInteger(campaignSelect.campaignPay, 3, 'COMMA')}"></span> [만근포인트 : 10,000]</div>
             <div sec:authorize="isAuthenticated()" class="guest-message">
                 <div th:if="${authUser != null && campaignSelect != null && authUser.canShowPoint(campaignSelect?.typeCode)}">
                     <div th:if="${#strings.isEmpty(campaignSelect.workHour)}">
@@ -650,6 +636,11 @@
                 </div>
             </div>
         </div>
+        <div class="image-row">
+            <img id="imgFile" style="margin: 15px auto" th:src="|/img?id=${campaignSelect.campaignId}|" alt="파일이미지" class=""/><br>
+            <!-- 이미지 경로는 마이클 환경에 맞게 수정해주세요 -->
+            <!-- <img src="image2.jpg" alt="음식 이미지 2" /> -->
+        </div>
         <div id="campaign-tab" class="tab-content active">
             <div class="campaign_mission">안내 사항</div>
             <div class="visit-info">
@@ -658,15 +649,14 @@
                 </div>
             </div>
 
-            <div class="campaign_mission address">
-                주소 : <span th:text="${campaignSelect.placeAddr}"></span>
-            </div>
-            <div class="content-text">
-
-            </div>
-            <div class="map">
-                <div class="col-6">
-                    <div class="map_area  mb20" id="map"></div>
+            <div class="address-box">
+                <div class="address">
+                    <span>주소 : </span><span th:text="${campaignSelect.placeAddr}"></span>
+                </div>
+                <div class="map">
+                    <div class="col-6">
+                        <div class="map_area  mb20" id="map"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -716,23 +706,37 @@
     </section>
 
     <section class="right-view">
-        <h1>인솔자 : <span th:text="${campaignSelect.leaderList[0].leaderNm}"></span></h1>
-
-        <!-- <img id="imgFile" th:src="|/selectProfile?id=${campaignSelect.leaderCode}&args=profile|" alt="파일이미지" class="profile_img"/><br>
-        <h2><span class="d-Day"th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}"
-            th:data-campaign-id="${campaignSelect.campaignId}"></span></h2>
-        <div class="period-info"> -->
+        <div class="leader-name">인솔자 : <span th:text="${campaignSelect.leaderList[0].leaderNm}"></span></div>
         <img id="imgFile"
         th:src="${campaignSelect == null || #lists.isEmpty(campaignSelect.leaderList) ? '/images/not-image.png' : '/selectProfile?id=' + campaignSelect.leaderList[0].leaderNo + '&amp;args=profile'}"
             alt="파일이미지"
             class="profile_img"/><br>
         <div>
-            <div>신청기간 : <span th:text="${campaignSelect.appPeriodStr}"></span> ~<span th:text="${campaignSelect.appPeriodEnd}"></span></div>
+
+            <!-- <div class="schedule-box">
+                <div class="schedule-item">
+                    <span class="icon">📅</span>
+                    <span class="label">[신청 기간]</span>
+                    <span class="date"><span th:text="${campaignSelect.appPeriodStr}"></span> ~ <span th:text="${campaignSelect.appPeriodEnd}"></spa></span>
+                    <span class="schedule-badge">모집 종료</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="icon">📅</span>
+                    <span class="label">[행사 날짜]</span>
+                    <span class="date"><span th:text="${campaignSelect.eventPeriodStr}"></span> ~ <span th:text="${campaignSelect.eventPeriodEnd}"></span>                                     </span>
+                    <span class="schedule-badge">진행 중</span>
+                </div>
+            </div> -->
+            <!-- <div>신청기간 : <span th:text="${campaignSelect.appPeriodStr}"></span> ~<span th:text="${campaignSelect.appPeriodEnd}"></span></div> -->
             <!-- <div>결과발표 : <span th:text="${campaignSelect.resultDate}">11.03</span></div> -->
-            <div>행사 날짜 : <span th:text="${campaignSelect.eventPeriodStr}"></span> ~<span th:text="${campaignSelect.eventPeriodEnd}"></span></div>
+            <!-- <div>행사 날짜 : <span th:text="${campaignSelect.eventPeriodStr}"></span> ~<span th:text="${campaignSelect.eventPeriodEnd}"></span></div> -->
         </div>
-        <br>
-        <div id="calendar">
+
+        <div class="calendar-card">
+            <h3 class="schedule-info">일정 안내</h3>
+            <h2 class="timeline"><span class="d-day" th:data-event-end-date-str="${campaignSelect.appPeriodEnd != null ? #temporals.format(campaignSelect.appPeriodEnd, 'yyyy-MM-dd') : ''}" th:data-campaign-id="${campaignSelect.campaignId}"></span></h2>
+            <div class="calendar" id="calendar" style="height: 515px;">
+            </div>
         </div>
 
         <!-- <div class="image-row">

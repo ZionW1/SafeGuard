@@ -255,8 +255,6 @@ public class FileController {
             if (file == null) {
                 log.error("No identification image found for user id: {}", id);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                log.info("identification image found for user id: {}", id + " : identification");
             }
         } else if(args.equals("3")) {
             // 이수증
@@ -264,8 +262,6 @@ public class FileController {
             if (file == null) {
                 log.error("No certificate image found for user id: {}", id);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                log.info("certificate image found for user id: {}", id + " : certificate");
             }
         }else {
             // 프로필 사진
@@ -273,8 +269,6 @@ public class FileController {
             if (file == null) {
                 log.error("No profile image found for user id: {}", id);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                log.info("Profile image found for user id: {}", id + " : profile");
             }
         }
 

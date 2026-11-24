@@ -54,7 +54,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("securityFilterChain : : : : : : : : :");
         // ✅ 인가 설정
         http.authorizeHttpRequests(auth -> auth
             .requestMatchers("/", "/login", "/join", "/css/**", "/js/**", "/images/**", "/error01", "/error", "/downloadImg").permitAll() // 로그인 없이도 접근 가능한 정적 파일이나 특정 경로
@@ -79,7 +78,7 @@ public class SecurityConfig {
         http.rememberMe(me -> me.key("23emperor")
             .rememberMeParameter("auto-login")
             .tokenRepository(tokenRepository())
-            .tokenValiditySeconds(60 * 60 * 24 * 7)); 
+            .tokenValiditySeconds(60 * 60 * 24 * 7));
 
         //인증 예외 처리
         http.exceptionHandling(exception -> exception
@@ -93,17 +92,17 @@ public class SecurityConfig {
                 .deleteCookies("remember-id") // 로그아웃 시, 아이디 저장 쿠키 삭제
                 // .logoutSuccessHandler("null") // 로그아웃 성공 처리자 설정
         );
-        
 
-        // http.requiresChannel(channel -> 
+
+        // http.requiresChannel(channel ->
         //     channel.anyRequest().requiresSecure() // 모든 요청에 대해 보안 연결(HTTPS)을 강제함
         // );
 
         return http.build();
-        
+
     }
-    
-    
+
+
     /**
      * 🍃 암호화 방식 빈 등록
      * @return
@@ -120,7 +119,7 @@ public class SecurityConfig {
      * @throws Exception
     */
     @Bean
-    public AuthenticationManager authenticationManager( 
+    public AuthenticationManager authenticationManager(
                                     AuthenticationConfiguration authenticationConfiguration ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
@@ -129,14 +128,14 @@ public class SecurityConfig {
      * 👮‍♂️🔐 사용자 인증 관리 빈 등록 메소드
      * JDBC 인증 방식
      * ✅ 데이터 소스 (URL, ID, PW) - application.properties
-     * ✅ SQL 쿼리 등록         
+     * ✅ SQL 쿼리 등록
      * ⭐ 사용자 인증 쿼리
      * ⭐ 사용자 권한 쿼리
      * @return
      */
     // @Bean
     // public UserDetailsService userDetailsService() {
-    //     JdbcUserDetailsManager userDetailsManager 
+    //     JdbcUserDetailsManager userDetailsManager
     //             = new JdbcUserDetailsManager(dataSource);
 
     //     // 사용자 인증 쿼리
@@ -165,9 +164,9 @@ public class SecurityConfig {
                 , last_used timestamp not null
             );
     * 🔄 자동 로그인 프로세스
-    * ✅ 로그인 시 
+    * ✅ 로그인 시
     *     ➡ 👩‍💼(ID, 시리즈, 토큰) 저장
-    * ✅ 로그아웃 시, 
+    * ✅ 로그아웃 시,
     *     ➡ 👩‍💼(ID, 시리즈, 토큰) 삭제
     * @return
     */
@@ -184,7 +183,7 @@ public class SecurityConfig {
         // persistent_logins 테이블 생성
         try {
             repositoryImpl.getJdbcTemplate().execute(JdbcTokenRepositoryImpl.CREATE_TABLE_SQL);
-        } 
+        }
         catch (BadSqlGrammarException e) {
             log.error("persistent_logins 테이블이 이미 존재합니다.");
         }

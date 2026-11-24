@@ -26,7 +26,6 @@ public class FaqController {
 
     @GetMapping("/faq01")
     public String notice01(Model model, Option option, Page page) throws Exception {
-        log.info("FAQ List 화면");
         List<AdminContentVO> faqList = faqService.faqList(option, page);
 
         model.addAttribute("faqList", faqList);
@@ -34,13 +33,13 @@ public class FaqController {
         model.addAttribute("page", page);
         model.addAttribute("row", page.getRows());
         String pageUrl = UriComponentsBuilder.fromPath("/faq01")
-                        //.queryParam("page", page.getPage())
-                        .queryParam("keyword", option.getKeyword())
-                        .queryParam("code", option.getCode())
-                        // .queryParam("rows", page.getRows())
-                        .queryParam("orderCode", option.getOrderCode())
-                        .build()
-                        .toUriString();
+            //.queryParam("page", page.getPage())
+            .queryParam("keyword", option.getKeyword())
+            .queryParam("code", option.getCode())
+            // .queryParam("rows", page.getRows())
+            .queryParam("orderCode", option.getOrderCode())
+            .build()
+            .toUriString();
         model.addAttribute("pageUrl", pageUrl);
 
         return "faq/faq01";
@@ -48,9 +47,7 @@ public class FaqController {
 
     @GetMapping("/faq02")
     public String faq02(Model model, @RequestParam("id") String faqId) throws Exception {
-        log.info("FAQ update 화면");
         AdminContentVO faqSelect = faqService.faqSelect(faqId);
-
         model.addAttribute("faqSelect", faqSelect);
 
         return "faq/faq02";
@@ -58,16 +55,11 @@ public class FaqController {
 
     @GetMapping("/faq03")
     public String faq03(Model model) throws Exception {
-        log.info("FAQ insert 화면");
-
         return "faq/faq03";
     }
 
     @PostMapping("/faq04")
     public String faq04(Model model, AdminContentVO adminContentVO) throws Exception {
-        log.info("FAQ insert 추가");
-        log.info("faq04 : " + adminContentVO);
-
         int result = faqService.faqInsert(adminContentVO);
         if(result > 0){
             return "redirect:/faq01";
@@ -77,8 +69,6 @@ public class FaqController {
 
     @PostMapping("/faq05")
     public String faq05(AdminContentVO adminContentVO) throws Exception {
-        log.info("FAQ update 수정");
-
         int result = faqService.faqUpdate(adminContentVO);
         if(result > 0){
             return "redirect:/faq01";
@@ -88,8 +78,6 @@ public class FaqController {
 
     @PostMapping("/faq06")
     public String faq06(@RequestParam("id") String faqId) throws Exception {
-        log.info("FAQ Delete 삭제");
-
         int result = faqService.faqDelete(faqId);
         if(result > 0){
             return "redirect:/faq01";
